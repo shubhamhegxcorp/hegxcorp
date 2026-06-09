@@ -55,16 +55,16 @@ const serviceColumns: { heading: string; items: ServiceItem[] }[] = [
       { icon: Palette, title: "UI/UX Design", desc: "Human-centered design" },
       { icon: Sparkles, title: "Branding", desc: "Identities with intent" },
       { icon: ImageIcon, title: "Graphic Design", desc: "Visual storytelling" },
-      { icon: Brush, title: "Illustration", desc: "Custom artwork" },
+
     ],
   },
 ];
 
 const countries = [
-  { code: "in", flag: "🇮🇳", name: "India", region: "hegxcorp.in", domain: "https://hegxcorp.in" },
-  { code: "us", flag: "🇺🇸", name: "United States", region: "hegxcorp.com", domain: "https://hegxcorp.com" },
-  { code: "au", flag: "🇦🇺", name: "Australia", region: "hegxcorp.au", domain: "https://hegxcorp.au" },
-  { code: "eu", flag: "🇪🇺", name: "Europe", region: "hegxcorp.eu", domain: "https://hegxcorp.eu" },
+  { code: "in", flag: "IN", name: "India", region: "hegxcorp.in", domain: "https://hegxcorp.in" },
+  { code: "us", flag: "US", name: "United States", region: "hegxcorp.us", domain: "https://hegxcorp.us" },
+  { code: "uk", flag: "UK", name: "United Kingdom", region: "hegxcorp.uk", domain: "https://hegxcorp.uk" },
+  { code: "ae", flag: "AE", name: "Dubai", region: "hegxcorp.ae", domain: "https://hegxcorp.ae" },
 ];
 
 const navLinks = [
