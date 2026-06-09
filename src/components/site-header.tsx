@@ -21,7 +21,7 @@ import {
   ArrowRight,
   Check,
 } from "lucide-react";
-import logoAsset from "@/assets/hegxcorp-logo.webp.asset.json";
+import logoAsset from "@/assets/cropped-hegxcorp-logo-new-web.webp";
 import { cn } from "@/lib/utils";
 
 type ServiceItem = {
@@ -73,6 +73,42 @@ const navLinks = [
   { label: "Blog", to: "/blog" },
   { label: "Contact", to: "/contact" },
 ];
+
+function StatCounter({ target, suffix = "", duration = 1200, trigger }: { target: number; suffix?: string; duration?: number; trigger: boolean }) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!trigger) {
+      setCount(0);
+      return;
+    }
+
+    let startTimestamp: number | null = null;
+    let animationFrameId: number;
+
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+
+      // Easing function for smoother counter animation: easeOutQuad
+      const easedProgress = progress * (2 - progress);
+
+      setCount(Math.floor(easedProgress * target));
+
+      if (progress < 1) {
+        animationFrameId = window.requestAnimationFrame(step);
+      }
+    };
+
+    animationFrameId = window.requestAnimationFrame(step);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+    };
+  }, [trigger, target, duration]);
+
+  return <span>{count}{suffix}</span>;
+}
 
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
@@ -136,11 +172,11 @@ export function SiteHeader() {
           {/* Logo */}
           <Link to="/" className="flex items-center" aria-label="HEXGCORP home">
             <img
-              src={logoAsset.url}
+              src={logoAsset}
               alt="HEXGCORP"
               className={cn(
                 "w-auto transition-all duration-300",
-                scrolled ? "h-9" : "h-11"
+                scrolled ? "h-11" : "h-[54px]"
               )}
             />
           </Link>
@@ -203,15 +239,30 @@ export function SiteHeader() {
 
                     {/* Featured card */}
                     <div className="rounded-xl bg-gradient-to-br from-[oklch(0.21_0.03_265)] to-[oklch(0.32_0.05_265)] p-6 text-white flex flex-col justify-between">
-                      <div>
+                      <div className="space-y-5">
                         <div className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-white/90">
-                          <Sparkles className="h-3 w-3" />
                           Featured
                         </div>
-                        <h5 className="mt-4 text-lg font-semibold leading-tight">Need Expert Guidance?</h5>
-                        <p className="mt-2 text-sm text-white/70 leading-relaxed">
-                          Talk with our specialists and discover the best solution for your business.
-                        </p>
+
+                        {/* Primary Statistic */}
+                        <div className="space-y-1">
+                          <div className="text-5xl font-black tracking-tight text-white leading-none">
+                            <StatCounter target={300} suffix="+" trigger={megaOpen} />
+                          </div>
+                          <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/60">
+                            Projects Delivered
+                          </div>
+                        </div>
+
+                        {/* Headline & Description */}
+                        <div className="space-y-2">
+                          <h5 className="text-base font-bold leading-snug">
+                            Building Modern Digital Experiences
+                          </h5>
+                          <p className="text-xs text-white/75 leading-relaxed font-normal">
+                            We help businesses build scalable websites, digital products, and growth-focused solutions that drive measurable results.
+                          </p>
+                        </div>
                       </div>
                       <button className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-white/90 transition-colors">
                         Book Free Consultation
@@ -324,7 +375,7 @@ export function SiteHeader() {
           )}
         >
           <div className="flex h-16 items-center justify-between border-b border-border px-5">
-            <img src={logoAsset.url} alt="HEXGCORP" className="h-8 w-auto" />
+            <img src={logoAsset} alt="HEXGCORP" className="h-8 w-auto" />
             <button
               className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-muted"
               onClick={() => setMobileOpen(false)}
