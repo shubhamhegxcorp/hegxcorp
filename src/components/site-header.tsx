@@ -138,7 +138,7 @@ export function SiteHeader() {
   return (
     <>
       {/* Utility bar */}
-      <div className="hidden md:block bg-[oklch(0.21_0.03_265)] text-white/80 text-xs">
+      <div className="hidden md:block bg-brand-dark text-white/80 text-xs">
         <div className="mx-auto flex h-8 max-w-[1400px] items-center justify-between px-6">
           <div className="flex items-center gap-2">
             <Globe className="h-3.5 w-3.5 text-white/60" />
@@ -196,7 +196,7 @@ export function SiteHeader() {
               >
                 Services
                 <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-300", megaOpen && "rotate-180")} />
-                <span className="absolute left-4 right-4 bottom-1 h-px scale-x-0 origin-left bg-foreground transition-transform duration-300 group-hover:scale-x-100" />
+                <span className="absolute left-4 right-4 bottom-1 h-px scale-x-0 origin-left bg-brand transition-transform duration-300 group-hover:scale-x-100" />
               </button>
 
               {/* Mega menu */}
@@ -213,7 +213,7 @@ export function SiteHeader() {
                   <div className="grid grid-cols-4 gap-6">
                     {serviceColumns.map((col) => (
                       <div key={col.heading}>
-                        <h4 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                        <h4 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-brand">
                           {col.heading}
                         </h4>
                         <ul className="space-y-1">
@@ -221,9 +221,9 @@ export function SiteHeader() {
                             <li key={item.title}>
                               <Link
                                 to="/"
-                                className="group flex items-start gap-3 rounded-lg p-2.5 transition-colors duration-200 hover:bg-muted"
+                                className="group flex items-start gap-3 rounded-lg p-2.5 transition-colors duration-200 hover:bg-brand-bg"
                               >
-                                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-foreground/70 group-hover:bg-foreground group-hover:text-white transition-colors duration-200">
+                                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-foreground/70 group-hover:bg-brand group-hover:text-white transition-colors duration-200">
                                   <item.icon className="h-4 w-4" />
                                 </span>
                                 <span className="min-w-0">
@@ -238,11 +238,9 @@ export function SiteHeader() {
                     ))}
 
                     {/* Featured card */}
-                    <div className="rounded-xl bg-gradient-to-br from-[oklch(0.21_0.03_265)] to-[oklch(0.32_0.05_265)] p-6 text-white flex flex-col justify-between">
+                    <div className="rounded-xl bg-brand p-6 text-white flex flex-col justify-between">
                       <div className="space-y-5">
-                        <div className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-white/90">
-                          Featured
-                        </div>
+
 
                         {/* Primary Statistic */}
                         <div className="space-y-1">
@@ -265,7 +263,7 @@ export function SiteHeader() {
                         </div>
                       </div>
                       <button className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-white/90 transition-colors">
-                        Book Free Consultation
+                        Schedule a Strategy Call
                         <ArrowRight className="h-4 w-4" />
                       </button>
                     </div>
@@ -281,7 +279,7 @@ export function SiteHeader() {
                 className="group relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors duration-[250ms]"
               >
                 {l.label}
-                <span className="absolute left-4 right-4 bottom-1 h-px scale-x-0 origin-left bg-foreground transition-transform duration-300 group-hover:scale-x-100" />
+                <span className="absolute left-4 right-4 bottom-1 h-px scale-x-0 origin-left bg-brand transition-transform duration-300 group-hover:scale-x-100" />
               </Link>
             ))}
           </nav>
@@ -295,7 +293,7 @@ export function SiteHeader() {
               onMouseLeave={() => setCountryOpen(false)}
             >
               <button
-                className="flex items-center gap-2 rounded-full border border-border/80 px-3.5 py-2 text-sm font-medium text-foreground/80 hover:bg-muted hover:text-foreground transition-colors"
+                className="flex items-center gap-2 rounded-full border border-border/80 px-3.5 py-2 text-sm font-medium text-foreground/80 hover:bg-brand-bg hover:text-foreground transition-colors"
                 aria-haspopup="true"
                 aria-expanded={countryOpen}
               >
@@ -325,8 +323,8 @@ export function SiteHeader() {
                         setCountryOpen(false);
                       }}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted",
-                        activeCountry === c.code && "bg-muted"
+                        "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-brand-bg",
+                        activeCountry === c.code && "bg-brand-bg"
                       )}
                     >
                       <span className="text-xl leading-none">{c.flag}</span>
@@ -334,7 +332,7 @@ export function SiteHeader() {
                         <span className="block text-sm font-medium text-foreground">{c.name}</span>
                         <span className="block text-xs text-muted-foreground">{c.region}</span>
                       </span>
-                      {activeCountry === c.code && <Check className="h-4 w-4 text-foreground" />}
+                      {activeCountry === c.code && <Check className="h-4 w-4 text-brand" />}
                     </a>
                   ))}
                 </div>
@@ -342,8 +340,8 @@ export function SiteHeader() {
             </div>
 
             {/* CTA */}
-            <button className="hidden md:inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-[oklch(0.21_0.03_265)] to-[oklch(0.35_0.05_265)] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(17,24,39,0.4)] hover:shadow-[0_12px_24px_-8px_rgba(17,24,39,0.5)] hover:-translate-y-0.5 transition-all duration-300">
-              Get Free Consultation
+            <button className="hidden md:inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(252,156,68,0.35)] hover:bg-brand-hover hover:shadow-[0_12px_24px_-8px_rgba(252,156,68,0.45)] hover:-translate-y-0.5 transition-all duration-300">
+              Connect With Us
               <ArrowRight className="h-4 w-4" />
             </button>
 
@@ -388,7 +386,7 @@ export function SiteHeader() {
           <nav className="flex-1 overflow-y-auto px-3 py-4">
             {/* Services accordion */}
             <button
-              className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-base font-medium hover:bg-muted"
+              className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-base font-medium hover:bg-brand-bg"
               onClick={() => setMobileServicesOpen((v) => !v)}
             >
               Services
@@ -398,7 +396,7 @@ export function SiteHeader() {
               <div className="mb-2 ml-2 mt-1 space-y-3 border-l border-border pl-3">
                 {serviceColumns.map((col) => (
                   <div key={col.heading}>
-                    <div className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                    <div className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-brand">
                       {col.heading}
                     </div>
                     {col.items.map((item) => (
@@ -406,7 +404,7 @@ export function SiteHeader() {
                         key={item.title}
                         to="/"
                         onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-muted"
+                        className="flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-brand-bg"
                       >
                         <item.icon className="h-4 w-4 text-muted-foreground" />
                         {item.title}
@@ -422,7 +420,7 @@ export function SiteHeader() {
                 key={l.to}
                 to={l.to}
                 onClick={() => setMobileOpen(false)}
-                className="block rounded-lg px-3 py-3 text-base font-medium hover:bg-muted"
+                className="block rounded-lg px-3 py-3 text-base font-medium hover:bg-brand-bg"
               >
                 {l.label}
               </Link>
@@ -430,7 +428,7 @@ export function SiteHeader() {
 
             {/* Countries accordion */}
             <button
-              className="mt-2 flex w-full items-center justify-between rounded-lg px-3 py-3 text-base font-medium hover:bg-muted"
+              className="mt-2 flex w-full items-center justify-between rounded-lg px-3 py-3 text-base font-medium hover:bg-brand-bg"
               onClick={() => setMobileCountriesOpen((v) => !v)}
             >
               <span className="flex items-center gap-2">
@@ -450,13 +448,13 @@ export function SiteHeader() {
                       setActiveCountry(c.code);
                     }}
                     className={cn(
-                      "flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-muted",
-                      activeCountry === c.code && "bg-muted font-medium"
+                      "flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-brand-bg",
+                      activeCountry === c.code && "bg-brand-bg font-medium"
                     )}
                   >
                     <span className="text-lg">{c.flag}</span>
                     {c.name}
-                    {activeCountry === c.code && <Check className="ml-auto h-4 w-4" />}
+                    {activeCountry === c.code && <Check className="ml-auto h-4 w-4 text-brand" />}
                   </a>
                 ))}
               </div>
@@ -464,7 +462,7 @@ export function SiteHeader() {
           </nav>
 
           <div className="border-t border-border p-4 space-y-3">
-            <button className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[oklch(0.21_0.03_265)] px-5 py-3 text-sm font-semibold text-white">
+            <button className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-3 hover:bg-brand-hover text-sm font-semibold text-white">
               Get Free Consultation
               <ArrowRight className="h-4 w-4" />
             </button>
