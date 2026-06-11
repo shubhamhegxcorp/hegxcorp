@@ -1,6 +1,3 @@
-// Client logos — SVG placeholder silhouettes
-// TODO: Replace SVG placeholders with actual client logo files when provided
-
 const logos = [
   { id: 1, name: "TechCorp", width: 100 },
   { id: 2, name: "GrowthCo", width: 90 },
@@ -29,7 +26,7 @@ function LogoPlaceholder({ name, width }: { name: string; width: number }) {
   );
 }
 
-export function ClientLogosSection() {
+export function ClientLogos() {
   // Duplicate for seamless loop
   const all = [...logos, ...logos];
 
@@ -47,10 +44,14 @@ export function ClientLogosSection() {
       {/* Marquee track */}
       <div className="relative">
         {/* Fade edges */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-32 z-10"
-          style={{ background: "linear-gradient(to right, white, transparent)" }} />
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-32 z-10"
-          style={{ background: "linear-gradient(to left, white, transparent)" }} />
+        <div
+          className="pointer-events-none absolute left-0 top-0 bottom-0 w-32 z-10"
+          style={{ background: "linear-gradient(to right, white, transparent)" }}
+        />
+        <div
+          className="pointer-events-none absolute right-0 top-0 bottom-0 w-32 z-10"
+          style={{ background: "linear-gradient(to left, white, transparent)" }}
+        />
 
         <div className="flex gap-10 animate-marquee w-max">
           {all.map((logo, i) => (

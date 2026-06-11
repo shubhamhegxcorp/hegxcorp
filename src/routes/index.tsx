@@ -1,18 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteHeader } from "@/components/site-header";
-import { HeroSection } from "@/components/hero-section";
-import { ClientLogosSection } from "@/components/client-logos-section";
-import { ResultsMetricsSection } from "@/components/results-metrics-section";
-import { ServicesGridSection } from "@/components/services-grid-section";
-import { WhyHegxcorpSection } from "@/components/why-hegxcorp-section";
-import { FeaturedCaseStudySection } from "@/components/featured-case-study-section";
-import { ProcessSection } from "@/components/process-section";
-import { TestimonialsSection } from "@/components/testimonials-section";
-import { InsightsSection } from "@/components/insights-section";
-import { FinalCtaSection } from "@/components/final-cta-section";
-import { SiteFooter } from "@/components/site-footer";
+import { Header } from "@/components/site/Header";
+import { Hero } from "@/components/home/Hero";
+import { ClientLogos } from "@/components/home/ClientLogos";
+import { ResultsMetrics } from "@/components/home/ResultsMetrics";
+import { ServicesGrid } from "@/components/home/ServicesGrid";
+import { FeaturedWork } from "@/components/home/FeaturedWork";
+import { WhyHegxcorp } from "@/components/home/WhyHegxcorp";
+import { FeaturedCaseStudy } from "@/components/home/FeaturedCaseStudy";
+import { Process } from "@/components/home/Process";
+import { Testimonials } from "@/components/home/Testimonials";
+import { BlogPreview } from "@/components/home/BlogPreview";
+import { FinalCTA } from "@/components/home/FinalCTA";
+import { Footer } from "@/components/site/Footer";
+import { StickyMobileCTA } from "@/components/site/StickyMobileCTA";
 
-export const Route = createFileRoute("/")(({
+export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Hegxcorp — Data-Driven Growth Marketing Agency" },
@@ -35,46 +37,52 @@ export const Route = createFileRoute("/")(({
     ],
   }),
   component: Index,
-} as never));
+} as never);
 
 function Index() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       {/* ── Navigation ──────────────────────── */}
-      <SiteHeader />
+      <Header />
 
       {/* ── Section 1: Hero ─────────────────── */}
-      <HeroSection />
+      <Hero />
 
       {/* ── Section 2: Client Logos ─────────── */}
-      <ClientLogosSection />
+      <ClientLogos />
 
       {/* ── Section 3: Results Metrics ──────── */}
-      <ResultsMetricsSection />
+      <ResultsMetrics />
 
       {/* ── Section 4: Services Grid ────────── */}
-      <ServicesGridSection />
+      <ServicesGrid />
+
+      {/* ── Section 4.5: Featured Work ──────── */}
+      <FeaturedWork />
 
       {/* ── Section 5: Why Hegxcorp ─────────── */}
-      <WhyHegxcorpSection />
+      <WhyHegxcorp />
 
       {/* ── Section 6: Featured Case Study ──── */}
-      <FeaturedCaseStudySection />
+      <FeaturedCaseStudy />
 
       {/* ── Section 7: Process ──────────────── */}
-      <ProcessSection />
+      <Process />
 
       {/* ── Section 8: Testimonials ─────────── */}
-      <TestimonialsSection />
+      <Testimonials />
 
       {/* ── Section 9: Insights / Blog ──────── */}
-      <InsightsSection />
+      <BlogPreview />
 
       {/* ── Section 10: Final CTA ───────────── */}
-      <FinalCtaSection />
+      <FinalCTA />
 
       {/* ── Footer ──────────────────────────── */}
-      <SiteFooter />
+      <Footer />
+
+      {/* ── Sticky Mobile CTA ───────────────── */}
+      <StickyMobileCTA />
     </div>
   );
 }

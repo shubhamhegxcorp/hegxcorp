@@ -4,7 +4,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -48,24 +47,34 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* ── Hegxcorp Brand Tokens ─────────────────────────────── */
-  --color-brand: #FC9C44;           /* Primary CTA accent orange */
-  --color-brand-hover: #E88C35;     /* Button hover */
-  --color-brand-soft: #FFB36B;      /* Light accent */
-  --color-brand-bg: #FFF4E8;        /* Hover backgrounds */
-  --color-brand-stats: #EBB771;     /* Featured metrics / results cards */
-  --color-brand-dark: #1D2742;      /* Primary navy — header, footer, premium sections */
-  --color-brand-body: #4B5563;      /* Legacy body text */
-  --color-brand-border: #EAEAEA;    /* Borders, dividers */
+  --color-brand: #fc9c44;
+  /* Primary CTA accent orange */
+  --color-brand-hover: #e88c35;
+  /* Button hover */
+  --color-brand-soft: #ffb36b;
+  /* Light accent */
+  --color-brand-bg: #fff4e8;
+  /* Hover backgrounds */
+  --color-brand-stats: #ebb771;
+  /* Featured metrics / results cards */
+  --color-brand-dark: #1d2742;
+  /* Primary navy — header, footer, premium sections */
+  --color-brand-body: #4b5563;
+  /* Legacy body text */
+  --color-brand-border: #eaeaea;
+  /* Borders, dividers */
 
   /* Semantic aliases */
-  --color-hx-navy: #1D2742;
-  --color-hx-accent: #FC9C44;
-  --color-hx-stats: #EBB771;
+  --color-hx-navy: #1d2742;
+  --color-hx-accent: #fc9c44;
+  --color-hx-stats: #ebb771;
   --color-hx-text: #232323;
-  --color-hx-muted: #6B7280;
-  --color-hx-border: #EAEAEA;
-  --color-hx-hover-bg: #FFF4E8;
-  --color-hx-success: #22C55E;
+  --color-hx-muted: #6b7280;
+  --color-hx-border: #eaeaea;
+  --color-hx-hover-bg: #fff4e8;
+  --color-hx-soft-bg: #fafaf8;
+  --color-hx-bg: #ffffff;
+  --color-hx-success: #22c55e;
 }
 
 :root {
@@ -147,38 +156,72 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Space Grotesk", system-ui, sans-serif;
   }
 }
 
 /* ── Scroll Reveal Animations ────────────────────────────── */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to   { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes progressFill {
-  from { width: 0%; }
-  to   { width: 100%; }
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
 }
 
 .animate-fade-up {
@@ -198,20 +241,39 @@
 }
 
 /* Stagger helpers */
-.stagger-1 { animation-delay: 0.05s; }
-.stagger-2 { animation-delay: 0.12s; }
-.stagger-3 { animation-delay: 0.19s; }
-.stagger-4 { animation-delay: 0.26s; }
-.stagger-5 { animation-delay: 0.33s; }
-.stagger-6 { animation-delay: 0.40s; }
+.stagger-1 {
+  animation-delay: 0.05s;
+}
+
+.stagger-2 {
+  animation-delay: 0.12s;
+}
+
+.stagger-3 {
+  animation-delay: 0.19s;
+}
+
+.stagger-4 {
+  animation-delay: 0.26s;
+}
+
+.stagger-5 {
+  animation-delay: 0.33s;
+}
+
+.stagger-6 {
+  animation-delay: 0.4s;
+}
 
 /* Reveal on scroll (JS adds .is-visible) */
 .reveal {
   opacity: 0;
   transform: translateY(28px);
-  transition: opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
-              transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
 .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);

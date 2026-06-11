@@ -78,10 +78,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Hegxcorp — Data-Driven Growth Marketing Agency" },
-      { name: "description", content: "Hegxcorp helps businesses generate more leads, sales and revenue through data-driven SEO, paid advertising, web development and conversion optimization." },
+      {
+        name: "description",
+        content:
+          "Hegxcorp helps businesses generate more leads, sales and revenue through data-driven SEO, paid advertising, web development and conversion optimization.",
+      },
       { name: "author", content: "Hegxcorp" },
       { property: "og:title", content: "Hegxcorp — Data-Driven Growth Marketing Agency" },
-      { property: "og:description", content: "Generate more leads, sales and revenue through data-driven growth marketing." },
+      {
+        property: "og:description",
+        content: "Generate more leads, sales and revenue through data-driven growth marketing.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@hegxcorp" },
@@ -119,8 +126,35 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+import Lenis from "lenis";
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: "vertical",
+      gestureOrientation: "vertical",
+      smoothWheel: true,
+    });
+
+    let rafId: number;
+    function raf(time: number) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+
+    rafId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      lenis.destroy();
+    };
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

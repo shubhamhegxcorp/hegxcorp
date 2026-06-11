@@ -17,64 +17,111 @@ import {
   Palette,
   Sparkles,
   Image as ImageIcon,
-  Brush,
   ArrowRight,
   Check,
 } from "lucide-react";
 import logoAsset from "@/assets/cropped-hegxcorp-logo-new-web.webp";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 type ServiceItem = {
   icon: React.ComponentType<{ className?: string }>;
   title: string;
   desc: string;
+  href: string;
 };
 
 const serviceColumns: { heading: string; items: ServiceItem[] }[] = [
   {
     heading: "Development",
     items: [
-      { icon: Code2, title: "Web Development", desc: "Scalable, modern websites" },
-      { icon: Layers, title: "Custom Web Applications", desc: "Tailored platforms" },
-      { icon: LayoutTemplate, title: "WordPress Development", desc: "Premium WP builds" },
-      { icon: ShoppingCart, title: "Ecommerce Development", desc: "Stores that convert" },
+      {
+        icon: Code2,
+        title: "Web Development",
+        desc: "Scalable, modern websites",
+        href: "/services",
+      },
+      {
+        icon: Layers,
+        title: "Custom Web Applications",
+        desc: "Tailored platforms",
+        href: "/services",
+      },
+      {
+        icon: LayoutTemplate,
+        title: "WordPress Development",
+        desc: "Premium WP builds",
+        href: "/services",
+      },
+      {
+        icon: ShoppingCart,
+        title: "Ecommerce Development",
+        desc: "Stores that convert",
+        href: "/services",
+      },
     ],
   },
   {
     heading: "Marketing",
     items: [
-      { icon: Search, title: "SEO", desc: "Rank where it matters" },
-      { icon: MousePointerClick, title: "PPC", desc: "Performance ad campaigns" },
-      { icon: Share2, title: "Social Media Marketing", desc: "Engage & grow" },
-      { icon: PenLine, title: "Content Marketing", desc: "Stories that scale" },
+      { icon: Search, title: "SEO", desc: "Rank where it matters", href: "/services" },
+      {
+        icon: MousePointerClick,
+        title: "PPC",
+        desc: "Performance ad campaigns",
+        href: "/services",
+      },
+      { icon: Share2, title: "Social Media Marketing", desc: "Engage & grow", href: "/services" },
+      { icon: PenLine, title: "Content Marketing", desc: "Stories that scale", href: "/services" },
     ],
   },
   {
     heading: "Design",
     items: [
-      { icon: Palette, title: "UI/UX Design", desc: "Human-centered design" },
-      { icon: Sparkles, title: "Branding", desc: "Identities with intent" },
-      { icon: ImageIcon, title: "Graphic Design", desc: "Visual storytelling" },
-
+      { icon: Palette, title: "UI/UX Design", desc: "Human-centered design", href: "/services" },
+      { icon: Sparkles, title: "Branding", desc: "Identities with intent", href: "/services" },
+      { icon: ImageIcon, title: "Graphic Design", desc: "Visual storytelling", href: "/services" },
     ],
   },
 ];
 
 const countries = [
   { code: "in", flag: "IN", name: "India", region: "hegxcorp.in", domain: "https://hegxcorp.in" },
-  { code: "us", flag: "US", name: "United States", region: "hegxcorp.us", domain: "https://hegxcorp.us" },
-  { code: "uk", flag: "UK", name: "United Kingdom", region: "hegxcorp.uk", domain: "https://hegxcorp.uk" },
+  {
+    code: "us",
+    flag: "US",
+    name: "United States",
+    region: "hegxcorp.us",
+    domain: "https://hegxcorp.us",
+  },
+  {
+    code: "uk",
+    flag: "UK",
+    name: "United Kingdom",
+    region: "hegxcorp.uk",
+    domain: "https://hegxcorp.uk",
+  },
   { code: "ae", flag: "AE", name: "Dubai", region: "hegxcorp.ae", domain: "https://hegxcorp.ae" },
 ];
 
 const navLinks = [
-  { label: "Case Studies", to: "/case-studies" },
-  { label: "About Us", to: "/about" },
-  { label: "Blog", to: "/blog" },
-  { label: "Contact", to: "/contact" },
+  { label: "Case Studies", to: "/case-studies" as const },
+  { label: "About Us", to: "/about" as const },
+  { label: "Blog", to: "/blog" as const },
+  { label: "Contact", to: "/contact" as const },
 ];
 
-function StatCounter({ target, suffix = "", duration = 1200, trigger }: { target: number; suffix?: string; duration?: number; trigger: boolean }) {
+function StatCounter({
+  target,
+  suffix = "",
+  duration = 1200,
+  trigger,
+}: {
+  target: number;
+  suffix?: string;
+  duration?: number;
+  trigger: boolean;
+}) {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -107,10 +154,15 @@ function StatCounter({ target, suffix = "", duration = 1200, trigger }: { target
     };
   }, [trigger, target, duration]);
 
-  return <span>{count}{suffix}</span>;
+  return (
+    <span>
+      {count}
+      {suffix}
+    </span>
+  );
 }
 
-export function SiteHeader() {
+export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
@@ -118,6 +170,13 @@ export function SiteHeader() {
   const [activeCountry, setActiveCountry] = useState("in");
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [mobileCountriesOpen, setMobileCountriesOpen] = useState(false);
+  const [hasMegaOpened, setHasMegaOpened] = useState(false);
+
+  useEffect(() => {
+    if (megaOpen) {
+      setHasMegaOpened(true);
+    }
+  }, [megaOpen]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -138,7 +197,7 @@ export function SiteHeader() {
   return (
     <>
       {/* Utility bar */}
-      <div className="hidden md:block bg-brand-dark text-white/80 text-xs">
+      <div className="hidden md:block bg-[#1D2742] text-white/80 text-xs">
         <div className="mx-auto flex h-8 max-w-[1400px] items-center justify-between px-6">
           <div className="flex items-center gap-2">
             <Globe className="h-3.5 w-3.5 text-white/60" />
@@ -148,7 +207,10 @@ export function SiteHeader() {
           <div className="flex items-center gap-4">
             <span className="text-white/60">24/7 Support</span>
             <span className="text-white/20">|</span>
-            <a href="tel:+10000000000" className="flex items-center gap-1.5 text-white/90 hover:text-white transition-colors">
+            <a
+              href="tel:+10000000000"
+              className="flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
+            >
               <Phone className="h-3.5 w-3.5" />
               +1 (000) 000-0000
             </a>
@@ -159,14 +221,14 @@ export function SiteHeader() {
       {/* Main header */}
       <header
         className={cn(
-          "sticky top-0 z-50 w-full bg-white border-b border-border/60 transition-all duration-300",
-          scrolled && "shadow-[0_4px_24px_-12px_rgba(17,24,39,0.12)]"
+          "sticky top-0 z-50 w-full bg-white border-b border-[#EAEAEA]/60 transition-all duration-300",
+          scrolled && "shadow-[0_4px_24px_-12px_rgba(17,24,39,0.12)]",
         )}
       >
         <div
           className={cn(
             "mx-auto flex max-w-[1400px] items-center justify-between px-6 transition-all duration-300",
-            scrolled ? "h-[65px]" : "h-[90px]"
+            scrolled ? "h-[65px]" : "h-[90px]",
           )}
         >
           {/* Logo */}
@@ -174,10 +236,7 @@ export function SiteHeader() {
             <img
               src={logoAsset}
               alt="HEXGCORP"
-              className={cn(
-                "w-auto transition-all duration-300",
-                scrolled ? "h-11" : "h-[54px]"
-              )}
+              className={cn("w-auto transition-all duration-300", scrolled ? "h-11" : "h-[54px]")}
             />
           </Link>
 
@@ -189,15 +248,21 @@ export function SiteHeader() {
               onMouseEnter={() => setMegaOpen(true)}
               onMouseLeave={() => setMegaOpen(false)}
             >
-              <button
+              <Link
+                to="/services"
                 className="group flex items-center gap-1 px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors duration-[250ms]"
                 aria-expanded={megaOpen}
                 aria-haspopup="true"
               >
                 Services
-                <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-300", megaOpen && "rotate-180")} />
-                <span className="absolute left-4 right-4 bottom-1 h-px scale-x-0 origin-left bg-brand transition-transform duration-300 group-hover:scale-x-100" />
-              </button>
+                <ChevronDown
+                  className={cn(
+                    "h-3.5 w-3.5 transition-transform duration-300",
+                    megaOpen && "rotate-180",
+                  )}
+                />
+                <span className="absolute left-4 right-4 bottom-1 h-px scale-x-0 origin-left bg-[#FC9C44] transition-transform duration-300 group-hover:scale-x-100" />
+              </Link>
 
               {/* Mega menu */}
               <div
@@ -206,29 +271,33 @@ export function SiteHeader() {
                   "transition-all duration-200",
                   megaOpen
                     ? "opacity-100 translate-y-0 pointer-events-auto"
-                    : "opacity-0 -translate-y-2 pointer-events-none"
+                    : "opacity-0 -translate-y-2 pointer-events-none",
                 )}
               >
-                <div className="rounded-2xl border border-border/60 bg-white p-8 shadow-[0_24px_60px_-20px_rgba(17,24,39,0.18)]">
+                <div className="rounded-2xl border border-[#EAEAEA]/60 bg-white p-8 shadow-[0_24px_60px_-20px_rgba(17,24,39,0.18)]">
                   <div className="grid grid-cols-4 gap-6">
                     {serviceColumns.map((col) => (
                       <div key={col.heading}>
-                        <h4 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-brand">
+                        <h4 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#FC9C44]">
                           {col.heading}
                         </h4>
                         <ul className="space-y-1">
                           {col.items.map((item) => (
                             <li key={item.title}>
                               <Link
-                                to="/"
-                                className="group flex items-start gap-3 rounded-lg p-2.5 transition-colors duration-200 hover:bg-brand-bg"
+                                to={item.href}
+                                className="group flex items-start gap-3 rounded-lg p-2.5 transition-all duration-300 hover:bg-[#FFF4E8] hover:-translate-y-[3px]"
                               >
-                                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-foreground/70 group-hover:bg-brand group-hover:text-white transition-colors duration-200">
+                                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-white border border-[#EAEAEA] text-foreground/70 group-hover:text-[#FC9C44] group-hover:border-[#FC9C44]/25 transition-all duration-200">
                                   <item.icon className="h-4 w-4" />
                                 </span>
                                 <span className="min-w-0">
-                                  <span className="block text-sm font-medium text-foreground">{item.title}</span>
-                                  <span className="block text-xs text-muted-foreground">{item.desc}</span>
+                                  <span className="block text-sm font-medium text-foreground">
+                                    {item.title}
+                                  </span>
+                                  <span className="block text-xs text-muted-foreground">
+                                    {item.desc}
+                                  </span>
                                 </span>
                               </Link>
                             </li>
@@ -238,14 +307,17 @@ export function SiteHeader() {
                     ))}
 
                     {/* Featured card */}
-                    <div className="rounded-xl bg-brand p-6 text-white flex flex-col justify-between">
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={megaOpen ? { opacity: 1, y: 0 } : {}}
+                      transition={{ duration: 0.4 }}
+                      className="rounded-xl bg-[#FC9C44] p-6 text-white flex flex-col justify-between"
+                    >
                       <div className="space-y-5">
-
-
                         {/* Primary Statistic */}
                         <div className="space-y-1">
                           <div className="text-5xl font-black tracking-tight text-white leading-none">
-                            <StatCounter target={300} suffix="+" trigger={megaOpen} />
+                            <StatCounter target={300} suffix="+" trigger={hasMegaOpened} />
                           </div>
                           <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/60">
                             Projects Delivered
@@ -258,15 +330,25 @@ export function SiteHeader() {
                             Building Modern Digital Experiences
                           </h5>
                           <p className="text-xs text-white/75 leading-relaxed font-normal">
-                            We help businesses build scalable websites, digital products, and growth-focused solutions that drive measurable results.
+                            We help businesses build scalable websites, digital products, and
+                            growth-focused solutions that drive measurable results.
                           </p>
                         </div>
                       </div>
-                      <button className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-white/90 transition-colors">
-                        Schedule a Strategy Call
-                        <ArrowRight className="h-4 w-4" />
-                      </button>
-                    </div>
+                      <motion.div
+                        whileHover={{ scale: 1.03 }}
+                        transition={{ duration: 0.2 }}
+                        className="w-full mt-6"
+                      >
+                        <Link
+                          to="/contact"
+                          className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-white/90 transition-colors"
+                        >
+                          Schedule a Strategy Call
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      </motion.div>
+                    </motion.div>
                   </div>
                 </div>
               </div>
@@ -279,7 +361,7 @@ export function SiteHeader() {
                 className="group relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors duration-[250ms]"
               >
                 {l.label}
-                <span className="absolute left-4 right-4 bottom-1 h-px scale-x-0 origin-left bg-brand transition-transform duration-300 group-hover:scale-x-100" />
+                <span className="absolute left-4 right-4 bottom-1 h-px scale-x-0 origin-left bg-[#FC9C44] transition-transform duration-300 group-hover:scale-x-100" />
               </Link>
             ))}
           </nav>
@@ -293,23 +375,27 @@ export function SiteHeader() {
               onMouseLeave={() => setCountryOpen(false)}
             >
               <button
-                className="flex items-center gap-2 rounded-full border border-border/80 px-3.5 py-2 text-sm font-medium text-foreground/80 hover:bg-brand-bg hover:text-foreground transition-colors"
+                className="flex items-center gap-2 rounded-full border border-[#EAEAEA]/80 px-3.5 py-2 text-sm font-medium text-foreground/80 hover:bg-[#FFF4E8] hover:text-foreground transition-colors"
                 aria-haspopup="true"
                 aria-expanded={countryOpen}
               >
                 <Globe className="h-4 w-4" />
                 <span className="text-base leading-none">{active.flag}</span>
                 <span className="hidden xl:inline">{active.name}</span>
-                <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", countryOpen && "rotate-180")} />
+                <ChevronDown
+                  className={cn("h-3.5 w-3.5 transition-transform", countryOpen && "rotate-180")}
+                />
               </button>
 
               <div
                 className={cn(
                   "absolute right-0 top-full pt-2 w-72 transition-all duration-200",
-                  countryOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
+                  countryOpen
+                    ? "opacity-100 translate-y-0 pointer-events-auto"
+                    : "opacity-0 -translate-y-2 pointer-events-none",
                 )}
               >
-                <div className="rounded-xl border border-border/60 bg-white p-2 shadow-[0_20px_50px_-20px_rgba(17,24,39,0.2)]">
+                <div className="rounded-xl border border-[#EAEAEA]/60 bg-white p-2 shadow-[0_20px_50px_-20px_rgba(17,24,39,0.2)]">
                   <div className="px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                     Select your region
                   </div>
@@ -323,8 +409,8 @@ export function SiteHeader() {
                         setCountryOpen(false);
                       }}
                       className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-brand-bg",
-                        activeCountry === c.code && "bg-brand-bg"
+                        "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-[#FFF4E8]",
+                        activeCountry === c.code && "bg-[#FFF4E8]",
                       )}
                     >
                       <span className="text-xl leading-none">{c.flag}</span>
@@ -332,7 +418,7 @@ export function SiteHeader() {
                         <span className="block text-sm font-medium text-foreground">{c.name}</span>
                         <span className="block text-xs text-muted-foreground">{c.region}</span>
                       </span>
-                      {activeCountry === c.code && <Check className="h-4 w-4 text-brand" />}
+                      {activeCountry === c.code && <Check className="h-4 w-4 text-[#FC9C44]" />}
                     </a>
                   ))}
                 </div>
@@ -340,10 +426,13 @@ export function SiteHeader() {
             </div>
 
             {/* CTA */}
-            <button className="hidden md:inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(252,156,68,0.35)] hover:bg-brand-hover hover:shadow-[0_12px_24px_-8px_rgba(252,156,68,0.45)] hover:-translate-y-0.5 transition-all duration-300">
+            <Link
+              to="/contact"
+              className="hidden md:inline-flex items-center gap-2 rounded-full bg-[#FC9C44] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(252,156,68,0.35)] hover:bg-[#E88C35] hover:shadow-[0_12px_24px_-8px_rgba(252,156,68,0.45)] hover:-translate-y-0.5 transition-all duration-300"
+            >
               Connect With Us
               <ArrowRight className="h-4 w-4" />
-            </button>
+            </Link>
 
             {/* Mobile hamburger */}
             <button
@@ -361,7 +450,7 @@ export function SiteHeader() {
       <div
         className={cn(
           "fixed inset-0 z-[60] lg:hidden transition-opacity duration-300",
-          mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
         )}
         aria-hidden={!mobileOpen}
       >
@@ -369,7 +458,7 @@ export function SiteHeader() {
         <aside
           className={cn(
             "absolute right-0 top-0 h-full w-[85vw] max-w-sm bg-white shadow-2xl flex flex-col transition-transform duration-300",
-            mobileOpen ? "translate-x-0" : "translate-x-full"
+            mobileOpen ? "translate-x-0" : "translate-x-full",
           )}
         >
           <div className="flex h-16 items-center justify-between border-b border-border px-5">
@@ -386,25 +475,27 @@ export function SiteHeader() {
           <nav className="flex-1 overflow-y-auto px-3 py-4">
             {/* Services accordion */}
             <button
-              className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-base font-medium hover:bg-brand-bg"
+              className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-base font-medium hover:bg-[#FFF4E8]"
               onClick={() => setMobileServicesOpen((v) => !v)}
             >
               Services
-              <ChevronDown className={cn("h-4 w-4 transition-transform", mobileServicesOpen && "rotate-180")} />
+              <ChevronDown
+                className={cn("h-4 w-4 transition-transform", mobileServicesOpen && "rotate-180")}
+              />
             </button>
             {mobileServicesOpen && (
-              <div className="mb-2 ml-2 mt-1 space-y-3 border-l border-border pl-3">
+              <div className="mb-2 ml-2 mt-1 space-y-3 border-l border-[#EAEAEA] pl-3">
                 {serviceColumns.map((col) => (
                   <div key={col.heading}>
-                    <div className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-brand">
+                    <div className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#FC9C44]">
                       {col.heading}
                     </div>
                     {col.items.map((item) => (
                       <Link
                         key={item.title}
-                        to="/"
+                        to={item.href}
                         onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-brand-bg"
+                        className="flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-[#FFF4E8]"
                       >
                         <item.icon className="h-4 w-4 text-muted-foreground" />
                         {item.title}
@@ -420,7 +511,7 @@ export function SiteHeader() {
                 key={l.to}
                 to={l.to}
                 onClick={() => setMobileOpen(false)}
-                className="block rounded-lg px-3 py-3 text-base font-medium hover:bg-brand-bg"
+                className="block rounded-lg px-3 py-3 text-base font-medium hover:bg-[#FFF4E8]"
               >
                 {l.label}
               </Link>
@@ -428,17 +519,19 @@ export function SiteHeader() {
 
             {/* Countries accordion */}
             <button
-              className="mt-2 flex w-full items-center justify-between rounded-lg px-3 py-3 text-base font-medium hover:bg-brand-bg"
+              className="mt-2 flex w-full items-center justify-between rounded-lg px-3 py-3 text-base font-medium hover:bg-[#FFF4E8]"
               onClick={() => setMobileCountriesOpen((v) => !v)}
             >
               <span className="flex items-center gap-2">
                 <Globe className="h-4 w-4" />
                 Countries
               </span>
-              <ChevronDown className={cn("h-4 w-4 transition-transform", mobileCountriesOpen && "rotate-180")} />
+              <ChevronDown
+                className={cn("h-4 w-4 transition-transform", mobileCountriesOpen && "rotate-180")}
+              />
             </button>
             {mobileCountriesOpen && (
-              <div className="ml-2 mt-1 space-y-1 border-l border-border pl-3">
+              <div className="ml-2 mt-1 space-y-1 border-l border-[#EAEAEA] pl-3">
                 {countries.map((c) => (
                   <a
                     key={c.code}
@@ -448,25 +541,34 @@ export function SiteHeader() {
                       setActiveCountry(c.code);
                     }}
                     className={cn(
-                      "flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-brand-bg",
-                      activeCountry === c.code && "bg-brand-bg font-medium"
+                      "flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-[#FFF4E8]",
+                      activeCountry === c.code && "bg-[#FFF4E8] font-medium",
                     )}
                   >
                     <span className="text-lg">{c.flag}</span>
                     {c.name}
-                    {activeCountry === c.code && <Check className="ml-auto h-4 w-4 text-brand" />}
+                    {activeCountry === c.code && (
+                      <Check className="ml-auto h-4 w-4 text-[#FC9C44]" />
+                    )}
                   </a>
                 ))}
               </div>
             )}
           </nav>
 
-          <div className="border-t border-border p-4 space-y-3">
-            <button className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-3 hover:bg-brand-hover text-sm font-semibold text-white">
-              Get Free Consultation
+          <div className="border-t border-[#EAEAEA] p-4 space-y-3">
+            <Link
+              to="/free-growth-audit"
+              onClick={() => setMobileOpen(false)}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#FC9C44] px-5 py-3 hover:bg-[#E88C35] text-sm font-semibold text-white"
+            >
+              Get Free Growth Audit
               <ArrowRight className="h-4 w-4" />
-            </button>
-            <a href="tel:+10000000000" className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+            </Link>
+            <a
+              href="tel:+10000000000"
+              className="flex items-center justify-center gap-2 text-sm text-muted-foreground"
+            >
               <Phone className="h-4 w-4" /> 24/7 Support: +1 (000) 000-0000
             </a>
           </div>
