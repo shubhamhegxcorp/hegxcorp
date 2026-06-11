@@ -66,7 +66,6 @@ export function ServicesGrid() {
       }}
     >
       <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-        {/* Scroll Reveal Container (0.6s, y: 30 -> 0) */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -80,7 +79,6 @@ export function ServicesGrid() {
               heading="Services built for growth"
               description="Every service is tied to a business outcome — not just an activity."
             />
-            {/* Header link hover scaling (1 -> 1.03) */}
             <motion.div
               whileHover={{ scale: 1.03 }}
               transition={{ duration: 0.2 }}
@@ -106,11 +104,13 @@ export function ServicesGrid() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
                 whileHover={{
-                  y: -4, // -4px lift on hover
-                  borderColor: "#FC9C44",
-                  boxShadow: "0 16px 40px -16px rgba(29,39,66,0.1)",
+                  y: -7,
+                  borderColor: "rgba(252,156,68,0.65)",
+                  boxShadow:
+                    "0 0 0 1px rgba(252,156,68,0.20), 0 20px 48px -16px rgba(29,39,66,0.12)",
+                  transition: { duration: 0.22, ease: "easeOut" },
                 }}
-                className="rounded-2xl border border-[#EAEAEA] bg-white cursor-pointer transition-colors duration-300"
+                className="rounded-2xl border border-[#EAEAEA] bg-white cursor-pointer"
               >
                 <Link to={s.href} className="group relative flex flex-col h-full gap-5 p-7">
                   {/* Slug badge */}
@@ -121,10 +121,25 @@ export function ServicesGrid() {
                     {s.slug}
                   </span>
 
-                  {/* Icon container */}
-                  <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#EAEAEA] bg-[#FAFAF8] text-[#1D2742] transition-all duration-300 group-hover:bg-[#1D2742] group-hover:text-white group-hover:border-[#1D2742]">
-                    <s.icon className="h-5 w-5" />
-                  </span>
+                  {/* Icon wrapper — rotates 4° on hover, inverts color */}
+                  <motion.span
+                    className="flex h-11 w-11 items-center justify-center rounded-xl text-[#1D2742]"
+                    style={{
+                      transformOrigin: "center",
+                      border: "1px solid #EAEAEA",
+                      backgroundColor: "#FAFAF8",
+                    }}
+                    whileHover={{
+                      rotate: 4,
+                      backgroundColor: "#1D2742",
+                      borderColor: "#1D2742",
+                      transition: { duration: 0.22, ease: "easeOut" },
+                    }}
+                  >
+                    <s.icon
+                      className="h-5 w-5 transition-colors duration-200 group-hover:text-white"
+                    />
+                  </motion.span>
 
                   {/* Text */}
                   <div className="flex-1">
@@ -142,13 +157,18 @@ export function ServicesGrid() {
                     </p>
                   </div>
 
-                  {/* Arrow (subtle scale in motion) */}
-                  <motion.div
-                    whileHover={{ scale: 1.03 }}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-[#FC9C44] opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200"
+                  {/* Arrow — slides in from left on group hover */}
+                  <div
+                    className={[
+                      "flex items-center gap-1.5 text-xs font-semibold text-[#FC9C44]",
+                      "opacity-0 -translate-x-2",
+                      "group-hover:opacity-100 group-hover:translate-x-0",
+                      "transition-[opacity,transform] duration-200 ease-out",
+                    ].join(" ")}
+                    style={{ fontFamily: "'Inter', sans-serif" }}
                   >
                     Learn more <ArrowRight className="h-3 w-3" />
-                  </motion.div>
+                  </div>
                 </Link>
               </motion.div>
             ))}

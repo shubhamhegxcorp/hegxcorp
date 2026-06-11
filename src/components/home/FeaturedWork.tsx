@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowRight, Sparkles, TrendingUp, Zap, Search } from "lucide-react";
 import { SectionHeading } from "@/components/site/SectionHeading";
+import { CaseStudyCursor } from "@/components/site/PremiumInteractions";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -179,11 +180,13 @@ export function FeaturedWork() {
                 key={project.id}
                 className={`project-card-${index} shrink-0 w-[44vw] origin-center`}
               >
-                <ProjectCard
-                  project={project}
-                  index={index}
-                  isActive={activeIndex === index}
-                />
+                <CaseStudyCursor>
+                  <ProjectCard
+                    project={project}
+                    index={index}
+                    isActive={activeIndex === index}
+                  />
+                </CaseStudyCursor>
               </div>
             ))}
           </div>
