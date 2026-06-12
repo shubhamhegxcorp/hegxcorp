@@ -3,8 +3,8 @@ import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 
 const results = [
-  { label: "Organic Traffic", value: "+340%", period: "12 months" },
-  { label: "Lead Volume", value: "+220%", period: "Q1–Q3" },
+  { label: "Organic Traffic", value: "+310%", period: "12 months" },
+  { label: "Lead Volume", value: "+184%", period: "Q1–Q3" },
   { label: "Revenue Growth", value: "+$1.2M", period: "Year 1" },
 ];
 

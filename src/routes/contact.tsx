@@ -89,11 +89,11 @@ function ContactPage() {
                       Direct Hotline
                     </span>
                     <a
-                      href="tel:+10000000000"
+                      href="tel:+91 836 920 7836"
                       className="text-sm font-semibold text-[#232323] hover:text-[#FC9C44] transition-colors"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
-                      +1 (000) 000-0000 (US)
+                      +91 836 920 7836
                     </a>
                   </div>
                 </div>
@@ -218,11 +218,10 @@ function ContactPage() {
                       id="name"
                       placeholder="e.g. Priya Sharma"
                       {...register("name")}
-                      className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${
-                        errors.name
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-[#EAEAEA] focus:border-[#FC9C44]"
-                      }`}
+                      className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${errors.name
+                        ? "border-red-500 focus:border-red-500"
+                        : "border-[#EAEAEA] focus:border-[#FC9C44]"
+                        }`}
                     />
                     {errors.name && (
                       <p
@@ -248,11 +247,10 @@ function ContactPage() {
                       id="email"
                       placeholder="e.g. priya@retailbrand.in"
                       {...register("email")}
-                      className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${
-                        errors.email
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-[#EAEAEA] focus:border-[#FC9C44]"
-                      }`}
+                      className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${errors.email
+                        ? "border-red-500 focus:border-red-500"
+                        : "border-[#EAEAEA] focus:border-[#FC9C44]"
+                        }`}
                     />
                     {errors.email && (
                       <p
@@ -278,11 +276,10 @@ function ContactPage() {
                       rows={5}
                       placeholder="Tell us about your digital platforms, your timeline, and your specific growth targets..."
                       {...register("message")}
-                      className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] resize-none ${
-                        errors.message
-                          ? "border-red-500 focus:border-red-500"
-                          : "border-[#EAEAEA] focus:border-[#FC9C44]"
-                      }`}
+                      className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] resize-none ${errors.message
+                        ? "border-red-500 focus:border-red-500"
+                        : "border-[#EAEAEA] focus:border-[#FC9C44]"
+                        }`}
                     />
                     {errors.message && (
                       <p

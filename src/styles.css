@@ -311,6 +311,41 @@
 }
 
 /* ─────────────────────────────────────────────
+   Client Logo Marquee
+   Grayscale by default, full colour on hover.
+   Heights normalised so mixed-size logos align.
+───────────────────────────────────────────── */
+.client-logo-img {
+  height: 36px;          /* desktop baseline */
+  width: auto;
+  max-width: 130px;
+  object-fit: contain;
+  object-position: center;
+
+  /* Grayscale default */
+  filter: grayscale(100%);
+  opacity: 0.65;
+
+  transition:
+    filter 300ms ease,
+    opacity 300ms ease,
+    transform 300ms ease;
+}
+
+.client-logo-item:hover .client-logo-img {
+  filter: grayscale(0%);
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+@media (max-width: 640px) {
+  .client-logo-img {
+    height: 26px;
+    max-width: 100px;
+  }
+}
+
+/* ─────────────────────────────────────────────
    Respect prefers-reduced-motion globally.
    Framer Motion / GSAP animations will still
    play, but at instant / near-instant duration.

@@ -208,11 +208,11 @@ export function Header() {
             <span className="text-white/60">24/7 Support</span>
             <span className="text-white/20">|</span>
             <a
-              href="tel:+10000000000"
+              href="tel:+918369207836"
               className="flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
             >
               <Phone className="h-3.5 w-3.5" />
-              +1 (000) 000-0000
+              +91 836 920 7836
             </a>
           </div>
         </div>

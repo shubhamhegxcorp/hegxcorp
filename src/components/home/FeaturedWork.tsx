@@ -71,7 +71,7 @@ export function FeaturedWork() {
 
     const ctx = gsap.context(() => {
       // Step width is: 44vw card width + 6vw gap = 50vw step
-      const getStepWidth = () => window.innerWidth * 0.50; 
+      const getStepWidth = () => window.innerWidth * 0.50;
       const totalMove = (projects.length - 1) * getStepWidth();
 
       // Set initial visual states for cards (inactive cards are y-lifted, scaled down, faded, and blurred)
@@ -111,6 +111,8 @@ export function FeaturedWork() {
           { x: 30, ease: "none", duration: 1 },
           0
         );
+
+
 
         if (index > 0) {
           const startTime = (index - 1) / (projects.length - 1);
@@ -494,9 +496,8 @@ function ProjectCard({
         transformStyle: "preserve-3d",
         perspective: 1000,
       }}
-      className={`group rounded-2xl border border-[#EAEAEA] bg-white cursor-pointer overflow-hidden flex flex-col justify-between transition-[box-shadow] duration-300 hover:shadow-[0_24px_48px_-12px_rgba(29,39,66,0.08)] ${
-        isMobile ? "w-full min-h-[400px]" : "w-full min-h-[460px]"
-      }`}
+      className={`group rounded-2xl border border-[#EAEAEA] bg-white cursor-pointer overflow-hidden flex flex-col justify-between transition-[box-shadow] duration-300 hover:shadow-[0_24px_48px_-12px_rgba(29,39,66,0.08)] ${isMobile ? "w-full min-h-[400px]" : "w-full min-h-[460px]"
+        }`}
     >
       {/* ── Mock Browser Frame Header ── */}
       <div className="flex items-center gap-2 px-4 py-3 bg-white border-b border-[#EAEAEA] select-none">
