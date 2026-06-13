@@ -47,7 +47,11 @@ const fadeUp = {
   show: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: i * 0.07 },
+    transition: {
+      duration: 0.55,
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+      delay: i * 0.07,
+    },
   }),
 };
 
@@ -117,7 +121,7 @@ export function WhyHegxcorp() {
                   >
                     {/* Agency column */}
                     <td
-                      className={`px-7 py-4 text-[#9CA3AF] border-[#EAEAEA] ${i < rows.length - 1 ? "border-b" : ""}`}
+                      className={`px-7 py-4 text-[#9CA3AF] ${i < rows.length - 1 ? "border-b border-[#EAEAEA]" : ""}`}
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     >
                       <span className="flex items-center gap-3">
@@ -141,7 +145,7 @@ export function WhyHegxcorp() {
 
                     {/* Hegxcorp column — subtle orange tint */}
                     <td
-                      className={`px-7 py-4 font-medium text-[#1D2742] bg-[#FFF4E8] border-[#FC9C44]/20 ${i < rows.length - 1 ? "border-b" : ""}`}
+                      className={`px-7 py-4 font-medium text-[#1D2742] bg-[#FFF4E8] ${i < rows.length - 1 ? "border-b border-[#FC9C44]/20" : ""}`}
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     >
                       <span className="flex items-center gap-3">
@@ -184,6 +188,7 @@ export function WhyHegxcorp() {
                 y: -4,
                 zIndex: 10,
                 boxShadow: "0 10px 30px -10px rgba(0,0,0,0.08)",
+                transition: { duration: 0.22, ease: "easeOut" },
               }}
               className="group flex flex-col gap-5 bg-white p-7 cursor-default transition-colors duration-300 hover:bg-[#FFF4E8]"
             >

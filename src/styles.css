@@ -47,22 +47,22 @@
   --color-sidebar-ring: var(--sidebar-ring);
 
   /* ── Hegxcorp Brand Tokens ─────────────────────────────── */
-  --color-brand: #fc9c44;
   /* Primary CTA accent orange */
-  --color-brand-hover: #e88c35;
+  --color-brand: #fc9c44;
   /* Button hover */
-  --color-brand-soft: #ffb36b;
+  --color-brand-hover: #e88c35;
   /* Light accent */
-  --color-brand-bg: #fff4e8;
+  --color-brand-soft: #ffb36b;
   /* Hover backgrounds */
-  --color-brand-stats: #ebb771;
+  --color-brand-bg: #fff4e8;
   /* Featured metrics / results cards */
-  --color-brand-dark: #1d2742;
+  --color-brand-stats: #ebb771;
   /* Primary navy — header, footer, premium sections */
-  --color-brand-body: #4b5563;
+  --color-brand-dark: #1d2742;
   /* Legacy body text */
-  --color-brand-border: #eaeaea;
+  --color-brand-body: #4b5563;
   /* Borders, dividers */
+  --color-brand-border: #eaeaea;
 
   /* Semantic aliases */
   --color-hx-navy: #1d2742;
@@ -305,7 +305,7 @@
 }
 
 /* Children of .grain-overlay need explicit z-index to appear above grain */
-.grain-overlay > * {
+.grain-overlay>* {
   position: relative;
   z-index: 1;
 }
@@ -316,7 +316,8 @@
    Heights normalised so mixed-size logos align.
 ───────────────────────────────────────────── */
 .client-logo-img {
-  height: 36px;          /* desktop baseline */
+  height: 36px;
+  /* desktop baseline */
   width: auto;
   max-width: 130px;
   object-fit: contain;
@@ -351,6 +352,7 @@
    play, but at instant / near-instant duration.
 ───────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
