@@ -8,26 +8,31 @@ const steps = [
     num: "01",
     title: "Audit",
     desc: "We analyse your current digital footprint — SEO health, ad performance, website UX, and competitive landscape — to identify the highest-impact opportunities.",
+    deliverables: ["Competitor Analysis", "Funnel Review", "Analytics Audit", "Opportunity Mapping"],
   },
   {
     num: "02",
     title: "Strategy",
     desc: "We build a 90-day growth roadmap with clear KPIs, channel allocation, and milestones. No generic playbooks — every strategy is bespoke to your business.",
+    deliverables: ["Channel Plan", "Growth Roadmap", "KPI Design", "90-Day Blueprint"],
   },
   {
     num: "03",
     title: "Execution",
     desc: "Our specialist team activates across SEO, paid media, content, and development simultaneously — moving fast without sacrificing quality.",
+    deliverables: ["SEO Setup", "Paid Campaigns", "Content Activation", "Web Deployment"],
   },
   {
     num: "04",
     title: "Optimisation",
     desc: "We continuously test, analyse and refine every campaign and touchpoint. Data informs every decision, week over week.",
+    deliverables: ["A/B Tests", "Weekly Reports", "CRO Experiments", "Bid Strategy"],
   },
   {
     num: "05",
     title: "Scale",
     desc: "Once we've found what works, we double down. Proven channels get more budget, winning creative gets expanded, and growth compounds.",
+    deliverables: ["Budget Expansion", "New Channels", "Market Entry", "Creative Scaling"],
   },
 ];
 
@@ -191,6 +196,27 @@ export function Process() {
                     >
                       {steps[activeStep].desc}
                     </p>
+
+                    {/* Deliverable chips */}
+                    <div className="mt-6">
+                      <div
+                        className="text-[9px] font-bold tracking-[0.14em] text-[#9CA3AF] uppercase mb-3"
+                        style={{ fontFamily: "'Inter', sans-serif" }}
+                      >
+                        Deliverables
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {steps[activeStep].deliverables.map((d) => (
+                          <span
+                            key={d}
+                            className="inline-block rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-3 py-1 text-[11px] font-medium text-[#6B7280]"
+                            style={{ fontFamily: "'Inter', sans-serif" }}
+                          >
+                            {d}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </motion.div>
                 </AnimatePresence>
               </div>
@@ -275,6 +301,27 @@ export function Process() {
                 >
                   {steps[mobileActive].desc}
                 </p>
+
+                {/* Mobile deliverable chips */}
+                <div className="mt-5">
+                  <div
+                    className="text-[9px] font-bold tracking-[0.14em] text-[#9CA3AF] uppercase mb-2.5"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    Deliverables
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {steps[mobileActive].deliverables.map((d) => (
+                      <span
+                        key={d}
+                        className="inline-block rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-2.5 py-1 text-[10px] font-medium text-[#6B7280]"
+                        style={{ fontFamily: "'Inter', sans-serif" }}
+                      >
+                        {d}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </motion.div>
             </AnimatePresence>
           </div>

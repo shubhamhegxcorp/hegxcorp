@@ -4,34 +4,23 @@ import { ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/site/SectionHeading";
 
 /* ─────────────────────────────────────────────────────────────
-   BLUEPRINT CONNECTOR SVG
-   Sits behind the card grid. Draws faint lines between service
-   positions to communicate that all six are one system.
-   vectorEffect="non-scaling-stroke" keeps strokes at 1px even
-   when the SVG is stretched with preserveAspectRatio="none".
+   BLUEPRINT CONNECTOR SVG — updated for 2+4 layout
+   Row 1 (featured): SEO @ x=0.25, PPC @ x=0.75,  y ≈ 0.28
+   Row 2 (standard): WEB @ x=0.125, CRO @ x=0.375,
+                     BRAND @ x=0.625, SMM @ x=0.875, y ≈ 0.78
 ───────────────────────────────────────────────────────────── */
 function SystemConnections() {
-  // Normalized 0→1 grid coords: 3 cols × 2 rows
-  // Column centres at ~1/6, 3/6, 5/6; row centres at ~1/4, 3/4
-  const c = [1 / 6, 3 / 6, 5 / 6];
-  const r = [1 / 4, 3 / 4];
-
-  // [x1,y1, x2,y2]
   const lines: [number, number, number, number][] = [
-    [c[0], r[0], c[1], r[0]], // SEO   → PPC
-    [c[1], r[0], c[2], r[0]], // PPC   → WEB
-    [c[0], r[1], c[1], r[1]], // CRO   → BRAND
-    [c[1], r[1], c[2], r[1]], // BRAND → SOCIAL
-    [c[0], r[0], c[0], r[1]], // SEO   → CRO
-    [c[1], r[0], c[1], r[1]], // PPC   → BRAND
-    [c[2], r[0], c[2], r[1]], // WEB   → SOCIAL
+    // Featured row horizontal
+    [0.25, 0.28, 0.75, 0.28],
+    // Standard row horizontals
+    [0.125, 0.78, 0.375, 0.78],
+    [0.375, 0.78, 0.625, 0.78],
+    [0.625, 0.78, 0.875, 0.78],
+    // Verticals: featured → standard
+    [0.25, 0.28, 0.25, 0.78],
+    [0.75, 0.28, 0.75, 0.78],
   ];
-
-  const pulses = lines.map(([x1, y1, x2, y2], i) => ({
-    x: (x1 + x2) / 2,
-    y: (y1 + y2) / 2,
-    delay: i * 0.42,
-  }));
 
   return (
     <svg
@@ -40,32 +29,14 @@ function SystemConnections() {
       preserveAspectRatio="none"
       aria-hidden="true"
     >
-      {/* Faint connector lines */}
       {lines.map(([x1, y1, x2, y2], i) => (
         <line
           key={i}
-          x1={x1}
-          y1={y1}
-          x2={x2}
-          y2={y2}
+          x1={x1} y1={y1} x2={x2} y2={y2}
           stroke="#FC9C44"
           strokeWidth="1"
-          opacity="0.10"
+          opacity="0.08"
           vectorEffect="non-scaling-stroke"
-        />
-      ))}
-
-      {/* Slow-pulsing node at each midpoint */}
-      {pulses.map(({ x, y, delay }, i) => (
-        <motion.circle
-          key={i}
-          cx={x}
-          cy={y}
-          r="0.009"
-          fill="#FC9C44"
-          initial={{ opacity: 0.07 }}
-          animate={{ opacity: [0.07, 0.28, 0.07] }}
-          transition={{ duration: 3, repeat: Infinity, delay, ease: "easeInOut" }}
         />
       ))}
     </svg>
@@ -446,9 +417,108 @@ const cardVariant = {
 };
 
 /* ─────────────────────────────────────────────────────────────
+   SERVICE CARD
+   size="featured"  — SEO + PPC: 2-col row, taller visual, larger title
+   size="standard"  — WEB, CRO, BRAND, SMM: 4-col row, compact
+───────────────────────────────────────────────────────────── */
+function ServiceCard({
+  s,
+  i,
+  size = "standard",
+}: {
+  s: (typeof services)[number];
+  i: number;
+  size?: "featured" | "standard";
+}) {
+  const isFeatured = size === "featured";
+
+  return (
+    <motion.div
+      custom={i}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-60px" }}
+      variants={cardVariant}
+      whileHover={{
+        y: -5,
+        borderColor: "rgba(252,156,68,0.45)",
+        boxShadow:
+          "0 0 0 1px rgba(252,156,68,0.12), 0 20px 40px -16px rgba(29,39,66,0.09)",
+        transition: { duration: 0.2, ease: "easeOut" },
+      }}
+      className="group rounded-2xl border border-[#EAEAEA] bg-white overflow-hidden flex flex-col cursor-pointer"
+    >
+      <Link to={s.href} className="flex flex-col h-full">
+
+        {/* Browser chrome = card top edge */}
+        <div className="flex items-center gap-1.5 px-3.5 py-2.5 bg-[#FAFAF8] border-b border-[#EAEAEA] select-none shrink-0">
+          <span className="h-2 w-2 rounded-full bg-[#FC9C44]/50" />
+          <span className="h-2 w-2 rounded-full bg-[#E5E7EB]" />
+          <span className="h-2 w-2 rounded-full bg-[#E5E7EB]" />
+          <span className="ml-2 text-[8px] text-[#C4C9D4] font-mono truncate flex-1">
+            {s.url}
+          </span>
+          <span className="h-1.5 w-1.5 rounded-full bg-[#EAEAEA] group-hover:bg-emerald-400 transition-colors duration-300 shrink-0" />
+        </div>
+
+        {/* Visual panel — taller for featured, compact for standard */}
+        <div
+          className={`border-b border-[#F3F4F6] bg-white ${
+            isFeatured ? "px-6 pt-6 pb-5" : "px-4 pt-4 pb-3"
+          }`}
+          style={{ minHeight: isFeatured ? "200px" : "140px" }}
+        >
+          <s.Visual />
+        </div>
+
+        {/* Text panel */}
+        <div className={`flex flex-col flex-1 gap-2 ${ isFeatured ? "p-5" : "p-4" }`}>
+          <span
+            className="text-[10px] font-bold tracking-[0.14em] text-[#FC9C44]"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {s.slug}
+          </span>
+
+          <h3
+            className="font-bold text-[#232323] leading-snug"
+            style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: isFeatured ? "18px" : "14px",
+            }}
+          >
+            {s.title}
+          </h3>
+
+          <p
+            className={`text-[#6B7280] leading-relaxed flex-1 ${
+              isFeatured ? "text-[13px]" : "text-[12px] line-clamp-2"
+            }`}
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {s.desc}
+          </p>
+
+          {/* CTA — slides in on hover */}
+          <div
+            className="flex items-center gap-1.5 text-xs font-semibold text-[#FC9C44] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-[opacity,transform] duration-200 ease-out"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            Learn more <ArrowRight className="h-3 w-3" />
+          </div>
+        </div>
+      </Link>
+    </motion.div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
    EXPORT
 ───────────────────────────────────────────────────────────── */
 export function ServicesGrid() {
+  const featured = services.slice(0, 2); // SEO + PPC
+  const standard = services.slice(2);    // WEB, CRO, BRAND, SMM
+
   return (
     <section
       className="bg-[#FAFAF8] overflow-hidden"
@@ -459,12 +529,12 @@ export function ServicesGrid() {
     >
       <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
 
-        {/* ── Section header ── */}
+        {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] }}
           className="mb-14 flex flex-col md:flex-row md:items-end md:justify-between gap-6"
         >
           <SectionHeading
@@ -472,11 +542,7 @@ export function ServicesGrid() {
             heading="Services built for growth"
             description="Not six separate services. One integrated system where every capability strengthens the next."
           />
-          <motion.div
-            whileHover={{ scale: 1.03 }}
-            transition={{ duration: 0.2 }}
-            className="shrink-0 mb-1"
-          >
+          <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.2 }} className="shrink-0 mb-1">
             <Link
               to="/services"
               className="inline-flex items-center gap-2 text-sm font-semibold text-[#FC9C44] hover:gap-3 transition-all duration-200"
@@ -487,90 +553,28 @@ export function ServicesGrid() {
           </motion.div>
         </motion.div>
 
-        {/* ── Grid + blueprint connector layer ── */}
-        <div className="relative">
-          {/* Blueprint connection lines — z-0, behind cards */}
+        {/* Grid wrapper with blueprint connectors behind */}
+        <div className="relative flex flex-col gap-5">
+
+          {/* Blueprint SVG — behind both rows, desktop only */}
           <div className="absolute inset-0 z-0 pointer-events-none hidden lg:block">
             <SystemConnections />
           </div>
 
-          {/* Service cards — z-10, above connectors */}
-          <div className="relative z-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {services.map((s, i) => (
-              <motion.div
-                key={s.slug}
-                custom={i}
-                initial="hidden"
-                whileInView="show"
-                viewport={{ once: true, margin: "-60px" }}
-                variants={cardVariant}
-                whileHover={{
-                  y: -5,
-                  borderColor: "rgba(252,156,68,0.45)",
-                  boxShadow:
-                    "0 0 0 1px rgba(252,156,68,0.12), 0 20px 40px -16px rgba(29,39,66,0.09)",
-                  transition: { duration: 0.2, ease: "easeOut" },
-                }}
-                /* The card IS the browser frame — no inner window */
-                className="group rounded-2xl border border-[#EAEAEA] bg-white overflow-hidden flex flex-col cursor-pointer"
-              >
-                <Link to={s.href} className="flex flex-col h-full">
-
-                  {/* ── Browser chrome = card top edge ── */}
-                  <div className="flex items-center gap-1.5 px-3.5 py-2.5 bg-[#FAFAF8] border-b border-[#EAEAEA] select-none shrink-0">
-                    <span className="h-2 w-2 rounded-full bg-[#FC9C44]/50" />
-                    <span className="h-2 w-2 rounded-full bg-[#E5E7EB]" />
-                    <span className="h-2 w-2 rounded-full bg-[#E5E7EB]" />
-                    <span className="ml-2 text-[8px] text-[#C4C9D4] font-mono truncate flex-1">
-                      {s.url}
-                    </span>
-                    {/* Active indicator — glows on hover */}
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#EAEAEA] group-hover:bg-emerald-400 transition-colors duration-300 shrink-0" />
-                  </div>
-
-                  {/* ── Visual panel — ~45% of card ── */}
-                  <div className="px-5 pt-5 pb-4 border-b border-[#F3F4F6] bg-white">
-                    <s.Visual />
-                  </div>
-
-                  {/* ── Text panel — ~55% of card ── */}
-                  <div className="flex flex-col flex-1 gap-2.5 p-5">
-                    {/* Slug */}
-                    <span
-                      className="text-[10px] font-bold tracking-[0.14em] text-[#FC9C44]"
-                      style={{ fontFamily: "'Inter', sans-serif" }}
-                    >
-                      {s.slug}
-                    </span>
-
-                    {/* Title — larger, dominant */}
-                    <h3
-                      className="text-[17px] font-bold text-[#232323] leading-snug"
-                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                    >
-                      {s.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p
-                      className="text-[13px] text-[#6B7280] leading-relaxed flex-1"
-                      style={{ fontFamily: "'Inter', sans-serif" }}
-                    >
-                      {s.desc}
-                    </p>
-
-                    {/* CTA — slides in on hover */}
-                    <div
-                      className="flex items-center gap-1.5 text-xs font-semibold text-[#FC9C44] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-[opacity,transform] duration-200 ease-out"
-                      style={{ fontFamily: "'Inter', sans-serif" }}
-                    >
-                      Learn more <ArrowRight className="h-3 w-3" />
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
+          {/* ── Row 1: Featured — SEO + PPC (2 wide cards) ── */}
+          <div className="relative z-10 grid sm:grid-cols-2 gap-5">
+            {featured.map((s, i) => (
+              <ServiceCard key={s.slug} s={s} i={i} size="featured" />
             ))}
           </div>
+
+          {/* ── Row 2: Standard — WEB, CRO, BRAND, SMM (4 compact cards) ── */}
+          <div className="relative z-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {standard.map((s, i) => (
+              <ServiceCard key={s.slug} s={s} i={i + 2} size="standard" />
+            ))}
+          </div>
+
         </div>
 
       </div>

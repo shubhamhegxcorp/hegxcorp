@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, TrendingUp, Users, BarChart3, Zap, Globe, Sparkles } from "lucide-react";
 import { motion, useInView, animate, useMotionValue, useSpring, useTransform, Variants } from "framer-motion";
+import ShapeGrid from "@/components/ShapeGrid";
 
 const dashboardMetrics = [
   {
@@ -77,20 +78,24 @@ export function Hero() {
       className="relative overflow-hidden bg-white"
       style={{ paddingTop: "clamp(64px, 8vw, 120px)", paddingBottom: "clamp(64px, 8vw, 120px)" }}
     >
-      {/* Subtle background grid */}
       <div
-        className="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 select-none"
         style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, #EAEAEA 1px, transparent 0)`,
-          backgroundSize: "40px 40px",
-          opacity: 0.5,
+          opacity: 0.20,
         }}
-      />
-      {/* Right glow accent */}
-      <div
-        className="pointer-events-none absolute right-0 top-0 h-[600px] w-[600px] opacity-[0.06]"
-        style={{ background: "radial-gradient(circle at 80% 20%, #FC9C44 0%, transparent 70%)" }}
-      />
+      >
+        <ShapeGrid
+          shape="hexagon"
+          squareSize={38}
+          borderColor="rgba(29,39,66,0.3)"
+          hoverFillColor="transparent"
+          hoverTrailAmount={0}
+          staticMode={false}
+          speed={0.2}
+          className="w-full h-full"
+        />
+      </div>
 
       <div className="relative mx-auto max-w-[1280px] px-6 lg:px-10">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
