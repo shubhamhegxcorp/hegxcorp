@@ -30,7 +30,7 @@ const socialLinks = [
   { icon: Twitter, href: "https://twitter.com/hegxcorp", label: "X (Twitter)" },
   { icon: Instagram, href: "https://instagram.com/hegxcorp", label: "Instagram" },
   { icon: Facebook, href: "https://facebook.com/hegxcorp", label: "Facebook" },
-  { icon: Youtube, href: "https://youtube.com/@hegxcorp", label: "YouTube" },
+  // { icon: Youtube, href: "https://youtube.com/@hegxcorp", label: "YouTube" },
 ];
 
 export function Footer() {

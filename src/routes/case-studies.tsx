@@ -4,7 +4,7 @@ import { Footer } from "@/components/site/Footer";
 import { ArrowRight, Sparkles, PhoneCall, FileText, Percent, ShieldCheck } from "lucide-react";
 import ShapeGrid from "@/components/ShapeGrid";
 import { BrowserPreview } from "@/components/site/BrowserPreview";
-import { caseStudies } from "@/data/caseStudies";
+import { getCaseStudies } from "@/lib/content/caseStudies";
 import SplitText from "@/components/ui/SplitText";
 
 export const Route = createFileRoute("/case-studies")({
@@ -32,14 +32,15 @@ function EditorialDivider() {
 }
 
 function CaseStudiesPage() {
+  const studies = getCaseStudies();
   // Tarkashastra is our featured case study
-  const featuredStudy = caseStudies.find((c) => c.slug === "tarkashastra") || caseStudies[0];
+  const featuredStudy = studies.find((c) => c.slug === "tarkashastra") || studies[0];
   
   // Specific case studies lookup to build the editorial rhythm
-  const gpen = caseStudies.find((c) => c.slug === "g-pen") || caseStudies[1];
-  const rollink = caseStudies.find((c) => c.slug === "rollink") || caseStudies[2];
-  const learningTree = caseStudies.find((c) => c.slug === "learning-tree") || caseStudies[3];
-  const orra = caseStudies.find((c) => c.slug === "orra") || caseStudies[4];
+  const gpen = studies.find((c) => c.slug === "g-pen") || studies[1];
+  const rollink = studies.find((c) => c.slug === "rollink") || studies[2];
+  const learningTree = studies.find((c) => c.slug === "learning-tree") || studies[3];
+  const orra = studies.find((c) => c.slug === "orra") || studies[4];
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-between">

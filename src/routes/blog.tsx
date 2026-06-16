@@ -5,7 +5,8 @@ import { Search as SearchIcon, ArrowRight, BookOpen, Sparkles, Mail, Tag } from 
 import ShapeGrid from "@/components/ShapeGrid";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useMemo } from "react";
-import { blogArticles, BlogArticle } from "@/data/blogArticles";
+import { getBlogs } from "@/lib/content/blogs";
+import { Blog } from "@/data/blogs";
 
 export const Route = createFileRoute("/blog")({
   head: () => ({
@@ -33,7 +34,7 @@ function BlogPage() {
 
   // Filter categories and tags
   const categories = useMemo(() => {
-    return ["All", ...Array.from(new Set(blogArticles.map((a) => a.category)))];
+    return ["All", ...Array.from(new Set(getBlogs().map((a) => a.category)))];
   }, []);
 
   const popularTopics = [
@@ -47,7 +48,7 @@ function BlogPage() {
 
   // Filter logic
   const filteredArticles = useMemo(() => {
-    return blogArticles.filter((article) => {
+    return getBlogs().filter((article) => {
       const matchesSearch =
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -68,7 +69,7 @@ function BlogPage() {
 
   // Featured article is always the AI Search Reshaping Traffic one, or the first matching item
   const featuredArticle = useMemo(() => {
-    return blogArticles.find((a) => a.slug === "how-ai-search-reshapes-organic-traffic") || blogArticles[0];
+    return getBlogs().find((a) => a.slug === "how-ai-search-reshapes-organic-traffic") || getBlogs()[0];
   }, []);
 
   // Filtered feed (excludes featured article to avoid duplication)
@@ -267,7 +268,7 @@ function BlogPage() {
 
                         {/* Address Bar */}
                         <div className="flex-1 max-w-[280px] mx-auto bg-[#FAFAF8] border border-[#EAEAEA] rounded py-0.5 px-3 text-[10px] text-[#9CA3AF] font-mono text-center select-none truncate">
-                          {featuredArticle.url}
+                          hegxcorp.com/blog/{featuredArticle.slug}
                         </div>
                       </div>
 
@@ -389,7 +390,7 @@ function BlogPage() {
                               </div>
                               <div className="relative z-10 flex justify-between items-center text-[9px] font-semibold text-[#9CA3AF] uppercase tracking-wider border-t border-[#EAEAEA]/40 pt-3">
                                 <span>{article.readTime}</span>
-                                <span>{article.publishedDate}</span>
+                                <span>{new Date(article.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
                               </div>
                             </div>
 

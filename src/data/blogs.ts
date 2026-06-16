@@ -1,34 +1,40 @@
-export interface BlogArticle {
+export interface Blog {
+  id: string;
   slug: string;
   title: string;
+  excerpt: string;
+  content: string;
   category: string;
   readTime: string;
-  excerpt: string;
-  publishedDate: string;
+  featuredImage: string;
   author: {
     name: string;
     role: string;
     avatar?: string;
   };
-  content: string;
-  featuredImage: string;
-  url: string;
+  publishedAt: string; // ISO 8601 string
+  seoTitle: string;
+  seoDescription: string;
+  featured: boolean;
 }
 
-export const blogArticles: BlogArticle[] = [
+export const blogs: Blog[] = [
   {
+    id: "blog-001",
     slug: "how-ai-search-reshapes-organic-traffic",
     title: "How AI Search Is Reshaping Organic Traffic",
     category: "AI Search",
     readTime: "5 min read",
     excerpt: "Generative search engines are fundamentally shifting user search behavior. Learn how to optimize your content architecture for AI-driven query platforms.",
-    publishedDate: "June 14, 2026",
+    publishedAt: "2026-06-14T08:00:00.000Z",
     author: {
       name: "Shubham Sharma",
       role: "Principal Growth Strategist",
     },
-    url: "hegxcorp.com/blog/ai-search-reshaping-traffic",
     featuredImage: "/placeholders/ai-search-traffic.svg",
+    seoTitle: "How AI Search Reshapes Organic Traffic | Hegxcorp Insights",
+    seoDescription: "Generative search engines and LLM-powered answer bots are shifting user behavior. Learn how to construct a content architecture designed for AI-driven search models.",
+    featured: true,
     content: `
       <h2>The Shift from Ten Blue Links to Generative Answers</h2>
       <p>Search engines are no longer just directories pointing users to other web destinations. With the rise of Search Generative Experience (SGE) and LLM-powered answer bots, users receive complete, multi-perspective summaries directly in the viewport. This shifts user behaviour from link-clicking to direct answer consumption.</p>
@@ -49,18 +55,21 @@ export const blogArticles: BlogArticle[] = [
     `,
   },
   {
+    id: "blog-002",
     slug: "how-ai-search-changes-rankings",
     title: "How AI Search Changes Rankings",
     category: "SEO",
     readTime: "6 min read",
     excerpt: "A technical breakdown of semantic search index shifts and how search algorithms evaluate topical authority inside generative answers.",
-    publishedDate: "June 10, 2026",
+    publishedAt: "2026-06-10T08:00:00.000Z",
     author: {
       name: "Amit Bose",
       role: "Technical Director",
     },
-    url: "hegxcorp.com/blog/ai-search-rankings",
     featuredImage: "/placeholders/ai-rankings.svg",
+    seoTitle: "How AI Search Changes SEO Rankings & Indexing | Hegxcorp",
+    seoDescription: "A technical breakdown of dense vector search databases and how topical authority algorithms evaluate content collections inside modern search systems.",
+    featured: false,
     content: `
       <h2>Semantic Overlays vs Vector Databases</h2>
       <p>The transition from lexical matching to dense vector search has changed how content is catalogued. Instead of matching exact string patterns, search engines map questions and answers into high-dimensional vector spaces, calculating relevance using cosine similarity. This means pages with completely different wording can rank if their semantic intent matches.</p>
@@ -73,18 +82,21 @@ export const blogArticles: BlogArticle[] = [
     `,
   },
   {
+    id: "blog-003",
     slug: "maximizing-performance-max-campaigns",
     title: "Maximizing Performance Max Campaigns",
     category: "Paid Media",
     readTime: "7 min read",
     excerpt: "How to structure asset groups, feed signals, and first-party customer audiences to scale Google Ads budgets profitably.",
-    publishedDate: "June 06, 2026",
+    publishedAt: "2026-06-06T08:00:00.000Z",
     author: {
       name: "Vikas Patel",
       role: "Paid Media Lead",
     },
-    url: "hegxcorp.com/blog/maximizing-pmax",
     featuredImage: "/placeholders/pmax-optimization.svg",
+    seoTitle: "Optimizing Google Ads Performance Max Campaigns | Hegxcorp",
+    seoDescription: "A tactical guide on structuring asset groups, audience signals, first-party data, and negatives to scale Performance Max ad budgets profitably.",
+    featured: false,
     content: `
       <h2>The Black Box of PMax</h2>
       <p>Google's Performance Max is a highly automated campaign type that spans Search, YouTube, Display, Discover, and Maps. However, without strict constraints, PMax can waste budget on poor-quality display placements or brand bidding. Controlling PMax requires feeding it high-value data signals.</p>
@@ -97,18 +109,21 @@ export const blogArticles: BlogArticle[] = [
     `,
   },
   {
+    id: "blog-004",
     slug: "psychology-of-high-converting-landing-pages",
     title: "The Psychology of High-Converting Landing Pages",
     category: "Conversion",
     readTime: "4 min read",
     excerpt: "A deep dive into cognitive load reduction, structural hierarchy, and decision-making frameworks that drive lower acquisition costs.",
-    publishedDate: "May 28, 2026",
+    publishedAt: "2026-05-28T08:00:00.000Z",
     author: {
       name: "Sarah Vance",
       role: "CRO Lead",
     },
-    url: "hegxcorp.com/blog/landing-page-psychology",
     featuredImage: "/placeholders/landing-page-ux.svg",
+    seoTitle: "High-Converting Landing Page UX & Psychology | Hegxcorp",
+    seoDescription: "Analyze the psychological frameworks of page layouts. Discover how to reduce cognitive load and use visual trust cues to maximize landing page conversions.",
+    featured: false,
     content: `
       <h2>Friction and Cognitive Load</h2>
       <p>Conversion optimization is less about adding elements and more about removing friction. Every input field, secondary navigation link, or visual distraction increases cognitive load, driving down overall conversion rate. A user should understand your offer within three seconds of landing.</p>
@@ -121,18 +136,21 @@ export const blogArticles: BlogArticle[] = [
     `,
   },
   {
+    id: "blog-005",
     slug: "core-web-vitals-and-organic-growth",
     title: "Core Web Vitals & Organic Growth",
     category: "Web Development",
     readTime: "5 min read",
     excerpt: "How sub-second rendering times, low cumulative layout shifts, and responsive interactions directly boost organic search positioning.",
-    publishedDate: "May 20, 2026",
+    publishedAt: "2026-05-20T08:00:00.000Z",
     author: {
       name: "Alex Mercer",
       role: "Technical Web Engineer",
     },
-    url: "hegxcorp.com/blog/core-web-vitals",
     featuredImage: "/placeholders/web-vitals.svg",
+    seoTitle: "Core Web Vitals Impact on Organic Search Rankings | Hegxcorp",
+    seoDescription: "Examine how Cumulative Layout Shift, Largest Contentful Paint, and page responsiveness affect search engine index prioritization and organic search listings.",
+    featured: false,
     content: `
       <h2>Speed as a Ranking Tie-Breaker</h2>
       <p>While content relevance is paramount, Google uses page experience metrics—specifically Core Web Vitals—as a critical ranking signal. If two pages cover a query with similar authority, the faster page with a stable visual layout will win the top slot.</p>
@@ -145,18 +163,21 @@ export const blogArticles: BlogArticle[] = [
     `,
   },
   {
+    id: "blog-006",
     slug: "engineering-compounding-growth-systems",
     title: "Engineering Compounding Growth Systems",
     category: "Growth Systems",
     readTime: "8 min read",
     excerpt: "Why isolated search campaigns fail, and how to build interconnected organic loops, paid acquisition, and conversion funnels.",
-    publishedDate: "May 12, 2026",
+    publishedAt: "2026-05-12T08:00:00.000Z",
     author: {
       name: "Shubham Sharma",
       role: "Principal Growth Strategist",
     },
-    url: "hegxcorp.com/blog/growth-systems-engineering",
     featuredImage: "/placeholders/growth-systems.svg",
+    seoTitle: "Interconnected Growth Marketing Architecture | Hegxcorp",
+    seoDescription: "Break down internal marketing silos. Design a compounding growth strategy linking organic SEO loops, PPC campaigns, and conversion optimization.",
+    featured: false,
     content: `
       <h2>The Trap of Marketing Silos</h2>
       <p>Many businesses separate their SEO, PPC, and product development teams. This structure creates massive inefficiencies: PPC teams target high-cost terms that the SEO team could easily capture organically, and web developers build pages that destroy search authority.</p>

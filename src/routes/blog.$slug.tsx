@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound, useParams } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { blogArticles, BlogArticle } from "@/data/blogArticles";
+import { getBlogBySlug, getBlogs } from "@/lib/content/blogs";
+import { Blog } from "@/data/blogs";
 import ShapeGrid from "@/components/ShapeGrid";
 import { ArrowLeft, ArrowRight, Calendar, Clock, User, Bookmark } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
@@ -9,20 +10,20 @@ import { motion, useScroll, useSpring } from "framer-motion";
 
 export const Route = createFileRoute("/blog/$slug")({
   loader: ({ params }: { params: { slug: string } }) => {
-    const article = blogArticles.find((a) => a.slug === params.slug);
+    const article = getBlogBySlug(params.slug);
     if (!article) {
       throw notFound();
     }
     return { article };
   },
   head: ({ params }: { params: { slug: string } }) => {
-    const article = blogArticles.find((a) => a.slug === params.slug);
+    const article = getBlogBySlug(params.slug);
     return {
       meta: [
-        { title: article ? `${article.title} | Hegxcorp Insights` : "Insights | Hegxcorp" },
+        { title: article ? article.seoTitle : "Insights | Hegxcorp" },
         {
           name: "description",
-          content: article ? article.excerpt : "In-depth growth breakdowns and strategic frameworks from Hegxcorp.",
+          content: article ? article.seoDescription : "In-depth growth breakdowns and strategic frameworks from Hegxcorp.",
         },
       ],
     };
@@ -37,7 +38,7 @@ interface TocItem {
 
 function BlogDetailPage() {
   const { slug } = useParams({ strict: false });
-  const article = blogArticles.find((a) => a.slug === slug);
+  const article = getBlogBySlug(slug || "");
   const [toc, setToc] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState("");
   const contentRef = useRef<HTMLDivElement>(null);
@@ -55,7 +56,7 @@ function BlogDetailPage() {
   });
 
   // Find related articles (max 3, excluding current article)
-  const relatedArticles = blogArticles
+  const relatedArticles = getBlogs()
     .filter((a) => a.slug !== article.slug)
     .slice(0, 3);
 
@@ -175,7 +176,7 @@ function BlogDetailPage() {
                 </div>
                 <div className="flex items-center gap-2 text-xs text-[#6B7280] font-medium">
                   <Calendar className="h-4 w-4 text-[#9CA3AF]" />
-                  Published {article.publishedDate}
+                  Published {new Date(article.publishedAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
                 </div>
               </div>
             </div>
@@ -195,7 +196,7 @@ function BlogDetailPage() {
                     <span className="h-2.5 w-2.5 rounded-full bg-[#27C93F]" />
                   </div>
                   <div className="flex-1 max-w-[320px] mx-auto bg-[#FAFAF8] border border-[#EAEAEA] rounded py-0.5 px-3 text-[10px] text-[#9CA3AF] font-mono text-center select-none truncate">
-                    {article.url}
+                    hegxcorp.com/blog/{article.slug}
                   </div>
                 </div>
 

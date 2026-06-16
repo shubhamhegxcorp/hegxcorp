@@ -2,26 +2,26 @@ import { createFileRoute, Link, notFound, useParams } from "@tanstack/react-rout
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { BrowserPreview } from "@/components/site/BrowserPreview";
-import { caseStudies } from "@/data/caseStudies";
+import { getCaseStudyBySlug, getCaseStudies } from "@/lib/content/caseStudies";
 import ShapeGrid from "@/components/ShapeGrid";
 import { ArrowLeft, ArrowRight, CheckCircle2, ChevronRight, MessageSquare, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/case-studies/$slug")({
   loader: ({ params }: { params: { slug: string } }) => {
-    const study = caseStudies.find((c) => c.slug === params.slug);
+    const study = getCaseStudyBySlug(params.slug);
     if (!study) {
       throw notFound();
     }
     return { study };
   },
   head: ({ params }: { params: { slug: string } }) => {
-    const study = caseStudies.find((c) => c.slug === params.slug);
+    const study = getCaseStudyBySlug(params.slug);
     return {
       meta: [
-        { title: study ? `${study.client} Case Study: ${study.metricValue} ${study.metricLabel} | Hegxcorp` : "Case Study | Hegxcorp" },
+        { title: study ? study.seoTitle : "Case Study | Hegxcorp" },
         {
           name: "description",
-          content: study ? study.summary : "Detailed case history of performance growth, organic search architectures, and digital scaling engineered by Hegxcorp.",
+          content: study ? study.seoDescription : "Detailed case history of performance growth, organic search architectures, and digital scaling engineered by Hegxcorp.",
         },
       ],
     };
@@ -31,14 +31,14 @@ export const Route = createFileRoute("/case-studies/$slug")({
 
 function CaseStudyDetailPage() {
   const { slug } = useParams({ strict: false });
-  const study = caseStudies.find((c) => c.slug === slug);
+  const study = getCaseStudyBySlug(slug || "");
   
   if (!study) {
     return null;
   }
   
   // Find other relevant studies for the Related section (max 2)
-  const relatedStudies = caseStudies
+  const relatedStudies = getCaseStudies()
     .filter((c) => c.slug !== study.slug)
     .slice(0, 2);
 
@@ -193,49 +193,21 @@ function CaseStudyDetailPage() {
             </div>
 
             {/* Strategy Timeline Layout */}
-            <div className="grid md:grid-cols-4 gap-8 relative">
+            <div className={`grid md:grid-cols-${study.approach?.length || 4} gap-8 relative`}>
               {/* Horizontal connection line on desktop */}
               <div className="hidden md:block absolute top-[26px] left-[10%] right-[10%] h-0.5 bg-[#EAEAEA] -z-0" />
               
-              <div className="relative bg-white p-6 rounded-xl border border-[#EAEAEA] text-center space-y-3 z-10 shadow-sm">
-                <div className="mx-auto h-12 w-12 rounded-full bg-[#1D2742] text-white flex items-center justify-center font-bold text-lg" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  1
+              {study.approach?.map((step, idx) => (
+                <div key={idx} className="relative bg-white p-6 rounded-xl border border-[#EAEAEA] text-center space-y-3 z-10 shadow-sm">
+                  <div className="mx-auto h-12 w-12 rounded-full bg-[#1D2742] text-white flex items-center justify-center font-bold text-lg" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    {step.phase}
+                  </div>
+                  <h4 className="font-bold text-[#1D2742] text-sm" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{step.title}</h4>
+                  <p className="text-xs text-[#6B7280] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    {step.description}
+                  </p>
                 </div>
-                <h4 className="font-bold text-[#1D2742] text-sm" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Research</h4>
-                <p className="text-xs text-[#6B7280] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Deep-dive audits into search query intent patterns, crawl limits, competitor bid landscapes, and conversion gaps.
-                </p>
-              </div>
-
-              <div className="relative bg-white p-6 rounded-xl border border-[#EAEAEA] text-center space-y-3 z-10 shadow-sm">
-                <div className="mx-auto h-12 w-12 rounded-full bg-[#1D2742] text-white flex items-center justify-center font-bold text-lg" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  2
-                </div>
-                <h4 className="font-bold text-[#1D2742] text-sm" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Planning</h4>
-                <p className="text-xs text-[#6B7280] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Mapping user intent maps, structural page schemas, copy funnels, budget allocations, and analytics tracking parameters.
-                </p>
-              </div>
-
-              <div className="relative bg-white p-6 rounded-xl border border-[#EAEAEA] text-center space-y-3 z-10 shadow-sm">
-                <div className="mx-auto h-12 w-12 rounded-full bg-[#1D2742] text-white flex items-center justify-center font-bold text-lg" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  3
-                </div>
-                <h4 className="font-bold text-[#1D2742] text-sm" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Execution</h4>
-                <p className="text-xs text-[#6B7280] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Overhauling schemas, launching targeted keyword landing pages, structuring negative lists, and refining ad copy.
-                </p>
-              </div>
-
-              <div className="relative bg-white p-6 rounded-xl border border-[#EAEAEA] text-center space-y-3 z-10 shadow-sm">
-                <div className="mx-auto h-12 w-12 rounded-full bg-[#1D2742] text-white flex items-center justify-center font-bold text-lg" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                  4
-                </div>
-                <h4 className="font-bold text-[#1D2742] text-sm" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Optimization</h4>
-                <p className="text-xs text-[#6B7280] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Analyzing heatmaps, adjusting smart search bid triggers, conducting conversion tests, and scaling budget efficiency.
-                </p>
-              </div>
+              ))}
             </div>
           </div>
         </section>
@@ -323,17 +295,31 @@ function CaseStudyDetailPage() {
               </p>
             </div>
 
-            {/* Single Large Browser Preview displaying layout */}
-            <div className="max-w-[800px] mx-auto">
-              <BrowserPreview 
-                src={study.featuredImage} 
-                alt={`${study.client} Analytics Proof`} 
-                proofLabel={study.proofLabel}
-                proofDuration={study.proofDuration}
-                proofMetric={`${study.metricValue} Growth`}
-                aspectRatio="video"
-                className="w-full shadow-md"
-              />
+            {/* Gallery Grid or single image preview */}
+            <div className="grid md:grid-cols-2 gap-8 max-w-[960px] mx-auto">
+              {study.gallery && study.gallery.length > 0 ? (
+                study.gallery.map((img, idx) => (
+                  <BrowserPreview 
+                    key={idx}
+                    src={img} 
+                    alt={`${study.client} Gallery Screen ${idx + 1}`} 
+                    aspectRatio="video"
+                    className="w-full shadow-md"
+                  />
+                ))
+              ) : (
+                <div className="md:col-span-2 max-w-[800px] mx-auto w-full">
+                  <BrowserPreview 
+                    src={study.featuredImage} 
+                    alt={`${study.client} Analytics Proof`} 
+                    proofLabel={study.proofLabel}
+                    proofDuration={study.proofDuration}
+                    proofMetric={`${study.metricValue} Growth`}
+                    aspectRatio="video"
+                    className="w-full shadow-md"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </section>
