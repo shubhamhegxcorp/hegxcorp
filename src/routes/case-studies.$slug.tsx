@@ -53,7 +53,7 @@ function CaseStudyDetailPage() {
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 select-none"
-            style={{ opacity: 0.1 }}
+            style={{ opacity: 0.2 }}
           >
             <ShapeGrid
               shape="hexagon"

@@ -52,7 +52,7 @@ function CaseStudiesPage() {
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 select-none"
-            style={{ opacity: 0.15 }}
+            style={{ opacity: 0.2 }}
           >
             <ShapeGrid
               shape="hexagon"
@@ -61,7 +61,7 @@ function CaseStudiesPage() {
               hoverFillColor="transparent"
               hoverTrailAmount={0}
               staticMode={false}
-              speed={0.15}
+              speed={0.2}
               className="w-full h-full"
             />
           </div>

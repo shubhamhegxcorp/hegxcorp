@@ -13,10 +13,14 @@ export function FinalCTA() {
       }}
     >
       {/* Subtle animated background glow — absolutely positioned, does not affect section height */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.10] select-none overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.18] select-none overflow-hidden">
         <div
-          className="absolute inset-0 rounded-full bg-[#FC9C44] blur-[120px] animate-pulse"
-          style={{ margin: "auto", width: "50vw", maxWidth: "600px", height: "50vw", animationDuration: "8s" }}
+          className="absolute rounded-full bg-[#FC9C44] blur-[130px] animate-pulse"
+          style={{ margin: "auto", width: "55vw", maxWidth: "650px", height: "55vw", animationDuration: "8s" }}
+        />
+        <div
+          className="absolute rounded-full bg-[#EBB771] blur-[100px] animate-pulse"
+          style={{ margin: "auto", width: "35vw", maxWidth: "450px", height: "35vw", animationDuration: "14s", animationDelay: "-3s", opacity: 0.6 }}
         />
       </div>
 

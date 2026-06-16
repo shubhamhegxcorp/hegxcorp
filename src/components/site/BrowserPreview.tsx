@@ -11,6 +11,7 @@ interface BrowserPreviewProps {
   proofLabel?: string;
   proofDuration?: string;
   proofMetric?: string;
+  url?: string;
 }
 
 export function BrowserPreview({
@@ -23,6 +24,7 @@ export function BrowserPreview({
   proofLabel,
   proofDuration,
   proofMetric,
+  url,
 }: BrowserPreviewProps) {
   return (
     <div
@@ -42,7 +44,7 @@ export function BrowserPreview({
         
         {/* Minimal Address Bar */}
         <div className="flex-1 max-w-[280px] mx-auto bg-[#FAFAF8] border border-[#EAEAEA] rounded py-0.5 px-3 text-[9px] text-[#9CA3AF] font-mono text-center select-none truncate">
-          www.hegxcorp-client.com
+          {url || "www.hegxcorp-client.com"}
         </div>
       </div>
 

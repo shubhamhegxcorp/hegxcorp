@@ -342,10 +342,10 @@ export function Header() {
                       >
                         <Link
                           to="/contact"
-                          className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-white/90 transition-colors"
+                          className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white px-3 py-2.5 text-xs xl:text-sm font-semibold text-foreground hover:bg-white/90 transition-colors whitespace-nowrap"
                         >
                           Schedule a Strategy Call
-                          <ArrowRight className="h-4 w-4" />
+                          <ArrowRight className="h-4 w-4 shrink-0" />
                         </Link>
                       </motion.div>
                     </motion.div>
