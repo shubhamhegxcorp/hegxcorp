@@ -176,7 +176,7 @@ function FreeGrowthAuditPage() {
             </div>
 
             {/* Right Column — Multi-Step Form */}
-            <div className="rounded-2xl border border-[#EAEAEA] bg-[#FAFAF8] p-8 lg:p-10 shadow-[0_20px_48px_-20px_rgba(29,39,66,0.08)]">
+            <div className="rounded-2xl border border-[#EAEAEA] bg-[#FAFAF8] p-5 sm:p-8 lg:p-10 shadow-[0_20px_48px_-20px_rgba(29,39,66,0.08)]">
               {/* Form title / progress bar */}
               <div className="mb-8">
                 <div className="flex justify-between items-center text-xs text-[#6B7280] uppercase tracking-wider mb-2.5 font-bold">

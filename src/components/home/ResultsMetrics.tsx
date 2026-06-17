@@ -85,7 +85,7 @@ export function ResultsMetrics() {
             {/* Ghost numeral — sits behind at near-zero opacity */}
             <div
               aria-hidden="true"
-              className="pointer-events-none select-none absolute -top-6 -left-4 leading-none text-[#EAEAEA] font-black"
+              className="hidden sm:block pointer-events-none select-none absolute -top-6 -left-4 leading-none text-[#EAEAEA] font-black"
               style={{
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontSize: "clamp(120px, 17vw, 210px)",

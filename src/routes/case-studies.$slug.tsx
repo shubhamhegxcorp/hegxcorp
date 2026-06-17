@@ -29,6 +29,14 @@ export const Route = createFileRoute("/case-studies/$slug")({
   component: CaseStudyDetailPage,
 } as never);
 
+const gridColsMap: Record<number, string> = {
+  1: "md:grid-cols-1",
+  2: "md:grid-cols-2",
+  3: "md:grid-cols-3",
+  4: "md:grid-cols-4",
+  5: "md:grid-cols-5",
+};
+
 function CaseStudyDetailPage() {
   const { slug } = useParams({ strict: false });
   const study = getCaseStudyBySlug(slug || "");
@@ -193,7 +201,7 @@ function CaseStudyDetailPage() {
             </div>
 
             {/* Strategy Timeline Layout */}
-            <div className={`grid md:grid-cols-${study.approach?.length || 4} gap-8 relative`}>
+            <div className={`grid ${gridColsMap[study.approach?.length || 4] || "md:grid-cols-4"} gap-8 relative`}>
               {/* Horizontal connection line on desktop */}
               <div className="hidden md:block absolute top-[26px] left-[10%] right-[10%] h-0.5 bg-[#EAEAEA] -z-0" />
               

@@ -480,3 +480,6 @@ Current focus:
 
 Move from "beautiful website" to "content platform architecture".
 
+Forwarding to the backend team to work on it further 
+Backend architecture and fraemwrok layout has been made
+letter we will introduced SQL Database integration, Authentication roles Admin/Editor and a Browser based Admin Dashboard Allowing 

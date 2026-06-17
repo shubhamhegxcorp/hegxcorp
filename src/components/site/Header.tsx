@@ -16,6 +16,7 @@ import {
   PenLine,
   Palette,
   Sparkles,
+  TrendingUp,
   Image as ImageIcon,
   ArrowRight,
   Check,
@@ -432,6 +433,14 @@ export function Header() {
             >
               Connect With Us
               <ArrowRight className="h-4 w-4" />
+            </Link>
+
+            <Link
+              to="/free-growth-audit"
+              className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#FC9C44] text-white shadow-[0_4px_12px_-4px_rgba(252,156,68,0.5)]"
+              aria-label="Get Free Growth Audit"
+            >
+              <TrendingUp className="h-4 w-4" />
             </Link>
 
             {/* Mobile hamburger */}

@@ -205,7 +205,7 @@ export function Footer() {
 
         {/* ── Bottom bar ── */}
         <div className="border-t border-white/[0.07]">
-          <div className="mx-auto max-w-[1280px] px-6 lg:px-10 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="mx-auto max-w-[1280px] px-6 lg:px-10 pt-4 pb-28 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p
               className="text-[11px] text-white/30 tracking-wide"
               style={{ fontFamily: "'Inter', sans-serif" }}

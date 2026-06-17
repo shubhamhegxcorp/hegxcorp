@@ -6,11 +6,7 @@ import { MagneticButton } from "@/components/site/PremiumInteractions";
 export function FinalCTA() {
   return (
     <section
-      className="relative bg-[#1D2742] overflow-hidden grain-overlay"
-      style={{
-        paddingTop: "clamp(40px, 4vw, 64px)",
-        paddingBottom: "clamp(36px, 4vw, 56px)",
-      }}
+      className="relative bg-[#1D2742] overflow-hidden grain-overlay pt-10 pb-28 md:pt-12 md:pb-12 lg:pt-16 lg:pb-14"
     >
       {/* Subtle animated background glow — absolutely positioned, does not affect section height */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.18] select-none overflow-hidden">

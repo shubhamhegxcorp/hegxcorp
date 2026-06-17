@@ -125,7 +125,7 @@ function ContactPage() {
                 <div className="space-y-6">
                   {/* Hotline */}
                   <a
-                    href="+91 836 920 7836"
+                    href="tel:+918369207836"
                     className="group flex gap-4 items-start cursor-pointer w-fit transition-transform duration-300 ease-out hover:translate-x-1"
                   >
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FFF4E8] text-[#FC9C44] group-hover:bg-[#FC9C44] group-hover:text-white transition-all duration-300">

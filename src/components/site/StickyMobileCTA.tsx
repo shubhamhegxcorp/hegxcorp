@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, TrendingUp } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 export function StickyMobileCTA() {
@@ -33,7 +33,7 @@ export function StickyMobileCTA() {
           <div className="flex items-center justify-between gap-3 rounded-2xl border border-[#EAEAEA] bg-white/95 p-3.5 shadow-[0_12px_30px_-8px_rgba(29,39,66,0.2)] backdrop-blur-md">
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#FFF4E8] text-[#FC9C44]">
-                <Sparkles className="h-4 w-4" />
+                <TrendingUp className="h-4 w-4" />
               </span>
               <div className="flex flex-col">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-[#FC9C44]">

@@ -86,91 +86,98 @@ export function WhyHegxcorp() {
           custom={1}
           variants={fadeUp}
         >
-          {/* Table wrapper — rounded container with thin border */}
-          <div className="w-full overflow-x-auto rounded-2xl border border-[#EAEAEA] shadow-[0_2px_24px_-4px_rgba(0,0,0,0.06)]">
-            <table className="w-full min-w-[560px] border-collapse text-sm">
-              {/* Column headers */}
-              <thead>
-                <tr>
-                  <th
-                    className="w-1/2 px-7 py-5 text-left font-semibold text-[#6B7280] border-b border-[#EAEAEA] bg-[#FAFAF8]"
-                    style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "13px", letterSpacing: "0.02em" }}
-                  >
-                    Traditional Agency
-                  </th>
-                  <th
-                    className="w-1/2 px-7 py-5 text-left font-semibold border-b border-[#FC9C44]/30 bg-[#FFF4E8]"
-                    style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "13px", letterSpacing: "0.02em", color: "#c97a1e" }}
-                  >
-                    <span className="inline-flex items-center gap-2">
-                      <span
-                        className="inline-block h-2 w-2 rounded-full bg-[#FC9C44]"
-                        aria-hidden="true"
-                      />
-                      Hegxcorp
-                    </span>
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {rows.map((row, i) => (
-                  <tr
-                    key={i}
-                    className="group transition-colors duration-200 hover:bg-[#FAFAF8]"
-                  >
-                    {/* Agency column */}
-                    <td
-                      className={`px-7 py-4 text-[#9CA3AF] ${i < rows.length - 1 ? "border-b border-[#EAEAEA]" : ""}`}
-                      style={{ fontFamily: "'Inter', sans-serif" }}
+          <div className="relative">
+            <div className="w-full overflow-x-auto rounded-2xl border border-[#EAEAEA] shadow-[0_2px_24px_-4px_rgba(0,0,0,0.06)]">
+              <table className="w-full min-w-[560px] border-collapse text-sm">
+                {/* Column headers */}
+                <thead>
+                  <tr>
+                    <th
+                      className="w-1/2 px-7 py-5 text-left font-semibold text-[#6B7280] border-b border-[#EAEAEA] bg-[#FAFAF8]"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "13px", letterSpacing: "0.02em" }}
                     >
-                      <span className="flex items-center gap-3">
-                        {/* Cross mark */}
-                        <svg
-                          className="shrink-0 h-4 w-4 text-[#D1D5DB]"
-                          viewBox="0 0 16 16"
-                          fill="none"
-                          aria-hidden="true"
-                        >
-                          <path
-                            d="M4 4l8 8M12 4l-8 8"
-                            stroke="currentColor"
-                            strokeWidth="1.6"
-                            strokeLinecap="round"
-                          />
-                        </svg>
-                        {row.agency}
-                      </span>
-                    </td>
-
-                    {/* Hegxcorp column — subtle orange tint */}
-                    <td
-                      className={`px-7 py-4 font-medium text-[#1D2742] bg-[#FFF4E8] ${i < rows.length - 1 ? "border-b border-[#FC9C44]/20" : ""}`}
-                      style={{ fontFamily: "'Inter', sans-serif" }}
+                      Traditional Agency
+                    </th>
+                    <th
+                      className="w-1/2 px-7 py-5 text-left font-semibold border-b border-[#FC9C44]/30 bg-[#FFF4E8]"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "13px", letterSpacing: "0.02em", color: "#c97a1e" }}
                     >
-                      <span className="flex items-center gap-3">
-                        {/* Check mark */}
-                        <svg
-                          className="shrink-0 h-4 w-4 text-[#FC9C44]"
-                          viewBox="0 0 16 16"
-                          fill="none"
+                      <span className="inline-flex items-center gap-2">
+                        <span
+                          className="inline-block h-2 w-2 rounded-full bg-[#FC9C44]"
                           aria-hidden="true"
-                        >
-                          <path
-                            d="M3 8l4 4 6-7"
-                            stroke="currentColor"
-                            strokeWidth="1.8"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        {row.hegx}
+                        />
+                        Hegxcorp
                       </span>
-                    </td>
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody>
+                  {rows.map((row, i) => (
+                    <tr
+                      key={i}
+                      className="group transition-colors duration-200 hover:bg-[#FAFAF8]"
+                    >
+                      {/* Agency column */}
+                      <td
+                        className={`px-7 py-4 text-[#9CA3AF] ${i < rows.length - 1 ? "border-b border-[#EAEAEA]" : ""}`}
+                        style={{ fontFamily: "'Inter', sans-serif" }}
+                      >
+                        <span className="flex items-center gap-3">
+                          {/* Cross mark */}
+                          <svg
+                            className="shrink-0 h-4 w-4 text-[#D1D5DB]"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M4 4l8 8M12 4l-8 8"
+                              stroke="currentColor"
+                              strokeWidth="1.6"
+                              strokeLinecap="round"
+                            />
+                          </svg>
+                          {row.agency}
+                        </span>
+                      </td>
+
+                      {/* Hegxcorp column — subtle orange tint */}
+                      <td
+                        className={`px-7 py-4 font-medium text-[#1D2742] bg-[#FFF4E8] ${i < rows.length - 1 ? "border-b border-[#FC9C44]/20" : ""}`}
+                        style={{ fontFamily: "'Inter', sans-serif" }}
+                      >
+                        <span className="flex items-center gap-3">
+                          {/* Check mark */}
+                          <svg
+                            className="shrink-0 h-4 w-4 text-[#FC9C44]"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M3 8l4 4 6-7"
+                              stroke="currentColor"
+                              strokeWidth="1.8"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          {row.hegx}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {/* Scroll hint gradient — right edge, mobile only */}
+            <div
+              aria-hidden="true"
+              className="md:hidden pointer-events-none absolute right-0 top-0 bottom-0 w-10 rounded-r-2xl"
+              style={{ background: "linear-gradient(to left, white 0%, transparent 100%)" }}
+            />
           </div>
         </motion.div>
 
