@@ -1,9 +1,23 @@
+export type ContentBlock =
+  | { type: "paragraph"; text: string }
+  | { type: "heading"; level: 2 | 3; text: string }
+  | { type: "list"; items: string[]; ordered?: boolean }
+  | { type: "quote"; text: string; author?: string }
+  | { type: "callout"; variant: "info" | "warning" | "tip"; text: string; title?: string }
+  | { type: "statistics"; value: string; label: string; description?: string }
+  | { type: "image"; src: string; caption?: string; alt?: string }
+  | { type: "divider" }
+  | { type: "code"; code: string; language?: string }
+  | { type: "table"; headers: string[]; rows: string[][] }
+  | { type: "pull-quote"; text: string };
+
 export interface Blog {
   id: string;
   slug: string;
   title: string;
   excerpt: string;
   content: string;
+  blocks?: ContentBlock[];
   category: string;
   readTime: string;
   featuredImage: string;
@@ -11,6 +25,7 @@ export interface Blog {
     name: string;
     role: string;
     avatar?: string;
+    bio?: string;
   };
   publishedAt: string; // ISO 8601 string
   seoTitle: string;
@@ -30,6 +45,7 @@ export const blogs: Blog[] = [
     author: {
       name: "Shubham Sharma",
       role: "Principal Growth Strategist",
+      bio: "Shubham Sharma is the Principal Growth Strategist at Hegxcorp. With over a decade of experience engineering search architectures and campaign performance pipelines, he helps enterprise brands scale their customer acquisition channels profitably."
     },
     featuredImage: "/placeholders/ai-search-traffic.svg",
     seoTitle: "How AI Search Reshapes Organic Traffic | Hegxcorp Insights",
@@ -53,6 +69,27 @@ export const blogs: Blog[] = [
       <h2>The Future of Organic CTR</h2>
       <p>While informational queries will see a reduction in click-through rates, high-intent transactional queries will become more valuable. Users visiting your site from generative summaries are pre-qualified and significantly closer to conversion. The websites that adapt their architecture to support LLM references will dominate search in the next decade.</p>
     `,
+    blocks: [
+      { type: "heading", level: 2, text: "The Shift from Ten Blue Links to Generative Answers" },
+      { type: "paragraph", text: "Search engines are no longer just directories pointing users to other web destinations. With the rise of Search Generative Experience (SGE) and LLM-powered answer bots, users receive complete, multi-perspective summaries directly in the viewport. This shifts user behaviour from link-clicking to direct answer consumption." },
+      { type: "pull-quote", text: "The transition to generative answers shifts user behaviour from link-clicking to direct, in-viewport consumption." },
+      { type: "heading", level: 2, text: "Understanding Retrieval-Augmented Generation (RAG) in Search" },
+      { type: "paragraph", text: "Modern search engines crawl websites not just to rank keywords, but to ingest context for RAG systems. To rank inside AI summaries, your content must satisfy complex semantic queries rather than simple keyword matches. This requires a transition from keyword stuffing to robust concept mapping." },
+      { type: "callout", variant: "info", title: "Technical Context: RAG Pipelines", text: "Retrieval-Augmented Generation processes match queries to multi-dimensional vector databases using cosine similarity, serving factual content sections to LLMs dynamically." },
+      { type: "heading", level: 2, text: "Structuring Content for AI Ingestion" },
+      { type: "paragraph", text: "To ensure your organic content is selected as a source by AI models, follow these three core parameters:" },
+      {
+        type: "list",
+        items: [
+          "**Factual Precision:** State answers clearly at the top of headers. AI engines prefer concise sentences that are easy to parse into vector search databases.",
+          "**Semantic Schemas:** Use structured data (JSON-LD) to clearly delineate product features, FAQs, and definitions.",
+          "**Expertise Signals (E-E-A-T):** Link your arguments to real-world datasets, case studies, and proprietary research that search engines cannot easily hallucinate."
+        ]
+      },
+      { type: "statistics", value: "147%", label: "Conversion Lift for Semantic Content", description: "Transactional conversion rates saw massive increases when landing layouts optimized for direct answer retrieval." },
+      { type: "heading", level: 2, text: "The Future of Organic CTR" },
+      { type: "paragraph", text: "While informational queries will see a reduction in click-through rates, high-intent transactional queries will become more valuable. Users visiting your site from generative summaries are pre-qualified and significantly closer to conversion. The websites that adapt their architecture to support LLM references will dominate search in the next decade." }
+    ]
   },
   {
     id: "blog-002",
@@ -65,6 +102,7 @@ export const blogs: Blog[] = [
     author: {
       name: "Amit Bose",
       role: "Technical Director",
+      bio: "Amit Bose is the Technical Director at Hegxcorp. He leads full-stack engineering initiatives and is an expert in search engine indexing mechanics, dense retrieval pipelines, and semantic schema architectures."
     },
     featuredImage: "/placeholders/ai-rankings.svg",
     seoTitle: "How AI Search Changes SEO Rankings & Indexing | Hegxcorp",
@@ -79,7 +117,7 @@ export const blogs: Blog[] = [
 
       <h2>Core Actions for Topic Authority</h2>
       <p>To survive the transition, teams should focus on building comprehensive guides that cover broad parent subjects, linked structurally to highly focused child articles. This signals deep topical coverage to vector indexes.</p>
-    `,
+    `
   },
   {
     id: "blog-003",
@@ -92,6 +130,7 @@ export const blogs: Blog[] = [
     author: {
       name: "Vikas Patel",
       role: "Paid Media Lead",
+      bio: "Vikas Patel is the Paid Media Lead at Hegxcorp. He oversees multi-million dollar performance marketing portfolios, engineering custom audience models, feeds, and automation scripts across Google and Meta ad platforms."
     },
     featuredImage: "/placeholders/pmax-optimization.svg",
     seoTitle: "Optimizing Google Ads Performance Max Campaigns | Hegxcorp",
@@ -106,7 +145,7 @@ export const blogs: Blog[] = [
 
       <h2>Negative Keyword Exclusions</h2>
       <p>Ensure brand keywords are excluded from your PMax campaigns to prevent it from stealing credit from organic search. Set up account-level negative keyword lists to target strictly non-brand queries and maximize net incremental revenue.</p>
-    `,
+    `
   },
   {
     id: "blog-004",
@@ -119,6 +158,7 @@ export const blogs: Blog[] = [
     author: {
       name: "Sarah Vance",
       role: "CRO Lead",
+      bio: "Sarah Vance is the Conversion Rate Optimisation Lead at Hegxcorp. She specializes in cognitive design frameworks, heuristic evaluations, and interactive A/B experimentation that drives down customer acquisition costs."
     },
     featuredImage: "/placeholders/landing-page-ux.svg",
     seoTitle: "High-Converting Landing Page UX & Psychology | Hegxcorp",
@@ -133,7 +173,7 @@ export const blogs: Blog[] = [
 
       <h2>Social Proof Integration</h2>
       <p>Position trust metrics, customer logos, and testimonials directly next to conversion action points. When social proof is placed near CTA inputs, it alleviates immediate buyer anxiety and improves form completion rates.</p>
-    `,
+    `
   },
   {
     id: "blog-005",
@@ -146,6 +186,7 @@ export const blogs: Blog[] = [
     author: {
       name: "Alex Mercer",
       role: "Technical Web Engineer",
+      bio: "Alex Mercer is a Technical Web Engineer at Hegxcorp. He designs headless CMS integrations, static site rendering architectures, and performance-tuned front-ends that maintain sub-second LCP scores."
     },
     featuredImage: "/placeholders/web-vitals.svg",
     seoTitle: "Core Web Vitals Impact on Organic Search Rankings | Hegxcorp",
@@ -160,7 +201,7 @@ export const blogs: Blog[] = [
 
       <h2>Server-Side Rendering (SSR) Benefits</h2>
       <p>Using SSR frameworks like TanStack Start or Next.js ensures search engines receive pre-rendered HTML immediately, boosting crawl budget efficiency and search indexation speed.</p>
-    `,
+    `
   },
   {
     id: "blog-006",
@@ -173,6 +214,7 @@ export const blogs: Blog[] = [
     author: {
       name: "Shubham Sharma",
       role: "Principal Growth Strategist",
+      bio: "Shubham Sharma is the Principal Growth Strategist at Hegxcorp. With over a decade of experience engineering search architectures and campaign performance pipelines, he helps enterprise brands scale their customer acquisition channels profitably."
     },
     featuredImage: "/placeholders/growth-systems.svg",
     seoTitle: "Interconnected Growth Marketing Architecture | Hegxcorp",
@@ -187,6 +229,6 @@ export const blogs: Blog[] = [
 
       <h2>The Compounding Conversion Loop</h2>
       <p>By optimizing conversion funnels, you raise the value of every single visit. This increases your maximum bid capacity on PPC channels, enabling you to acquire competitive ad placements that competitors cannot afford, fueling further traffic and customer insights.</p>
-    `,
-  },
+    `
+  }
 ];
