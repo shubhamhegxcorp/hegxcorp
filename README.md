@@ -482,4 +482,6 @@ Move from "beautiful website" to "content platform architecture".
 
 Forwarding to the backend team to work on it further 
 Backend architecture and fraemwrok layout has been made
-letter we will introduced SQL Database integration, Authentication roles Admin/Editor and a Browser based Admin Dashboard Allowing 
+letter we will introduced SQL Database integration, Authentication roles Admin/Editor and a Browser based Admin Dashboard Allowing complete access to create/edit/publish and manage blogs and case studiesto 
+
+Temporary Building On Wordpress Using Rest API for Authentication and fetch data from wordporess api for blogs and case studies
