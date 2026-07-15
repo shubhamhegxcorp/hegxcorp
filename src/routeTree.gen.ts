@@ -9,20 +9,41 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicesRouteImport } from './routes/services'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as IndustriesRouteImport } from './routes/industries'
 import { Route as FreeGrowthAuditRouteImport } from './routes/free-growth-audit'
+import { Route as CookiePolicyRouteImport } from './routes/cookie-policy'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CaseStudiesRouteImport } from './routes/case-studies'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CaseStudiesIndexRouteImport } from './routes/case-studies.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as ServiceWordpressRouteImport } from './routes/service.wordpress'
+import { Route as ServiceWebDevRouteImport } from './routes/service.web-dev'
+import { Route as ServiceWebAppRouteImport } from './routes/service.web-app'
+import { Route as ServiceUiUxDesignRouteImport } from './routes/service.ui-ux-design'
+import { Route as ServiceSocialMedRouteImport } from './routes/service.social-med'
+import { Route as ServiceSeoRouteImport } from './routes/service.seo'
+import { Route as ServicePpcRouteImport } from './routes/service.ppc'
+import { Route as ServiceGraphicDesignRouteImport } from './routes/service.graphic-design'
+import { Route as ServiceECommRouteImport } from './routes/service.e-comm'
+import { Route as ServiceContentMarketingRouteImport } from './routes/service.content-marketing'
+import { Route as ServiceBrandingRouteImport } from './routes/service.branding'
 import { Route as CaseStudiesSlugRouteImport } from './routes/case-studies.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as ApiGrowthAuditRouteImport } from './routes/api.growth-audit'
 
+const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -33,6 +54,11 @@ const ServicesRoute = ServicesRouteImport.update({
   path: '/services',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndustriesRoute = IndustriesRouteImport.update({
   id: '/industries',
   path: '/industries',
@@ -41,6 +67,11 @@ const IndustriesRoute = IndustriesRouteImport.update({
 const FreeGrowthAuditRoute = FreeGrowthAuditRouteImport.update({
   id: '/free-growth-audit',
   path: '/free-growth-audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiePolicyRoute = CookiePolicyRouteImport.update({
+  id: '/cookie-policy',
+  path: '/cookie-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -56,6 +87,11 @@ const CaseStudiesRoute = CaseStudiesRouteImport.update({
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -78,6 +114,61 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/',
   getParentRoute: () => BlogRoute,
 } as any)
+const ServiceWordpressRoute = ServiceWordpressRouteImport.update({
+  id: '/service/wordpress',
+  path: '/service/wordpress',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiceWebDevRoute = ServiceWebDevRouteImport.update({
+  id: '/service/web-dev',
+  path: '/service/web-dev',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiceWebAppRoute = ServiceWebAppRouteImport.update({
+  id: '/service/web-app',
+  path: '/service/web-app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiceUiUxDesignRoute = ServiceUiUxDesignRouteImport.update({
+  id: '/service/ui-ux-design',
+  path: '/service/ui-ux-design',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiceSocialMedRoute = ServiceSocialMedRouteImport.update({
+  id: '/service/social-med',
+  path: '/service/social-med',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiceSeoRoute = ServiceSeoRouteImport.update({
+  id: '/service/seo',
+  path: '/service/seo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServicePpcRoute = ServicePpcRouteImport.update({
+  id: '/service/ppc',
+  path: '/service/ppc',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiceGraphicDesignRoute = ServiceGraphicDesignRouteImport.update({
+  id: '/service/graphic-design',
+  path: '/service/graphic-design',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiceECommRoute = ServiceECommRouteImport.update({
+  id: '/service/e-comm',
+  path: '/service/e-comm',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiceContentMarketingRoute = ServiceContentMarketingRouteImport.update({
+  id: '/service/content-marketing',
+  path: '/service/content-marketing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ServiceBrandingRoute = ServiceBrandingRouteImport.update({
+  id: '/service/branding',
+  path: '/service/branding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CaseStudiesSlugRoute = CaseStudiesSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -88,32 +179,69 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => BlogRoute,
 } as any)
+const ApiGrowthAuditRoute = ApiGrowthAuditRouteImport.update({
+  id: '/api/growth-audit',
+  path: '/api/growth-audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/blog': typeof BlogRouteWithChildren
   '/case-studies': typeof CaseStudiesRouteWithChildren
   '/contact': typeof ContactRoute
+  '/cookie-policy': typeof CookiePolicyRoute
   '/free-growth-audit': typeof FreeGrowthAuditRoute
   '/industries': typeof IndustriesRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
+  '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
+  '/service/branding': typeof ServiceBrandingRoute
+  '/service/content-marketing': typeof ServiceContentMarketingRoute
+  '/service/e-comm': typeof ServiceECommRoute
+  '/service/graphic-design': typeof ServiceGraphicDesignRoute
+  '/service/ppc': typeof ServicePpcRoute
+  '/service/seo': typeof ServiceSeoRoute
+  '/service/social-med': typeof ServiceSocialMedRoute
+  '/service/ui-ux-design': typeof ServiceUiUxDesignRoute
+  '/service/web-app': typeof ServiceWebAppRoute
+  '/service/web-dev': typeof ServiceWebDevRoute
+  '/service/wordpress': typeof ServiceWordpressRoute
   '/blog/': typeof BlogIndexRoute
   '/case-studies/': typeof CaseStudiesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
+  '/cookie-policy': typeof CookiePolicyRoute
   '/free-growth-audit': typeof FreeGrowthAuditRoute
   '/industries': typeof IndustriesRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
+  '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
+  '/service/branding': typeof ServiceBrandingRoute
+  '/service/content-marketing': typeof ServiceContentMarketingRoute
+  '/service/e-comm': typeof ServiceECommRoute
+  '/service/graphic-design': typeof ServiceGraphicDesignRoute
+  '/service/ppc': typeof ServicePpcRoute
+  '/service/seo': typeof ServiceSeoRoute
+  '/service/social-med': typeof ServiceSocialMedRoute
+  '/service/ui-ux-design': typeof ServiceUiUxDesignRoute
+  '/service/web-app': typeof ServiceWebAppRoute
+  '/service/web-dev': typeof ServiceWebDevRoute
+  '/service/wordpress': typeof ServiceWordpressRoute
   '/blog': typeof BlogIndexRoute
   '/case-studies': typeof CaseStudiesIndexRoute
 }
@@ -121,15 +249,31 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin': typeof AdminRoute
   '/blog': typeof BlogRouteWithChildren
   '/case-studies': typeof CaseStudiesRouteWithChildren
   '/contact': typeof ContactRoute
+  '/cookie-policy': typeof CookiePolicyRoute
   '/free-growth-audit': typeof FreeGrowthAuditRoute
   '/industries': typeof IndustriesRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
+  '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
+  '/service/branding': typeof ServiceBrandingRoute
+  '/service/content-marketing': typeof ServiceContentMarketingRoute
+  '/service/e-comm': typeof ServiceECommRoute
+  '/service/graphic-design': typeof ServiceGraphicDesignRoute
+  '/service/ppc': typeof ServicePpcRoute
+  '/service/seo': typeof ServiceSeoRoute
+  '/service/social-med': typeof ServiceSocialMedRoute
+  '/service/ui-ux-design': typeof ServiceUiUxDesignRoute
+  '/service/web-app': typeof ServiceWebAppRoute
+  '/service/web-dev': typeof ServiceWebDevRoute
+  '/service/wordpress': typeof ServiceWordpressRoute
   '/blog/': typeof BlogIndexRoute
   '/case-studies/': typeof CaseStudiesIndexRoute
 }
@@ -138,43 +282,91 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/admin'
     | '/blog'
     | '/case-studies'
     | '/contact'
+    | '/cookie-policy'
     | '/free-growth-audit'
     | '/industries'
+    | '/privacy-policy'
     | '/services'
     | '/sitemap.xml'
+    | '/terms-of-service'
+    | '/api/growth-audit'
     | '/blog/$slug'
     | '/case-studies/$slug'
+    | '/service/branding'
+    | '/service/content-marketing'
+    | '/service/e-comm'
+    | '/service/graphic-design'
+    | '/service/ppc'
+    | '/service/seo'
+    | '/service/social-med'
+    | '/service/ui-ux-design'
+    | '/service/web-app'
+    | '/service/web-dev'
+    | '/service/wordpress'
     | '/blog/'
     | '/case-studies/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/admin'
     | '/contact'
+    | '/cookie-policy'
     | '/free-growth-audit'
     | '/industries'
+    | '/privacy-policy'
     | '/services'
     | '/sitemap.xml'
+    | '/terms-of-service'
+    | '/api/growth-audit'
     | '/blog/$slug'
     | '/case-studies/$slug'
+    | '/service/branding'
+    | '/service/content-marketing'
+    | '/service/e-comm'
+    | '/service/graphic-design'
+    | '/service/ppc'
+    | '/service/seo'
+    | '/service/social-med'
+    | '/service/ui-ux-design'
+    | '/service/web-app'
+    | '/service/web-dev'
+    | '/service/wordpress'
     | '/blog'
     | '/case-studies'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/admin'
     | '/blog'
     | '/case-studies'
     | '/contact'
+    | '/cookie-policy'
     | '/free-growth-audit'
     | '/industries'
+    | '/privacy-policy'
     | '/services'
     | '/sitemap.xml'
+    | '/terms-of-service'
+    | '/api/growth-audit'
     | '/blog/$slug'
     | '/case-studies/$slug'
+    | '/service/branding'
+    | '/service/content-marketing'
+    | '/service/e-comm'
+    | '/service/graphic-design'
+    | '/service/ppc'
+    | '/service/seo'
+    | '/service/social-med'
+    | '/service/ui-ux-design'
+    | '/service/web-app'
+    | '/service/web-dev'
+    | '/service/wordpress'
     | '/blog/'
     | '/case-studies/'
   fileRoutesById: FileRoutesById
@@ -182,17 +374,40 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminRoute: typeof AdminRoute
   BlogRoute: typeof BlogRouteWithChildren
   CaseStudiesRoute: typeof CaseStudiesRouteWithChildren
   ContactRoute: typeof ContactRoute
+  CookiePolicyRoute: typeof CookiePolicyRoute
   FreeGrowthAuditRoute: typeof FreeGrowthAuditRoute
   IndustriesRoute: typeof IndustriesRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsOfServiceRoute: typeof TermsOfServiceRoute
+  ApiGrowthAuditRoute: typeof ApiGrowthAuditRoute
+  ServiceBrandingRoute: typeof ServiceBrandingRoute
+  ServiceContentMarketingRoute: typeof ServiceContentMarketingRoute
+  ServiceECommRoute: typeof ServiceECommRoute
+  ServiceGraphicDesignRoute: typeof ServiceGraphicDesignRoute
+  ServicePpcRoute: typeof ServicePpcRoute
+  ServiceSeoRoute: typeof ServiceSeoRoute
+  ServiceSocialMedRoute: typeof ServiceSocialMedRoute
+  ServiceUiUxDesignRoute: typeof ServiceUiUxDesignRoute
+  ServiceWebAppRoute: typeof ServiceWebAppRoute
+  ServiceWebDevRoute: typeof ServiceWebDevRoute
+  ServiceWordpressRoute: typeof ServiceWordpressRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms-of-service': {
+      id: '/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof TermsOfServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -207,6 +422,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/industries': {
       id: '/industries'
       path: '/industries'
@@ -219,6 +441,13 @@ declare module '@tanstack/react-router' {
       path: '/free-growth-audit'
       fullPath: '/free-growth-audit'
       preLoaderRoute: typeof FreeGrowthAuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookie-policy': {
+      id: '/cookie-policy'
+      path: '/cookie-policy'
+      fullPath: '/cookie-policy'
+      preLoaderRoute: typeof CookiePolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -240,6 +469,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog'
       preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -270,6 +506,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/service/wordpress': {
+      id: '/service/wordpress'
+      path: '/service/wordpress'
+      fullPath: '/service/wordpress'
+      preLoaderRoute: typeof ServiceWordpressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/service/web-dev': {
+      id: '/service/web-dev'
+      path: '/service/web-dev'
+      fullPath: '/service/web-dev'
+      preLoaderRoute: typeof ServiceWebDevRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/service/web-app': {
+      id: '/service/web-app'
+      path: '/service/web-app'
+      fullPath: '/service/web-app'
+      preLoaderRoute: typeof ServiceWebAppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/service/ui-ux-design': {
+      id: '/service/ui-ux-design'
+      path: '/service/ui-ux-design'
+      fullPath: '/service/ui-ux-design'
+      preLoaderRoute: typeof ServiceUiUxDesignRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/service/social-med': {
+      id: '/service/social-med'
+      path: '/service/social-med'
+      fullPath: '/service/social-med'
+      preLoaderRoute: typeof ServiceSocialMedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/service/seo': {
+      id: '/service/seo'
+      path: '/service/seo'
+      fullPath: '/service/seo'
+      preLoaderRoute: typeof ServiceSeoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/service/ppc': {
+      id: '/service/ppc'
+      path: '/service/ppc'
+      fullPath: '/service/ppc'
+      preLoaderRoute: typeof ServicePpcRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/service/graphic-design': {
+      id: '/service/graphic-design'
+      path: '/service/graphic-design'
+      fullPath: '/service/graphic-design'
+      preLoaderRoute: typeof ServiceGraphicDesignRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/service/e-comm': {
+      id: '/service/e-comm'
+      path: '/service/e-comm'
+      fullPath: '/service/e-comm'
+      preLoaderRoute: typeof ServiceECommRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/service/content-marketing': {
+      id: '/service/content-marketing'
+      path: '/service/content-marketing'
+      fullPath: '/service/content-marketing'
+      preLoaderRoute: typeof ServiceContentMarketingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/service/branding': {
+      id: '/service/branding'
+      path: '/service/branding'
+      fullPath: '/service/branding'
+      preLoaderRoute: typeof ServiceBrandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/case-studies/$slug': {
       id: '/case-studies/$slug'
       path: '/$slug'
@@ -283,6 +596,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof BlogRoute
+    }
+    '/api/growth-audit': {
+      id: '/api/growth-audit'
+      path: '/api/growth-audit'
+      fullPath: '/api/growth-audit'
+      preLoaderRoute: typeof ApiGrowthAuditRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -316,13 +636,29 @@ const CaseStudiesRouteWithChildren = CaseStudiesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminRoute: AdminRoute,
   BlogRoute: BlogRouteWithChildren,
   CaseStudiesRoute: CaseStudiesRouteWithChildren,
   ContactRoute: ContactRoute,
+  CookiePolicyRoute: CookiePolicyRoute,
   FreeGrowthAuditRoute: FreeGrowthAuditRoute,
   IndustriesRoute: IndustriesRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsOfServiceRoute: TermsOfServiceRoute,
+  ApiGrowthAuditRoute: ApiGrowthAuditRoute,
+  ServiceBrandingRoute: ServiceBrandingRoute,
+  ServiceContentMarketingRoute: ServiceContentMarketingRoute,
+  ServiceECommRoute: ServiceECommRoute,
+  ServiceGraphicDesignRoute: ServiceGraphicDesignRoute,
+  ServicePpcRoute: ServicePpcRoute,
+  ServiceSeoRoute: ServiceSeoRoute,
+  ServiceSocialMedRoute: ServiceSocialMedRoute,
+  ServiceUiUxDesignRoute: ServiceUiUxDesignRoute,
+  ServiceWebAppRoute: ServiceWebAppRoute,
+  ServiceWebDevRoute: ServiceWebDevRoute,
+  ServiceWordpressRoute: ServiceWordpressRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

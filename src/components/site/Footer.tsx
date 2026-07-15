@@ -1,15 +1,15 @@
 import { Link } from "@tanstack/react-router";
 import logoAsset from "@/assets/cropped-hegxcorp-logo-new-web.webp";
-import { Linkedin, Twitter, Instagram, Facebook, Youtube, ArrowRight } from "lucide-react";
+import { Linkedin, Twitter, Instagram, Facebook, ArrowRight } from "lucide-react";
 
 const footerLinks = {
   Services: [
-    { label: "Search Engine Optimisation", to: "/services" as const },
-    { label: "Paid Advertising (PPC)", to: "/services" as const },
-    { label: "Web Development", to: "/services" as const },
-    { label: "Social Media Marketing", to: "/services" as const },
-    { label: "Branding & Design", to: "/services" as const },
-    { label: "Conversion Optimisation", to: "/services" as const },
+    { label: "Search Engine Optimisation", to: "/service/seo" as const },
+    { label: "Paid Advertising (PPC)", to: "/service/ppc" as const },
+    { label: "Web Development", to: "/service/web-dev" as const },
+    { label: "Social Media Marketing", to: "/service/social-med" as const },
+    { label: "Branding & Design", to: "/service/branding" as const },
+    { label: "Conversion Optimisation", to: "/service/ui-ux-design" as const },
   ],
   Company: [
     { label: "About Us", to: "/about" as const },
@@ -36,7 +36,6 @@ const socialLinks = [
 export function Footer() {
   return (
     <footer className="bg-[#1D2742] relative overflow-hidden grain-overlay">
-
       {/*
         ── Watermark —
         Positioned bottom-centre, sized so it sits squarely behind the
@@ -100,7 +99,6 @@ export function Footer() {
 
       {/* ── All content: sits above watermark and glow ── */}
       <div style={{ position: "relative", zIndex: 1 }}>
-
         {/*
           Top separator — very subtle, distinguishes footer from CTA
           while maintaining the shared dark navy surface.
@@ -116,7 +114,6 @@ export function Footer() {
           }}
         >
           <div className="grid lg:grid-cols-[1.5fr_1fr_1fr_1fr] gap-x-10 gap-y-10 items-start">
-
             {/* ── Brand column ── */}
             <div className="flex flex-col gap-5">
               <img
@@ -213,20 +210,23 @@ export function Footer() {
               © {new Date().getFullYear()} Hegxcorp. All rights reserved.
             </p>
             <div className="flex items-center gap-6">
-              {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((l) => (
-                <a
-                  key={l}
-                  href="#"
+              {[
+                { label: "Privacy Policy", to: "/privacy-policy" as const },
+                { label: "Terms of Service", to: "/terms-of-service" as const },
+                { label: "Cookie Policy", to: "/cookie-policy" as const },
+              ].map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
                   className="text-[11px] text-white/30 hover:text-white/60 transition-colors duration-200 tracking-wide"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
-                  {l}
-                </a>
+                  {link.label}
+                </Link>
               ))}
             </div>
           </div>
         </div>
-
       </div>
     </footer>
   );

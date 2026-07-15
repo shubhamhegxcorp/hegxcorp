@@ -40,48 +40,73 @@ const serviceColumns: { heading: string; items: ServiceItem[] }[] = [
         icon: Code2,
         title: "Web Development",
         desc: "Scalable, modern websites",
-        href: "/services",
+        href: "/service/web-dev",
       },
       {
         icon: Layers,
         title: "Custom Web Applications",
         desc: "Tailored platforms",
-        href: "/services",
+        href: "/service/web-app",
       },
       {
         icon: LayoutTemplate,
         title: "WordPress Development",
         desc: "Premium WP builds",
-        href: "/services",
+        href: "/service/wordpress",
       },
       {
         icon: ShoppingCart,
         title: "Ecommerce Development",
         desc: "Stores that convert",
-        href: "/services",
+        href: "/service/e-comm",
       },
     ],
   },
   {
     heading: "Marketing",
     items: [
-      { icon: Search, title: "SEO", desc: "Rank where it matters", href: "/services" },
+      { icon: Search, title: "SEO", desc: "Rank where it matters", href: "/service/seo" },
       {
         icon: MousePointerClick,
         title: "PPC",
         desc: "Performance ad campaigns",
-        href: "/services",
+        href: "/service/ppc",
       },
-      { icon: Share2, title: "Social Media Marketing", desc: "Engage & grow", href: "/services" },
-      { icon: PenLine, title: "Content Marketing", desc: "Stories that scale", href: "/services" },
+      {
+        icon: Share2,
+        title: "Social Media Marketing",
+        desc: "Engage & grow",
+        href: "/service/social-med",
+      },
+      {
+        icon: PenLine,
+        title: "Content Marketing",
+        desc: "Stories that scale",
+        href: "/service/content-marketing",
+      },
     ],
   },
   {
     heading: "Design",
     items: [
-      { icon: Palette, title: "UI/UX Design", desc: "Human-centered design", href: "/services" },
-      { icon: Sparkles, title: "Branding", desc: "Identities with intent", href: "/services" },
-      { icon: ImageIcon, title: "Graphic Design", desc: "Visual storytelling", href: "/services" },
+      {
+        icon: Palette,
+        title: "UI/UX Design",
+        desc: "Human-centered design",
+        href: "/service/ui-ux-design",
+      },
+      {
+        icon: Sparkles,
+        title: "Branding",
+        desc: "Identities with intent",
+        href: "/service/branding",
+      },
+      {
+        icon: ImageIcon,
+        title: "Graphic Design",
+        desc: "Visual storytelling",
+        href: "/service/graphic-design",
+      },
     ],
   },
 ];
@@ -404,8 +429,7 @@ export function Header() {
                     <a
                       key={c.code}
                       href={c.domain}
-                      onClick={(e) => {
-                        e.preventDefault();
+                      onClick={() => {
                         setActiveCountry(c.code);
                         setCountryOpen(false);
                       }}
@@ -545,9 +569,9 @@ export function Header() {
                   <a
                     key={c.code}
                     href={c.domain}
-                    onClick={(e) => {
-                      e.preventDefault();
+                    onClick={() => {
                       setActiveCountry(c.code);
+                      setMobileOpen(false);
                     }}
                     className={cn(
                       "flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-[#FFF4E8]",
@@ -575,10 +599,10 @@ export function Header() {
               <ArrowRight className="h-4 w-4" />
             </Link>
             <a
-              href="tel:+10000000000"
+              href="tel:+918369207836"
               className="flex items-center justify-center gap-2 text-sm text-muted-foreground"
             >
-              <Phone className="h-4 w-4" /> 24/7 Support: +1 (000) 000-0000
+              <Phone className="h-4 w-4" /> Support: +91 836 920 7836
             </a>
           </div>
         </aside>

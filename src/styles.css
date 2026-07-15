@@ -90,7 +90,7 @@
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
+  --muted-foreground: oklch(55.417% 0.04605 257.553);
   --accent: oklch(0.968 0.007 247.896);
   --accent-foreground: oklch(0.208 0.042 265.755);
   --destructive: oklch(0.577 0.245 27.325);
@@ -339,10 +339,307 @@
   transform: scale(1.05);
 }
 
+/* SEO service page interactions */
+.seo-split-reveal {
+  display: flex;
+  min-height: 520px;
+  overflow: hidden;
+  border: 1px solid rgba(100, 120, 170, 0.18);
+  border-radius: 16px;
+  background: #eaecf2;
+  box-shadow: 0 24px 70px -40px rgba(29, 39, 66, 0.45);
+}
+
+.seo-split-left {
+  width: 42%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 2.5rem;
+}
+
+.seo-split-eyebrow {
+  margin-bottom: 14px;
+  color: #fc9c44;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.seo-split-heading {
+  max-width: 380px;
+  margin-bottom: 14px;
+  color: #111c3a;
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 700;
+  line-height: 1.16;
+}
+
+.seo-split-body {
+  max-width: 360px;
+  margin-bottom: 2rem;
+  color: #5a6480;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.seo-service-list {
+  display: grid;
+  gap: 0;
+}
+
+.seo-service-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  border-bottom: 1px solid rgba(100, 120, 170, 0.18);
+  background: transparent;
+  padding: 12px 0;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: padding-left 250ms ease;
+}
+
+.seo-service-item:last-child {
+  border-bottom: 0;
+}
+
+.seo-service-item:hover,
+.seo-service-item.active {
+  padding-left: 6px;
+}
+
+.seo-service-icon {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: rgba(150, 165, 210, 0.18);
+  color: #4a5580;
+  transition:
+    background-color 250ms ease,
+    color 250ms ease;
+}
+
+.seo-service-item:hover .seo-service-icon,
+.seo-service-item.active .seo-service-icon {
+  background: #fc9c44;
+  color: #ffffff;
+}
+
+.seo-service-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.seo-service-name {
+  color: #1a2550;
+  font-size: 14px;
+  font-weight: 700;
+  transition: color 200ms ease;
+}
+
+.seo-service-tag {
+  color: #8a93b0;
+  font-size: 11px;
+}
+
+.seo-service-item:hover .seo-service-name,
+.seo-service-item.active .seo-service-name {
+  color: #fc9c44;
+}
+
+.seo-service-arrow {
+  margin-left: auto;
+  color: #c8cfe0;
+  transition:
+    color 200ms ease,
+    transform 200ms ease;
+}
+
+.seo-service-item:hover .seo-service-arrow,
+.seo-service-item.active .seo-service-arrow {
+  color: #fc9c44;
+  transform: translateX(3px);
+}
+
+.seo-split-right {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  background: #111c3a;
+}
+
+.seo-progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  height: 2px;
+  background: #fc9c44;
+  animation: seoProgress 3200ms linear both;
+}
+
+.seo-capability-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2.75rem;
+}
+
+.seo-slide-bg {
+  position: absolute;
+  inset: 0;
+  background-color: #1a2a50;
+  background-position: center;
+  background-size: cover;
+  background-blend-mode: multiply;
+  transform: scale(1.04);
+  transition: transform 600ms ease;
+}
+
+.seo-slide-bg.service-slide-bg {
+  background-color: #14224d;
+  background-blend-mode: soft-light, normal;
+  filter: saturate(1.14) contrast(1.04);
+}
+
+.seo-capability-slide:hover .seo-slide-bg {
+  transform: scale(1.08);
+}
+
+.seo-slide-tint {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, rgba(10, 15, 40, 0.94) 0%, rgba(10, 15, 40, 0.36) 70%, rgba(10, 15, 40, 0.22) 100%),
+    linear-gradient(120deg, rgba(252, 156, 68, 0.18), transparent 45%);
+}
+
+.seo-slide-tint.service-slide-tint {
+  background:
+    linear-gradient(to top, rgba(6, 19, 61, 0.82) 0%, rgba(6, 19, 61, 0.36) 50%, rgba(6, 19, 61, 0.06) 100%),
+    linear-gradient(120deg, rgba(252, 156, 68, 0.2), transparent 44%);
+}
+
+.seo-slide-content {
+  position: relative;
+  z-index: 2;
+  max-width: 420px;
+}
+
+.seo-slide-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  border-radius: 999px;
+  background: #fc9c44;
+  padding: 5px 13px;
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.seo-slide-title {
+  margin-bottom: 8px;
+  color: #ffffff;
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 700;
+  line-height: 1.08;
+}
+
+.seo-slide-hook {
+  margin-bottom: 16px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 14px;
+  font-style: italic;
+}
+
+.seo-slide-desc {
+  max-width: 390px;
+  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.seo-slide-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.seo-slide-pill {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 5px 12px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.seo-disclosure-answer {
+  color: #06133d;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.75;
+}
+
+@keyframes seoProgress {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
 @media (max-width: 640px) {
   .client-logo-img {
     height: 26px;
     max-width: 100px;
+  }
+
+  .seo-split-reveal {
+    display: block;
+    min-height: 0;
+  }
+
+  .seo-split-left {
+    width: 100%;
+    padding: 2rem 1.35rem;
+  }
+
+  .seo-split-body {
+    max-width: none;
+  }
+
+  .seo-split-right {
+    min-height: 420px;
+  }
+
+  .seo-capability-slide {
+    padding: 2rem 1.35rem;
+  }
+
+  .seo-disclosure-answer {
+    font-size: 0.98rem;
   }
 }
 

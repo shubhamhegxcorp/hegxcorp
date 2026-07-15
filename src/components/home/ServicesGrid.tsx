@@ -32,7 +32,10 @@ function SystemConnections() {
       {lines.map(([x1, y1, x2, y2], i) => (
         <line
           key={i}
-          x1={x1} y1={y1} x2={x2} y2={y2}
+          x1={x1}
+          y1={y1}
+          x2={x2}
+          y2={y2}
           stroke="#FC9C44"
           strokeWidth="1"
           opacity="0.08"
@@ -63,12 +66,14 @@ function SEOVisual() {
             initial={{ scaleY: 0 }}
             whileInView={{ scaleY: 1 }}
             viewport={{ once: true }}
-            transition={{
-              duration: 0.55,
-              delay: i * 0.05,
-              ease: [0.22, 1, 0.36, 1],
-              originY: "bottom",
-            } as never}
+            transition={
+              {
+                duration: 0.55,
+                delay: i * 0.05,
+                ease: [0.22, 1, 0.36, 1],
+                originY: "bottom",
+              } as never
+            }
           >
             <div
               className="w-full"
@@ -105,9 +110,7 @@ function SEOVisual() {
 
       {/* Proof point */}
       <div className="absolute -top-1 right-0 text-right">
-        <div className="text-[20px] font-bold text-[#FC9C44] leading-none font-mono">
-          +310%
-        </div>
+        <div className="text-[20px] font-bold text-[#FC9C44] leading-none font-mono">+310%</div>
         <div className="text-[8px] text-[#9CA3AF] font-mono">Organic Growth</div>
       </div>
     </div>
@@ -139,9 +142,7 @@ function PPCVisual() {
           { label: "Meta", pct: 52 },
         ].map((b) => (
           <div key={b.label} className="flex items-center gap-2.5">
-            <span className="text-[8px] text-[#C4C9D4] font-mono w-9 shrink-0">
-              {b.label}
-            </span>
+            <span className="text-[8px] text-[#C4C9D4] font-mono w-9 shrink-0">{b.label}</span>
             <div className="flex-1 h-1.5 rounded-full bg-[#F3F4F6] overflow-hidden">
               <motion.div
                 className="h-full rounded-full bg-[#FC9C44]"
@@ -186,9 +187,7 @@ function WebDevVisual() {
         <span className="text-[9px] text-emerald-600 font-mono font-medium">
           Deployment successful
         </span>
-        <span className="ml-auto text-[8px] text-[#C4C9D4] font-mono">
-          98 Lighthouse
-        </span>
+        <span className="ml-auto text-[8px] text-[#C4C9D4] font-mono">98 Lighthouse</span>
       </div>
     </div>
   );
@@ -211,9 +210,7 @@ function CROVisual() {
             </div>
           )}
           <div className="flex items-center gap-2.5">
-            <span className="text-[8px] font-mono text-[#9CA3AF] w-14 shrink-0">
-              {s.label}
-            </span>
+            <span className="text-[8px] font-mono text-[#9CA3AF] w-14 shrink-0">{s.label}</span>
             <div className="flex-1 h-3.5 rounded bg-[#F3F4F6] overflow-hidden">
               <motion.div
                 className="h-full rounded bg-gradient-to-r from-[#FC9C44] to-[#ffb880]"
@@ -232,9 +229,7 @@ function CROVisual() {
         </div>
       ))}
       <div className="text-right mt-0.5">
-        <span className="text-[10px] font-bold text-[#FC9C44] font-mono">
-          +184% Leads
-        </span>
+        <span className="text-[10px] font-bold text-[#FC9C44] font-mono">+184% Leads</span>
       </div>
     </div>
   );
@@ -287,19 +282,13 @@ function SMMVisual() {
           Audience Growth
         </div>
         <div className="text-right">
-          <div className="text-[20px] font-bold text-[#1D2742] leading-none font-mono">
-            +38%
-          </div>
+          <div className="text-[20px] font-bold text-[#1D2742] leading-none font-mono">+38%</div>
           <div className="text-[8px] text-[#9CA3AF] font-mono">Engagement</div>
         </div>
       </div>
 
       {/* Engagement curve */}
-      <svg
-        viewBox="0 0 200 44"
-        className="w-full h-10"
-        preserveAspectRatio="none"
-      >
+      <svg viewBox="0 0 200 44" className="w-full h-10" preserveAspectRatio="none">
         <defs>
           <linearGradient id="smm-g" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#E1306C" stopOpacity="0.15" />
@@ -354,7 +343,7 @@ const services = [
     slug: "SEO",
     title: "Search Engine Optimisation",
     desc: "A compounding growth asset. We engineer technical authority and content systems that make you the default answer in your market.",
-    href: "/services",
+    href: "/service/seo",
     url: "hegxcorp › seo-engine",
     Visual: SEOVisual,
   },
@@ -362,7 +351,7 @@ const services = [
     slug: "PPC",
     title: "Paid Advertising",
     desc: "Every campaign optimised toward revenue, not clicks. Google, Meta and programmatic — unified by one metric: ROAS.",
-    href: "/services",
+    href: "/service/ppc",
     url: "hegxcorp › paid-ads",
     Visual: PPCVisual,
   },
@@ -370,7 +359,7 @@ const services = [
     slug: "WEB",
     title: "Web Development",
     desc: "Sites engineered to load fast, rank high and convert. Performance and conversion architecture are baked in from line one.",
-    href: "/services",
+    href: "/service/web-dev",
     url: "hegxcorp › web-platform",
     Visual: WebDevVisual,
   },
@@ -386,7 +375,7 @@ const services = [
     slug: "BRAND",
     title: "Branding & Design",
     desc: "A brand system that makes premium positioning visible at every touchpoint — identity, type, colour and creative assets built to last.",
-    href: "/services",
+    href: "/service/branding",
     url: "hegxcorp › brand-system",
     Visual: BrandVisual,
   },
@@ -394,7 +383,7 @@ const services = [
     slug: "SMM",
     title: "Social Media Marketing",
     desc: "Audiences built with intent. Content systems that grow engaged communities and feed your wider growth funnel.",
-    href: "/services",
+    href: "/service/social-med",
     url: "hegxcorp › social-studio",
     Visual: SMMVisual,
   },
@@ -442,37 +431,32 @@ function ServiceCard({
       whileHover={{
         y: -5,
         borderColor: "rgba(252,156,68,0.45)",
-        boxShadow:
-          "0 0 0 1px rgba(252,156,68,0.12), 0 20px 40px -16px rgba(29,39,66,0.09)",
+        boxShadow: "0 0 0 1px rgba(252,156,68,0.12), 0 20px 40px -16px rgba(29,39,66,0.09)",
         transition: { duration: 0.2, ease: "easeOut" },
       }}
       className="group rounded-2xl border border-[#EAEAEA] bg-white overflow-hidden flex flex-col cursor-pointer"
     >
       <Link to={s.href} className="flex flex-col h-full">
-
         {/* Browser chrome = card top edge */}
         <div className="flex items-center gap-1.5 px-3.5 py-2.5 bg-[#FAFAF8] border-b border-[#EAEAEA] select-none shrink-0">
           <span className="h-2 w-2 rounded-full bg-[#FC9C44]/50" />
           <span className="h-2 w-2 rounded-full bg-[#E5E7EB]" />
           <span className="h-2 w-2 rounded-full bg-[#E5E7EB]" />
-          <span className="ml-2 text-[8px] text-[#C4C9D4] font-mono truncate flex-1">
-            {s.url}
-          </span>
+          <span className="ml-2 text-[8px] text-[#C4C9D4] font-mono truncate flex-1">{s.url}</span>
           <span className="h-1.5 w-1.5 rounded-full bg-[#EAEAEA] group-hover:bg-emerald-400 transition-colors duration-300 shrink-0" />
         </div>
 
         {/* Visual panel — taller for featured, compact for standard */}
         <div
-          className={`border-b border-[#F3F4F6] bg-white ${
-            isFeatured ? "px-6 pt-6 pb-5" : "px-4 pt-4 pb-3"
-          }`}
+          className={`border-b border-[#F3F4F6] bg-white ${isFeatured ? "px-6 pt-6 pb-5" : "px-4 pt-4 pb-3"
+            }`}
           style={{ minHeight: isFeatured ? "200px" : "140px" }}
         >
           <s.Visual />
         </div>
 
         {/* Text panel */}
-        <div className={`flex flex-col flex-1 gap-2 ${ isFeatured ? "p-5" : "p-4" }`}>
+        <div className={`flex flex-col flex-1 gap-2 ${isFeatured ? "p-5" : "p-4"}`}>
           <span
             className="text-[10px] font-bold tracking-[0.14em] text-[#FC9C44]"
             style={{ fontFamily: "'Inter', sans-serif" }}
@@ -491,9 +475,8 @@ function ServiceCard({
           </h3>
 
           <p
-            className={`text-[#6B7280] leading-relaxed flex-1 ${
-              isFeatured ? "text-[13px]" : "text-[12px] line-clamp-2"
-            }`}
+            className={`text-[#6B7280] leading-relaxed flex-1 ${isFeatured ? "text-[13px]" : "text-[12px] line-clamp-2"
+              }`}
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             {s.desc}
@@ -517,8 +500,7 @@ function ServiceCard({
 ───────────────────────────────────────────────────────────── */
 export function ServicesGrid() {
   const featured = services.slice(0, 2); // SEO + PPC
-  const standard = services.slice(2);    // WEB, CRO, BRAND, SMM
-
+  const standard = services.slice(2); // WEB, CRO, BRAND, SMM
   return (
     <section
       className="bg-[#FAFAF8] overflow-hidden"
@@ -528,13 +510,15 @@ export function ServicesGrid() {
       }}
     >
       <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-
         {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] }}
+          transition={{
+            duration: 0.6,
+            ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+          }}
           className="mb-14 flex flex-col md:flex-row md:items-end md:justify-between gap-6"
         >
           <SectionHeading
@@ -542,7 +526,11 @@ export function ServicesGrid() {
             heading="Services built for growth"
             description="Not six separate services. One integrated system where every capability strengthens the next."
           />
-          <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.2 }} className="shrink-0 mb-1">
+          <motion.div
+            whileHover={{ scale: 1.03 }}
+            transition={{ duration: 0.2 }}
+            className="shrink-0 mb-1"
+          >
             <Link
               to="/services"
               className="inline-flex items-center gap-2 text-sm font-semibold text-[#FC9C44] hover:gap-3 transition-all duration-200"
@@ -555,7 +543,6 @@ export function ServicesGrid() {
 
         {/* Grid wrapper with blueprint connectors behind */}
         <div className="relative flex flex-col gap-5">
-
           {/* Blueprint SVG — behind both rows, desktop only */}
           <div className="absolute inset-0 z-0 pointer-events-none hidden lg:block">
             <SystemConnections />
@@ -574,9 +561,7 @@ export function ServicesGrid() {
               <ServiceCard key={s.slug} s={s} i={i + 2} size="standard" />
             ))}
           </div>
-
         </div>
-
       </div>
     </section>
   );

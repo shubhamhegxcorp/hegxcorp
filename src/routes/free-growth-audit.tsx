@@ -20,6 +20,8 @@ import { Toaster, toast } from "sonner";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { submitGrowthAuditInquiry } from "@/lib/growth-audit-inquiries";
+
 export const Route = createFileRoute("/free-growth-audit")({
   head: () => ({
     meta: [
@@ -74,6 +76,7 @@ function FreeGrowthAuditPage() {
   const {
     register,
     handleSubmit,
+    reset,
     setValue,
     watch,
     trigger,
@@ -99,7 +102,7 @@ function FreeGrowthAuditPage() {
     if (isValid) {
       setStep(2);
     } else {
-      toast.error("Please correct the validation errors in Step 1 before continuing.");
+      toast.error("Please Fill  all value in fields .");
     }
   };
 
@@ -108,10 +111,15 @@ function FreeGrowthAuditPage() {
   };
 
   const onSubmit = async (data: AuditFormValues) => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log("Growth Audit submitted:", data);
-    toast.success("Audit request submitted successfully! We will analyze your site shortly.");
-    setIsSubmitted(true);
+    try {
+      await submitGrowthAuditInquiry({ data });
+      toast.success("Audit request submitted successfully! We will analyze your site shortly.");
+      setIsSubmitted(true);
+      reset();
+    } catch (error) {
+      console.error("Growth audit form failed:", error);
+      toast.error("We could not save your audit request. Please try again.");
+    }
   };
 
   return (
@@ -253,11 +261,10 @@ function FreeGrowthAuditPage() {
                             type="text"
                             placeholder="e.g. Priya Sharma"
                             {...register("name")}
-                            className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${
-                              errors.name
-                                ? "border-red-500 focus:border-red-500"
-                                : "border-[#EAEAEA] focus:border-[#FC9C44]"
-                            }`}
+                            className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${errors.name
+                              ? "border-red-500 focus:border-red-500"
+                              : "border-[#EAEAEA] focus:border-[#FC9C44]"
+                              }`}
                           />
                           {errors.name && (
                             <p className="text-xs text-red-500 font-medium">
@@ -276,11 +283,10 @@ function FreeGrowthAuditPage() {
                             type="email"
                             placeholder="e.g. priya@retailbrand.in"
                             {...register("email")}
-                            className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${
-                              errors.email
-                                ? "border-red-500 focus:border-red-500"
-                                : "border-[#EAEAEA] focus:border-[#FC9C44]"
-                            }`}
+                            className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${errors.email
+                              ? "border-red-500 focus:border-red-500"
+                              : "border-[#EAEAEA] focus:border-[#FC9C44]"
+                              }`}
                           />
                           {errors.email && (
                             <p className="text-xs text-red-500 font-medium">
@@ -299,11 +305,10 @@ function FreeGrowthAuditPage() {
                             type="text"
                             placeholder="e.g. retailbrand.in"
                             {...register("website")}
-                            className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${
-                              errors.website
-                                ? "border-red-500 focus:border-red-500"
-                                : "border-[#EAEAEA] focus:border-[#FC9C44]"
-                            }`}
+                            className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${errors.website
+                              ? "border-red-500 focus:border-red-500"
+                              : "border-[#EAEAEA] focus:border-[#FC9C44]"
+                              }`}
                           />
                           {errors.website && (
                             <p className="text-xs text-red-500 font-medium">
@@ -351,11 +356,10 @@ function FreeGrowthAuditPage() {
                                 onClick={() =>
                                   setValue("revenueRange", opt.value, { shouldValidate: true })
                                 }
-                                className={`rounded-xl border p-3.5 text-xs font-semibold text-center transition-all ${
-                                  selectedRevenue === opt.value
-                                    ? "bg-[#1D2742] border-[#1D2742] text-white shadow-sm"
-                                    : "bg-white border-[#EAEAEA] text-[#232323] hover:border-[#FC9C44]/40"
-                                }`}
+                                className={`rounded-xl border p-3.5 text-xs font-semibold text-center transition-all ${selectedRevenue === opt.value
+                                  ? "bg-[#1D2742] border-[#1D2742] text-white shadow-sm"
+                                  : "bg-white border-[#EAEAEA] text-[#232323] hover:border-[#FC9C44]/40"
+                                  }`}
                               >
                                 {opt.label}
                               </button>
@@ -381,11 +385,10 @@ function FreeGrowthAuditPage() {
                                 onClick={() =>
                                   setValue("goal", opt.value, { shouldValidate: true })
                                 }
-                                className={`w-full text-left rounded-xl border p-3.5 text-xs font-semibold flex items-center justify-between transition-all ${
-                                  selectedGoal === opt.value
-                                    ? "bg-[#1D2742] border-[#1D2742] text-white shadow-sm"
-                                    : "bg-white border-[#EAEAEA] text-[#232323] hover:border-[#FC9C44]/40"
-                                }`}
+                                className={`w-full text-left rounded-xl border p-3.5 text-xs font-semibold flex items-center justify-between transition-all ${selectedGoal === opt.value
+                                  ? "bg-[#1D2742] border-[#1D2742] text-white shadow-sm"
+                                  : "bg-white border-[#EAEAEA] text-[#232323] hover:border-[#FC9C44]/40"
+                                  }`}
                               >
                                 <span>{opt.label}</span>
                                 <Target

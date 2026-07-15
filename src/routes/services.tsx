@@ -1,229 +1,225 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Gauge,
+  ShieldCheck,
+  Smartphone,
+  Wrench,
+} from "lucide-react";
+
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { SectionHeading } from "@/components/site/SectionHeading";
-import {
-  Search,
-  MousePointerClick,
-  Code2,
-  Share2,
-  Palette,
-  TrendingUp,
-  ArrowRight,
-  Zap,
-  Target,
-  LineChart,
-} from "lucide-react";
-import { motion } from "framer-motion";
+import { ServiceDirectory } from "@/components/site/ServiceDirectory";
 
 export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
-      { title: "Enterprise Growth Consultancy Services | Hegxcorp" },
+      { title: "Our Services | Hegxcorp" },
       {
         name: "description",
         content:
-          "Explore Hegxcorp's premium digital growth services including enterprise SEO, paid media campaigns, custom web engineering, conversion optimization, and brand transformation.",
-      },
-      { property: "og:title", content: "Growth Consultancy Services | Hegxcorp" },
-      {
-        property: "og:description",
-        content:
-          "Partner with Hegxcorp to scale revenue through data-backed engineering and growth optimization.",
+          "Explore Hegxcorp services including website development, web application development, ecommerce development, WordPress development, SEO, digital marketing, UI/UX design, branding, and maintenance.",
       },
     ],
   }),
-  component: ServicesPage,
-} as never);
+  component: OurServicesPage,
+});
 
-const detailedServices = [
-  {
-    icon: Search,
-    title: "Search Engine Optimisation (SEO)",
-    desc: "Gain compounding organic visibility. We build robust technical foundations, editorial content strategies, and high-authority link architectures that ensure your business ranks where it matters most.",
-    deliverables: [
-      "Technical & Core Web Vitals Audits",
-      "Semantic Keyword Strategy",
-      "Editorial Content Development",
-      "High-Quality Digital PR & Backlinks",
-    ],
-  },
-  {
-    icon: MousePointerClick,
-    title: "Performance Advertising (PPC)",
-    desc: "ROAS-focused campaigns across search, social, and programmatic channels. We design, deploy, and continuously optimize ads to secure high-intent lead flow and maximize yield on ad spend.",
-    deliverables: [
-      "Google Search & Performance Max",
-      "Meta (Facebook & Instagram) Campaigns",
-      "LinkedIn Account-Based Marketing (ABM)",
-      "Creative Asset Testing & Scaling",
-    ],
-  },
-  {
-    icon: Code2,
-    title: "Enterprise Web Development",
-    desc: "Speed, security, and conversion are built into our DNA. We engineer scalable web platforms, customized web applications, and headless architectures designed to convert visitors into customers.",
-    deliverables: [
-      "Custom React & Next.js Platforms",
-      "Headless CMS Implementations",
-      "Conversion-Ready Wordpress Builds",
-      "Speed & Security Optimization",
-    ],
-  },
-  {
-    icon: Share2,
-    title: "Social Media Marketing",
-    desc: "Build authority and engage your audience directly. We create high-quality organic social assets and community-building strategies to convert brand followers into loyal brand advocates.",
-    deliverables: [
-      "B2B Thought Leadership Strategies",
-      "Creative Visual Storytelling",
-      "Community Moderation & Engagement",
-      "Influencer Outreach & Partnerships",
-    ],
-  },
-  {
-    icon: Palette,
-    title: "Branding & Identity Design",
-    desc: "Position your brand as the premium choice. We build cohesive brand identity systems, custom design languages, and digital brand guidelines designed to command market attention.",
-    deliverables: [
-      "Brand Strategy & Positioning",
-      "Visual Identity & Logo Systems",
-      "UX/UI Design Systems",
-      "Marketing Collateral & Guidelines",
-    ],
-  },
-  {
-    icon: TrendingUp,
-    title: "Conversion Optimization (CRO)",
-    desc: "Scale your revenue without increasing your traffic budget. We run scientific A/B tests, qualitative user recordings analysis, and copy reviews to remove conversion barriers across your funnel.",
-    deliverables: [
-      "User Session & Heatmap Analysis",
-      "Structured A/B & Multivariate Testing",
-      "Landing Page Copywriting & Re-design",
-      "Checkout Flow Optimization",
-    ],
-  },
+const benefits = [
+  "Business-focused digital strategy",
+  "Modern responsive design",
+  "Scalable frontend and backend systems",
+  "SEO-friendly page structure",
+  "Performance and speed optimisation",
+  "Secure development practices",
+  "Clear communication and support",
+  "Launch-ready testing and maintenance",
 ];
 
-function ServicesPage() {
+const process = [
+  "Discover business goals",
+  "Plan digital structure",
+  "Design user experience",
+  "Build and integrate",
+  "Test, launch, improve",
+];
+
+function OurServicesPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F7F8FB] text-[#06133D]">
       <Header />
 
-      {/* Hero Banner */}
-      <section className="relative overflow-hidden bg-[#FAFAF8] py-20 border-b border-[#EAEAEA]">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-10 relative z-10">
-          <div className="max-w-[760px] space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-[#FC9C44] shadow-sm">
-              <Zap className="h-3.5 w-3.5" />
-              Outcome-Based Solutions
+      <main>
+        <section className="bg-[#F7F8FB] px-6 pb-16 pt-32 lg:px-10">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
+              <div>
+                <p className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-[#FC9C44] shadow-sm">
+                  <Wrench className="h-4 w-4" />
+                  Our Services
+                </p>
+              </div>
+
+              <div>
+                <h1 className="max-w-5xl text-5xl font-black leading-[1.02] tracking-normal md:text-7xl">
+                  Digital services built for business growth
+                </h1>
+
+                <p className="mt-7 max-w-3xl text-lg leading-8 text-slate-600">
+                  From websites and web applications to ecommerce, WordPress,
+                  SEO, marketing, and maintenance, Hegxcorp helps businesses
+                  build a stronger digital presence.
+                </p>
+              </div>
             </div>
-            <h1
-              className="font-bold text-[#232323] leading-tight tracking-tight"
-              style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: "clamp(36px, 5vw, 60px)",
-              }}
-            >
-              Consulting capabilities built for enterprise scale
-            </h1>
-            <p
-              className="text-[#6B7280] leading-relaxed"
-              style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(16px, 1.25vw, 19px)" }}
-            >
-              We don't sell activities; we build outcomes. Every digital capability we deploy is
-              aligned to your company's leads, sales, and revenue pipeline.
-            </p>
-          </div>
-        </div>
-      </section>
 
-      {/* Services Grid List */}
-      <section className="py-24 bg-white">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-          <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
-            {detailedServices.map((s, idx) => (
-              <motion.div
-                key={s.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.5, delay: idx * 0.05 }}
-                className="space-y-6 flex flex-col justify-between p-8 rounded-2xl border border-[#EAEAEA] bg-[#FAFAF8] hover:border-[#FC9C44]/30 transition-all duration-300"
-              >
-                <div className="space-y-4">
-                  {/* Icon container */}
-                  <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-white border border-[#EAEAEA] text-[#1D2742]">
-                    <s.icon className="h-6 w-6 text-[#FC9C44]" />
-                  </span>
-                  <h2
-                    className="text-xl font-bold text-[#232323]"
-                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                  >
-                    {s.title}
-                  </h2>
-                  <p
-                    className="text-sm text-[#6B7280] leading-relaxed"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    {s.desc}
-                  </p>
-
-                  {/* Deliverables list */}
-                  <div className="pt-4 space-y-2">
-                    <span className="block text-[11px] font-bold uppercase tracking-wider text-[#FC9C44]">
-                      Core Focus Areas
-                    </span>
-                    <ul className="grid grid-cols-1 gap-2">
-                      {s.deliverables.map((item) => (
-                        <li
-                          key={item}
-                          className="flex items-center gap-2 text-xs text-[#232323]"
-                          style={{ fontFamily: "'Inter', sans-serif" }}
-                        >
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#EBB771]" />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
+            <div className="mt-14 grid gap-4 border-y border-slate-200 py-6 md:grid-cols-4">
+              {[
+                ["Websites", "Development"],
+                ["Apps", "Dashboards"],
+                ["Stores", "E-Commerce"],
+                ["Growth", "SEO & Marketing"],
+              ].map(([top, bottom]) => (
+                <div key={top} className="flex items-center gap-4">
+                  <span className="h-3 w-3 rounded-full bg-[#FC9C44]" />
+                  <div>
+                    <p className="text-lg font-black">{top}</p>
+                    <p className="text-sm font-semibold text-slate-500">
+                      {bottom}
+                    </p>
                   </div>
                 </div>
-
-                <div className="pt-6">
-                  <Link
-                    to="/free-growth-audit"
-                    className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#FC9C44] hover:gap-3 transition-all duration-200"
-                  >
-                    Discuss this capability <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </motion.div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Middle CTA row */}
-      <section className="bg-[#1D2742] py-20 text-white text-center">
-        <div className="mx-auto max-w-[800px] px-6 space-y-6">
-          <SectionHeading
-            align="center"
-            tagline="Not sure where to start?"
-            heading="Get a customized growth audit of your current channels"
-            className="text-white"
-          />
-          {/* Proactively align taglines / colors inside SectionHeading inside Navy blocks */}
-          <div className="pt-4">
+        <ServiceDirectory />
+
+        <section className="bg-[#06133D] px-6 py-24 text-white lg:px-10">
+          <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#FC9C44]">
+                Why Hegxcorp
+              </p>
+
+              <h2 className="mt-4 text-4xl font-black leading-tight md:text-6xl">
+                Practical digital systems, not repeated templates.
+              </h2>
+
+              <p className="mt-7 max-w-xl text-base leading-8 text-white/70">
+                We focus on building digital solutions that are useful,
+                scalable, fast, and easy to improve after launch.
+              </p>
+
+              <Link
+                to="/contact"
+                className="mt-9 inline-flex items-center gap-2 rounded-full bg-[#FC9C44] px-7 py-4 text-sm font-bold text-white transition hover:bg-[#e8872d]"
+              >
+                Discuss Your Project
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="grid gap-px overflow-hidden rounded-[32px] bg-white/15 sm:grid-cols-2">
+              {benefits.map((benefit) => (
+                <div key={benefit} className="bg-[#06133D] p-6">
+                  <CheckCircle2 className="mb-5 h-5 w-5 text-[#FC9C44]" />
+                  <p className="text-base font-bold leading-7 text-white/85">
+                    {benefit}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-white px-6 py-24 lg:px-10">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+              <div>
+                <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#FC9C44]">
+                  Our Process
+                </p>
+
+                <h2 className="mt-4 text-4xl font-black leading-tight md:text-5xl">
+                  From first discussion to launch.
+                </h2>
+              </div>
+
+              <div className="space-y-0">
+                {process.map((item, index) => (
+                  <div
+                    key={item}
+                    className="grid grid-cols-[70px_1fr] border-t border-slate-200 py-7 last:border-b"
+                  >
+                    <p className="text-sm font-black text-[#FC9C44]">
+                      0{index + 1}
+                    </p>
+
+                    <div className="flex items-center justify-between gap-6">
+                      <h3 className="text-2xl font-black">{item}</h3>
+                      <ArrowRight className="h-5 w-5 text-slate-300" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-20 grid gap-4 md:grid-cols-3">
+              <div className="border-t-4 border-[#FC9C44] bg-[#F7F8FB] p-8">
+                <Smartphone className="mb-6 h-8 w-8 text-[#FC9C44]" />
+                <h3 className="text-xl font-black">Responsive Experience</h3>
+                <p className="mt-4 text-sm leading-7 text-slate-500">
+                  Every digital solution is planned for smooth use across
+                  mobile, tablet, laptop, and desktop screens.
+                </p>
+              </div>
+
+              <div className="border-t-4 border-[#FC9C44] bg-[#F7F8FB] p-8">
+                <ShieldCheck className="mb-6 h-8 w-8 text-[#FC9C44]" />
+                <h3 className="text-xl font-black">Secure Foundation</h3>
+                <p className="mt-4 text-sm leading-7 text-slate-500">
+                  We build with stable structure, reliable forms, protected
+                  flows, and maintainable code.
+                </p>
+              </div>
+
+              <div className="border-t-4 border-[#FC9C44] bg-[#F7F8FB] p-8">
+                <Gauge className="mb-6 h-8 w-8 text-[#FC9C44]" />
+                <h3 className="text-xl font-black">Performance Focus</h3>
+                <p className="mt-4 text-sm leading-7 text-slate-500">
+                  Speed, clean structure, strong UX, and conversion-focused
+                  sections are considered from the start.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-[#F7F8FB] px-6 py-20 lg:px-10">
+          <div className="mx-auto grid max-w-7xl gap-8 border-y border-slate-200 py-14 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#FC9C44]">
+                Start Your Project
+              </p>
+
+              <h2 className="mt-4 max-w-3xl text-4xl font-black leading-tight md:text-5xl">
+                Need a digital solution built for real business growth?
+              </h2>
+            </div>
+
             <Link
-              to="/free-growth-audit"
-              className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-semibold text-[#1D2742] bg-[#FC9C44] hover:bg-[#E88C35] hover:shadow-[0_8px_20px_-8px_rgba(252,156,68,0.35)] transition-all duration-300"
+              to="/contact"
+              className="inline-flex w-fit items-center justify-center gap-2 rounded-full bg-[#06133D] px-7 py-4 text-sm font-bold text-white transition hover:bg-[#10215a]"
             >
-              Get Free Growth Audit
+              Contact Us
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
       <Footer />
     </div>

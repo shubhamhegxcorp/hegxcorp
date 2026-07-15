@@ -1,49 +1,47 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+const siteUrl = "https://hegxcorp.in";
+
+const pages = [
+  { path: "/", changefreq: "daily", priority: "1.0" },
+  { path: "/services", changefreq: "weekly", priority: "0.8" },
+  { path: "/service/web-dev", changefreq: "weekly", priority: "0.8" },
+  { path: "/service/web-app", changefreq: "weekly", priority: "0.8" },
+  { path: "/service/wordpress", changefreq: "weekly", priority: "0.8" },
+  { path: "/service/e-comm", changefreq: "weekly", priority: "0.8" },
+  { path: "/service/seo", changefreq: "weekly", priority: "0.8" },
+  { path: "/service/ppc", changefreq: "weekly", priority: "0.8" },
+  { path: "/service/social-med", changefreq: "weekly", priority: "0.8" },
+  { path: "/service/content-marketing", changefreq: "weekly", priority: "0.8" },
+  { path: "/service/ui-ux-design", changefreq: "weekly", priority: "0.8" },
+  { path: "/service/branding", changefreq: "weekly", priority: "0.8" },
+  { path: "/service/graphic-design", changefreq: "weekly", priority: "0.8" },
+  { path: "/contact", changefreq: "monthly", priority: "0.7" },
+  { path: "/free-growth-audit", changefreq: "monthly", priority: "0.9" },
+  { path: "/case-studies", changefreq: "weekly", priority: "0.6" },
+  { path: "/industries", changefreq: "monthly", priority: "0.5" },
+  { path: "/about", changefreq: "monthly", priority: "0.5" },
+  { path: "/blog", changefreq: "weekly", priority: "0.6" },
+  { path: "/privacy-policy", changefreq: "yearly", priority: "0.3" },
+  { path: "/terms-of-service", changefreq: "yearly", priority: "0.3" },
+  { path: "/cookie-policy", changefreq: "yearly", priority: "0.3" },
+] as const;
+
 export const Route = createFileRoute("/sitemap.xml")({
   loader: () => {
+    const urls = pages
+      .map(
+        ({ path, changefreq, priority }) => `  <url>
+    <loc>${siteUrl}${path}</loc>
+    <changefreq>${changefreq}</changefreq>
+    <priority>${priority}</priority>
+  </url>`,
+      )
+      .join("\n");
+
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://hegxcorp.in/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://hegxcorp.in/services</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://hegxcorp.in/contact</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://hegxcorp.in/free-growth-audit</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://hegxcorp.in/case-studies</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://hegxcorp.in/industries</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://hegxcorp.in/about</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://hegxcorp.in/blog</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
+${urls}
 </urlset>`;
 
     return new Response(xml, {

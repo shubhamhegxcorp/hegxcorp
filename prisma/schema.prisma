@@ -18,6 +18,12 @@ enum BlogStatus {
   ARCHIVED
 }
 
+enum InquiryStatus {
+  NEW
+  INPROGRESS
+  CLOSED
+}
+
 model User {
   id       String  @id @default(cuid())
   name     String
@@ -83,4 +89,44 @@ model Blog {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ContactInquiry {
+  id String @id @default(cuid())
+
+  name     String
+  email    String
+  phone    String
+  website  String?
+  source   String   @default("Contact")
+  services String[]
+  budget   String?
+  timeline String?
+  message  String
+
+  status InquiryStatus @default(NEW)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model GrowthAuditInquiry {
+  id String @id @default(cuid())
+
+  name         String
+  email        String
+  website      String
+  revenueRange String
+  goal         String
+
+  status InquiryStatus @default(NEW)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
 }
