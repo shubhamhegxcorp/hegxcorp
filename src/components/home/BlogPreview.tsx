@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { BrowserPreview } from "@/components/site/BrowserPreview";
 import { Skeleton } from "@/components/ui/skeleton";
+import aisearch from "@/assets/Blog/How AI Search Changes Rankings.png";
 
 export function BlogPreview() {
   return (
@@ -50,33 +51,31 @@ export function BlogPreview() {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Left Side */}
               <div className="space-y-6 text-left">
-                <span
+                {/* <span
                   className="inline-flex items-center gap-2 rounded-full bg-[#FFF4E8] text-[#FC9C44] px-4 py-1.5 text-xs font-bold uppercase tracking-wider"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
-                  Coming Soon
-                </span>
+                </span> */}
 
                 <h3
                   className="text-3xl lg:text-4xl font-bold text-[#1D2742] tracking-tight"
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                 >
-                  Insights From The Field
+                  How AI Search Changes Rankings
                 </h3>
 
                 <p
                   className="text-[#6B7280] leading-relaxed text-sm md:text-base"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
-                  We're documenting the SEO frameworks, paid media systems, website optimisation strategies, and growth experiments used across client engagements. Launching soon.
-                </p>
+                  A technical breakdown of semantic search index shifts and how search algorithms evaluate topical authority inside generative answers.                </p>
 
                 <div className="pt-2">
                   <Link
-                    to="/contact"
+                    to="/blog/how-ai-search-reshapes-organic-traffic"
                     className="inline-flex items-center gap-2.5 rounded-full px-8 py-3.5 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#E88C35] transition-colors"
                   >
-                    Get Updates
+                    View  Blog
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>
@@ -86,26 +85,17 @@ export function BlogPreview() {
               <div className="w-full">
                 <BrowserPreview
                   aspectRatio="video"
-                  url="hegxcorp.com/insights"
+                  url="hegxcorp.com/blog"
                   className="w-full shadow-lg"
                 >
-                  <div className="p-8 bg-white h-full flex flex-col justify-center gap-6 select-none">
-                    {/* Row 1 */}
-                    <div className="space-y-3">
-                      <Skeleton className="h-4 w-[75%]" />
-                      <Skeleton className="h-2.5 w-[45%]" />
-                    </div>
-                    {/* Row 2 */}
-                    <div className="space-y-3">
-                      <Skeleton className="h-4 w-[60%]" />
-                      <Skeleton className="h-2.5 w-[35%]" />
-                    </div>
-                    {/* Row 3 */}
-                    <div className="space-y-3">
-                      <Skeleton className="h-4 w-[85%]" />
-                      <Skeleton className="h-2.5 w-[50%]" />
-                    </div>
-                  </div>
+
+                  <Link to="/blog/how-ai-search-reshapes-organic-traffic">
+                    <img
+                      src={aisearch}
+                      alt="How Ai Search Changes Rankings"
+                      className="w-full h-full object-cover"
+                    />
+                  </Link>
                 </BrowserPreview>
               </div>
             </div>

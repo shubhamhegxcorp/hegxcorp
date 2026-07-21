@@ -66,6 +66,7 @@ const fullNamePattern = /^[A-Za-z\s]+$/;
 const fullNameCharacterPattern = /^[A-Za-z\s]$/;
 const phoneNumberPattern = /^\d+$/;
 const phoneNumberCharacterPattern = /^\d$/;
+const defaultPhoneCountryCode = "+91";
 
 function blockInvalidNameKey(
   event: KeyboardEvent<HTMLInputElement>,
@@ -190,6 +191,7 @@ function ContactPage() {
       await submitContactInquiry({
         data: {
           ...data,
+          phone: `${defaultPhoneCountryCode} ${data.phone}`,
           source: "Contact page",
         },
       });
@@ -456,31 +458,38 @@ function ContactPage() {
                         >
                           Phone Number
                         </label>
-                        <input
-                          type="tel"
-                          id="phone"
-                          inputMode="numeric"
-                          placeholder="9876543210"
-                          {...register("phone", { onChange: () => clearErrors("phone") })}
-                          onKeyDown={(event) =>
-                            blockInvalidPhoneKey(event, () =>
-                              setError("phone", {
-                                type: "manual",
-                                message: "Please enter digits only",
-                              }),
-                            )
-                          }
-                          onPaste={(event) =>
-                            blockInvalidPhonePaste(event, () =>
-                              setError("phone", {
-                                type: "manual",
-                                message: "Please enter digits only",
-                              }),
-                            )
-                          }
-                          className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${errors.phone ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
+                        <div
+                          className={`flex overflow-hidden rounded-lg border bg-white transition-all focus-within:border-[#FC9C44] ${errors.phone ? "border-red-500 focus-within:border-red-500" : "border-[#EAEAEA]"
                             }`}
-                        />
+                        >
+                          <span className="inline-flex items-center border-r border-[#EAEAEA] bg-[#F9FAFB] px-4 text-sm font-bold text-[#06133D]">
+                            {defaultPhoneCountryCode}
+                          </span>
+                          <input
+                            type="tel"
+                            id="phone"
+                            inputMode="numeric"
+                            placeholder="9876543210"
+                            {...register("phone", { onChange: () => clearErrors("phone") })}
+                            onKeyDown={(event) =>
+                              blockInvalidPhoneKey(event, () =>
+                                setError("phone", {
+                                  type: "manual",
+                                  message: "Please enter digits only",
+                                }),
+                              )
+                            }
+                            onPaste={(event) =>
+                              blockInvalidPhonePaste(event, () =>
+                                setError("phone", {
+                                  type: "manual",
+                                  message: "Please enter digits only",
+                                }),
+                              )
+                            }
+                            className="min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-[#232323] outline-none placeholder:text-[#9CA3AF] placeholder:opacity-50"
+                          />
+                        </div>
                         {errors.phone && (
                           <p className="text-xs text-red-500 font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
                             {errors.phone.message}

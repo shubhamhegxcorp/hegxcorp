@@ -4,12 +4,12 @@ import { SectionHeading } from "@/components/site/SectionHeading";
 
 /* ── Comparison table data ─────────────────────────────────── */
 const rows = [
-  { agency: "Reports activity",                   hegx: "Reports business outcomes"           },
-  { agency: "SEO, PPC & Web teams operate separately", hegx: "Unified growth strategy"       },
-  { agency: "Generic service packages",           hegx: "Custom growth roadmaps"              },
-  { agency: "Monthly reporting",                  hegx: "Continuous optimisation"             },
-  { agency: "Traffic-focused KPIs",               hegx: "Revenue-focused KPIs"               },
-  { agency: "Vendor relationship",                hegx: "Extension of your team"              },
+  { agency: "Reports activity", hegx: "Reports business outcomes" },
+  { agency: "SEO, PPC & Web teams operate separately", hegx: "Unified growth strategy" },
+  { agency: "Generic service packages", hegx: "Custom growth roadmaps" },
+  { agency: "Monthly reporting", hegx: "Continuous optimisation" },
+  { agency: "Traffic-focused KPIs", hegx: "Revenue-focused KPIs" },
+  { agency: "Vendor relationship", hegx: "Extension of your team" },
 ];
 
 /* ── Outcome-focused pillars ───────────────────────────────── */
@@ -58,8 +58,8 @@ const fadeUp = {
 export function WhyHegxcorp() {
   return (
     <section
-      className="bg-white overflow-hidden"
-      style={{ paddingTop: "clamp(72px, 9vw, 128px)", paddingBottom: "clamp(72px, 9vw, 128px)" }}
+      className="bg-[#FAFAF8] overflow-hidden"
+      style={{ paddingTop: "clamp(10px, 2vw, 20px)", paddingBottom: "clamp(72px, 9vw, 128px)" }}
     >
       <div className="mx-auto max-w-[1280px] px-6 lg:px-10 space-y-16">
 

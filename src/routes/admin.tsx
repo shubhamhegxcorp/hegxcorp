@@ -1,6 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import {
   ArrowLeft,
+  BookOpenText,
   CalendarClock,
   ChevronDown,
   ChevronLeft,
@@ -21,6 +22,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Toaster, toast } from "sonner";
 
 import { getAdminSession, loginAdmin, logoutAdmin } from "@/lib/admin-auth";
+import { getBlogs } from "@/lib/content/blogs";
 import {
   type ContactInquiry,
   type InquiryStatus,
@@ -57,7 +59,9 @@ const statusStyles: Record<InquiryStatus, string> = {
 type LeadInbox = "contact" | "growthAudit";
 
 const activeInboxStorageKey = "hegxcorp-admin-active-inbox";
+const adminTabSessionKey = "hegxcorp-admin-tab-session";
 const leadsPerPage = 10;
+const blogPostCount = getBlogs().length;
 
 const inboxCopy: Record<LeadInbox, { title: string; empty: string }> = {
   contact: {
@@ -94,6 +98,7 @@ function isLeadInbox(value: string | null): value is LeadInbox {
 }
 
 function AdminLeadsPage() {
+  const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -108,12 +113,15 @@ function AdminLeadsPage() {
   const [updatingId, setUpdatingId] = useState("");
   const [isFormMenuOpen, setIsFormMenuOpen] = useState(false);
   const [isFormMenuHovered, setIsFormMenuHovered] = useState(false);
+  const [isPostMenuOpen, setIsPostMenuOpen] = useState(false);
+  const [isPostMenuHovered, setIsPostMenuHovered] = useState(false);
   const [leadPages, setLeadPages] = useState<Record<LeadInbox, number>>({
     contact: 1,
     growthAudit: 1,
   });
   const [activeStatusFilter, setActiveStatusFilter] = useState<InquiryStatus | null>(null);
 
+  const isBlogRoute = location.pathname.startsWith("/admin/blog");
   const allActiveInquiries = activeInbox === "contact" ? inquiries : growthAuditInquiries;
   const filteredContactInquiries = activeStatusFilter
     ? inquiries.filter((inquiry) => inquiry.status === activeStatusFilter)
@@ -125,6 +133,7 @@ function AdminLeadsPage() {
     activeInbox === "contact" ? filteredContactInquiries : filteredGrowthAuditInquiries;
   const activeInboxTitle = inboxCopy[activeInbox].title;
   const isFormMenuVisible = isFormMenuOpen || isFormMenuHovered;
+  const isPostMenuVisible = isPostMenuOpen || isPostMenuHovered;
   const activePage = leadPages[activeInbox];
   const totalLeadPages = Math.max(1, Math.ceil(activeInquiries.length / leadsPerPage));
   const currentLeadPage = Math.min(activePage, totalLeadPages);
@@ -220,11 +229,21 @@ function AdminLeadsPage() {
 
     async function restoreSession() {
       try {
+        if (window.sessionStorage.getItem(adminTabSessionKey) !== "active") {
+          await logoutAdmin();
+          setIsAuthenticated(false);
+          setEmail("");
+          setPassword("");
+          return;
+        }
+
         const session = await getAdminSession();
         setIsAuthenticated(session.isAuthenticated);
         if (session.isAuthenticated) {
           setEmail(session.email ?? "");
           await loadInquiries();
+        } else {
+          window.sessionStorage.removeItem(adminTabSessionKey);
         }
       } catch (sessionError) {
         console.error("Admin session check failed:", sessionError);
@@ -253,6 +272,7 @@ function AdminLeadsPage() {
       setIsAuthenticated(session.isAuthenticated);
       setEmail(session.email);
       setPassword("");
+      window.sessionStorage.setItem(adminTabSessionKey, "active");
       await loadInquiries();
     } catch (loginError) {
       console.error("Admin login failed:", loginError);
@@ -274,6 +294,7 @@ function AdminLeadsPage() {
       setInquiries([]);
       setGrowthAuditInquiries([]);
       setPassword("");
+      window.sessionStorage.removeItem(adminTabSessionKey);
       toast.success("You have been signed out.");
     } catch (logoutError) {
       console.error("Admin logout failed:", logoutError);
@@ -488,8 +509,8 @@ function AdminLeadsPage() {
 
             {isFormMenuVisible && (
               <div className="absolute left-0 right-0 top-full z-20 mt-2 grid gap-2 border border-[#E4E7EC] bg-white p-2 shadow-xl shadow-[#06133D]/10 lg:static lg:shadow-none">
-                <button
-                  type="button"
+                <Link
+                  to="/admin"
                   onClick={() => {
                     selectInbox("contact");
                     setIsFormMenuOpen(false);
@@ -505,10 +526,10 @@ function AdminLeadsPage() {
                     Contact Form
                   </span>
                   <span>{inquiries.length}</span>
-                </button>
+                </Link>
 
-                <button
-                  type="button"
+                <Link
+                  to="/admin"
                   onClick={() => {
                     selectInbox("growthAudit");
                     setIsFormMenuOpen(false);
@@ -524,7 +545,57 @@ function AdminLeadsPage() {
                     Growth Audit Form
                   </span>
                   <span>{growthAuditInquiries.length}</span>
-                </button>
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <div
+            className="relative mt-3"
+            onMouseEnter={() => setIsPostMenuHovered(true)}
+            onMouseLeave={() => setIsPostMenuHovered(false)}
+          >
+            <Link
+              to="/admin/blog"
+              onClick={() => setIsPostMenuOpen(false)}
+              aria-expanded={isPostMenuVisible}
+              className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${
+                isBlogRoute
+                  ? "bg-[#06133D] text-white"
+                  : "bg-white text-[#344054] hover:bg-[#F9FAFB] hover:text-[#06133D]"
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <BookOpenText className={`h-4 w-4 ${isBlogRoute ? "text-[#FC9C44]" : "text-[#667085]"}`} />
+                Posts
+              </span>
+              <ChevronDown
+                className={`h-4 w-4 transition ${
+                  isBlogRoute ? "text-white/70" : "text-[#98A2B3]"
+                } ${isPostMenuVisible ? "rotate-180" : ""}`}
+              />
+            </Link>
+
+            {isPostMenuVisible && (
+              <div className="absolute left-0 right-0 top-full z-20 mt-2 grid gap-2 border border-[#E4E7EC] bg-white p-2 shadow-xl shadow-[#06133D]/10 lg:static lg:shadow-none">
+                <Link
+                  to="/admin/blog"
+                  onClick={() => {
+                    setIsPostMenuOpen(false);
+                    setIsPostMenuHovered(false);
+                  }}
+                  className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${
+                    isBlogRoute
+                      ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
+                      : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <BookOpenText className="h-4 w-4" />
+                    All Posts
+                  </span>
+                  <span>{blogPostCount}</span>
+                </Link>
               </div>
             )}
           </div>
@@ -542,13 +613,13 @@ function AdminLeadsPage() {
           <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-5 lg:px-8">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.11em] text-[#98A2B3]">
-                Viewing {activeInboxTitle}
+                Viewing {isBlogRoute ? "Blog Posts" : activeInboxTitle}
               </p>
               <h2
                 className="mt-2 text-2xl font-black text-[#06133D] sm:text-3xl"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
-                {activeInboxTitle} submissions
+                {isBlogRoute ? "All Posts" : `${activeInboxTitle} submissions`}
               </h2>
             </div>
 
@@ -568,19 +639,24 @@ function AdminLeadsPage() {
                 <LogOut className="h-4 w-4" />
                 Sign out
               </button>
-              <button
-                type="button"
-                onClick={() => void loadInquiries()}
-                disabled={isLoading}
-                className="inline-flex items-center gap-2 rounded-lg bg-[#06133D] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#102159] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-                Refresh
-              </button>
+              {!isBlogRoute && (
+                <button
+                  type="button"
+                  onClick={() => void loadInquiries()}
+                  disabled={isLoading}
+                  className="inline-flex items-center gap-2 rounded-lg bg-[#06133D] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#102159] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+                  Refresh
+                </button>
+              )}
             </div>
           </div>
         </div>
 
+        {isBlogRoute ? (
+          <Outlet />
+        ) : (
         <section className="grid gap-6 px-6 py-8 lg:px-8 ">
           <div className="grid gap-3 sm:grid-cols-4 ">
             <button
@@ -933,6 +1009,7 @@ function AdminLeadsPage() {
             )}
           </div>
         </section>
+        )}
       </div>
     </main>
   );

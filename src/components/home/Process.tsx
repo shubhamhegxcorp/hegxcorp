@@ -142,17 +142,15 @@ export function Process() {
                           className="flex items-center gap-3"
                         >
                           <span
-                            className={`text-xs font-bold ${
-                              isActive ? "text-[#FC9C44]" : "text-[#6B7280]"
-                            }`}
+                            className={`text-xs  ${isActive ? "text-[#FC9C44]" : "text-[#6B7280]"
+                              }`}
                             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                           >
                             {s.num}
                           </span>
                           <span
-                            className={`text-base font-bold ${
-                              isActive ? "text-[#1D2742]" : "text-[#6B7280]"
-                            }`}
+                            className={`text-base font-bold ${isActive ? "text-[#1D2742]" : "text-[#6B7280]"
+                              }`}
                             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                           >
                             {s.title}
@@ -176,10 +174,10 @@ export function Process() {
                     className="space-y-5"
                   >
                     <div
-                      className="text-8xl font-black text-white leading-none select-none tracking-tight"
+                      className="text-8xl font-black text-[#fcb044] leading-none select-none tracking-tight"
                       style={{
                         fontFamily: "'Space Grotesk', sans-serif",
-                        WebkitTextStroke: "1px #EAEAEA",
+                        // WebkitTextStroke: "1px #EAEAEA",
                       }}
                     >
                       {steps[activeStep].num}
@@ -245,16 +243,14 @@ export function Process() {
               <button
                 key={s.num}
                 onClick={() => setMobileActive(i)}
-                className={`flex items-center gap-2.5 rounded-xl px-4 py-3 shrink-0 transition-all duration-300 ${
-                  mobileActive === i
-                    ? "bg-[#1D2742] text-white shadow-md"
-                    : "bg-white border border-[#EAEAEA] text-[#6B7280]"
-                }`}
+                className={`flex items-center gap-2.5 rounded-xl px-4 py-3 shrink-0 transition-all duration-300 ${mobileActive === i
+                  ? "bg-[#1D2742] text-white shadow-md"
+                  : "bg-white border border-[#EAEAEA] text-[#6B7280]"
+                  }`}
               >
                 <span
-                  className={`text-[10px] font-bold ${
-                    mobileActive === i ? "text-[#EBB771]" : "text-[#FC9C44]"
-                  }`}
+                  className={`text-[10px] font-bold ${mobileActive === i ? "text-[#EBB771]" : "text-[#FC9C44]"
+                    }`}
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                 >
                   {s.num}

@@ -85,7 +85,7 @@ export function FeaturedCaseStudy() {
               </div>
 
               {/* Testimonial */}
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              {/* <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
                 <Quote className="h-5 w-5 text-[#EBB771] mb-3" />
                 <p
                   className="text-white/85 text-sm leading-relaxed italic mb-4"
@@ -108,7 +108,7 @@ export function FeaturedCaseStudy() {
                     <div className="text-xs text-white/50">Founder, E-Commerce Brand</div>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Button Scale on Hover: 1 -> 1.03 */}
               <motion.div

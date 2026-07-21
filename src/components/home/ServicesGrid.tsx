@@ -367,7 +367,7 @@ const services = [
     slug: "CRO",
     title: "Conversion Optimisation",
     desc: "Turn existing traffic into more revenue. We map the funnel, find the leaks and close them with systematic data-led experiments.",
-    href: "/services",
+    href: "/service/ui-ux-design",
     url: "hegxcorp › cro-funnel",
     Visual: CROVisual,
   },
@@ -505,7 +505,7 @@ export function ServicesGrid() {
     <section
       className="bg-[#FAFAF8] overflow-hidden"
       style={{
-        paddingTop: "clamp(64px, 8vw, 120px)",
+        paddingTop: "clamp(10px, 2vw, 20px)",
         paddingBottom: "clamp(64px, 8vw, 120px)",
       }}
     >

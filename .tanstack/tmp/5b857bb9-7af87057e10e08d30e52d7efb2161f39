@@ -37,8 +37,6 @@ import { Route as ServiceContentMarketingRouteImport } from './routes/service.co
 import { Route as ServiceBrandingRouteImport } from './routes/service.branding'
 import { Route as CaseStudiesSlugRouteImport } from './routes/case-studies.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
-import { Route as ApiGrowthAuditRouteImport } from './routes/api.growth-audit'
-import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
   id: '/terms-of-service',
@@ -180,21 +178,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => BlogRoute,
 } as any)
-const ApiGrowthAuditRoute = ApiGrowthAuditRouteImport.update({
-  id: '/api/growth-audit',
-  path: '/api/growth-audit',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminBlogRoute = AdminBlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => AdminRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRouteWithChildren
+  '/admin': typeof AdminRoute
   '/blog': typeof BlogRouteWithChildren
   '/case-studies': typeof CaseStudiesRouteWithChildren
   '/contact': typeof ContactRoute
@@ -205,8 +193,6 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
-  '/admin/blog': typeof AdminBlogRoute
-  '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
   '/service/branding': typeof ServiceBrandingRoute
@@ -226,7 +212,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRouteWithChildren
+  '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
   '/free-growth-audit': typeof FreeGrowthAuditRoute
@@ -235,8 +221,6 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
-  '/admin/blog': typeof AdminBlogRoute
-  '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
   '/service/branding': typeof ServiceBrandingRoute
@@ -257,7 +241,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRouteWithChildren
+  '/admin': typeof AdminRoute
   '/blog': typeof BlogRouteWithChildren
   '/case-studies': typeof CaseStudiesRouteWithChildren
   '/contact': typeof ContactRoute
@@ -268,8 +252,6 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
-  '/admin/blog': typeof AdminBlogRoute
-  '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
   '/service/branding': typeof ServiceBrandingRoute
@@ -302,8 +284,6 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/terms-of-service'
-    | '/admin/blog'
-    | '/api/growth-audit'
     | '/blog/$slug'
     | '/case-studies/$slug'
     | '/service/branding'
@@ -332,8 +312,6 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/terms-of-service'
-    | '/admin/blog'
-    | '/api/growth-audit'
     | '/blog/$slug'
     | '/case-studies/$slug'
     | '/service/branding'
@@ -364,8 +342,6 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/terms-of-service'
-    | '/admin/blog'
-    | '/api/growth-audit'
     | '/blog/$slug'
     | '/case-studies/$slug'
     | '/service/branding'
@@ -386,7 +362,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AdminRoute: typeof AdminRouteWithChildren
+  AdminRoute: typeof AdminRoute
   BlogRoute: typeof BlogRouteWithChildren
   CaseStudiesRoute: typeof CaseStudiesRouteWithChildren
   ContactRoute: typeof ContactRoute
@@ -397,7 +373,6 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
-  ApiGrowthAuditRoute: typeof ApiGrowthAuditRoute
   ServiceBrandingRoute: typeof ServiceBrandingRoute
   ServiceContentMarketingRoute: typeof ServiceContentMarketingRoute
   ServiceECommRoute: typeof ServiceECommRoute
@@ -609,32 +584,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof BlogRoute
     }
-    '/api/growth-audit': {
-      id: '/api/growth-audit'
-      path: '/api/growth-audit'
-      fullPath: '/api/growth-audit'
-      preLoaderRoute: typeof ApiGrowthAuditRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/blog': {
-      id: '/admin/blog'
-      path: '/blog'
-      fullPath: '/admin/blog'
-      preLoaderRoute: typeof AdminBlogRouteImport
-      parentRoute: typeof AdminRoute
-    }
   }
 }
-
-interface AdminRouteChildren {
-  AdminBlogRoute: typeof AdminBlogRoute
-}
-
-const AdminRouteChildren: AdminRouteChildren = {
-  AdminBlogRoute: AdminBlogRoute,
-}
-
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface BlogRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
@@ -665,7 +616,7 @@ const CaseStudiesRouteWithChildren = CaseStudiesRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AdminRoute: AdminRouteWithChildren,
+  AdminRoute: AdminRoute,
   BlogRoute: BlogRouteWithChildren,
   CaseStudiesRoute: CaseStudiesRouteWithChildren,
   ContactRoute: ContactRoute,
@@ -676,7 +627,6 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
-  ApiGrowthAuditRoute: ApiGrowthAuditRoute,
   ServiceBrandingRoute: ServiceBrandingRoute,
   ServiceContentMarketingRoute: ServiceContentMarketingRoute,
   ServiceECommRoute: ServiceECommRoute,
