@@ -7,19 +7,19 @@ const steps = [
   {
     num: "01",
     title: "Audit",
-    desc: "We analyse your current digital footprint — SEO health, ad performance, website UX, and competitive landscape — to identify the highest-impact opportunities.",
+    desc: "We analyse your current digital footprint SEO health, ad performance, website UX, and competitive landscape  to identify the highest-impact opportunities.",
     deliverables: ["Competitor Analysis", "Funnel Review", "Analytics Audit", "Opportunity Mapping"],
   },
   {
     num: "02",
     title: "Strategy",
-    desc: "We build a 90-day growth roadmap with clear KPIs, channel allocation, and milestones. No generic playbooks — every strategy is bespoke to your business.",
+    desc: "We build a 90-day growth roadmap with clear KPIs, channel allocation, and milestones. No generic playbooks every strategy is bespoke to your business.",
     deliverables: ["Channel Plan", "Growth Roadmap", "KPI Design", "90-Day Blueprint"],
   },
   {
     num: "03",
     title: "Execution",
-    desc: "Our specialist team activates across SEO, paid media, content, and development simultaneously — moving fast without sacrificing quality.",
+    desc: "Our specialist team activates across SEO, paid media, content, and development simultaneously  moving fast without sacrificing quality.",
     deliverables: ["SEO Setup", "Paid Campaigns", "Content Activation", "Web Deployment"],
   },
   {

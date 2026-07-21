@@ -72,7 +72,8 @@ export function BlogPreview() {
 
                 <div className="pt-2">
                   <Link
-                    to="/blog/how-ai-search-reshapes-organic-traffic"
+                    to="/blog/$slug"
+                    params={{ slug: "how-ai-search-reshapes-organic-traffic" }}
                     className="inline-flex items-center gap-2.5 rounded-full px-8 py-3.5 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#E88C35] transition-colors"
                   >
                     View  Blog
@@ -89,7 +90,7 @@ export function BlogPreview() {
                   className="w-full shadow-lg"
                 >
 
-                  <Link to="/blog/how-ai-search-reshapes-organic-traffic">
+                  <Link to="/blog/$slug" params={{ slug: "how-ai-search-reshapes-organic-traffic" }}>
                     <img
                       src={aisearch}
                       alt="How Ai Search Changes Rankings"

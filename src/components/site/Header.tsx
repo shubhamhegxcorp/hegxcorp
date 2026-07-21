@@ -494,8 +494,8 @@ export function Header() {
             mobileOpen ? "translate-x-0" : "translate-x-full",
           )}
         >
-          <div className="flex h-16 items-center justify-between border-b border-border px-5">
-            <img src={logoAsset} alt="HEXGCORP" className="h-8 w-auto" />
+          <div className="flex h-24 items-center justify-between border-b border-border px-5">
+            <img src={logoAsset} alt="HEXGCORP" className="h-20 w-auto" />
             <button
               className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-muted"
               onClick={() => setMobileOpen(false)}

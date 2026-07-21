@@ -133,7 +133,7 @@ function BlogPage() {
             />
           </div>
 
-          <div className="relative mx-auto max-w-[1280px] px-6 lg:px-10 w-full text-center">
+          <div className="relative mx-auto max-w-[1280px] px-6 lg:px-10 w-full text-center lg:min-h-[500px]">
             <div className="max-w-[850px] mx-auto space-y-6">
               <span
                 className="inline-flex items-center gap-1.5 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-[#FC9C44] shadow-sm"
@@ -275,7 +275,7 @@ function BlogPage() {
                       <div className="aspect-video bg-white p-8 flex flex-col justify-between overflow-hidden relative">
                         {/* Soft visual background glow */}
                         <div className="absolute inset-0 bg-gradient-to-tr from-[#FAFAF8] via-white to-[#FFF4E8]/20 -z-0" />
-                        
+
                         <div className="relative z-10 space-y-6">
                           <span className="text-[10px] font-bold tracking-widest text-[#FC9C44] uppercase bg-[#FFF4E8] px-3 py-1 rounded">
                             {featuredArticle.category.toUpperCase()}
@@ -284,7 +284,7 @@ function BlogPage() {
                             <div className="h-6 w-[85%] bg-[#1D2742] rounded-md" />
                             <div className="h-6 w-[50%] bg-[#1D2742] rounded-md" />
                           </div>
-                          
+
                           <div className="space-y-2 pt-2">
                             <div className="h-3 w-full bg-[#EAEAEA] rounded" />
                             <div className="h-3 w-[90%] bg-[#EAEAEA] rounded" />
@@ -317,7 +317,7 @@ function BlogPage() {
         <section id="main-feed" className="py-20 bg-white">
           <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
             <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
-              
+
               {/* LEFT COLUMN: ARTICLES FEED (8 cols) */}
               <div className="lg:col-span-8 space-y-12">
                 <div className="flex items-center justify-between border-b border-[#EAEAEA] pb-5">
@@ -470,11 +470,10 @@ function BlogPage() {
                         <button
                           key={i}
                           onClick={() => setCurrentPage(i + 1)}
-                          className={`h-9 w-9 text-xs font-bold rounded-lg border transition-all ${
-                            currentPage === i + 1
-                              ? "bg-[#FC9C44] text-white border-[#FC9C44]"
-                              : "bg-white text-[#6B7280] border-[#EAEAEA] hover:border-[#FC9C44]"
-                          }`}
+                          className={`h-9 w-9 text-xs font-bold rounded-lg border transition-all ${currentPage === i + 1
+                            ? "bg-[#FC9C44] text-white border-[#FC9C44]"
+                            : "bg-white text-[#6B7280] border-[#EAEAEA] hover:border-[#FC9C44]"
+                            }`}
                         >
                           {i + 1}
                         </button>
@@ -495,7 +494,7 @@ function BlogPage() {
               {/* RIGHT COLUMN: STICKY DISCOVERY PANEL (4 cols) */}
               <div className="lg:col-span-4">
                 <aside className="space-y-10 lg:sticky lg:top-[120px] lg:h-fit">
-                  
+
                   {/* Search Box */}
                   <div className="space-y-3 text-left">
                     <h4 className="text-xs font-bold text-[#1D2742] uppercase tracking-[0.1em]" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -526,11 +525,10 @@ function BlogPage() {
                         <button
                           key={cat}
                           onClick={() => handleCategoryClick(cat)}
-                          className={`px-4 py-2 text-xs font-semibold rounded-full border transition-all cursor-pointer ${
-                            selectedCategory === cat
-                              ? "bg-[#1D2742] text-white border-[#1D2742]"
-                              : "bg-[#FAFAF8] text-[#6B7280] border-[#EAEAEA] hover:border-[#FC9C44]/30 hover:bg-[#FFF4E8]/20"
-                          }`}
+                          className={`px-4 py-2 text-xs font-semibold rounded-full border transition-all cursor-pointer ${selectedCategory === cat
+                            ? "bg-[#1D2742] text-white border-[#1D2742]"
+                            : "bg-[#FAFAF8] text-[#6B7280] border-[#EAEAEA] hover:border-[#FC9C44]/30 hover:bg-[#FFF4E8]/20"
+                            }`}
                         >
                           {cat}
                         </button>
@@ -548,11 +546,10 @@ function BlogPage() {
                         <button
                           key={topic.label}
                           onClick={() => handleTagClick(topic.searchVal)}
-                          className={`px-3 py-1.5 text-[11px] font-semibold rounded-lg border transition-all cursor-pointer ${
-                            selectedTag === topic.searchVal
-                              ? "bg-[#FC9C44] text-white border-[#FC9C44]"
-                              : "bg-white text-[#4A5568] border-[#EAEAEA] hover:border-[#FC9C44]/20 hover:bg-[#FAFAF8]"
-                          }`}
+                          className={`px-3 py-1.5 text-[11px] font-semibold rounded-lg border transition-all cursor-pointer ${selectedTag === topic.searchVal
+                            ? "bg-[#FC9C44] text-white border-[#FC9C44]"
+                            : "bg-white text-[#4A5568] border-[#EAEAEA] hover:border-[#FC9C44]/20 hover:bg-[#FAFAF8]"
+                            }`}
                         >
                           {topic.label}
                         </button>
@@ -564,12 +561,12 @@ function BlogPage() {
                   <div className="rounded-xl border border-[#EAEAEA] bg-[#FAFAF8] p-6 text-left relative overflow-hidden">
                     {/* Small visual decoration */}
                     <div className="absolute -top-12 -right-12 h-24 w-24 rounded-full bg-[#FFF4E8]/40 blur-xl" />
-                    
+
                     <div className="relative z-10 space-y-4">
                       <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#FFF4E8] text-[#FC9C44]">
                         <Mail className="h-5 w-5" />
                       </div>
-                      
+
                       <div className="space-y-1">
                         <h4 className="text-base font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
                           Get Weekly Growth Insights
