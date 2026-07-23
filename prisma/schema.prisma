@@ -96,7 +96,7 @@ model ContactInquiry {
 
   name     String
   email    String
-  phone    String
+  phone    String?
   website  String?
   source   String   @default("Contact")
   services String[]

@@ -1,0 +1,18 @@
+Error: Error transforming route file C:/Users/Hegxcorp4/hegxcorp project/hegxcorp/src/routes/blog.index.tsx: SyntaxError: Unexpected token (136:10)
+    at file:///C:/Users/Hegxcorp4/hegxcorp%20project/hegxcorp/node_modules/@tanstack/router-generator/dist/esm/generator.js:143:13
+    at async generate (file:///C:/Users/Hegxcorp4/hegxcorp%20project/hegxcorp/node_modules/@tanstack/router-plugin/dist/esm/core/router-generator-plugin.js:39:4)
+    at async PluginContext.watchChange (file:///C:/Users/Hegxcorp4/hegxcorp%20project/hegxcorp/node_modules/@tanstack/router-plugin/dist/esm/core/router-generator-plugin.js:49:4)
+    at async Promise.all (index 2)
+    at async EnvironmentPluginContainer.hookParallel (file:///C:/Users/Hegxcorp4/hegxcorp%20project/hegxcorp/node_modules/vite/dist/node/chunks/config.js:28741:3)
+    at async EnvironmentPluginContainer.watchChange (file:///C:/Users/Hegxcorp4/hegxcorp%20project/hegxcorp/node_modules/vite/dist/node/chunks/config.js:28901:3)
+    at async Promise.all (index 0)
+    at async FSWatcher.<anonymous> (file:///C:/Users/Hegxcorp4/hegxcorp%20project/hegxcorp/node_modules/vite/dist/node/chunks/config.js:25658:3)
+Error: Error transforming route file C:/Users/Hegxcorp4/hegxcorp project/hegxcorp/src/routes/blog.index.tsx: SyntaxError: Adjacent JSX elements must be wrapped in an enclosing tag. Did you want a JSX fragment <>...</>? (346:10)
+    at file:///C:/Users/Hegxcorp4/hegxcorp%20project/hegxcorp/node_modules/@tanstack/router-generator/dist/esm/generator.js:143:13
+    at async generate (file:///C:/Users/Hegxcorp4/hegxcorp%20project/hegxcorp/node_modules/@tanstack/router-plugin/dist/esm/core/router-generator-plugin.js:39:4)
+    at async PluginContext.watchChange (file:///C:/Users/Hegxcorp4/hegxcorp%20project/hegxcorp/node_modules/@tanstack/router-plugin/dist/esm/core/router-generator-plugin.js:49:4)
+    at async Promise.all (index 2)
+    at async EnvironmentPluginContainer.hookParallel (file:///C:/Users/Hegxcorp4/hegxcorp%20project/hegxcorp/node_modules/vite/dist/node/chunks/config.js:28741:3)
+    at async EnvironmentPluginContainer.watchChange (file:///C:/Users/Hegxcorp4/hegxcorp%20project/hegxcorp/node_modules/vite/dist/node/chunks/config.js:28901:3)
+    at async Promise.all (index 0)
+    at async FSWatcher.<anonymous> (file:///C:/Users/Hegxcorp4/hegxcorp%20project/hegxcorp/node_modules/vite/dist/node/chunks/config.js:25658:3)

@@ -72,7 +72,7 @@ const categories: Category[] = [
   },
   {
     id: "growth",
-    label: "Growth",
+    label: "Marketing",
     icon: Megaphone,
     services: [
       {
@@ -209,16 +209,14 @@ export function ServiceDirectory() {
                   key={category.id}
                   type="button"
                   onClick={() => setActiveId(category.id)}
-                  className={`group relative flex w-full items-center gap-4 rounded-xl border-l-[3px] py-3 pl-4 pr-3 text-left transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-px ${
-                    isActive
+                  className={`group relative flex w-full items-center gap-4 rounded-xl border-l-[3px] py-3 pl-4 pr-3 text-left transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-px ${isActive
                       ? "border-l-[#FC9C44] bg-[#FFF8F0]"
                       : "border-l-transparent bg-white hover:border-l-[#FC9C44]/40 hover:bg-[#FFFCF8]"
-                  }`}
+                    }`}
                 >
                   <span
-                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-transform duration-200 ease-out group-hover:scale-[1.08] ${
-                      isActive ? "bg-[#06133D] text-[#FC9C44]" : "bg-[#F8F9FC] text-[#06133D]"
-                    }`}
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-transform duration-200 ease-out group-hover:scale-[1.08] ${isActive ? "bg-[#06133D] text-[#FC9C44]" : "bg-[#F8F9FC] text-[#06133D]"
+                      }`}
                   >
                     {isActive ? (
                       <motion.span
@@ -237,27 +235,24 @@ export function ServiceDirectory() {
 
                   <span className="flex-1">
                     <span
-                      className={`relative inline-block text-sm transition-colors duration-200 ease-out ${
-                        isActive
+                      className={`relative inline-block text-sm transition-colors duration-200 ease-out ${isActive
                           ? "font-bold text-[#06133D]"
                           : "font-semibold text-slate-500 group-hover:text-[#06133D]"
-                      }`}
+                        }`}
                     >
                       {category.label}
                       <span
-                        className={`absolute -bottom-1 left-0 h-[1.5px] bg-[#FC9C44] transition-all duration-200 ease-out ${
-                          isActive ? "w-full" : "w-0 group-hover:w-full"
-                        }`}
+                        className={`absolute -bottom-1 left-0 h-[1.5px] bg-[#FC9C44] transition-all duration-200 ease-out ${isActive ? "w-full" : "w-0 group-hover:w-full"
+                          }`}
                       />
                     </span>
                   </span>
 
                   <span
-                    className={`rounded-full px-2.5 py-1 text-xs font-bold transition-colors duration-200 ease-out ${
-                      isActive
+                    className={`rounded-full px-2.5 py-1 text-xs font-bold transition-colors duration-200 ease-out ${isActive
                         ? "bg-[#FFF0DC] text-[#FC9C44]"
                         : "bg-slate-100 text-slate-400 group-hover:bg-[#FFF0DC] group-hover:text-[#FC9C44]"
-                    }`}
+                      }`}
                   >
                     {category.services.length}
                   </span>

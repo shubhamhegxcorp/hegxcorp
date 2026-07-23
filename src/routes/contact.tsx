@@ -2,12 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { SectionHeading } from "@/components/site/SectionHeading";
-import { Phone, Mail, MapPin, Sparkles, Send, Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, Mail, MapPin, Phone, Send, Sparkles } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Toaster, toast } from "sonner";
-import { type ClipboardEvent, type KeyboardEvent, type WheelEvent, useEffect, useRef, useState } from "react";
+import {
+  type ClipboardEvent,
+  type KeyboardEvent,
+  type WheelEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import ShapeGrid from "@/components/ShapeGrid";
 import { motion } from "framer-motion";
 
@@ -68,10 +75,39 @@ const phoneNumberPattern = /^\d+$/;
 const phoneNumberCharacterPattern = /^\d$/;
 const defaultPhoneCountryCode = "+91";
 
-function blockInvalidNameKey(
-  event: KeyboardEvent<HTMLInputElement>,
-  onInvalidInput: () => void,
-) {
+const fieldBaseClass =
+  "w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF]";
+
+const selectBaseClass =
+  "w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all";
+
+const errorMessageClass = "text-xs font-medium text-red-500";
+
+function getFieldClass(hasError: boolean) {
+  return `${fieldBaseClass} ${
+    hasError ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
+  }`;
+}
+
+function getSelectClass(hasError: boolean) {
+  return `${selectBaseClass} ${
+    hasError ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
+  }`;
+}
+
+function getPhoneFieldClass(hasError: boolean) {
+  return `flex overflow-hidden rounded-lg border bg-white transition-all focus-within:border-[#FC9C44] ${
+    hasError ? "border-red-500 focus-within:border-red-500" : "border-[#EAEAEA]"
+  }`;
+}
+
+function getServiceButtonClass(hasError: boolean) {
+  return `flex w-full items-center justify-between rounded-lg border bg-white px-4 py-3 text-left text-sm outline-none transition-all ${
+    hasError ? "border-red-500" : "border-[#EAEAEA] hover:border-[#FC9C44]"
+  }`;
+}
+
+function blockInvalidNameKey(event: KeyboardEvent<HTMLInputElement>, onInvalidInput: () => void) {
   if (event.key.length === 1 && !fullNameCharacterPattern.test(event.key)) {
     event.preventDefault();
     onInvalidInput();
@@ -90,10 +126,7 @@ function blockInvalidNamePaste(
   }
 }
 
-function blockInvalidPhoneKey(
-  event: KeyboardEvent<HTMLInputElement>,
-  onInvalidInput: () => void,
-) {
+function blockInvalidPhoneKey(event: KeyboardEvent<HTMLInputElement>, onInvalidInput: () => void) {
   if (event.key.length === 1 && !phoneNumberCharacterPattern.test(event.key)) {
     event.preventDefault();
     onInvalidInput();
@@ -250,15 +283,21 @@ function ContactPage() {
                   >
                     <div className="flex items-center gap-10">
                       <Check className="h-4 w-4 text-[#FC9C44] shrink-0" />
-                      <span className="text-xs font-semibold tracking-wide uppercase">Response within 24 hours</span>
+                      <span className="text-xs font-semibold tracking-wide uppercase">
+                        Response within 24 hours
+                      </span>
                     </div>
                     <div className="flex items-center gap-10">
                       <Check className="h-4 w-4 text-[#FC9C44] shrink-0" />
-                      <span className="text-xs font-semibold tracking-wide uppercase">Free strategy consultation</span>
+                      <span className="text-xs font-semibold tracking-wide uppercase">
+                        Free strategy consultation
+                      </span>
                     </div>
                     <div className="flex items-center gap-10">
                       <Check className="h-4 w-4 text-[#FC9C44] shrink-0" />
-                      <span className="text-xs font-semibold tracking-wide uppercase">No-obligation growth assessment</span>
+                      <span className="text-xs font-semibold tracking-wide uppercase">
+                        No-obligation growth assessment
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -325,42 +364,10 @@ function ContactPage() {
                         className="text-sm text-[#232323] group-hover:text-[#FC9C44] transition-colors duration-300 leading-relaxed"
                         style={{ fontFamily: "'Inter', sans-serif" }}
                       >
-                        10th Floor Building 4, Nesco IT Park, Western Express Highway, Goregaon (East) Mumbai, Maharashtra 400063
+                        10th Floor Building 4, Nesco IT Park, Western Express Highway, Goregaon
+                        (East) Mumbai, Maharashtra 400063
                       </p>
                     </div>
-                  </div>
-                </div>
-
-                <div className="space-y-6 pt-8 border-t border-[#EAEAEA]">
-                  {/* <div className="flex items-center gap-2 text-[#FC9C44]">
-                    <Sparkles className="h-4 w-4" />
-                    <span className="text-xs font-bold uppercase tracking-wider">
-                      What to expect next
-                    </span>
-                  </div> */}
-
-                  <div className="relative pl-8 space-y-8">
-                    <div className="absolute left-[15px] top-2 bottom-2 w-[1px] bg-[#EAEAEA]" />
-
-                    {/* {[
-                      ["01", "Review", "A consultant reviews your website and growth channels."],
-                      ["02", "Strategy Call", "We schedule a short consultation to understand goals."],
-                      ["03", "Growth Roadmap", "We provide a prioritized action plan with recommendations."],
-                    ].map(([step, title, desc]) => (
-                      <div key={step} className="relative flex items-start gap-4">
-                        <div className="absolute -left-[30px] flex h-8 w-8 items-center justify-center rounded-full bg-white border border-[#EAEAEA] text-[10px] font-bold text-[#FC9C44] shadow-sm select-none">
-                          {step}
-                        </div>
-                        <div className="space-y-1">
-                          <h4 className="text-sm font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                            {title}
-                          </h4>
-                          <p className="text-xs text-[#6B7280] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                            {desc}
-                          </p>
-                        </div>
-                      </div>
-                    ))} */}
                   </div>
                 </div>
               </motion.div>
@@ -369,7 +376,7 @@ function ContactPage() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-                className="group/form rounded-2xl border border-[#EAEAEA] bg-white p-8 lg:p-10 shadow-[0_16px_40px_-20px_rgba(29,39,66,0.06)] hover:shadow-[0_24px_70px_rgba(252,156,68,0.16)] hover:-translate-y-1 transition-all duration-300 ease-out"
+                className="rounded-2xl border border-[#EAEAEA] bg-[#FAFAF8] p-8 shadow-[0_16px_36px_rgba(29,39,66,0.06)] transition-shadow duration-300 hover:shadow-[0_24px_48px_rgba(29,39,66,0.1)] lg:p-10"
               >
                 <div className="mb-6 flex items-start justify-between gap-4">
                   <h3
@@ -378,7 +385,7 @@ function ContactPage() {
                   >
                     Send a secure message
                   </h3>
-                  <span className="rounded-full bg-[#FFF4E8] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#FC9C44] opacity-0 transition-opacity duration-300 group-hover/form:opacity-100">
+                  <span className="rounded-full border border-[#F5D5B6] bg-white px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#FC9C44]">
                     Fast reply
                   </span>
                 </div>
@@ -398,8 +405,8 @@ function ContactPage() {
                       className="text-sm text-[#6B7280] leading-relaxed max-w-[340px] mx-auto"
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     >
-                      We've logged your request. One of our growth advisors will reach out to you via
-                      email within the next business day.
+                      We've logged your request. One of our growth advisors will reach out to you
+                      via email within the next business day.
                     </p>
                     <button
                       onClick={() => setIsSubmitted(false)}
@@ -440,11 +447,13 @@ function ContactPage() {
                               }),
                             )
                           }
-                          className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${errors.name ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
-                            }`}
+                          className={getFieldClass(Boolean(errors.name))}
                         />
                         {errors.name && (
-                          <p className="text-xs text-red-500 font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
+                          <p
+                            className={errorMessageClass}
+                            style={{ fontFamily: "'Inter', sans-serif" }}
+                          >
                             {errors.name.message}
                           </p>
                         )}
@@ -458,10 +467,7 @@ function ContactPage() {
                         >
                           Phone Number
                         </label>
-                        <div
-                          className={`flex overflow-hidden rounded-lg border bg-white transition-all focus-within:border-[#FC9C44] ${errors.phone ? "border-red-500 focus-within:border-red-500" : "border-[#EAEAEA]"
-                            }`}
-                        >
+                        <div className={getPhoneFieldClass(Boolean(errors.phone))}>
                           <span className="inline-flex items-center border-r border-[#EAEAEA] bg-[#F9FAFB] px-4 text-sm font-bold text-[#06133D]">
                             {defaultPhoneCountryCode}
                           </span>
@@ -491,7 +497,10 @@ function ContactPage() {
                           />
                         </div>
                         {errors.phone && (
-                          <p className="text-xs text-red-500 font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
+                          <p
+                            className={errorMessageClass}
+                            style={{ fontFamily: "'Inter', sans-serif" }}
+                          >
                             {errors.phone.message}
                           </p>
                         )}
@@ -511,11 +520,13 @@ function ContactPage() {
                         id="email"
                         placeholder="e.g. priya@retailbrand.in"
                         {...register("email")}
-                        className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] ${errors.email ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
-                          }`}
+                        className={getFieldClass(Boolean(errors.email))}
                       />
                       {errors.email && (
-                        <p className="text-xs text-red-500 font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        <p
+                          className={errorMessageClass}
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
                           {errors.email.message}
                         </p>
                       )}
@@ -532,15 +543,22 @@ function ContactPage() {
                         <button
                           type="button"
                           onClick={() => setIsServiceOpen((value) => !value)}
-                          className={`flex w-full items-center justify-between rounded-lg border bg-white px-4 py-3 text-left text-sm outline-none transition-all ${errors.services ? "border-red-500" : "border-[#EAEAEA] hover:border-[#FC9C44]"
-                            }`}
+                          className={getServiceButtonClass(Boolean(errors.services))}
                         >
-                          <span className={selectedServices.length ? "font-semibold text-[#232323]" : "text-[#9CA3AF]"}>
+                          <span
+                            className={
+                              selectedServices.length
+                                ? "font-semibold text-[#232323]"
+                                : "text-[#9CA3AF]"
+                            }
+                          >
                             {selectedServices.length
                               ? `${selectedServices.length} service${selectedServices.length > 1 ? "s" : ""} selected`
                               : "Choose one or more services"}
                           </span>
-                          <ChevronDown className={`h-4 w-4 text-[#FC9C44] transition-transform ${isServiceOpen ? "rotate-180" : ""}`} />
+                          <ChevronDown
+                            className={`h-4 w-4 text-[#FC9C44] transition-transform ${isServiceOpen ? "rotate-180" : ""}`}
+                          />
                         </button>
 
                         {isServiceOpen && (
@@ -566,8 +584,12 @@ function ContactPage() {
                                         className="mt-1 h-4 w-4 accent-[#FC9C44]"
                                       />
                                       <span>
-                                        <span className="block text-sm font-bold text-[#232323]">{service.name}</span>
-                                        <span className="block text-xs text-[#6B7280]">{service.desc}</span>
+                                        <span className="block text-sm font-bold text-[#232323]">
+                                          {service.name}
+                                        </span>
+                                        <span className="block text-xs text-[#6B7280]">
+                                          {service.desc}
+                                        </span>
                                       </span>
                                     </label>
                                   ))}
@@ -590,7 +612,10 @@ function ContactPage() {
                         </div>
                       )}
                       {errors.services && (
-                        <p className="text-xs text-red-500 font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        <p
+                          className={errorMessageClass}
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
                           {errors.services.message}
                         </p>
                       )}
@@ -608,17 +633,21 @@ function ContactPage() {
                         <select
                           id="budget"
                           {...register("budget")}
-                          className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all ${errors.budget ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
-                            }`}
+                          className={getSelectClass(Boolean(errors.budget))}
                         >
                           <option value="">Select budget</option>
                           <option value="Under Rs. 25,000">Under Rs. 25,000</option>
                           <option value="Rs. 25,000 - Rs. 50,000">Rs. 25,000 - Rs. 50,000</option>
-                          <option value="Rs. 50,000 - Rs. 1,00,000">Rs. 50,000 - Rs. 1,00,000</option>
+                          <option value="Rs. 50,000 - Rs. 1,00,000">
+                            Rs. 50,000 - Rs. 1,00,000
+                          </option>
                           <option value="Above Rs. 1,00,000">Above Rs. 1,00,000</option>
                         </select>
                         {errors.budget && (
-                          <p className="text-xs text-red-500 font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
+                          <p
+                            className={errorMessageClass}
+                            style={{ fontFamily: "'Inter', sans-serif" }}
+                          >
                             {errors.budget.message}
                           </p>
                         )}
@@ -635,8 +664,7 @@ function ContactPage() {
                         <select
                           id="timeline"
                           {...register("timeline")}
-                          className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all ${errors.timeline ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
-                            }`}
+                          className={getSelectClass(Boolean(errors.timeline))}
                         >
                           <option value="">Select timeline</option>
                           <option value="Urgent">Urgent</option>
@@ -645,7 +673,10 @@ function ContactPage() {
                           <option value="Flexible">Flexible</option>
                         </select>
                         {errors.timeline && (
-                          <p className="text-xs text-red-500 font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
+                          <p
+                            className={errorMessageClass}
+                            style={{ fontFamily: "'Inter', sans-serif" }}
+                          >
                             {errors.timeline.message}
                           </p>
                         )}
@@ -665,33 +696,17 @@ function ContactPage() {
                         rows={5}
                         placeholder="Tell us about your digital platforms, your timeline, and your specific growth targets..."
                         {...register("message")}
-                        className={`w-full rounded-lg border bg-white px-4 py-3 text-sm text-[#232323] outline-none transition-all placeholder:text-[#9CA3AF] resize-none ${errors.message ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
-                          }`}
+                        className={`${getFieldClass(Boolean(errors.message))} resize-none`}
                       />
                       {errors.message && (
-                        <p className="text-xs text-red-500 font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        <p
+                          className={errorMessageClass}
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
                           {errors.message.message}
                         </p>
                       )}
                     </div>
-
-                    {/* <div className="grid gap-3 rounded-xl border border-[#EAEAEA] bg-[#FAFAFA] p-3 transition-all duration-300 group-hover/form:border-[#FC9C44]/40 group-hover/form:bg-[#FFF9F3] sm:grid-cols-3">
-                      <a href="tel:+918369207836" className="group/item rounded-lg p-3 transition-colors hover:bg-white">
-                        <Phone className="mb-2 h-4 w-4 text-[#FC9C44]" />
-                        <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Direct Hotline</span>
-                        <span className="block text-xs font-bold text-[#232323] group-hover/item:text-[#FC9C44]">+91 836 920 7836</span>
-                      </a>
-                      <a href="mailto:hegxcorp@gmail.com" className="group/item rounded-lg p-3 transition-colors hover:bg-white">
-                        <Mail className="mb-2 h-4 w-4 text-[#FC9C44]" />
-                        <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Inquiries</span>
-                        <span className="block break-all text-xs font-bold text-[#232323] group-hover/item:text-[#FC9C44]">hegxcorp@gmail.com</span>
-                      </a>
-                      <div className="group/item rounded-lg p-3 transition-colors hover:bg-white">
-                        <MapPin className="mb-2 h-4 w-4 text-[#FC9C44]" />
-                        <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Address</span>
-                        <span className="block text-xs font-bold leading-relaxed text-[#232323] group-hover/item:text-[#FC9C44]">Goregaon East, Mumbai</span>
-                      </div>
-                    </div> */}
 
                     <button
                       type="submit"

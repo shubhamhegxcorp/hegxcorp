@@ -1,5 +1,5 @@
 -- Replace CONTACTED/QUALIFIED with INPROGRESS for admin lead status tracking.
-CREATE TYPE "InquiryStatus_new" AS ENUM ('NEW', 'IN PROGRESS', 'CLOSED');
+CREATE TYPE "InquiryStatus_new" AS ENUM ('NEW', 'INPROGRESS', 'CLOSED');
 
 ALTER TABLE "ContactInquiry" ALTER COLUMN "status" DROP DEFAULT;
 ALTER TABLE "GrowthAuditInquiry" ALTER COLUMN "status" DROP DEFAULT;

@@ -56,7 +56,7 @@ const serviceColumns: { heading: string; items: ServiceItem[] }[] = [
       },
       {
         icon: ShoppingCart,
-        title: "Ecommerce Development",
+        title: "E-commerce Development",
         desc: "Stores that convert",
         href: "/service/e-comm",
       },
@@ -65,7 +65,7 @@ const serviceColumns: { heading: string; items: ServiceItem[] }[] = [
   {
     heading: "Marketing",
     items: [
-      { icon: Search, title: "SEO", desc: "Rank where it matters", href: "/service/seo" },
+      { icon: Search, title: "SEO Services", desc: "Rank where it matters", href: "/service/seo" },
       {
         icon: MousePointerClick,
         title: "PPC",
@@ -262,7 +262,7 @@ export function Header() {
             <img
               src={logoAsset}
               alt="HEXGCORP"
-              className={cn("w-auto transition-all duration-300", scrolled ? "h-11" : "h-[54px]")}
+              className={cn("w-auto transition-all duration-300", scrolled ? "h-11" : "h-[80px]")}
             />
           </Link>
 
@@ -494,7 +494,7 @@ export function Header() {
             mobileOpen ? "translate-x-0" : "translate-x-full",
           )}
         >
-          <div className="flex h-24 items-center justify-between border-b border-border px-5">
+          <div className="flex h-60 items-center justify-between border-b border-border px-5">
             <img src={logoAsset} alt="HEXGCORP" className="h-20 w-auto" />
             <button
               className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-muted"

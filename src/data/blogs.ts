@@ -1,3 +1,10 @@
+import aiSearchRankingsImage from "@/assets/Blog/How AI Search Changes Rankings.png";
+import organic from "@/assets/Blog/organic.png";
+import maximizing from "@/assets/Blog/maximizing.png";
+import psycho from "@/assets/Blog/psycho.png";
+import core from "@/assets/Blog/core.png";
+import compound from "@/assets/Blog/compound.png";
+
 export type ContentBlock =
   | { type: "paragraph"; text: string }
   | { type: "heading"; level: 2 | 3; text: string }
@@ -21,6 +28,7 @@ export interface Blog {
   category: string;
   readTime: string;
   featuredImage: string;
+  previewImage?: string;
   author: {
     name: string;
     role: string;
@@ -43,11 +51,12 @@ export const blogs: Blog[] = [
     excerpt: "Generative search engines are fundamentally shifting user search behavior. Learn how to optimize your content architecture for AI-driven query platforms.",
     publishedAt: "2026-06-14T08:00:00.000Z",
     author: {
-      name: "Shubham Sharma",
+      name: "Akshay Jadia",
       role: "Principal Growth Strategist",
-      bio: "Shubham Sharma is the Principal Growth Strategist at Hegxcorp. With over a decade of experience engineering search architectures and campaign performance pipelines, he helps enterprise brands scale their customer acquisition channels profitably."
+      bio: "Akshay Jadia is the Principal Growth Strategist at Hegxcorp. With over a decade of experience engineering search architectures and campaign performance pipelines, he helps enterprise brands scale their customer acquisition channels profitably."
     },
-    featuredImage: "/placeholders/ai-search-traffic.svg",
+    featuredImage: organic,
+    previewImage: organic,
     seoTitle: "How AI Search Reshapes Organic Traffic | Hegxcorp Insights",
     seoDescription: "Generative search engines and LLM-powered answer bots are shifting user behavior. Learn how to construct a content architecture designed for AI-driven search models.",
     featured: true,
@@ -100,11 +109,12 @@ export const blogs: Blog[] = [
     excerpt: "A technical breakdown of semantic search index shifts and how search algorithms evaluate topical authority inside generative answers.",
     publishedAt: "2026-06-10T08:00:00.000Z",
     author: {
-      name: "Amit Bose",
+      name: "Akshay Jadia",
       role: "Technical Director",
-      bio: "Amit Bose is the Technical Director at Hegxcorp. He leads full-stack engineering initiatives and is an expert in search engine indexing mechanics, dense retrieval pipelines, and semantic schema architectures."
+      bio: "Akshay Jadia is the Technical Director at Hegxcorp. He leads full-stack engineering initiatives and is an expert in search engine indexing mechanics, dense retrieval pipelines, and semantic schema architectures."
     },
-    featuredImage: "/placeholders/ai-rankings.svg",
+    featuredImage: aiSearchRankingsImage,
+    previewImage: aiSearchRankingsImage,
     seoTitle: "How AI Search Changes SEO Rankings & Indexing | Hegxcorp",
     seoDescription: "A technical breakdown of dense vector search databases and how topical authority algorithms evaluate content collections inside modern search systems.",
     featured: false,
@@ -128,11 +138,12 @@ export const blogs: Blog[] = [
     excerpt: "How to structure asset groups, feed signals, and first-party customer audiences to scale Google Ads budgets profitably.",
     publishedAt: "2026-06-06T08:00:00.000Z",
     author: {
-      name: "Vikas Patel",
+      name: "Akshay Jadia",
       role: "Paid Media Lead",
-      bio: "Vikas Patel is the Paid Media Lead at Hegxcorp. He oversees multi-million dollar performance marketing portfolios, engineering custom audience models, feeds, and automation scripts across Google and Meta ad platforms."
+      bio: "Akshay Jadia is the Paid Media Lead at Hegxcorp. He oversees multi-million dollar performance marketing portfolios, engineering custom audience models, feeds, and automation scripts across Google and Meta ad platforms."
     },
-    featuredImage: "/placeholders/pmax-optimization.svg",
+    featuredImage: maximizing,
+    previewImage: maximizing,
     seoTitle: "Optimizing Google Ads Performance Max Campaigns | Hegxcorp",
     seoDescription: "A tactical guide on structuring asset groups, audience signals, first-party data, and negatives to scale Performance Max ad budgets profitably.",
     featured: false,
@@ -156,11 +167,12 @@ export const blogs: Blog[] = [
     excerpt: "A deep dive into cognitive load reduction, structural hierarchy, and decision-making frameworks that drive lower acquisition costs.",
     publishedAt: "2026-05-28T08:00:00.000Z",
     author: {
-      name: "Sarah Vance",
+      name: "Akshay Jadia",
       role: "CRO Lead",
-      bio: "Sarah Vance is the Conversion Rate Optimisation Lead at Hegxcorp. She specializes in cognitive design frameworks, heuristic evaluations, and interactive A/B experimentation that drives down customer acquisition costs."
+      bio: "Akshay Jadia is the Conversion Rate Optimisation Lead at Hegxcorp. She specializes in cognitive design frameworks, heuristic evaluations, and interactive A/B experimentation that drives down customer acquisition costs."
     },
-    featuredImage: "/placeholders/landing-page-ux.svg",
+    featuredImage: psycho,
+    previewImage: psycho,
     seoTitle: "High-Converting Landing Page UX & Psychology | Hegxcorp",
     seoDescription: "Analyze the psychological frameworks of page layouts. Discover how to reduce cognitive load and use visual trust cues to maximize landing page conversions.",
     featured: false,
@@ -184,11 +196,12 @@ export const blogs: Blog[] = [
     excerpt: "How sub-second rendering times, low cumulative layout shifts, and responsive interactions directly boost organic search positioning.",
     publishedAt: "2026-05-20T08:00:00.000Z",
     author: {
-      name: "Alex Mercer",
+      name: "Akshay Jadia",
       role: "Technical Web Engineer",
-      bio: "Alex Mercer is a Technical Web Engineer at Hegxcorp. He designs headless CMS integrations, static site rendering architectures, and performance-tuned front-ends that maintain sub-second LCP scores."
+      bio: "Akshay Jadia is a Technical Web Engineer at Hegxcorp. He designs headless CMS integrations, static site rendering architectures, and performance-tuned front-ends that maintain sub-second LCP scores."
     },
-    featuredImage: "/placeholders/web-vitals.svg",
+    featuredImage: core,
+    previewImage: core,
     seoTitle: "Core Web Vitals Impact on Organic Search Rankings | Hegxcorp",
     seoDescription: "Examine how Cumulative Layout Shift, Largest Contentful Paint, and page responsiveness affect search engine index prioritization and organic search listings.",
     featured: false,
@@ -212,11 +225,12 @@ export const blogs: Blog[] = [
     excerpt: "Why isolated search campaigns fail, and how to build interconnected organic loops, paid acquisition, and conversion funnels.",
     publishedAt: "2026-05-12T08:00:00.000Z",
     author: {
-      name: "Shubham Sharma",
+      name: "Akshay Jadia",
       role: "Principal Growth Strategist",
-      bio: "Shubham Sharma is the Principal Growth Strategist at Hegxcorp. With over a decade of experience engineering search architectures and campaign performance pipelines, he helps enterprise brands scale their customer acquisition channels profitably."
+      bio: "Akshay Jadia is the Principal Growth Strategist at Hegxcorp. With over a decade of experience engineering search architectures and campaign performance pipelines, he helps enterprise brands scale their customer acquisition channels profitably."
     },
-    featuredImage: "/placeholders/growth-systems.svg",
+    featuredImage: compound,
+    previewImage: compound,
     seoTitle: "Interconnected Growth Marketing Architecture | Hegxcorp",
     seoDescription: "Break down internal marketing silos. Design a compounding growth strategy linking organic SEO loops, PPC campaigns, and conversion optimization.",
     featured: false,
