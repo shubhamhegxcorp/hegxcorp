@@ -98,6 +98,7 @@ model ContactInquiry {
   email    String
   phone    String?
   website  String?
+  visitorId String?
   source   String   @default("Contact")
   services String[]
   budget   String?
@@ -111,6 +112,7 @@ model ContactInquiry {
 
   @@index([status])
   @@index([createdAt])
+  @@index([visitorId])
 }
 
 model GrowthAuditInquiry {
@@ -119,6 +121,7 @@ model GrowthAuditInquiry {
   name         String
   email        String
   website      String
+  visitorId    String?
   revenueRange String
   goal         String
 
@@ -128,5 +131,23 @@ model GrowthAuditInquiry {
   updatedAt DateTime @updatedAt
 
   @@index([status])
+  @@index([createdAt])
+  @@index([visitorId])
+}
+
+model VisitorEvent {
+  id        String   @id @default(cuid())
+  visitorId String
+  eventName String
+  path      String
+  pageTitle String?
+  referrer  String?
+  params    Json     @default("{}")
+  userAgent String?
+
+  createdAt DateTime @default(now())
+
+  @@index([visitorId])
+  @@index([eventName])
   @@index([createdAt])
 }

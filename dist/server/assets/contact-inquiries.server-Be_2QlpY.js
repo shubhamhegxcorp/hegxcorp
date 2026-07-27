@@ -1,72 +1,52 @@
 import { randomUUID } from "node:crypto";
 import process from "node:process";
-
 import postgres from "postgres";
-
-import { assertAdminSession } from "./admin-auth.server";
-import type { ContactInquiry, ContactInquiryInput, InquiryStatus } from "./contact-inquiries";
-
-type SqlClient = ReturnType<typeof postgres>;
-type GlobalWithSql = typeof globalThis & {
-  hegxcorpSql?: SqlClient;
-};
-
-type InquiryRow = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string | null;
-  website: string | null;
-  visitorId: string | null;
-  source: string;
-  services: string[];
-  budget: string | null;
-  timeline: string | null;
-  message: string;
-  status: InquiryStatus;
-  createdAt: Date | string;
-  updatedAt: Date | string;
-};
-
-function cleanOptional(value: string | undefined) {
+import { assertAdminSession } from "./admin-auth.server-BiJWdJyd.js";
+import "./server-D5AtdEfo.js";
+import "node:async_hooks";
+import "h3-v2";
+import "@tanstack/router-core";
+import "seroval";
+import "@tanstack/history";
+import "@tanstack/router-core/ssr/client";
+import "@tanstack/router-core/ssr/server";
+import "react";
+import "@tanstack/react-router";
+import "react/jsx-runtime";
+import "@tanstack/react-router/ssr/server";
+function cleanOptional(value) {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
 }
-
-function cleanServices(services: string[]) {
+function cleanServices(services) {
   return [...new Set(services.map((service) => service.trim()).filter(Boolean))];
 }
-
 function getSql() {
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) {
     throw new Error("DATABASE_URL is not configured.");
   }
-
-  const globalForSql = globalThis as GlobalWithSql;
+  const globalForSql = globalThis;
   if (!globalForSql.hegxcorpSql) {
     globalForSql.hegxcorpSql = postgres(databaseUrl, {
       max: 5,
       idle_timeout: 20,
-      connect_timeout: 10,
+      connect_timeout: 10
     });
   }
-
   return globalForSql.hegxcorpSql;
 }
-
-function mapInquiry(row: InquiryRow): ContactInquiry {
+function mapInquiry(row) {
   return {
     ...row,
     createdAt: new Date(row.createdAt).toISOString(),
-    updatedAt: new Date(row.updatedAt).toISOString(),
+    updatedAt: new Date(row.updatedAt).toISOString()
   };
 }
-
-export async function createContactInquiry(input: ContactInquiryInput) {
+async function createContactInquiry(input) {
   const sql = getSql();
   const services = cleanServices(input.services);
-  const rows = await sql<InquiryRow[]>`
+  const rows = await sql`
     INSERT INTO "ContactInquiry" (
       "id",
       "name",
@@ -111,14 +91,12 @@ export async function createContactInquiry(input: ContactInquiryInput) {
       "createdAt",
       "updatedAt"
   `;
-
   return mapInquiry(rows[0]);
 }
-
-export async function listSavedContactInquiries() {
+async function listSavedContactInquiries() {
   await assertAdminSession();
   const sql = getSql();
-  const rows = await sql<InquiryRow[]>`
+  const rows = await sql`
     SELECT
       "id",
       "name",
@@ -138,14 +116,12 @@ export async function listSavedContactInquiries() {
     ORDER BY "createdAt" DESC
     LIMIT 200
   `;
-
   return rows.map(mapInquiry);
 }
-
-export async function updateSavedContactInquiryStatus(id: string, status: InquiryStatus) {
+async function updateSavedContactInquiryStatus(id, status) {
   await assertAdminSession();
   const sql = getSql();
-  const rows = await sql<InquiryRow[]>`
+  const rows = await sql`
     UPDATE "ContactInquiry"
     SET
       "status" = ${status}::"InquiryStatus",
@@ -167,10 +143,13 @@ export async function updateSavedContactInquiryStatus(id: string, status: Inquir
       "createdAt",
       "updatedAt"
   `;
-
   if (!rows[0]) {
     throw new Error("Inquiry not found.");
   }
-
   return mapInquiry(rows[0]);
 }
+export {
+  createContactInquiry,
+  listSavedContactInquiries,
+  updateSavedContactInquiryStatus
+};

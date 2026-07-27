@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { BrowserPreview } from "@/components/site/BrowserPreview";
-import { Skeleton } from "@/components/ui/skeleton";
 import aisearch from "@/assets/Blog/How AI Search Changes Rankings.png";
 
 export function BlogPreview() {

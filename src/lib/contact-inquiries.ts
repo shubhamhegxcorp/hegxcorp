@@ -8,6 +8,7 @@ export const contactInquiryInputSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email" }),
   phone: z.string().optional(),
   website: z.string().optional(),
+  visitorId: z.string().optional(),
   source: z.string().optional(),
   services: z.array(z.string()).default([]),
   budget: z.string().optional(),
@@ -24,6 +25,7 @@ export type ContactInquiry = {
   email: string;
   phone: string | null;
   website: string | null;
+  visitorId: string | null;
   source: string;
   services: string[];
   budget: string | null;
@@ -41,11 +43,10 @@ export const submitContactInquiry = createServerFn({ method: "POST" })
     return createContactInquiry(data);
   });
 
-export const listContactInquiries = createServerFn({ method: "POST" })
-  .handler(async () => {
-    const { listSavedContactInquiries } = await import("./contact-inquiries.server");
-    return listSavedContactInquiries();
-  });
+export const listContactInquiries = createServerFn({ method: "POST" }).handler(async () => {
+  const { listSavedContactInquiries } = await import("./contact-inquiries.server");
+  return listSavedContactInquiries();
+});
 
 export const updateContactInquiryStatus = createServerFn({ method: "POST" })
   .validator(

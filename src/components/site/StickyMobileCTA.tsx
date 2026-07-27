@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, TrendingUp } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { trackEvent } from "@/lib/analytics";
 
 export function StickyMobileCTA() {
   const [isVisible, setIsVisible] = useState(false);
@@ -44,6 +45,13 @@ export function StickyMobileCTA() {
             </div>
             <Link
               to="/free-growth-audit"
+              onClick={() =>
+                trackEvent("cta_click", {
+                  cta_name: "claim_audit",
+                  cta_location: "sticky_mobile_cta",
+                  destination: "/free-growth-audit",
+                })
+              }
               className="inline-flex items-center justify-center gap-1.5 rounded-full bg-[#FC9C44] px-4 py-2 text-xs font-bold text-white shadow-md hover:bg-[#E88C35] transition-all"
             >
               Claim Audit

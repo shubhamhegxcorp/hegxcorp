@@ -18,6 +18,7 @@ import {
 import ShapeGrid from "@/components/ShapeGrid";
 import { motion } from "framer-motion";
 
+import { getVisitorId, trackContactClick, trackLead } from "@/lib/analytics";
 import { submitContactInquiry } from "@/lib/contact-inquiries";
 
 export const Route = createFileRoute("/contact")({
@@ -225,8 +226,16 @@ function ContactPage() {
         data: {
           ...data,
           phone: `${defaultPhoneCountryCode} ${data.phone}`,
+          visitorId: getVisitorId(),
           source: "Contact page",
         },
+      });
+      trackLead({
+        form_name: "contact_form",
+        lead_source: "Contact page",
+        services: data.services.join(", "),
+        budget: data.budget,
+        timeline: data.timeline,
       });
       toast.success("Message saved successfully! Our growth strategists will contact you shortly.");
       setIsSubmitted(true);
@@ -305,6 +314,7 @@ function ContactPage() {
                 <div className="space-y-6">
                   <a
                     href="tel:+918369207836"
+                    onClick={() => trackContactClick("phone", "contact_page_hotline")}
                     className="group flex gap-4 items-start cursor-pointer w-fit transition-transform duration-300 ease-out hover:translate-x-1"
                   >
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FFF4E8] text-[#FC9C44] group-hover:bg-[#FC9C44] group-hover:text-white transition-all duration-300">
@@ -328,6 +338,7 @@ function ContactPage() {
 
                   <a
                     href="mailto:hegxcorp@gmail.com"
+                    onClick={() => trackContactClick("email", "contact_page_email")}
                     className="group flex gap-4 items-start cursor-pointer w-fit transition-transform duration-300 ease-out hover:translate-x-1"
                   >
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FFF4E8] text-[#FC9C44] group-hover:bg-[#FC9C44] group-hover:text-white transition-all duration-300">

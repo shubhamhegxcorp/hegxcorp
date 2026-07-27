@@ -8,6 +8,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
+    "db:visitor-tracking": "prisma db execute --file prisma/sql/add_visitor_tracking.sql",
     "lint": "eslint .",
     "format": "prettier --write ."
   },

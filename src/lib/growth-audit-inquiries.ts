@@ -7,14 +7,16 @@ export const growthAuditInquiryInputSchema = z.object({
   name: z.string().min(2, { message: "Please enter your full name" }),
   email: z.string().email({ message: "Please enter a valid business email" }),
   website: z.string().min(4, { message: "Please enter your website" }),
+  visitorId: z.string().optional(),
   revenueRange: z.string().min(1, { message: "Please select your annual revenue range" }),
   goal: z.string().min(1, { message: "Please select your primary growth target" }),
 });
 
 export type GrowthAuditInquiryInput = z.infer<typeof growthAuditInquiryInputSchema>;
 
-export type GrowthAuditInquiry = GrowthAuditInquiryInput & {
+export type GrowthAuditInquiry = Omit<GrowthAuditInquiryInput, "visitorId"> & {
   id: string;
+  visitorId: string | null;
   status: InquiryStatus;
   createdAt: string;
   updatedAt: string;
@@ -40,8 +42,6 @@ export const updateGrowthAuditInquiryStatus = createServerFn({ method: "POST" })
     }),
   )
   .handler(async ({ data }) => {
-    const { updateSavedGrowthAuditInquiryStatus } = await import(
-      "./growth-audit-inquiries.server"
-    );
+    const { updateSavedGrowthAuditInquiryStatus } = await import("./growth-audit-inquiries.server");
     return updateSavedGrowthAuditInquiryStatus(data.id, data.status);
   });

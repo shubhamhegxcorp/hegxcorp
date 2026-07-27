@@ -22,6 +22,7 @@ import {
   Check,
 } from "lucide-react";
 import logoAsset from "@/assets/cropped-hegxcorp-logo-new-web.webp";
+import { trackContactClick, trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
@@ -235,6 +236,7 @@ export function Header() {
             <span className="text-white/20">|</span>
             <a
               href="tel:+918369207836"
+              onClick={() => trackContactClick("phone", "header_utility_phone")}
               className="flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
             >
               <Phone className="h-3.5 w-3.5" />
@@ -453,6 +455,13 @@ export function Header() {
             {/* CTA */}
             <Link
               to="/contact"
+              onClick={() =>
+                trackEvent("cta_click", {
+                  cta_name: "connect_with_us",
+                  cta_location: "header",
+                  destination: "/contact",
+                })
+              }
               className="hidden md:inline-flex items-center gap-2 rounded-full bg-[#FC9C44] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(252,156,68,0.35)] hover:bg-[#E88C35] hover:shadow-[0_12px_24px_-8px_rgba(252,156,68,0.45)] hover:-translate-y-0.5 transition-all duration-300"
             >
               Connect With Us
@@ -461,6 +470,13 @@ export function Header() {
 
             <Link
               to="/free-growth-audit"
+              onClick={() =>
+                trackEvent("cta_click", {
+                  cta_name: "free_growth_audit",
+                  cta_location: "mobile_header",
+                  destination: "/free-growth-audit",
+                })
+              }
               className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#FC9C44] text-white shadow-[0_4px_12px_-4px_rgba(252,156,68,0.5)]"
               aria-label="Get Free Growth Audit"
             >
@@ -600,6 +616,7 @@ export function Header() {
             </Link>
             <a
               href="tel:+918369207836"
+              onClick={() => trackContactClick("phone", "mobile_menu_support_phone")}
               className="flex items-center justify-center gap-2 text-sm text-muted-foreground"
             >
               <Phone className="h-4 w-4" /> Support: +91 836 920 7836

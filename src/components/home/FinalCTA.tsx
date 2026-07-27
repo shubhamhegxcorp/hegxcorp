@@ -2,21 +2,34 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, CalendarCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { MagneticButton } from "@/components/site/PremiumInteractions";
+import { trackEvent } from "@/lib/analytics";
 
 export function FinalCTA() {
   return (
-    <section
-      className="relative bg-[#1D2742] overflow-hidden grain-overlay pt-10 pb-28 md:pt-12 md:pb-12 lg:pt-16 lg:pb-14"
-    >
+    <section className="relative bg-[#1D2742] overflow-hidden grain-overlay pt-10 pb-28 md:pt-12 md:pb-12 lg:pt-16 lg:pb-14">
       {/* Subtle animated background glow — absolutely positioned, does not affect section height */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.18] select-none overflow-hidden">
         <div
           className="absolute rounded-full bg-[#FC9C44] blur-[130px] animate-pulse"
-          style={{ margin: "auto", width: "55vw", maxWidth: "650px", height: "55vw", animationDuration: "8s" }}
+          style={{
+            margin: "auto",
+            width: "55vw",
+            maxWidth: "650px",
+            height: "55vw",
+            animationDuration: "8s",
+          }}
         />
         <div
           className="absolute rounded-full bg-[#EBB771] blur-[100px] animate-pulse"
-          style={{ margin: "auto", width: "35vw", maxWidth: "450px", height: "35vw", animationDuration: "14s", animationDelay: "-3s", opacity: 0.6 }}
+          style={{
+            margin: "auto",
+            width: "35vw",
+            maxWidth: "450px",
+            height: "35vw",
+            animationDuration: "14s",
+            animationDelay: "-3s",
+            opacity: 0.6,
+          }}
         />
       </div>
 
@@ -56,7 +69,9 @@ export function FinalCTA() {
             className="text-white/75 max-w-[620px] mx-auto leading-relaxed"
             style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(15px, 1.2vw, 18px)" }}
           >
-            Book a free strategy session and receive a practical growth roadmap tailored to your business. We'll review your website, acquisition channels, and conversion opportunities and show you the highest-impact next steps.
+            Book a free strategy session and receive a practical growth roadmap tailored to your
+            business. We'll review your website, acquisition channels, and conversion opportunities
+            and show you the highest-impact next steps.
           </p>
 
           {/* CTAs with magnetic spring + snappy button hover elevations */}
@@ -71,6 +86,13 @@ export function FinalCTA() {
               >
                 <Link
                   to="/contact"
+                  onClick={() =>
+                    trackEvent("cta_click", {
+                      cta_name: "book_free_strategy_call",
+                      cta_location: "final_cta",
+                      destination: "/contact",
+                    })
+                  }
                   className="group inline-flex items-center gap-2.5 rounded-full px-8 py-4 text-sm font-bold text-[#1D2742] bg-[#FC9C44] transition-colors duration-200 hover:bg-[#E88C35]"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                   id="final-cta-strategy-call"
@@ -91,6 +113,13 @@ export function FinalCTA() {
               >
                 <Link
                   to="/free-growth-audit"
+                  onClick={() =>
+                    trackEvent("cta_click", {
+                      cta_name: "get_free_growth_audit",
+                      cta_location: "final_cta",
+                      destination: "/free-growth-audit",
+                    })
+                  }
                   className="group inline-flex items-center gap-2.5 rounded-full border border-white/25 px-8 py-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-white/10 hover:border-white/40"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                   id="final-cta-free-audit"
@@ -103,8 +132,8 @@ export function FinalCTA() {
           </div>
 
           {/* Trust Indicators */}
-          <div 
-            className="flex flex-wrap justify-center gap-6 md:gap-10 text-xs text-white/50 pt-4" 
+          <div
+            className="flex flex-wrap justify-center gap-6 md:gap-10 text-xs text-white/50 pt-4"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             <div className="flex items-center gap-2">
@@ -125,4 +154,3 @@ export function FinalCTA() {
     </section>
   );
 }
-

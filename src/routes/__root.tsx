@@ -10,6 +10,8 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { AnalyticsScripts } from "../components/site/AnalyticsScripts";
+import { VisitorTracking } from "../components/site/VisitorTracking";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
@@ -143,6 +145,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <AnalyticsScripts />
       </head>
       <body>
         {children}
@@ -184,6 +187,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <VisitorTracking />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>

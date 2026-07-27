@@ -1,5 +1,14 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, CheckCircle2, Gauge, ShieldCheck, Smartphone, Wrench } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Gauge,
+  Plus,
+  ShieldCheck,
+  Smartphone,
+  Wrench,
+} from "lucide-react";
 
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
@@ -32,14 +41,57 @@ const benefits = [
 ];
 
 const process = [
-  "Discover business goals",
-  "Plan digital structure",
-  "Design user experience",
-  "Build and integrate",
-  "Test, launch, improve",
+  {
+    title: "Discover business goals",
+    points: [
+      "Understand your business, users, and goals",
+      "Review competitors and your current digital presence",
+      "Define what success looks like for the project",
+    ],
+  },
+  {
+    title: "Plan digital structure",
+    points: [
+      "Map site architecture and user flows",
+      "Choose the right tech stack for your needs",
+      "Set a clear timeline and project milestones",
+    ],
+  },
+  {
+    title: "Design user experience",
+    points: [
+      "Wireframe key pages and user journeys",
+      "Design a visual identity and UI components",
+      "Refine the design based on your feedback",
+    ],
+  },
+  {
+    title: "Build and integrate",
+    points: [
+      "Develop the frontend and backend systems",
+      "Integrate APIs, payments, and third-party tools",
+      "Set up CMS and content workflows",
+    ],
+  },
+  {
+    title: "Test, launch, improve",
+    points: [
+      "Test across devices, browsers, and edge cases",
+      "Launch with monitoring and support in place",
+      "Track performance and iterate after launch",
+    ],
+  },
+];
+
+const processHighlights = [
+  "Direct communication at every stage",
+  "Fixed milestones, no surprise scope changes",
+  "Feedback built into each step of the build",
 ];
 
 function OurServicesPage() {
+  const [openStep, setOpenStep] = useState<number | null>(null);
+
   return (
     <div className="min-h-screen bg-[#F7F8FB] text-[#06133D]">
       <Header />
@@ -149,22 +201,70 @@ function OurServicesPage() {
                 <h2 className="mt-4 text-4xl font-black leading-tight md:text-5xl">
                   From first discussion to launch.
                 </h2>
+
+                <p className="mt-7 max-w-md text-base leading-8 text-[#52607A]">
+                  Every stage is a real conversation, not a black box. Tap any step to see what
+                  actually happens, so you always know where your project stands.
+                </p>
+
+                <div className="mt-10 space-y-5">
+                  {processHighlights.map((item) => (
+                    <div key={item} className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[#FC9C44]" />
+                      <p className="text-sm font-semibold text-[#06133D]">{item}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="space-y-0">
-                {process.map((item, index) => (
-                  <div
-                    key={item}
-                    className="grid grid-cols-[70px_1fr] border-t border-slate-200 py-7 last:border-b"
-                  >
-                    <p className="text-sm font-black text-[#FC9C44]">0{index + 1}</p>
+                {process.map((item, index) => {
+                  const isOpen = openStep === index;
 
-                    <div className="flex items-center justify-between gap-6">
-                      <h3 className="text-2xl font-black">{item}</h3>
-                      <ArrowRight className="h-5 w-5 text-slate-300" />
+                  return (
+                    <div key={item.title} className="border-t border-slate-200 last:border-b">
+                      <button
+                        type="button"
+                        onClick={() => setOpenStep(isOpen ? null : index)}
+                        aria-expanded={isOpen}
+                        className="grid w-full grid-cols-[70px_1fr] items-center py-7 text-left"
+                      >
+                        <p className="text-sm font-black text-[#FC9C44]">0{index + 1}</p>
+
+                        <div className="flex items-center justify-between gap-6">
+                          <h3 className="text-2xl font-black">{item.title}</h3>
+                          <span
+                            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${isOpen
+                              ? "rotate-45 border-[#FC9C44] bg-[#FC9C44] text-white"
+                              : "border-slate-200 text-slate-400"
+                              }`}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </span>
+                        </div>
+                      </button>
+
+                      <div
+                        className={`grid overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr] pb-7 opacity-100" : "grid-rows-[0fr] opacity-0"
+                          }`}
+                      >
+                        <div className="min-h-0 pl-[70px]">
+                          <ul className="space-y-3">
+                            {item.points.map((point) => (
+                              <li
+                                key={point}
+                                className="flex items-start gap-3 text-sm leading-6 text-slate-500"
+                              >
+                                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#FC9C44]" />
+                                {point}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
