@@ -4,6 +4,7 @@ import process from "node:process";
 import postgres from "postgres";
 
 import { assertAdminSession } from "./admin-auth.server";
+import { cleanLeadSourceData } from "./lead-source";
 import type { ContactInquiry, ContactInquiryInput, InquiryStatus } from "./contact-inquiries";
 
 type SqlClient = ReturnType<typeof postgres>;
@@ -18,6 +19,13 @@ type InquiryRow = {
   phone: string | null;
   website: string | null;
   visitorId: string | null;
+  leadSource: string | null;
+  leadMedium: string | null;
+  leadCampaign: string | null;
+  leadAdSet: string | null;
+  leadAd: string | null;
+  leadLandingPage: string | null;
+  leadReferrer: string | null;
   source: string;
   services: string[];
   budget: string | null;
@@ -66,6 +74,7 @@ function mapInquiry(row: InquiryRow): ContactInquiry {
 export async function createContactInquiry(input: ContactInquiryInput) {
   const sql = getSql();
   const services = cleanServices(input.services);
+  const leadSourceData = cleanLeadSourceData(input.leadSourceData);
   const rows = await sql<InquiryRow[]>`
     INSERT INTO "ContactInquiry" (
       "id",
@@ -74,6 +83,13 @@ export async function createContactInquiry(input: ContactInquiryInput) {
       "phone",
       "website",
       "visitorId",
+      "leadSource",
+      "leadMedium",
+      "leadCampaign",
+      "leadAdSet",
+      "leadAd",
+      "leadLandingPage",
+      "leadReferrer",
       "source",
       "services",
       "budget",
@@ -88,6 +104,13 @@ export async function createContactInquiry(input: ContactInquiryInput) {
       ${cleanOptional(input.phone)},
       ${cleanOptional(input.website)},
       ${cleanOptional(input.visitorId)},
+      ${cleanOptional(leadSourceData.leadSource)},
+      ${cleanOptional(leadSourceData.leadMedium)},
+      ${cleanOptional(leadSourceData.leadCampaign)},
+      ${cleanOptional(leadSourceData.leadAdSet)},
+      ${cleanOptional(leadSourceData.leadAd)},
+      ${cleanOptional(leadSourceData.leadLandingPage)},
+      ${cleanOptional(leadSourceData.leadReferrer)},
       ${input.source?.trim() || "Contact"},
       ${sql.array(services)},
       ${cleanOptional(input.budget)},
@@ -102,6 +125,13 @@ export async function createContactInquiry(input: ContactInquiryInput) {
       "phone",
       "website",
       "visitorId",
+      "leadSource",
+      "leadMedium",
+      "leadCampaign",
+      "leadAdSet",
+      "leadAd",
+      "leadLandingPage",
+      "leadReferrer",
       "source",
       "services",
       "budget",
@@ -126,6 +156,13 @@ export async function listSavedContactInquiries() {
       "phone",
       "website",
       "visitorId",
+      "leadSource",
+      "leadMedium",
+      "leadCampaign",
+      "leadAdSet",
+      "leadAd",
+      "leadLandingPage",
+      "leadReferrer",
       "source",
       "services",
       "budget",
@@ -158,6 +195,13 @@ export async function updateSavedContactInquiryStatus(id: string, status: Inquir
       "phone",
       "website",
       "visitorId",
+      "leadSource",
+      "leadMedium",
+      "leadCampaign",
+      "leadAdSet",
+      "leadAd",
+      "leadLandingPage",
+      "leadReferrer",
       "source",
       "services",
       "budget",

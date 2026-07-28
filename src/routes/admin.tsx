@@ -13,6 +13,7 @@ import {
   LockKeyhole,
   LogOut,
   Mail,
+  Megaphone,
   Phone,
   RefreshCw,
   ShieldCheck,
@@ -97,6 +98,20 @@ function isLeadInbox(value: string | null): value is LeadInbox {
   return value === "contact" || value === "growthAudit";
 }
 
+function getLeadSourceLabel(lead: {
+  leadSource: string | null;
+  leadCampaign: string | null;
+  leadAd?: string | null;
+}) {
+  const source = lead.leadSource?.trim() || "Untracked";
+  const campaign = lead.leadCampaign?.trim();
+  const ad = lead.leadAd?.trim();
+
+  if (campaign && ad) return `${source} / ${campaign} / ${ad}`;
+  if (campaign) return `${source} / ${campaign}`;
+  return source;
+}
+
 function AdminLeadsPage() {
   const location = useLocation();
   const [email, setEmail] = useState("");
@@ -122,6 +137,8 @@ function AdminLeadsPage() {
   const [activeStatusFilter, setActiveStatusFilter] = useState<InquiryStatus | null>(null);
 
   const isBlogRoute = location.pathname.startsWith("/admin/blog");
+  const isAdLeadsRoute = location.pathname.startsWith("/admin/ad-leads");
+  const isChildAdminRoute = isBlogRoute || isAdLeadsRoute;
   const allActiveInquiries = activeInbox === "contact" ? inquiries : growthAuditInquiries;
   const filteredContactInquiries = activeStatusFilter
     ? inquiries.filter((inquiry) => inquiry.status === activeStatusFilter)
@@ -600,6 +617,20 @@ function AdminLeadsPage() {
             )}
           </div>
 
+          <Link
+            to="/admin/ad-leads"
+            className={`mt-3 flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${
+              isAdLeadsRoute
+                ? "bg-[#06133D] text-white"
+                : "bg-white text-[#344054] hover:bg-[#F9FAFB] hover:text-[#06133D]"
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <Megaphone className={`h-4 w-4 ${isAdLeadsRoute ? "text-[#FC9C44]" : "text-[#667085]"}`} />
+              Ad Leads
+            </span>
+          </Link>
+
           <div className="mt-auto hidden border-t border-[#E4E7EC] pt-4 lg:block">
             <p className="px-2 text-xs font-semibold leading-5 text-[#667085]">
               Signed in as <span className="font-black text-[#06133D]">{email}</span>
@@ -613,13 +644,17 @@ function AdminLeadsPage() {
           <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-5 lg:px-8">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.11em] text-[#98A2B3]">
-                Viewing {isBlogRoute ? "Blog Posts" : activeInboxTitle}
+                Viewing {isBlogRoute ? "Blog Posts" : isAdLeadsRoute ? "Ad Leads" : activeInboxTitle}
               </p>
               <h2
                 className="mt-2 text-2xl font-black text-[#06133D] sm:text-3xl"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
-                {isBlogRoute ? "All Posts" : `${activeInboxTitle} submissions`}
+                {isBlogRoute
+                  ? "All Posts"
+                  : isAdLeadsRoute
+                    ? "Ad lead performance"
+                    : `${activeInboxTitle} submissions`}
               </h2>
             </div>
 
@@ -639,7 +674,7 @@ function AdminLeadsPage() {
                 <LogOut className="h-4 w-4" />
                 Sign out
               </button>
-              {!isBlogRoute && (
+              {!isChildAdminRoute && (
                 <button
                   type="button"
                   onClick={() => void loadInquiries()}
@@ -654,7 +689,7 @@ function AdminLeadsPage() {
           </div>
         </div>
 
-        {isBlogRoute ? (
+        {isChildAdminRoute ? (
           <Outlet />
         ) : (
         <section className="grid gap-6 px-6 py-8 lg:px-8 ">
@@ -787,11 +822,12 @@ function AdminLeadsPage() {
               </div>
             ) : activeInbox === "contact" ? (
               <div className="overflow-x-auto">
-                <table className="min-w-[1040px] w-full border-collapse text-left">
+                <table className="min-w-[1180px] w-full border-collapse text-left">
                   <thead className="bg-[#F9FAFB] text-xs font-black uppercase tracking-[0.11em] text-[#667085]">
                     <tr>
                       <th className="px-5 py-3">Lead</th>
                       <th className="px-5 py-3">Source</th>
+                      <th className="px-5 py-3">Ad Source</th>
                       <th className="px-5 py-3">Budget</th>
                       <th className="px-5 py-3">Timeline</th>
                       <th className="px-5 py-3">Message</th>
@@ -851,6 +887,16 @@ function AdminLeadsPage() {
                             </a>
                           )}
                         </td>
+                        <td className="px-5 py-4">
+                          <div className="grid min-w-[220px] gap-1 text-xs font-semibold text-[#667085]">
+                            <span className="w-fit rounded-full bg-[#EAF2FF] px-2.5 py-1 font-black text-[#2359B8]">
+                              {inquiry.leadSource ?? "Untracked"}
+                            </span>
+                            <p className="max-w-[240px] truncate">
+                              {getLeadSourceLabel(inquiry)}
+                            </p>
+                          </div>
+                        </td>
                         <td className="px-5 py-4 text-sm font-semibold text-[#475467]">
                           {inquiry.budget ?? "Not shared"}
                         </td>
@@ -896,11 +942,12 @@ function AdminLeadsPage() {
 
             ) : (
               <div className="overflow-x-auto">
-                <table className="min-w-[900px] w-full border-collapse text-left">
+                <table className="min-w-[1060px] w-full border-collapse text-left">
                   <thead className="bg-[#F9FAFB] text-xs font-black uppercase tracking-[0.11em] text-[#667085]">
                     <tr>
                       <th className="px-5 py-3">Lead</th>
                       <th className="px-5 py-3">Website</th>
+                      <th className="px-5 py-3">Ad Source</th>
                       <th className="px-5 py-3">Revenue Range</th>
                       <th className="px-5 py-3">Growth Goal</th>
                       <th className="px-5 py-3">Status</th>
@@ -934,6 +981,16 @@ function AdminLeadsPage() {
                           >
                             {inquiry.website}
                           </a>
+                        </td>
+                        <td className="px-5 py-4">
+                          <div className="grid gap-1 text-xs font-semibold text-[#667085]">
+                            <span className="w-fit rounded-full bg-[#EAF2FF] px-2.5 py-1 font-black text-[#2359B8]">
+                              {inquiry.leadSource ?? "Untracked"}
+                            </span>
+                            <p className="max-w-[240px] truncate">
+                              {getLeadSourceLabel(inquiry)}
+                            </p>
+                          </div>
                         </td>
                         <td className="px-5 py-4 text-sm font-semibold text-[#475467]">
                           {inquiry.revenueRange}

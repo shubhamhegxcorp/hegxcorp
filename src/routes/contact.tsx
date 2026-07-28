@@ -18,7 +18,13 @@ import {
 import ShapeGrid from "@/components/ShapeGrid";
 import { motion } from "framer-motion";
 
-import { getVisitorId, trackContactClick, trackLead } from "@/lib/analytics";
+import {
+  getLeadSourceData,
+  getVisitorId,
+  trackContactClick,
+  trackEvent,
+  trackLead,
+} from "@/lib/analytics";
 import { submitContactInquiry } from "@/lib/contact-inquiries";
 
 export const Route = createFileRoute("/contact")({
@@ -171,6 +177,7 @@ function ContactPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const serviceDropdownRef = useRef<HTMLDivElement>(null);
+  const hasTrackedFormStartRef = useRef(false);
   const {
     register,
     handleSubmit,
@@ -227,6 +234,7 @@ function ContactPage() {
           ...data,
           phone: `${defaultPhoneCountryCode} ${data.phone}`,
           visitorId: getVisitorId(),
+          leadSourceData: getLeadSourceData(),
           source: "Contact page",
         },
       });
@@ -246,6 +254,15 @@ function ContactPage() {
       toast.error("We could not save your message. Please try again.");
     }
   };
+
+  function trackFormStart() {
+    if (hasTrackedFormStartRef.current) return;
+
+    hasTrackedFormStartRef.current = true;
+    trackEvent("form_start", {
+      form_name: "contact_form",
+    });
+  }
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-between">
@@ -427,7 +444,11 @@ function ContactPage() {
                     </button>
                   </div>
                 ) : (
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                  <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    onFocusCapture={trackFormStart}
+                    className="space-y-5"
+                  >
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div className="space-y-1.5">
                         <label

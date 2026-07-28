@@ -1,12 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { CheckCircle2, Mail, Send, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Toaster, toast } from "sonner";
 import * as z from "zod";
 
-import { getVisitorId, trackLead } from "@/lib/analytics";
+import { getLeadSourceData, getVisitorId, trackEvent, trackLead } from "@/lib/analytics";
 import { submitContactInquiry } from "@/lib/contact-inquiries";
 
 const leadFormSchema = z.object({
@@ -42,6 +42,7 @@ export function ServiceLeadForm({
   focusOptions,
 }: ServiceLeadFormProps) {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const hasTrackedFormStartRef = useRef(false);
   const serviceId = serviceName.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   const {
     register,
@@ -63,6 +64,7 @@ export function ServiceLeadForm({
         data: {
           ...data,
           visitorId: getVisitorId(),
+          leadSourceData: getLeadSourceData(),
           source: `${serviceName} service page`,
           services: [serviceName],
         },
@@ -86,6 +88,16 @@ export function ServiceLeadForm({
       toast.error("We could not save your request. Please try again.");
     }
   };
+
+  function trackFormStart() {
+    if (hasTrackedFormStartRef.current) return;
+
+    hasTrackedFormStartRef.current = true;
+    trackEvent("form_start", {
+      form_name: "service_lead_form",
+      service_name: serviceName,
+    });
+  }
 
   return (
     <section className="border-y border-[#EAEAEA] bg-[#FAFAF8] px-6 py-24 lg:px-10">
@@ -170,7 +182,11 @@ export function ServiceLeadForm({
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              onFocusCapture={trackFormStart}
+              className="space-y-5"
+            >
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label

@@ -99,6 +99,13 @@ model ContactInquiry {
   phone    String?
   website  String?
   visitorId String?
+  leadSource String?
+  leadMedium String?
+  leadCampaign String?
+  leadAdSet String?
+  leadAd String?
+  leadLandingPage String?
+  leadReferrer String?
   source   String   @default("Contact")
   services String[]
   budget   String?
@@ -113,6 +120,8 @@ model ContactInquiry {
   @@index([status])
   @@index([createdAt])
   @@index([visitorId])
+  @@index([leadSource])
+  @@index([leadCampaign])
 }
 
 model GrowthAuditInquiry {
@@ -122,6 +131,13 @@ model GrowthAuditInquiry {
   email        String
   website      String
   visitorId    String?
+  leadSource   String?
+  leadMedium   String?
+  leadCampaign String?
+  leadAdSet    String?
+  leadAd       String?
+  leadLandingPage String?
+  leadReferrer String?
   revenueRange String
   goal         String
 
@@ -133,6 +149,8 @@ model GrowthAuditInquiry {
   @@index([status])
   @@index([createdAt])
   @@index([visitorId])
+  @@index([leadSource])
+  @@index([leadCampaign])
 }
 
 model VisitorEvent {

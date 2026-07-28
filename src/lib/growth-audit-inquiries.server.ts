@@ -4,6 +4,7 @@ import process from "node:process";
 import postgres from "postgres";
 
 import { assertAdminSession } from "./admin-auth.server";
+import { cleanLeadSourceData } from "./lead-source";
 import type { GrowthAuditInquiry, GrowthAuditInquiryInput } from "./growth-audit-inquiries";
 import type { InquiryStatus } from "./contact-inquiries";
 
@@ -18,6 +19,13 @@ type GrowthAuditRow = {
   email: string;
   website: string;
   visitorId: string | null;
+  leadSource: string | null;
+  leadMedium: string | null;
+  leadCampaign: string | null;
+  leadAdSet: string | null;
+  leadAd: string | null;
+  leadLandingPage: string | null;
+  leadReferrer: string | null;
   revenueRange: string;
   goal: string;
   status: InquiryStatus;
@@ -53,6 +61,7 @@ function mapGrowthAudit(row: GrowthAuditRow): GrowthAuditInquiry {
 
 export async function createGrowthAuditInquiry(input: GrowthAuditInquiryInput) {
   const sql = getSql();
+  const leadSourceData = cleanLeadSourceData(input.leadSourceData);
   const rows = await sql<GrowthAuditRow[]>`
     INSERT INTO "GrowthAuditInquiry" (
       "id",
@@ -60,6 +69,13 @@ export async function createGrowthAuditInquiry(input: GrowthAuditInquiryInput) {
       "email",
       "website",
       "visitorId",
+      "leadSource",
+      "leadMedium",
+      "leadCampaign",
+      "leadAdSet",
+      "leadAd",
+      "leadLandingPage",
+      "leadReferrer",
       "revenueRange",
       "goal",
       "updatedAt"
@@ -70,6 +86,13 @@ export async function createGrowthAuditInquiry(input: GrowthAuditInquiryInput) {
       ${input.email.trim().toLowerCase()},
       ${input.website.trim()},
       ${input.visitorId?.trim() || null},
+      ${leadSourceData.leadSource?.trim() || null},
+      ${leadSourceData.leadMedium?.trim() || null},
+      ${leadSourceData.leadCampaign?.trim() || null},
+      ${leadSourceData.leadAdSet?.trim() || null},
+      ${leadSourceData.leadAd?.trim() || null},
+      ${leadSourceData.leadLandingPage?.trim() || null},
+      ${leadSourceData.leadReferrer?.trim() || null},
       ${input.revenueRange.trim()},
       ${input.goal.trim()},
       now()
@@ -80,6 +103,13 @@ export async function createGrowthAuditInquiry(input: GrowthAuditInquiryInput) {
       "email",
       "website",
       "visitorId",
+      "leadSource",
+      "leadMedium",
+      "leadCampaign",
+      "leadAdSet",
+      "leadAd",
+      "leadLandingPage",
+      "leadReferrer",
       "revenueRange",
       "goal",
       "status",
@@ -100,6 +130,13 @@ export async function listSavedGrowthAuditInquiries() {
       "email",
       "website",
       "visitorId",
+      "leadSource",
+      "leadMedium",
+      "leadCampaign",
+      "leadAdSet",
+      "leadAd",
+      "leadLandingPage",
+      "leadReferrer",
       "revenueRange",
       "goal",
       "status",
@@ -128,6 +165,13 @@ export async function updateSavedGrowthAuditInquiryStatus(id: string, status: In
       "email",
       "website",
       "visitorId",
+      "leadSource",
+      "leadMedium",
+      "leadCampaign",
+      "leadAdSet",
+      "leadAd",
+      "leadLandingPage",
+      "leadReferrer",
       "revenueRange",
       "goal",
       "status",

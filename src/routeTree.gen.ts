@@ -39,6 +39,7 @@ import { Route as CaseStudiesSlugRouteImport } from './routes/case-studies.$slug
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApiGrowthAuditRouteImport } from './routes/api.growth-audit'
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
+import { Route as AdminAdLeadsRouteImport } from './routes/admin.ad-leads'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
   id: '/terms-of-service',
@@ -190,6 +191,11 @@ const AdminBlogRoute = AdminBlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdLeadsRoute = AdminAdLeadsRouteImport.update({
+  id: '/ad-leads',
+  path: '/ad-leads',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/admin/ad-leads': typeof AdminAdLeadsRoute
   '/admin/blog': typeof AdminBlogRoute
   '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/admin/ad-leads': typeof AdminAdLeadsRoute
   '/admin/blog': typeof AdminBlogRoute
   '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -268,6 +276,7 @@ export interface FileRoutesById {
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
+  '/admin/ad-leads': typeof AdminAdLeadsRoute
   '/admin/blog': typeof AdminBlogRoute
   '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/terms-of-service'
+    | '/admin/ad-leads'
     | '/admin/blog'
     | '/api/growth-audit'
     | '/blog/$slug'
@@ -332,6 +342,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/terms-of-service'
+    | '/admin/ad-leads'
     | '/admin/blog'
     | '/api/growth-audit'
     | '/blog/$slug'
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/services'
     | '/sitemap.xml'
     | '/terms-of-service'
+    | '/admin/ad-leads'
     | '/admin/blog'
     | '/api/growth-audit'
     | '/blog/$slug'
@@ -623,14 +635,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBlogRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/ad-leads': {
+      id: '/admin/ad-leads'
+      path: '/ad-leads'
+      fullPath: '/admin/ad-leads'
+      preLoaderRoute: typeof AdminAdLeadsRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminAdLeadsRoute: typeof AdminAdLeadsRoute
   AdminBlogRoute: typeof AdminBlogRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAdLeadsRoute: AdminAdLeadsRoute,
   AdminBlogRoute: AdminBlogRoute,
 }
 

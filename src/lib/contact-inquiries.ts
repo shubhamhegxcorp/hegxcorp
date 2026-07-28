@@ -1,7 +1,19 @@
 import { createServerFn } from "@tanstack/react-start";
 import * as z from "zod";
 
+import type { LeadSourceData } from "./lead-source";
+
 export const inquiryStatuses = ["NEW", "INPROGRESS", "CLOSED"] as const;
+
+const leadSourceDataSchema = z.object({
+  leadSource: z.string().optional(),
+  leadMedium: z.string().optional(),
+  leadCampaign: z.string().optional(),
+  leadAdSet: z.string().optional(),
+  leadAd: z.string().optional(),
+  leadLandingPage: z.string().optional(),
+  leadReferrer: z.string().optional(),
+});
 
 export const contactInquiryInputSchema = z.object({
   name: z.string().min(2, { message: "Please enter your full name" }),
@@ -9,6 +21,7 @@ export const contactInquiryInputSchema = z.object({
   phone: z.string().optional(),
   website: z.string().optional(),
   visitorId: z.string().optional(),
+  leadSourceData: leadSourceDataSchema.default({}),
   source: z.string().optional(),
   services: z.array(z.string()).default([]),
   budget: z.string().optional(),
@@ -26,6 +39,13 @@ export type ContactInquiry = {
   phone: string | null;
   website: string | null;
   visitorId: string | null;
+  leadSource: string | null;
+  leadMedium: string | null;
+  leadCampaign: string | null;
+  leadAdSet: string | null;
+  leadAd: string | null;
+  leadLandingPage: string | null;
+  leadReferrer: string | null;
   source: string;
   services: string[];
   budget: string | null;
@@ -35,6 +55,8 @@ export type ContactInquiry = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type { LeadSourceData };
 
 export const submitContactInquiry = createServerFn({ method: "POST" })
   .validator(contactInquiryInputSchema)

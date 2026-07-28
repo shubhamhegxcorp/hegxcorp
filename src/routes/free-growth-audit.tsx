@@ -17,10 +17,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Toaster, toast } from "sonner";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { getVisitorId, trackLead } from "@/lib/analytics";
+import { getLeadSourceData, getVisitorId, trackEvent, trackLead } from "@/lib/analytics";
 import { submitGrowthAuditInquiry } from "@/lib/growth-audit-inquiries";
 
 export const Route = createFileRoute("/free-growth-audit")({
@@ -73,6 +73,7 @@ const goalOptions = [
 function FreeGrowthAuditPage() {
   const [step, setStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const hasTrackedFormStartRef = useRef(false);
 
   const {
     register,
@@ -117,6 +118,7 @@ function FreeGrowthAuditPage() {
         data: {
           ...data,
           visitorId: getVisitorId(),
+          leadSourceData: getLeadSourceData(),
         },
       });
       trackLead({
@@ -133,6 +135,15 @@ function FreeGrowthAuditPage() {
       toast.error("We could not save your audit request. Please try again.");
     }
   };
+
+  function trackFormStart() {
+    if (hasTrackedFormStartRef.current) return;
+
+    hasTrackedFormStartRef.current = true;
+    trackEvent("form_start", {
+      form_name: "growth_audit_form",
+    });
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -244,7 +255,11 @@ function FreeGrowthAuditPage() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  onFocusCapture={trackFormStart}
+                  className="space-y-6"
+                >
                   <AnimatePresence mode="wait">
                     {step === 1 ? (
                       /* STEP 1: Profile Details */
