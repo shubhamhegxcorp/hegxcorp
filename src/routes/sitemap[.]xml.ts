@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const siteUrl = "https://hegxcorp.in";
+import { getBlogs } from "@/lib/content/blogs";
+import { getCaseStudies } from "@/lib/content/caseStudies";
+
+const siteUrl = "https://hegxcorp.com";
 
 const pages = [
   { path: "/", changefreq: "daily", priority: "1.0" },
@@ -27,17 +30,40 @@ const pages = [
   { path: "/cookie-policy", changefreq: "yearly", priority: "0.3" },
 ] as const;
 
-export const Route = createFileRoute("/sitemap.xml")({
-  loader: () => {
-    const urls = pages
-      .map(
-        ({ path, changefreq, priority }) => `  <url>
-    <loc>${siteUrl}${path}</loc>
+function renderUrl({
+  path,
+  changefreq,
+  priority,
+  lastmod,
+}: {
+  path: string;
+  changefreq: string;
+  priority: string;
+  lastmod?: string;
+}) {
+  return `  <url>
+    <loc>${siteUrl}${path}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ""}
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
-  </url>`,
-      )
-      .join("\n");
+  </url>`;
+}
+
+export const Route = createFileRoute("/sitemap.xml")({
+  loader: () => {
+    const blogPages = getBlogs().map((blog) => ({
+      path: `/blog/${blog.slug}`,
+      changefreq: "monthly",
+      priority: "0.6",
+      lastmod: blog.publishedAt.slice(0, 10),
+    }));
+
+    const caseStudyPages = getCaseStudies().map((study) => ({
+      path: `/case-studies/${study.slug}`,
+      changefreq: "monthly",
+      priority: "0.6",
+    }));
+
+    const urls = [...pages, ...blogPages, ...caseStudyPages].map(renderUrl).join("\n");
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
