@@ -48,13 +48,15 @@ export function ResultsMetrics() {
     >
       {/* Narrow container — creates density contrast vs adjacent sections */}
       <div className="mx-auto max-w-[1100px] px-6 lg:px-10">
-
         {/* Tagline label */}
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] }}
+          transition={{
+            duration: 0.5,
+            ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+          }}
           className="mb-12 lg:mb-16"
         >
           <span
@@ -73,13 +75,15 @@ export function ResultsMetrics() {
 
         {/* ── Two-column: hero left, stack right ── */}
         <div className="grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-24 items-center">
-
           {/* Hero metric — dominant, anchored left */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] }}
+            transition={{
+              duration: 0.7,
+              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+            }}
             className="relative"
           >
             {/* Ghost numeral — sits behind at near-zero opacity */}
@@ -104,13 +108,7 @@ export function ResultsMetrics() {
                   fontSize: "clamp(72px, 10vw, 130px)",
                 }}
               >
-                <AnimatedCounter
-                  target={310}
-                  prefix="+"
-                  suffix="%"
-                  decimals={0}
-                  trigger={true}
-                />
+                <AnimatedCounter target={310} prefix="+" suffix="%" decimals={0} trigger={true} />
               </div>
 
               {/* Brand accent bar */}
@@ -147,7 +145,7 @@ export function ResultsMetrics() {
             viewport={{ once: true, margin: "-80px" }}
             transition={{
               duration: 0.7,
-              ease: [0.22, 1, 0.36, 1] as [number,number,number,number],
+              ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
               delay: 0.12,
             }}
             className="divide-y divide-[#EAEAEA]"
@@ -161,7 +159,7 @@ export function ResultsMetrics() {
                 transition={{
                   duration: 0.45,
                   delay: 0.25 + i * 0.1,
-                  ease: [0.22, 1, 0.36, 1] as [number,number,number,number],
+                  ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
                 }}
                 className="group py-6 first:pt-0 last:pb-0"
               >
@@ -208,7 +206,6 @@ export function ResultsMetrics() {
               </motion.div>
             ))}
           </motion.div>
-
         </div>
       </div>
     </section>

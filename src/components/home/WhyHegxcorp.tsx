@@ -62,7 +62,6 @@ export function WhyHegxcorp() {
       style={{ paddingTop: "clamp(10px, 2vw, 20px)", paddingBottom: "clamp(72px, 9vw, 128px)" }}
     >
       <div className="mx-auto max-w-[1280px] px-6 lg:px-10 space-y-16">
-
         {/* ── Intro ─────────────────────────────────────────── */}
         <motion.div
           initial="hidden"
@@ -94,13 +93,22 @@ export function WhyHegxcorp() {
                   <tr>
                     <th
                       className="w-1/2 px-7 py-5 text-left font-semibold text-[#6B7280] border-b border-[#EAEAEA] bg-[#FAFAF8]"
-                      style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "13px", letterSpacing: "0.02em" }}
+                      style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: "13px",
+                        letterSpacing: "0.02em",
+                      }}
                     >
                       Traditional Agency
                     </th>
                     <th
                       className="w-1/2 px-7 py-5 text-left font-semibold border-b border-[#FC9C44]/30 bg-[#FFF4E8]"
-                      style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: "13px", letterSpacing: "0.02em", color: "#c97a1e" }}
+                      style={{
+                        fontFamily: "'Space Grotesk', sans-serif",
+                        fontSize: "13px",
+                        letterSpacing: "0.02em",
+                        color: "#c97a1e",
+                      }}
                     >
                       <span className="inline-flex items-center gap-2">
                         <span
@@ -115,10 +123,7 @@ export function WhyHegxcorp() {
 
                 <tbody>
                   {rows.map((row, i) => (
-                    <tr
-                      key={i}
-                      className="group transition-colors duration-200 hover:bg-[#FAFAF8]"
-                    >
+                    <tr key={i} className="group transition-colors duration-200 hover:bg-[#FAFAF8]">
                       {/* Agency column */}
                       <td
                         className={`px-7 py-4 text-[#9CA3AF] ${i < rows.length - 1 ? "border-b border-[#EAEAEA]" : ""}`}
@@ -219,7 +224,6 @@ export function WhyHegxcorp() {
             </motion.div>
           ))}
         </div>
-
       </div>
     </section>
   );

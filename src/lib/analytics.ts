@@ -17,12 +17,15 @@ const visitorIdStorageKey = "hegxcorp_visitor_id";
 const leadSourceStorageKey = "hegxcorp_lead_source";
 const excludedTrackingPaths = ["/admin"];
 
-function compactParams(params: TrackingEventParams) {
+function compactParams(params: TrackingEventParams): Record<string, string | number | boolean> {
+  // The filter strips undefined/null/"" values, so the surviving entries are
+  // always string | number | boolean. TypeScript can't narrow through
+  // Array.filter, so assert the post-filter value type explicitly.
   return Object.fromEntries(
     Object.entries(params).filter(
       ([, value]) => value !== undefined && value !== null && value !== "",
     ),
-  );
+  ) as Record<string, string | number | boolean>;
 }
 
 function createVisitorId() {
@@ -181,24 +184,78 @@ export function trackEvent(eventName: string, params: TrackingEventParams = {}) 
   });
 }
 
-export function trackLead(params: TrackingEventParams = {}) {
+export type LeadUserData = {
+  email?: string;
+  phone?: string;
+};
+
+// Normalizes a raw phone string to E.164 (e.g. "+919876543210"). Enhanced
+// Conversions match rates collapse if the number has spaces or is missing a
+// country code, so strip non-digits and assume +91 for bare 10-digit numbers.
+function normalizePhoneE164(rawPhone: string | undefined): string | undefined {
+  if (!rawPhone) return undefined;
+
+  let digits = rawPhone.replace(/\D/g, "");
+  if (!digits) return undefined;
+
+  if (digits.length === 10) digits = `91${digits}`;
+
+  return `+${digits}`;
+}
+
+// Builds the `user_data` object Google expects for Enhanced Conversions.
+// Values are sent as PLAINTEXT to the dataLayer; GTM's tag SHA-256-hashes them
+// before transmission. Never write these into the VisitorEvent table or into
+// GA4 / Meta event params.
+function buildLeadUserData(userData: LeadUserData): Record<string, string> | undefined {
+  const result: Record<string, string> = {};
+
+  const email = userData.email?.trim().toLowerCase();
+  if (email) result.email_address = email;
+
+  const phone = normalizePhoneE164(userData.phone);
+  if (phone) result.phone_number = phone;
+
+  return Object.keys(result).length > 0 ? result : undefined;
+}
+
+export function trackLead(params: TrackingEventParams = {}, userData: LeadUserData = {}) {
   const leadParams = {
     currency: "INR",
     value: 1,
     ...params,
   };
 
+  const leadUserData = buildLeadUserData(userData);
+
+  // Enhanced Conversions: expose plaintext PII to GTM via a dedicated dataLayer
+  // push immediately BEFORE the conversion event, so the `user_data` Data Layer
+  // Variable resolves when the Google Ads tag fires. GTM hashes it. We keep raw
+  // PII out of GA4 params and out of our own VisitorEvent table on purpose.
+  if (typeof window !== "undefined" && leadUserData) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ user_data: leadUserData });
+  }
+
   trackEvent("generate_lead", leadParams);
 
   if (typeof window === "undefined") return;
 
   if (googleAdsConversionId && googleAdsLeadLabel) {
+    // Direct gtag.js Enhanced Conversions path (used when gtag.js loads without
+    // GTM). Harmless when GTM is the one firing the conversion.
+    if (leadUserData) {
+      window.gtag?.("set", "user_data", leadUserData);
+    }
+
     window.gtag?.("event", "conversion", {
       send_to: `${googleAdsConversionId}/${googleAdsLeadLabel}`,
       ...compactParams(leadParams),
     });
   }
 
+  // Meta: do NOT pass raw email/phone here. Advanced matching must be hashed and
+  // supplied via fbq('init', id, {...}). This stays a non-PII conversion signal.
   window.fbq?.("track", "Lead", compactParams(leadParams));
 }
 

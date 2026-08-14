@@ -91,27 +91,23 @@ const selectBaseClass =
 const errorMessageClass = "text-xs font-medium text-red-500";
 
 function getFieldClass(hasError: boolean) {
-  return `${fieldBaseClass} ${
-    hasError ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
-  }`;
+  return `${fieldBaseClass} ${hasError ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
+    }`;
 }
 
 function getSelectClass(hasError: boolean) {
-  return `${selectBaseClass} ${
-    hasError ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
-  }`;
+  return `${selectBaseClass} ${hasError ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
+    }`;
 }
 
 function getPhoneFieldClass(hasError: boolean) {
-  return `flex overflow-hidden rounded-lg border bg-white transition-all focus-within:border-[#FC9C44] ${
-    hasError ? "border-red-500 focus-within:border-red-500" : "border-[#EAEAEA]"
-  }`;
+  return `flex overflow-hidden rounded-lg border bg-white transition-all focus-within:border-[#FC9C44] ${hasError ? "border-red-500 focus-within:border-red-500" : "border-[#EAEAEA]"
+    }`;
 }
 
 function getServiceButtonClass(hasError: boolean) {
-  return `flex w-full items-center justify-between rounded-lg border bg-white px-4 py-3 text-left text-sm outline-none transition-all ${
-    hasError ? "border-red-500" : "border-[#EAEAEA] hover:border-[#FC9C44]"
-  }`;
+  return `flex w-full items-center justify-between rounded-lg border bg-white px-4 py-3 text-left text-sm outline-none transition-all ${hasError ? "border-red-500" : "border-[#EAEAEA] hover:border-[#FC9C44]"
+    }`;
 }
 
 function blockInvalidNameKey(event: KeyboardEvent<HTMLInputElement>, onInvalidInput: () => void) {
@@ -238,13 +234,19 @@ function ContactPage() {
           source: "Contact page",
         },
       });
-      trackLead({
-        form_name: "contact_form",
-        lead_source: "Contact page",
-        services: data.services.join(", "),
-        budget: data.budget,
-        timeline: data.timeline,
-      });
+      trackLead(
+        {
+          form_name: "contact_form",
+          lead_source: "Contact page",
+          services: data.services.join(", "),
+          budget: data.budget,
+          timeline: data.timeline,
+        },
+        {
+          email: data.email,
+          phone: `${defaultPhoneCountryCode} ${data.phone}`,
+        },
+      );
       toast.success("Message saved successfully! Our growth strategists will contact you shortly.");
       setIsSubmitted(true);
       setIsServiceOpen(false);

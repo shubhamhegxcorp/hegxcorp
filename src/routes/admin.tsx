@@ -2,32 +2,29 @@ import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-rout
 import {
   ArrowLeft,
   BookOpenText,
-  CalendarClock,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   ClipboardList,
   Eye,
   EyeOff,
   Inbox,
   LockKeyhole,
   LogOut,
-  Mail,
   Megaphone,
-  Phone,
   RefreshCw,
   ShieldCheck,
   UserRound,
+  ChevronRight,
+  PlusCircle,
+  ChevronDown,
 } from "lucide-react";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Toaster, toast } from "sonner";
 
+import { AdminContext } from "@/lib/admin-context.tsx";
 import { getAdminSession, loginAdmin, logoutAdmin } from "@/lib/admin-auth";
 import { getBlogs } from "@/lib/content/blogs";
 import {
   type ContactInquiry,
   type InquiryStatus,
-  inquiryStatuses,
   listContactInquiries,
   updateContactInquiryStatus,
 } from "@/lib/contact-inquiries";
@@ -39,80 +36,15 @@ import {
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
-    meta: [
-      { title: "Lead Inbox | Hegxcorp Admin" },
-      {
-        name: "description",
-        content: "Private Hegxcorp lead inbox for contact and service inquiries.",
-      },
-      { name: "robots", content: "noindex,nofollow" },
-    ],
+    meta: [{ title: "Admin | Hegxcorp" }, { name: "robots", content: "noindex,nofollow" }],
   }),
-  component: AdminLeadsPage,
+  component: AdminLayout,
 } as never);
 
-const statusStyles: Record<InquiryStatus, string> = {
-  NEW: "bg-[#FFF4E8] text-[#C96A13]",
-  INPROGRESS: "bg-[#EAF2FF] text-[#2359B8]",
-  CLOSED: "bg-[#F2F4F7] text-[#475467]",
-};
-
-type LeadInbox = "contact" | "growthAudit";
-
-const activeInboxStorageKey = "hegxcorp-admin-active-inbox";
 const adminTabSessionKey = "hegxcorp-admin-tab-session";
-const leadsPerPage = 10;
 const blogPostCount = getBlogs().length;
 
-const inboxCopy: Record<LeadInbox, { title: string; empty: string }> = {
-  contact: {
-    title: "Contact Form",
-    empty: "New website inquiries will appear here after the contact form saves them to the database.",
-  },
-  growthAudit: {
-    title: "Growth Audit Form",
-    empty: "New growth audit requests will appear here after the free audit form saves them to the database.",
-  },
-};
-
-function formatStatus(status: InquiryStatus) {
-  if (status === "INPROGRESS") {
-    return "In Progress";
-  }
-
-  return status
-    .toLowerCase()
-    .split("_")
-    .map((part) => part[0].toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
-
-function isLeadInbox(value: string | null): value is LeadInbox {
-  return value === "contact" || value === "growthAudit";
-}
-
-function getLeadSourceLabel(lead: {
-  leadSource: string | null;
-  leadCampaign: string | null;
-  leadAd?: string | null;
-}) {
-  const source = lead.leadSource?.trim() || "Untracked";
-  const campaign = lead.leadCampaign?.trim();
-  const ad = lead.leadAd?.trim();
-
-  if (campaign && ad) return `${source} / ${campaign} / ${ad}`;
-  if (campaign) return `${source} / ${campaign}`;
-  return source;
-}
-
-function AdminLeadsPage() {
+function AdminLayout() {
   const location = useLocation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -120,100 +52,39 @@ function AdminLeadsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [activeInbox, setActiveInbox] = useState<LeadInbox>("contact");
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [growthAuditInquiries, setGrowthAuditInquiries] = useState<GrowthAuditInquiry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [updatingId, setUpdatingId] = useState("");
-  const [isFormMenuOpen, setIsFormMenuOpen] = useState(false);
-  const [isFormMenuHovered, setIsFormMenuHovered] = useState(false);
-  const [isPostMenuOpen, setIsPostMenuOpen] = useState(false);
-  const [isPostMenuHovered, setIsPostMenuHovered] = useState(false);
-  const [leadPages, setLeadPages] = useState<Record<LeadInbox, number>>({
-    contact: 1,
-    growthAudit: 1,
-  });
-  const [activeStatusFilter, setActiveStatusFilter] = useState<InquiryStatus | null>(null);
+  const [isBlogMenuOpen, setIsBlogMenuOpen] = useState(false);
+  const [isBlogMenuHovered, setIsBlogMenuHovered] = useState(false);
+  const isBlogMenuVisible = isBlogMenuOpen || isBlogMenuHovered;
+  const [isFormsMenuOpen, setIsFormsMenuOpen] = useState(false);
+  const [isFormsMenuHovered, setIsFormsMenuHovered] = useState(false);
+  const isFormsMenuVisible = isFormsMenuOpen || isFormsMenuHovered;
 
+  const isContactLeadsRoute = location.pathname.startsWith("/admin/contact-leads");
+  const isGrowthLeadsRoute = location.pathname.startsWith("/admin/growth-leads");
   const isBlogRoute = location.pathname.startsWith("/admin/blog");
+  const isAddBlogRoute = location.pathname.startsWith("/admin/add-blog");
   const isAdLeadsRoute = location.pathname.startsWith("/admin/ad-leads");
-  const isChildAdminRoute = isBlogRoute || isAdLeadsRoute;
-  const allActiveInquiries = activeInbox === "contact" ? inquiries : growthAuditInquiries;
-  const filteredContactInquiries = activeStatusFilter
-    ? inquiries.filter((inquiry) => inquiry.status === activeStatusFilter)
-    : inquiries;
-  const filteredGrowthAuditInquiries = activeStatusFilter
-    ? growthAuditInquiries.filter((inquiry) => inquiry.status === activeStatusFilter)
-    : growthAuditInquiries;
-  const activeInquiries =
-    activeInbox === "contact" ? filteredContactInquiries : filteredGrowthAuditInquiries;
-  const activeInboxTitle = inboxCopy[activeInbox].title;
-  const isFormMenuVisible = isFormMenuOpen || isFormMenuHovered;
-  const isPostMenuVisible = isPostMenuOpen || isPostMenuHovered;
-  const activePage = leadPages[activeInbox];
-  const totalLeadPages = Math.max(1, Math.ceil(activeInquiries.length / leadsPerPage));
-  const currentLeadPage = Math.min(activePage, totalLeadPages);
-  const firstVisibleLead = activeInquiries.length
-    ? (currentLeadPage - 1) * leadsPerPage + 1
-    : 0;
-  const lastVisibleLead = Math.min(currentLeadPage * leadsPerPage, activeInquiries.length);
-  const pageStartIndex = (currentLeadPage - 1) * leadsPerPage;
-  const pageEndIndex = pageStartIndex + leadsPerPage;
-  const paginatedContactInquiries = filteredContactInquiries.slice(pageStartIndex, pageEndIndex);
-  const paginatedGrowthAuditInquiries = filteredGrowthAuditInquiries.slice(pageStartIndex, pageEndIndex);
 
-  function selectInbox(inbox: LeadInbox) {
-    setActiveInbox(inbox);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(activeInboxStorageKey, inbox);
-    }
-  }
-
-  function setActiveLeadPage(page: number) {
-    const nextPage = Math.min(Math.max(page, 1), totalLeadPages);
-    setLeadPages((current) => ({
-      ...current,
-      [activeInbox]: nextPage,
-    }));
-  }
-
-  function toggleStatusFilter(status: InquiryStatus) {
-    setActiveStatusFilter((current) => (current === status ? null : status));
-    setLeadPages((current) => ({
-      ...current,
-      [activeInbox]: 1,
-    }));
-  }
-
-  function clearStatusFilter() {
-    setActiveStatusFilter(null);
-    setLeadPages((current) => ({
-      ...current,
-      [activeInbox]: 1,
-    }));
-  }
-
-  const stats = useMemo(() => {
-    return inquiryStatuses.map((status) => ({
-      status,
-      count: allActiveInquiries.filter((inquiry) => inquiry.status === status).length,
-    }));
-  }, [allActiveInquiries]);
-
-  useEffect(() => {
-    if (activePage > totalLeadPages) {
-      setLeadPages((current) => ({
-        ...current,
-        [activeInbox]: totalLeadPages,
-      }));
-    }
-  }, [activeInbox, activePage, totalLeadPages]);
+  const pageTitle = isContactLeadsRoute
+    ? "Contact Form submissions"
+    : isGrowthLeadsRoute
+      ? "Growth Audit submissions"
+      : isBlogRoute
+        ? "All Blogs"
+        : isAddBlogRoute
+          ? "Create blog post"
+          : isAdLeadsRoute
+            ? "Ad lead performance"
+            : "Admin";
 
   async function loadInquiries() {
     setIsLoading(true);
     setError("");
-
     try {
       const [savedInquiries, savedGrowthAuditInquiries] = await Promise.all([
         listContactInquiries(),
@@ -224,9 +95,7 @@ function AdminLeadsPage() {
     } catch (loadError) {
       console.error("Lead inbox failed:", loadError);
       const message =
-        loadError instanceof Error
-          ? loadError.message
-          : "Lead inbox could not load right now.";
+        loadError instanceof Error ? loadError.message : "Lead inbox could not load right now.";
       setError(message);
       if (message.includes("Authentication required")) {
         setIsAuthenticated(false);
@@ -239,11 +108,6 @@ function AdminLeadsPage() {
   }
 
   useEffect(() => {
-    const savedInbox = window.localStorage.getItem(activeInboxStorageKey);
-    if (isLeadInbox(savedInbox)) {
-      setActiveInbox(savedInbox);
-    }
-
     async function restoreSession() {
       try {
         if (window.sessionStorage.getItem(adminTabSessionKey) !== "active") {
@@ -253,7 +117,6 @@ function AdminLeadsPage() {
           setPassword("");
           return;
         }
-
         const session = await getAdminSession();
         setIsAuthenticated(session.isAuthenticated);
         if (session.isAuthenticated) {
@@ -273,9 +136,7 @@ function AdminLeadsPage() {
         setIsCheckingSession(false);
       }
     }
-
     void restoreSession();
-    // The initial session check should run once.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -283,7 +144,6 @@ function AdminLeadsPage() {
     event.preventDefault();
     setIsLoggingIn(true);
     setError("");
-
     try {
       const session = await loginAdmin({ data: { email, password } });
       setIsAuthenticated(session.isAuthenticated);
@@ -322,15 +182,8 @@ function AdminLeadsPage() {
   async function handleStatusChange(id: string, status: InquiryStatus) {
     setUpdatingId(id);
     setError("");
-
     try {
-      const updatedInquiry = await updateContactInquiryStatus({
-        data: {
-          id,
-          status,
-        },
-      });
-
+      const updatedInquiry = await updateContactInquiryStatus({ data: { id, status } });
       setInquiries((current) =>
         current.map((inquiry) => (inquiry.id === id ? updatedInquiry : inquiry)),
       );
@@ -338,9 +191,7 @@ function AdminLeadsPage() {
     } catch (updateError) {
       console.error("Lead status update failed:", updateError);
       setError(
-        updateError instanceof Error
-          ? updateError.message
-          : "Lead status could not be updated.",
+        updateError instanceof Error ? updateError.message : "Lead status could not be updated.",
       );
       toast.error("Lead status could not be updated.");
     } finally {
@@ -351,15 +202,8 @@ function AdminLeadsPage() {
   async function handleGrowthAuditStatusChange(id: string, status: InquiryStatus) {
     setUpdatingId(id);
     setError("");
-
     try {
-      const updatedInquiry = await updateGrowthAuditInquiryStatus({
-        data: {
-          id,
-          status,
-        },
-      });
-
+      const updatedInquiry = await updateGrowthAuditInquiryStatus({ data: { id, status } });
       setGrowthAuditInquiries((current) =>
         current.map((inquiry) => (inquiry.id === id ? updatedInquiry : inquiry)),
       );
@@ -395,7 +239,7 @@ function AdminLeadsPage() {
         <div className="pointer-events-none absolute -left-32 top-[-10rem] h-[32rem] w-[32rem] rounded-full bg-[#FC9C44]/15 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-48 right-[-8rem] h-[36rem] w-[36rem] rounded-full bg-[#2359B8]/20 blur-3xl" />
 
-        <div className="relative mx-auto w-full max-w-[460px]  -translate-y-25">
+        <div className="relative mx-auto w-full max-w-[460px] -translate-y-25">
           <section className="w-full rounded-lg border border-white/10 bg-white p-7 text-center text-[#101828] shadow-2xl shadow-black/30 sm:p-10">
             <Link
               to="/"
@@ -405,9 +249,9 @@ function AdminLeadsPage() {
               Back to website
             </Link>
 
-            {/* <div className="mx-auto grid h-12 w-12 place-items-center rounded-lg bg-[#FFF4E8] text-[#FC9C44]">
+            <div className="mx-auto grid h-12 w-12 place-items-center rounded-lg bg-[#FFF4E8] text-[#FC9C44]">
               <LockKeyhole className="h-6 w-6" />
-            </div> */}
+            </div>
             <h2
               className="mt-6 text-3xl font-black text-[#06133D]"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
@@ -465,7 +309,10 @@ function AdminLeadsPage() {
               </label>
 
               {error && (
-                <div role="alert" className="border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
+                <div
+                  role="alert"
+                  className="border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700"
+                >
                   {error}
                 </div>
               )}
@@ -476,7 +323,7 @@ function AdminLeadsPage() {
                 className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#FC9C44] px-5 py-3 text-sm font-black text-white transition hover:bg-[#E88C35] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isLoggingIn && <RefreshCw className="h-4 w-4 animate-spin" />}
-                {isLoggingIn ? "Signing in..." : "Sign in "}
+                {isLoggingIn ? "Signing in..." : "Sign in"}
               </button>
             </form>
           </section>
@@ -486,588 +333,238 @@ function AdminLeadsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F7F8FA] text-[#101828] lg:flex">
-      <Toaster position="top-right" richColors />
+    <AdminContext.Provider
+      value={{
+        inquiries,
+        growthAuditInquiries,
+        isLoading,
+        error,
+        updatingId,
+        handleStatusChange,
+        handleGrowthAuditStatusChange,
+        loadInquiries,
+      }}
+    >
+      <main className="min-h-screen bg-[#F7F8FA] text-[#101828] lg:flex">
+        <Toaster position="top-right" richColors />
 
-      <aside className="border-b border-[#E4E7EC] bg-white lg:sticky lg:top-0 lg:h-screen lg:w-[280px] lg:shrink-0 lg:border-b-0 lg:border-r">
-        <div className="flex h-full flex-col p-4">
-          <div className="px-2 pb-5">
-            <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.14em] text-[#FC9C44]">
-              <ShieldCheck className="h-4 w-4" />
-              Hegxcorp Admin
-            </div>
-            <h1
-              className="mt-2 text-2xl font-black text-[#06133D]"
-              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-            >
-              Lead Inbox
-            </h1>
-          </div>
-
-          <div
-            className="relative"
-            onMouseEnter={() => setIsFormMenuHovered(true)}
-            onMouseLeave={() => setIsFormMenuHovered(false)}
-          >
-            <button
-              type="button"
-              onClick={() => setIsFormMenuOpen((current) => !current)}
-              aria-expanded={isFormMenuVisible}
-              className="flex w-full items-center justify-between rounded-lg bg-[#06133D] px-3 py-3 text-left text-sm font-black text-white transition hover:bg-[#102159]"
-            >
-              <span className="flex items-center gap-2">
-                <Inbox className="h-4 w-4 text-[#FC9C44]" />
-                Lead Forms
-              </span>
-              <ChevronDown
-                className={`h-4 w-4 text-white/70 transition ${isFormMenuVisible ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {isFormMenuVisible && (
-              <div className="absolute left-0 right-0 top-full z-20 mt-2 grid gap-2 border border-[#E4E7EC] bg-white p-2 shadow-xl shadow-[#06133D]/10 lg:static lg:shadow-none">
-                <Link
-                  to="/admin"
-                  onClick={() => {
-                    selectInbox("contact");
-                    setIsFormMenuOpen(false);
-                    setIsFormMenuHovered(false);
-                  }}
-                  className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${activeInbox === "contact"
-                    ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
-                    : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
-                    }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <Mail className="h-4 w-4" />
-                    Contact Form
-                  </span>
-                  <span>{inquiries.length}</span>
-                </Link>
-
-                <Link
-                  to="/admin"
-                  onClick={() => {
-                    selectInbox("growthAudit");
-                    setIsFormMenuOpen(false);
-                    setIsFormMenuHovered(false);
-                  }}
-                  className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${activeInbox === "growthAudit"
-                    ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
-                    : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
-                    }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <ClipboardList className="h-4 w-4" />
-                    Growth Audit Form
-                  </span>
-                  <span>{growthAuditInquiries.length}</span>
-                </Link>
+        <aside className="border-b border-[#E4E7EC] bg-white lg:sticky lg:top-0 lg:h-screen lg:w-[280px] lg:shrink-0 lg:border-b-0 lg:border-r">
+          <div className="flex h-full flex-col p-4">
+            <div className="px-2 pb-5">
+              <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.14em] text-[#FC9C44]">
+                <ShieldCheck className="h-4 w-4" />
+                Hegxcorp Admin
               </div>
-            )}
-          </div>
-
-          <div
-            className="relative mt-3"
-            onMouseEnter={() => setIsPostMenuHovered(true)}
-            onMouseLeave={() => setIsPostMenuHovered(false)}
-          >
-            <Link
-              to="/admin/blog"
-              onClick={() => setIsPostMenuOpen(false)}
-              aria-expanded={isPostMenuVisible}
-              className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${
-                isBlogRoute
-                  ? "bg-[#06133D] text-white"
-                  : "bg-white text-[#344054] hover:bg-[#F9FAFB] hover:text-[#06133D]"
-              }`}
-            >
-              <span className="flex items-center gap-2">
-                <BookOpenText className={`h-4 w-4 ${isBlogRoute ? "text-[#FC9C44]" : "text-[#667085]"}`} />
-                Posts
-              </span>
-              <ChevronDown
-                className={`h-4 w-4 transition ${
-                  isBlogRoute ? "text-white/70" : "text-[#98A2B3]"
-                } ${isPostMenuVisible ? "rotate-180" : ""}`}
-              />
-            </Link>
-
-            {isPostMenuVisible && (
-              <div className="absolute left-0 right-0 top-full z-20 mt-2 grid gap-2 border border-[#E4E7EC] bg-white p-2 shadow-xl shadow-[#06133D]/10 lg:static lg:shadow-none">
-                <Link
-                  to="/admin/blog"
-                  onClick={() => {
-                    setIsPostMenuOpen(false);
-                    setIsPostMenuHovered(false);
-                  }}
-                  className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${
-                    isBlogRoute
-                      ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
-                      : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    <BookOpenText className="h-4 w-4" />
-                    All Posts
-                  </span>
-                  <span>{blogPostCount}</span>
-                </Link>
-              </div>
-            )}
-          </div>
-
-          <Link
-            to="/admin/ad-leads"
-            className={`mt-3 flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${
-              isAdLeadsRoute
-                ? "bg-[#06133D] text-white"
-                : "bg-white text-[#344054] hover:bg-[#F9FAFB] hover:text-[#06133D]"
-            }`}
-          >
-            <span className="flex items-center gap-2">
-              <Megaphone className={`h-4 w-4 ${isAdLeadsRoute ? "text-[#FC9C44]" : "text-[#667085]"}`} />
-              Ad Leads
-            </span>
-          </Link>
-
-          <div className="mt-auto hidden border-t border-[#E4E7EC] pt-4 lg:block">
-            <p className="px-2 text-xs font-semibold leading-5 text-[#667085]">
-              Signed in as <span className="font-black text-[#06133D]">{email}</span>
-            </p>
-          </div>
-        </div>
-      </aside>
-
-      <div className="min-w-0 flex-1">
-        <div className="border-b border-[#E4E7EC] bg-white">
-          <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-5 lg:px-8">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.11em] text-[#98A2B3]">
-                Viewing {isBlogRoute ? "Blog Posts" : isAdLeadsRoute ? "Ad Leads" : activeInboxTitle}
-              </p>
-              <h2
-                className="mt-2 text-2xl font-black text-[#06133D] sm:text-3xl"
+              <h1
+                className="mt-2 text-2xl font-black text-[#06133D]"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
-                {isBlogRoute
-                  ? "All Posts"
-                  : isAdLeadsRoute
-                    ? "Ad lead performance"
-                    : `${activeInboxTitle} submissions`}
-              </h2>
+                Lead Inbox
+              </h1>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <Link
-                to="/"
-                className="inline-flex items-center gap-2 rounded-lg border border-[#D0D5DD] bg-white px-4 py-2 text-sm font-bold text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44]"
+            <nav className="grid gap-2">
+              {/* Forms Leads dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setIsFormsMenuHovered(true)}
+                onMouseLeave={() => setIsFormsMenuHovered(false)}
               >
-                <ArrowLeft className="h-4 w-4" />
-                Website
-              </Link>
-              <button
-                type="button"
-                onClick={() => void handleLogout()}
-                className="inline-flex items-center gap-2 rounded-lg border border-[#D0D5DD] bg-white px-4 py-2 text-sm font-bold text-[#344054] transition hover:border-red-300 hover:text-red-600"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign out
-              </button>
-              {!isChildAdminRoute && (
                 <button
                   type="button"
-                  onClick={() => void loadInquiries()}
-                  disabled={isLoading}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[#06133D] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#102159] disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={() => setIsFormsMenuOpen((current) => !current)}
+                  aria-expanded={isFormsMenuVisible}
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${isContactLeadsRoute || isGrowthLeadsRoute
+                      ? "bg-[#06133D] text-white"
+                      : "bg-white text-[#344054] hover:bg-[#F9FAFB] hover:text-[#06133D]"
+                    }`}
                 >
-                  <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-                  Refresh
+                  <span className="flex items-center gap-2">
+                    <Inbox
+                      className={`h-4 w-4 ${isContactLeadsRoute || isGrowthLeadsRoute ? "text-[#FC9C44]" : "text-[#667085]"}`}
+                    />
+                    Forms Leads
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 transition ${isContactLeadsRoute || isGrowthLeadsRoute ? "text-white/70" : "text-[#98A2B3]"
+                      } ${isFormsMenuVisible ? "rotate-180" : ""}`}
+                  />
                 </button>
-              )}
-            </div>
-          </div>
-        </div>
 
-        {isChildAdminRoute ? (
-          <Outlet />
-        ) : (
-        <section className="grid gap-6 px-6 py-8 lg:px-8 ">
-          <div className="grid gap-3 sm:grid-cols-4 ">
-            <button
-              type="button"
-              onClick={clearStatusFilter}
-              aria-pressed={activeStatusFilter === null}
-              className={`border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md ${activeStatusFilter === null
-                ? "border-[#06133D] bg-[#06133D] text-white shadow-md"
-                : "border-[#E4E7EC] bg-white text-[#101828]"
-                }`}
-            >
-              <p className={`text-xs font-bold uppercase tracking-[0.12em] ${activeStatusFilter === null ? "text-white/70" : "text-[#667085]"}`}>
-                All Leads
-              </p>
-              <p className={`mt-2 text-3xl font-black ${activeStatusFilter === null ? "text-white" : "text-[#06133D]"}`}>
-                {allActiveInquiries.length}
-              </p>
-            </button>
+                {isFormsMenuVisible && (
+                  <div className="absolute left-0 right-0 top-full z-20 mt-2 grid gap-2 border border-[#E4E7EC] bg-white p-2 shadow-xl shadow-[#06133D]/10 lg:static lg:shadow-none">
+                    <Link
+                      to="/admin/contact-leads"
+                      onClick={() => {
+                        setIsFormsMenuOpen(false);
+                        setIsFormsMenuHovered(false);
+                      }}
+                      className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${isContactLeadsRoute
+                          ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
+                          : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
+                        }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <Inbox className="h-4 w-4" />
+                        Contact Leads
+                      </span>
+                      <span>{inquiries.length}</span>
+                    </Link>
 
-            {stats.map(({ status, count }) => (
-              <button
-                type="button"
-                key={status}
-                onClick={() => toggleStatusFilter(status)}
-                aria-pressed={activeStatusFilter === status}
-                className={`border p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md ${activeStatusFilter === status ? "ring-2 ring-[#06133D]/15 shadow-md" : ""
-                  } ${status === "NEW"
-                    ? "border-[#FED7AA] bg-[#FFF7ED]"
-                    : status === "INPROGRESS"
-                      ? "border-[#B9D3FF] bg-[#EAF2FF]"
-                      : status === "CLOSED"
-                        ? "border-[#D0D5DD] bg-[#F2F4F7]"
-                        : "border-[#E4E7EC] bg-white"
+                    <Link
+                      to="/admin/growth-leads"
+                      onClick={() => {
+                        setIsFormsMenuOpen(false);
+                        setIsFormsMenuHovered(false);
+                      }}
+                      className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${isGrowthLeadsRoute
+                          ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
+                          : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
+                        }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <ClipboardList className="h-4 w-4" />
+                        Growth Leads
+                      </span>
+                      <span>{growthAuditInquiries.length}</span>
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Blog dropdown — unchanged, just its own separate div now */}
+              <div
+                className="relative"
+                onMouseEnter={() => setIsBlogMenuHovered(true)}
+                onMouseLeave={() => setIsBlogMenuHovered(false)}
+              >
+                <Link
+                  to="/admin/blog"
+                  onClick={() => setIsBlogMenuOpen(false)}
+                  aria-expanded={isBlogMenuVisible}
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${isBlogRoute || isAddBlogRoute
+                      ? "bg-[#06133D] text-white"
+                      : "bg-white text-[#344054] hover:bg-[#F9FAFB] hover:text-[#06133D]"
+                    }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <BookOpenText
+                      className={`h-4 w-4 ${isBlogRoute || isAddBlogRoute ? "text-[#FC9C44]" : "text-[#667085]"}`}
+                    />
+                    Blog
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 transition ${isBlogRoute || isAddBlogRoute ? "text-white/70" : "text-[#98A2B3]"
+                      } ${isBlogMenuVisible ? "rotate-180" : ""}`}
+                  />
+                </Link>
+
+                {isBlogMenuVisible && (
+                  <div className="absolute left-0 right-0 top-full z-20 mt-2 grid gap-2 border border-[#E4E7EC] bg-white p-2 shadow-xl shadow-[#06133D]/10 lg:static lg:shadow-none">
+                    <Link
+                      to="/admin/blog"
+                      onClick={() => {
+                        setIsBlogMenuOpen(false);
+                        setIsBlogMenuHovered(false);
+                      }}
+                      className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${isBlogRoute
+                          ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
+                          : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
+                        }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <BookOpenText className="h-4 w-4" />
+                        All Blogs
+                      </span>
+                      <span>{blogPostCount}</span>
+                    </Link>
+
+                    <Link
+                      to="/admin/add-blog"
+                      onClick={() => {
+                        setIsBlogMenuOpen(false);
+                        setIsBlogMenuHovered(false);
+                      }}
+                      className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${isAddBlogRoute
+                          ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
+                          : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
+                        }`}
+                    >
+                      <PlusCircle className="h-4 w-4" />
+                      Add Blog
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              <Link
+                to="/admin/ad-leads"
+                className={`flex items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${isAdLeadsRoute
+                    ? "bg-[#06133D] text-white"
+                    : "bg-white text-[#344054] hover:bg-[#F9FAFB] hover:text-[#06133D]"
                   }`}
               >
-                <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#667085]">
-                  {formatStatus(status)}
-                </p>
-                <p className="mt-2 text-3xl font-black text-[#06133D]">{count}</p>
-              </button>
-            ))}
-          </div>
+                <span className="flex items-center gap-2">
+                  <Megaphone
+                    className={`h-4 w-4 ${isAdLeadsRoute ? "text-[#FC9C44]" : "text-[#667085]"}`}
+                  />
+                  Ad Leads
+                </span>
+              </Link>
+            </nav>
 
-          {/* <div className="flex flex-wrap items-center justify-between gap-3 border border-[#E4E7EC] bg-white px-4 py-3">
-            <p className="flex items-center gap-2 text-sm font-semibold text-[#667085]">
-              <ShieldCheck className="h-4 w-4 text-[#FC9C44]" />
-              Signed in as <span className="font-black text-[#06133D]">{email}</span>
-            </p>
-            <p className="text-xs font-bold uppercase tracking-[0.11em] text-[#98A2B3]">
-              {activeInquiries.length} leads
-            </p>
-          </div> */}
-
-          {error && (
-            <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
-              {error}
+            <div className="mt-auto hidden border-t border-[#E4E7EC] pt-4 lg:block">
+              <p className="px-2 text-xs font-semibold leading-5 text-[#667085]">
+                Signed in as <span className="font-black text-[#06133D]">{email}</span>
+              </p>
             </div>
-          )}
+          </div>
+        </aside>
 
-          <div className="overflow-hidden border border-[#E4E7EC] bg-white">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E4E7EC] px-5 py-4">
-              <div className="flex items-center gap-2">
-                {activeInbox === "contact" ? (
-                  <Inbox className="h-5 w-5 text-[#FC9C44]" />
-                ) : (
-                  <ClipboardList className="h-5 w-5 text-[#FC9C44]" />
-                )}
-                <h2 className="text-base font-black text-[#06133D]">
-                  {activeInboxTitle} submissions
-                </h2>
-                {activeStatusFilter && (
-                  <span className="rounded-full bg-[#FFF4E8] px-3 py-1 text-xs font-black text-[#C96A13]">
-                    {formatStatus(activeStatusFilter)}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-wrap items-center justify-end gap-2">
-                <p className="text-sm font-semibold text-[#667085]">
-                  {firstVisibleLead}-{lastVisibleLead} of {activeInquiries.length} leads
-                </p>
-                <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1">
+          <div className="border-b border-[#E4E7EC] bg-white">
+            <div className="flex flex-wrap items-center justify-between gap-4 px-6 py-5 lg:px-8">
+              <h2
+                className="text-2xl font-black text-[#06133D] sm:text-3xl"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              >
+                {pageTitle}
+              </h2>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <Link
+                  to="/"
+                  className="inline-flex items-center gap-2 rounded-lg border border-[#D0D5DD] bg-white px-4 py-2 text-sm font-bold text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44]"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Website
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => void handleLogout()}
+                  className="inline-flex items-center gap-2 rounded-lg border border-[#D0D5DD] bg-white px-4 py-2 text-sm font-bold text-[#344054] transition hover:border-red-300 hover:text-red-600"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign out
+                </button>
+                {(isContactLeadsRoute || isGrowthLeadsRoute) && (
                   <button
                     type="button"
-                    onClick={() => setActiveLeadPage(currentLeadPage - 1)}
-                    disabled={currentLeadPage === 1}
-                    className="grid h-8 w-8 place-items-center rounded-md border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44] disabled:cursor-not-allowed disabled:opacity-40"
-                    aria-label="Previous leads page"
+                    onClick={() => void loadInquiries()}
+                    disabled={isLoading}
+                    className="inline-flex items-center gap-2 rounded-lg bg-[#06133D] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#102159] disabled:cursor-not-allowed disabled:opacity-60"
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+                    Refresh
                   </button>
-
-                  <span className="min-w-[78px] rounded-md border border-[#D0D5DD] bg-[#F9FAFB] px-3 py-2 text-center text-xs font-black text-[#344054]">
-                    Page {currentLeadPage} of {totalLeadPages}
-                  </span>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveLeadPage(currentLeadPage + 1)}
-                    disabled={currentLeadPage === totalLeadPages}
-                    className="grid h-8 w-8 place-items-center rounded-md border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44] disabled:cursor-not-allowed disabled:opacity-40"
-                    aria-label="Next leads page"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
+                )}
               </div>
             </div>
-
-            {isLoading ? (
-              <div className="grid min-h-[320px] place-items-center text-sm font-semibold text-[#667085]">
-                Loading leads...
-              </div>
-            ) : activeInquiries.length === 0 ? (
-              <div className="grid min-h-[320px] place-items-center px-6 text-center">
-                <div>
-                  <Inbox className="mx-auto h-10 w-10 text-[#98A2B3]" />
-                  <h3 className="mt-4 text-lg font-black text-[#06133D]">
-                    {activeStatusFilter
-                      ? `No ${formatStatus(activeStatusFilter).toLowerCase()} leads found`
-                      : "No leads saved yet"}
-                  </h3>
-                  <p className="mt-2 max-w-sm text-sm leading-6 text-[#667085]">
-                    {activeStatusFilter
-                      ? "Choose another status box to review a different lead group."
-                      : inboxCopy[activeInbox].empty}
-                  </p>
-                </div>
-              </div>
-            ) : activeInbox === "contact" ? (
-              <div className="overflow-x-auto">
-                <table className="min-w-[1180px] w-full border-collapse text-left">
-                  <thead className="bg-[#F9FAFB] text-xs font-black uppercase tracking-[0.11em] text-[#667085]">
-                    <tr>
-                      <th className="px-5 py-3">Lead</th>
-                      <th className="px-5 py-3">Source</th>
-                      <th className="px-5 py-3">Ad Source</th>
-                      <th className="px-5 py-3">Budget</th>
-                      <th className="px-5 py-3">Timeline</th>
-                      <th className="px-5 py-3">Message</th>
-                      <th className="px-5 py-3">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#E4E7EC]">
-                    {paginatedContactInquiries.map((inquiry) => (
-                      <tr key={inquiry.id} className="align-top transition hover:bg-[#FFF9F3]">
-                        <td className="px-5 py-4">
-                          <div className="min-w-[220px]">
-                            <p className="font-black text-[#06133D]">{inquiry.name}</p>
-                            <a
-                              href={`mailto:${inquiry.email}`}
-                              className="mt-2 flex items-center gap-2 text-sm font-semibold text-[#475467] transition hover:text-[#FC9C44]"
-                            >
-                              <Mail className="h-4 w-4" />
-                              {inquiry.email}
-                            </a>
-                            {inquiry.phone && (
-                              <a
-                                href={`tel:${inquiry.phone}`}
-                                className="mt-1 flex items-center gap-2 text-sm font-semibold text-[#475467] transition hover:text-[#FC9C44]"
-                              >
-                                <Phone className="h-4 w-4" />
-                                {inquiry.phone}
-                              </a>
-                            )}
-                            <p className="mt-2 flex items-center gap-2 text-xs font-semibold text-[#667085]">
-                              <CalendarClock className="h-4 w-4" />
-                              {formatDate(inquiry.createdAt)}
-                            </p>
-                          </div>
-                        </td>
-                        <td className="px-5 py-4">
-                          <p className="font-bold text-[#344054]">{inquiry.source}</p>
-                          {inquiry.services.length > 0 && (
-                            <div className="mt-2 flex max-w-[240px] flex-wrap gap-2">
-                              {inquiry.services.map((service) => (
-                                <span
-                                  key={service}
-                                  className="rounded-full bg-[#FFF4E8] px-2.5 py-1 text-xs font-bold text-[#C96A13]"
-                                >
-                                  {service}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                          {inquiry.website && (
-                            <a
-                              href={inquiry.website}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="mt-3 block max-w-[240px] truncate text-sm font-semibold text-[#FC9C44] hover:underline"
-                            >
-                              {inquiry.website}
-                            </a>
-                          )}
-                        </td>
-                        <td className="px-5 py-4">
-                          <div className="grid min-w-[220px] gap-1 text-xs font-semibold text-[#667085]">
-                            <span className="w-fit rounded-full bg-[#EAF2FF] px-2.5 py-1 font-black text-[#2359B8]">
-                              {inquiry.leadSource ?? "Untracked"}
-                            </span>
-                            <p className="max-w-[240px] truncate">
-                              {getLeadSourceLabel(inquiry)}
-                            </p>
-                          </div>
-                        </td>
-                        <td className="px-5 py-4 text-sm font-semibold text-[#475467]">
-                          {inquiry.budget ?? "Not shared"}
-                        </td>
-                        <td className="px-5 py-4 text-sm font-semibold text-[#475467]">
-                          {inquiry.timeline ?? "Not shared"}
-                        </td>
-                        <td className="px-5 py-4">
-                          <p className="max-w-[300px] text-sm leading-6 text-[#344054]">
-                            {inquiry.message}
-                          </p>
-                        </td>
-                        <td className="px-5 py-4">
-                          <div className="grid gap-2">
-                            <span
-                              className={`w-fit rounded-full px-3 py-1 text-xs font-black ${statusStyles[inquiry.status]}`}
-                            >
-                              {formatStatus(inquiry.status)}
-                            </span>
-                            <select
-                              value={inquiry.status}
-                              disabled={updatingId === inquiry.id}
-                              onChange={(event) =>
-                                void handleStatusChange(
-                                  inquiry.id,
-                                  event.target.value as InquiryStatus,
-                                )
-                              }
-                              className="rounded-lg border border-[#D0D5DD] bg-white px-3 py-2 text-sm font-bold text-[#344054] outline-none transition focus:border-[#FC9C44] disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                              {inquiryStatuses.map((status) => (
-                                <option key={status} value={status}>
-                                  {formatStatus(status)}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-[1060px] w-full border-collapse text-left">
-                  <thead className="bg-[#F9FAFB] text-xs font-black uppercase tracking-[0.11em] text-[#667085]">
-                    <tr>
-                      <th className="px-5 py-3">Lead</th>
-                      <th className="px-5 py-3">Website</th>
-                      <th className="px-5 py-3">Ad Source</th>
-                      <th className="px-5 py-3">Revenue Range</th>
-                      <th className="px-5 py-3">Growth Goal</th>
-                      <th className="px-5 py-3">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#E4E7EC]">
-                    {paginatedGrowthAuditInquiries.map((inquiry) => (
-                      <tr key={inquiry.id} className="align-top transition hover:bg-[#FFF9F3]">
-                        <td className="px-5 py-4">
-                          <div className="min-w-[220px]">
-                            <p className="font-black text-[#06133D]">{inquiry.name}</p>
-                            <a
-                              href={`mailto:${inquiry.email}`}
-                              className="mt-2 flex items-center gap-2 text-sm font-semibold text-[#475467] transition hover:text-[#FC9C44]"
-                            >
-                              <Mail className="h-4 w-4" />
-                              {inquiry.email}
-                            </a>
-                            <p className="mt-2 flex items-center gap-2 text-xs font-semibold text-[#667085]">
-                              <CalendarClock className="h-4 w-4" />
-                              {formatDate(inquiry.createdAt)}
-                            </p>
-                          </div>
-                        </td>
-                        <td className="px-5 py-4">
-                          <a
-                            href={inquiry.website}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="block max-w-[240px] truncate text-sm font-semibold text-[#FC9C44] hover:underline"
-                          >
-                            {inquiry.website}
-                          </a>
-                        </td>
-                        <td className="px-5 py-4">
-                          <div className="grid gap-1 text-xs font-semibold text-[#667085]">
-                            <span className="w-fit rounded-full bg-[#EAF2FF] px-2.5 py-1 font-black text-[#2359B8]">
-                              {inquiry.leadSource ?? "Untracked"}
-                            </span>
-                            <p className="max-w-[240px] truncate">
-                              {getLeadSourceLabel(inquiry)}
-                            </p>
-                          </div>
-                        </td>
-                        <td className="px-5 py-4 text-sm font-semibold text-[#475467]">
-                          {inquiry.revenueRange}
-                        </td>
-                        <td className="px-5 py-4">
-                          <p className="max-w-[280px] text-sm leading-6 text-[#344054]">
-                            {inquiry.goal}
-                          </p>
-                        </td>
-                        <td className="px-5 py-4">
-                          <div className="grid gap-2">
-                            <span
-                              className={`w-fit rounded-full px-3 py-1 text-xs font-black ${statusStyles[inquiry.status]}`}
-                            >
-                              {formatStatus(inquiry.status)}
-                            </span>
-                            <select
-                              value={inquiry.status}
-                              disabled={updatingId === inquiry.id}
-                              onChange={(event) =>
-                                void handleGrowthAuditStatusChange(
-                                  inquiry.id,
-                                  event.target.value as InquiryStatus,
-                                )
-                              }
-                              className="rounded-lg border border-[#D0D5DD] bg-white px-3 py-2 text-sm font-bold text-[#344054] outline-none transition focus:border-[#FC9C44] disabled:cursor-not-allowed disabled:opacity-60"
-                            >
-                              {inquiryStatuses.map((status) => (
-                                <option key={status} value={status}>
-                                  {formatStatus(status)}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-            {activeInquiries.length > 0 && (
-              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[#E4E7EC] px-5 py-4">
-                <p className="text-sm font-semibold text-[#667085]">
-                  {firstVisibleLead}-{lastVisibleLead} of {activeInquiries.length} leads
-                </p>
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setActiveLeadPage(currentLeadPage - 1)}
-                    disabled={currentLeadPage === 1}
-                    className="grid h-8 w-8 place-items-center rounded-md border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44] disabled:cursor-not-allowed disabled:opacity-40"
-                    aria-label="Previous leads page"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </button>
-
-                  <span className="min-w-[78px] rounded-md border border-[#D0D5DD] bg-[#F9FAFB] px-3 py-2 text-center text-xs font-black text-[#344054]">
-                    Page {currentLeadPage} of {totalLeadPages}
-                  </span>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveLeadPage(currentLeadPage + 1)}
-                    disabled={currentLeadPage === totalLeadPages}
-                    className="grid h-8 w-8 place-items-center rounded-md border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44] disabled:cursor-not-allowed disabled:opacity-40"
-                    aria-label="Next leads page"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
-        </section>
-        )}
-      </div>
-    </main>
+
+          <Outlet />
+        </div>
+      </main>
+    </AdminContext.Provider>
   );
 }

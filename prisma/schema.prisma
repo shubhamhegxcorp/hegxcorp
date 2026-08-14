@@ -169,3 +169,25 @@ model VisitorEvent {
   @@index([eventName])
   @@index([createdAt])
 }
+
+model BlogDraft {
+  id String @id @default(cuid())
+
+  title          String  @default("")
+  slug           String  @default("")
+  excerpt        String  @default("")
+  content        String  @default("")
+  readTime       String  @default("")
+  seoDescription String  @default("")
+  status         String  @default("DRAFT")
+  featured       Boolean @default(false)
+  category       String[]
+  tags           String[]
+  featuredImage  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([updatedAt])
+}
+

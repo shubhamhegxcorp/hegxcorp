@@ -1,7 +1,15 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, TrendingUp, Users, BarChart3, Zap, Globe, Sparkles } from "lucide-react";
-import { motion, useInView, animate, useMotionValue, useSpring, useTransform, Variants } from "framer-motion";
+import {
+  motion,
+  useInView,
+  animate,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  Variants,
+} from "framer-motion";
 import ShapeGrid from "@/components/ShapeGrid";
 
 const dashboardMetrics = [
@@ -82,7 +90,7 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 select-none"
         style={{
-          opacity: 0.20,
+          opacity: 0.2,
         }}
       >
         <ShapeGrid
@@ -183,7 +191,7 @@ export function Hero() {
               whileHover={{
                 y: -10, // subtle lift on hover
                 boxShadow: "0 32px 80px -20px rgba(29,39,66,0.16)",
-                transition: { duration: 0.25, ease: "easeOut" }
+                transition: { duration: 0.25, ease: "easeOut" },
               }}
               className="relative rounded-2xl border border-[#EAEAEA] bg-[#FAFAF8] p-0.5 shadow-[0_24px_64px_-16px_rgba(29,39,66,0.12)] overflow-hidden"
             >
@@ -380,13 +388,13 @@ function ChartArea() {
             stroke="#FC9C44"
             animate={{
               pathLength: isInView ? 1 : 0,
-              strokeWidth: isHovered ? 4.5 : 3.5
+              strokeWidth: isHovered ? 4.5 : 3.5,
             }}
             strokeLinecap="round"
             initial={{ pathLength: 0, strokeWidth: 3.5 }}
             transition={{
               pathLength: { duration: 1.4, delay: 0.2, ease: "easeOut" },
-              strokeWidth: { duration: 0.2, ease: "easeOut" }
+              strokeWidth: { duration: 0.2, ease: "easeOut" },
             }}
           />
 
@@ -444,4 +452,3 @@ function ChartArea() {
     </motion.div>
   );
 }
-

@@ -38,7 +38,11 @@ import { Route as ServiceBrandingRouteImport } from './routes/service.branding'
 import { Route as CaseStudiesSlugRouteImport } from './routes/case-studies.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApiGrowthAuditRouteImport } from './routes/api.growth-audit'
+import { Route as AdminGrowthLeadsRouteImport } from './routes/admin.growth-leads'
+import { Route as AdminContactLeadsRouteImport } from './routes/admin.contact-leads'
+import { Route as AdminBlogPreviewRouteImport } from './routes/admin.blog-preview'
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
+import { Route as AdminAddBlogRouteImport } from './routes/admin.add-blog'
 import { Route as AdminAdLeadsRouteImport } from './routes/admin.ad-leads'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
@@ -186,9 +190,29 @@ const ApiGrowthAuditRoute = ApiGrowthAuditRouteImport.update({
   path: '/api/growth-audit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminGrowthLeadsRoute = AdminGrowthLeadsRouteImport.update({
+  id: '/growth-leads',
+  path: '/growth-leads',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminContactLeadsRoute = AdminContactLeadsRouteImport.update({
+  id: '/contact-leads',
+  path: '/contact-leads',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBlogPreviewRoute = AdminBlogPreviewRouteImport.update({
+  id: '/blog-preview',
+  path: '/blog-preview',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminBlogRoute = AdminBlogRouteImport.update({
   id: '/blog',
   path: '/blog',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminAddBlogRoute = AdminAddBlogRouteImport.update({
+  id: '/add-blog',
+  path: '/add-blog',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminAdLeadsRoute = AdminAdLeadsRouteImport.update({
@@ -212,7 +236,11 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/admin/ad-leads': typeof AdminAdLeadsRoute
+  '/admin/add-blog': typeof AdminAddBlogRoute
   '/admin/blog': typeof AdminBlogRoute
+  '/admin/blog-preview': typeof AdminBlogPreviewRoute
+  '/admin/contact-leads': typeof AdminContactLeadsRoute
+  '/admin/growth-leads': typeof AdminGrowthLeadsRoute
   '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
@@ -243,7 +271,11 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/admin/ad-leads': typeof AdminAdLeadsRoute
+  '/admin/add-blog': typeof AdminAddBlogRoute
   '/admin/blog': typeof AdminBlogRoute
+  '/admin/blog-preview': typeof AdminBlogPreviewRoute
+  '/admin/contact-leads': typeof AdminContactLeadsRoute
+  '/admin/growth-leads': typeof AdminGrowthLeadsRoute
   '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
@@ -277,7 +309,11 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/admin/ad-leads': typeof AdminAdLeadsRoute
+  '/admin/add-blog': typeof AdminAddBlogRoute
   '/admin/blog': typeof AdminBlogRoute
+  '/admin/blog-preview': typeof AdminBlogPreviewRoute
+  '/admin/contact-leads': typeof AdminContactLeadsRoute
+  '/admin/growth-leads': typeof AdminGrowthLeadsRoute
   '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
@@ -312,7 +348,11 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms-of-service'
     | '/admin/ad-leads'
+    | '/admin/add-blog'
     | '/admin/blog'
+    | '/admin/blog-preview'
+    | '/admin/contact-leads'
+    | '/admin/growth-leads'
     | '/api/growth-audit'
     | '/blog/$slug'
     | '/case-studies/$slug'
@@ -343,7 +383,11 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms-of-service'
     | '/admin/ad-leads'
+    | '/admin/add-blog'
     | '/admin/blog'
+    | '/admin/blog-preview'
+    | '/admin/contact-leads'
+    | '/admin/growth-leads'
     | '/api/growth-audit'
     | '/blog/$slug'
     | '/case-studies/$slug'
@@ -376,7 +420,11 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms-of-service'
     | '/admin/ad-leads'
+    | '/admin/add-blog'
     | '/admin/blog'
+    | '/admin/blog-preview'
+    | '/admin/contact-leads'
+    | '/admin/growth-leads'
     | '/api/growth-audit'
     | '/blog/$slug'
     | '/case-studies/$slug'
@@ -628,11 +676,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGrowthAuditRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/growth-leads': {
+      id: '/admin/growth-leads'
+      path: '/growth-leads'
+      fullPath: '/admin/growth-leads'
+      preLoaderRoute: typeof AdminGrowthLeadsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/contact-leads': {
+      id: '/admin/contact-leads'
+      path: '/contact-leads'
+      fullPath: '/admin/contact-leads'
+      preLoaderRoute: typeof AdminContactLeadsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/blog-preview': {
+      id: '/admin/blog-preview'
+      path: '/blog-preview'
+      fullPath: '/admin/blog-preview'
+      preLoaderRoute: typeof AdminBlogPreviewRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/blog': {
       id: '/admin/blog'
       path: '/blog'
       fullPath: '/admin/blog'
       preLoaderRoute: typeof AdminBlogRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/add-blog': {
+      id: '/admin/add-blog'
+      path: '/add-blog'
+      fullPath: '/admin/add-blog'
+      preLoaderRoute: typeof AdminAddBlogRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/ad-leads': {
@@ -647,12 +723,20 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminAdLeadsRoute: typeof AdminAdLeadsRoute
+  AdminAddBlogRoute: typeof AdminAddBlogRoute
   AdminBlogRoute: typeof AdminBlogRoute
+  AdminBlogPreviewRoute: typeof AdminBlogPreviewRoute
+  AdminContactLeadsRoute: typeof AdminContactLeadsRoute
+  AdminGrowthLeadsRoute: typeof AdminGrowthLeadsRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdLeadsRoute: AdminAdLeadsRoute,
+  AdminAddBlogRoute: AdminAddBlogRoute,
   AdminBlogRoute: AdminBlogRoute,
+  AdminBlogPreviewRoute: AdminBlogPreviewRoute,
+  AdminContactLeadsRoute: AdminContactLeadsRoute,
+  AdminGrowthLeadsRoute: AdminGrowthLeadsRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)

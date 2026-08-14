@@ -190,7 +190,11 @@ export function MagneticButton({ children, strength = 10, className = "" }: Magn
   }, [strength]);
 
   return (
-    <div ref={wrapperRef} className={`inline-flex ${className}`} style={{ willChange: "transform" }}>
+    <div
+      ref={wrapperRef}
+      className={`inline-flex ${className}`}
+      style={{ willChange: "transform" }}
+    >
       {children}
     </div>
   );

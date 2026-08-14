@@ -65,9 +65,9 @@ function hasValidSession(data: Partial<AdminSessionData>) {
   const configuredEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
   return Boolean(
     configuredEmail &&
-      data.isAdmin === true &&
-      data.email &&
-      constantTimeEqual(data.email, configuredEmail),
+    data.isAdmin === true &&
+    data.email &&
+    constantTimeEqual(data.email, configuredEmail),
   );
 }
 

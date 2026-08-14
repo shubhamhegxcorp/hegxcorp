@@ -167,11 +167,9 @@ function AdminAdLeadsPage() {
           <div className="grid min-h-[300px] place-items-center px-6 text-center">
             <div>
               <Megaphone className="mx-auto h-10 w-10 text-[#98A2B3]" />
-              <h3 className="mt-4 text-lg font-black text-[#06133D]">
-                No tracked ad activity yet
-              </h3>
+              <h3 className="mt-4 text-lg font-black text-[#06133D]">No tracked ad activity yet</h3>
               <p className="mt-2 max-w-md text-sm leading-6 text-[#667085]">
-                Visitors will appear here after they arrive from Meta or another UTM-tagged ad URL.
+                isitors will appear here after they arrive from Meta or another UTM-tagged ad URL.
               </p>
             </div>
           </div>
@@ -208,9 +206,7 @@ function AdminAdLeadsPage() {
                     <td className="px-5 py-4 text-sm font-semibold text-[#475467]">
                       <p className="max-w-[180px]">{row.leadAd}</p>
                     </td>
-                    <td className="px-5 py-4 text-sm font-black text-[#06133D]">
-                      {row.visitors}
-                    </td>
+                    <td className="px-5 py-4 text-sm font-black text-[#06133D]">{row.visitors}</td>
                     <td className="px-5 py-4">
                       <p className="text-sm font-black text-[#06133D]">{row.formStarts}</p>
                       <p className="text-xs font-semibold text-[#667085]">

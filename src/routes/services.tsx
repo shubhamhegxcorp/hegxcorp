@@ -234,10 +234,11 @@ function OurServicesPage() {
                         <div className="flex items-center justify-between gap-6">
                           <h3 className="text-2xl font-black">{item.title}</h3>
                           <span
-                            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${isOpen
-                              ? "rotate-45 border-[#FC9C44] bg-[#FC9C44] text-white"
-                              : "border-slate-200 text-slate-400"
-                              }`}
+                            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
+                              isOpen
+                                ? "rotate-45 border-[#FC9C44] bg-[#FC9C44] text-white"
+                                : "border-slate-200 text-slate-400"
+                            }`}
                           >
                             <Plus className="h-4 w-4" />
                           </span>
@@ -245,8 +246,9 @@ function OurServicesPage() {
                       </button>
 
                       <div
-                        className={`grid overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr] pb-7 opacity-100" : "grid-rows-[0fr] opacity-0"
-                          }`}
+                        className={`grid overflow-hidden transition-all duration-300 ease-in-out ${
+                          isOpen ? "grid-rows-[1fr] pb-7 opacity-100" : "grid-rows-[0fr] opacity-0"
+                        }`}
                       >
                         <div className="min-h-0 pl-[70px]">
                           <ul className="space-y-3">

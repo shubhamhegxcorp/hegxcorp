@@ -6,32 +6,32 @@ Hegxcorp is a premium growth consultancy / digital marketing agency website.
 
 Brand positioning:
 
-* Premium
-* Consulting-first
-* Results-driven
-* Editorial
-* Enterprise-friendly
+- Premium
+- Consulting-first
+- Results-driven
+- Editorial
+- Enterprise-friendly
 
 Not:
 
-* Startup landing page
-* SaaS template
-* Generic marketing agency
+- Startup landing page
+- SaaS template
+- Generic marketing agency
 
 Design language inspired by:
 
-* Linear
-* Stripe
-* Vercel
-* Modern consulting firms
+- Linear
+- Stripe
+- Vercel
+- Modern consulting firms
 
 Core stack:
 
-* React
-* TanStack Router
-* TypeScript
-* Tailwind
-* Antigravity/Lovable used heavily for implementation
+- React
+- TanStack Router
+- TypeScript
+- Tailwind
+- Antigravity/Lovable used heavily for implementation
 
 ---
 
@@ -41,21 +41,21 @@ Core stack:
 
 Avoid:
 
-* Heavy gradients
-* Glassmorphism
-* Neon effects
-* Over-animation
-* Random React Bits usage
-* Startup-style aesthetics
+- Heavy gradients
+- Glassmorphism
+- Neon effects
+- Over-animation
+- Random React Bits usage
+- Startup-style aesthetics
 
 Prefer:
 
-* Strong typography
-* Editorial layouts
-* Browser mockups
-* White / Navy / Orange palette
-* Premium whitespace
-* Subtle interactions
+- Strong typography
+- Editorial layouts
+- Browser mockups
+- White / Navy / Orange palette
+- Premium whitespace
+- Subtle interactions
 
 ---
 
@@ -65,12 +65,12 @@ Status: Complete
 
 Major changes:
 
-* Hero refined
-* Services section redesigned
-* ShapeGrid / Hexagon background added
-* Services transformed from generic cards into connected growth-engine concept
-* Browser mockups integrated into service visuals
-* Consistent visual language established
+- Hero refined
+- Services section redesigned
+- ShapeGrid / Hexagon background added
+- Services transformed from generic cards into connected growth-engine concept
+- Browser mockups integrated into service visuals
+- Consistent visual language established
 
 Key realization:
 
@@ -92,21 +92,21 @@ Editorial archive instead of agency portfolio.
 
 Not:
 
-* Grid of generic cards
+- Grid of generic cards
 
 Instead:
 
-* Featured case study
-* Metrics-first presentation
-* Browser mockups
-* Editorial collection layout
+- Featured case study
+- Metrics-first presentation
+- Browser mockups
+- Editorial collection layout
 
 Important design decisions:
 
-* Results before client names
-* Large outcome metrics
-* Browser previews
-* Case-study-first storytelling
+- Results before client names
+- Large outcome metrics
+- Browser previews
+- Case-study-first storytelling
 
 Current structure:
 
@@ -124,12 +124,12 @@ CTA
 
 # Case Study Improvements Implemented
 
-* Featured study hierarchy
-* Editorial layout
-* Browser preview hover states
-* Animated browser dots
-* Better metric hierarchy
-* Growth-oriented storytelling
+- Featured study hierarchy
+- Editorial layout
+- Browser preview hover states
+- Animated browser dots
+- Better metric hierarchy
+- Growth-oriented storytelling
 
 Remaining work:
 
@@ -212,22 +212,22 @@ Discovery Panel
 
 Contains:
 
-* Search
-* Categories
-* Popular Topics
-* Newsletter
+- Search
+- Categories
+- Popular Topics
+- Newsletter
 
 Avoid:
 
-* WordPress sidebars
-* Huge tag clouds
-* Category counts
+- WordPress sidebars
+- Huge tag clouds
+- Category counts
 
 Use:
 
-* Pills
-* Sticky panel
-* Browser mockup article cards
+- Pills
+- Sticky panel
+- Browser mockup article cards
 
 ---
 
@@ -239,16 +239,16 @@ Decisions:
 
 Avoid:
 
-* Browser mockups
-* Fancy animations
-* React Bits
+- Browser mockups
+- Fancy animations
+- React Bits
 
 Added:
 
-* Trust signals
-* Better hierarchy
-* Better CTA structure
-* Premium hover interactions
+- Trust signals
+- Better hierarchy
+- Better CTA structure
+- Premium hover interactions
 
 Contact page should feel:
 
@@ -265,16 +265,16 @@ One of the strongest visual motifs.
 
 Used heavily in:
 
-* Services
-* Case Studies
-* Blog
+- Services
+- Case Studies
+- Blog
 
 Hover behavior:
 
-* Browser lifts slightly
-* Screenshot scales slightly
-* Browser dots activate
-* Premium, restrained motion
+- Browser lifts slightly
+- Screenshot scales slightly
+- Browser dots activate
+- Premium, restrained motion
 
 No flashy effects.
 
@@ -286,14 +286,14 @@ Only used where necessary.
 
 Approved uses:
 
-* Hero headline reveal
-* Occasional subtle interactions
+- Hero headline reveal
+- Occasional subtle interactions
 
 Avoid:
 
-* Rotating text
-* Constant motion
-* Character-by-character gimmicks
+- Rotating text
+- Constant motion
+- Character-by-character gimmicks
 
 Site should feel like a consultancy.
 
@@ -480,8 +480,8 @@ Current focus:
 
 Move from "beautiful website" to "content platform architecture".
 
-Forwarding to the backend team to work on it further 
+Forwarding to the backend team to work on it further
 Backend architecture and fraemwrok layout has been made
-letter we will introduced SQL Database integration, Authentication roles Admin/Editor and a Browser based Admin Dashboard Allowing complete access to create/edit/publish and manage blogs and case studiesto 
+letter we will introduced SQL Database integration, Authentication roles Admin/Editor and a Browser based Admin Dashboard Allowing complete access to create/edit/publish and manage blogs and case studiesto
 
 Temporary Building On Wordpress Using Rest API for Authentication and fetch data from wordporess api for blogs and case studies

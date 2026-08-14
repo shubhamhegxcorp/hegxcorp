@@ -63,13 +63,15 @@ export function Testimonials() {
     >
       {/* Wider container — editorial feel */}
       <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-
         {/* ── Header ── */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] }}
+          transition={{
+            duration: 0.55,
+            ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+          }}
           className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-14"
         >
           <div>
@@ -83,7 +85,8 @@ export function Testimonials() {
               className="mt-3 text-[clamp(24px,3.5vw,36px)] font-bold text-[#1D2742] leading-tight"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
-              Results that speak<br className="hidden sm:block" /> for themselves.
+              Results that speak
+              <br className="hidden sm:block" /> for themselves.
             </h2>
           </div>
           <Link
@@ -189,13 +192,9 @@ export function Testimonials() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-12 pt-8 border-t border-[#EAEAEA] flex flex-wrap items-center justify-between gap-4"
         >
-          <p
-            className="text-sm text-[#6B7280]"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            Join{" "}
-            <span className="font-semibold text-[#232323]">100+ businesses</span>{" "}
-            scaling with Hegxcorp across India, USA, UK &amp; Dubai.
+          <p className="text-sm text-[#6B7280]" style={{ fontFamily: "'Inter', sans-serif" }}>
+            Join <span className="font-semibold text-[#232323]">100+ businesses</span> scaling with
+            Hegxcorp across India, USA, UK &amp; Dubai.
           </p>
           <motion.div whileHover={{ scale: 1.03 }} transition={{ duration: 0.2 }}>
             <Link
@@ -207,7 +206,6 @@ export function Testimonials() {
             </Link>
           </motion.div>
         </motion.div>
-
       </div>
     </section>
   );

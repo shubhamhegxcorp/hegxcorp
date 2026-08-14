@@ -448,8 +448,9 @@ function ServiceCard({
 
         {/* Visual panel — taller for featured, compact for standard */}
         <div
-          className={`border-b border-[#F3F4F6] bg-white ${isFeatured ? "px-6 pt-6 pb-5" : "px-4 pt-4 pb-3"
-            }`}
+          className={`border-b border-[#F3F4F6] bg-white ${
+            isFeatured ? "px-6 pt-6 pb-5" : "px-4 pt-4 pb-3"
+          }`}
           style={{ minHeight: isFeatured ? "200px" : "140px" }}
         >
           <s.Visual />
@@ -475,8 +476,9 @@ function ServiceCard({
           </h3>
 
           <p
-            className={`text-[#6B7280] leading-relaxed flex-1 ${isFeatured ? "text-[13px]" : "text-[12px] line-clamp-2"
-              }`}
+            className={`text-[#6B7280] leading-relaxed flex-1 ${
+              isFeatured ? "text-[13px]" : "text-[12px] line-clamp-2"
+            }`}
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             {s.desc}

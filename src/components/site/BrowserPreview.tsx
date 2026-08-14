@@ -30,7 +30,7 @@ export function BrowserPreview({
     <div
       className={cn(
         "relative rounded-xl border border-[#EAEAEA] bg-[#FAFAF8] shadow-[0_16px_36px_rgba(29,39,66,0.06)] overflow-hidden transition-all duration-[350ms] ease-out hover:-translate-y-1 hover:shadow-[0_24px_48px_rgba(29,39,66,0.1)] group-hover:-translate-y-1 group-hover:shadow-[0_24px_48px_rgba(29,39,66,0.1)] group",
-        className
+        className,
       )}
     >
       {/* Browser chrome header */}
@@ -41,7 +41,7 @@ export function BrowserPreview({
           <div className="h-2 w-2 rounded-full bg-[#FFBD2E]/60 transition-all duration-300 ease-out group-hover:bg-[#FFBD2E] group-hover:scale-[1.05]" />
           <div className="h-2 w-2 rounded-full bg-[#27C93F]/60 transition-all duration-300 ease-out group-hover:bg-[#27C93F] group-hover:scale-[1.05]" />
         </div>
-        
+
         {/* Minimal Address Bar */}
         <div className="flex-1 max-w-[280px] mx-auto bg-[#FAFAF8] border border-[#EAEAEA] rounded py-0.5 px-3 text-[9px] text-[#9CA3AF] font-mono text-center select-none truncate">
           {url || "www.hegxcorp-client.com"}
@@ -55,7 +55,7 @@ export function BrowserPreview({
           aspectRatio === "video" && "aspect-video",
           aspectRatio === "square" && "aspect-square",
           aspectRatio === "auto" && "h-auto",
-          innerClassName
+          innerClassName,
         )}
       >
         {src ? (
@@ -76,7 +76,10 @@ export function BrowserPreview({
           <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm border border-[#EAEAEA] rounded-lg p-3.5 shadow-lg flex items-center gap-4 max-w-[280px] z-10 transition-all duration-[350ms] ease-out group-hover:translate-y-[-3px] group-hover:shadow-2xl">
             <div className="flex-1 min-w-0">
               {proofMetric && (
-                <div className="text-sm font-bold text-[#1D2742] tracking-tight truncate leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                <div
+                  className="text-sm font-bold text-[#1D2742] tracking-tight truncate leading-tight"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
                   {proofMetric}
                 </div>
               )}

@@ -71,7 +71,7 @@ export function FeaturedWork() {
 
     const ctx = gsap.context(() => {
       // Step width is: 44vw card width + 6vw gap = 50vw step
-      const getStepWidth = () => window.innerWidth * 0.50;
+      const getStepWidth = () => window.innerWidth * 0.5;
       const totalMove = (projects.length - 1) * getStepWidth();
 
       // Set initial visual states for cards (inactive cards are y-lifted, scaled down, faded, and blurred)
@@ -96,23 +96,20 @@ export function FeaturedWork() {
       });
 
       // 1. Linearly translate the track container from right to left
-      tl.to(trackRef.current, {
-        x: () => -totalMove,
-        ease: "none",
-        duration: 1,
-      }, 0);
+      tl.to(
+        trackRef.current,
+        {
+          x: () => -totalMove,
+          ease: "none",
+          duration: 1,
+        },
+        0,
+      );
 
       // 2. Animate active center scaling, opacity, vertical lift, and inner parallax
       projects.forEach((_, index) => {
         // Inner image parallax (moves in opposite direction)
-        tl.fromTo(
-          `.preview-inner-${index}`,
-          { x: -30 },
-          { x: 30, ease: "none", duration: 1 },
-          0
-        );
-
-
+        tl.fromTo(`.preview-inner-${index}`, { x: -30 }, { x: 30, ease: "none", duration: 1 }, 0);
 
         if (index > 0) {
           const startTime = (index - 1) / (projects.length - 1);
@@ -129,7 +126,7 @@ export function FeaturedWork() {
               ease: "power2.inOut",
               duration: segmentDuration,
             },
-            startTime
+            startTime,
           );
 
           // Current card scales up, fades in, lifts up (y: 0), and unblurs
@@ -143,7 +140,7 @@ export function FeaturedWork() {
               ease: "power2.inOut",
               duration: segmentDuration,
             },
-            startTime
+            startTime,
           );
         }
       });
@@ -183,11 +180,7 @@ export function FeaturedWork() {
                 className={`project-card-${index} shrink-0 w-[44vw] origin-center`}
               >
                 <CaseStudyCursor>
-                  <ProjectCard
-                    project={project}
-                    index={index}
-                    isActive={activeIndex === index}
-                  />
+                  <ProjectCard project={project} index={index} isActive={activeIndex === index} />
                 </CaseStudyCursor>
               </div>
             ))}
@@ -330,7 +323,11 @@ function BrowserPreview({ type, isActive = false }: { type: string; isActive?: b
               <div className="text-[6px] text-[#9CA3AF] font-bold">D{d}</div>
               <motion.div
                 initial={{ backgroundColor: "#FFFFFF", scale: 0.9 }}
-                animate={isActive && d === 3 ? { backgroundColor: "#FC9C44", scale: 1 } : { backgroundColor: "#FFFFFF", scale: 0.9 }}
+                animate={
+                  isActive && d === 3
+                    ? { backgroundColor: "#FC9C44", scale: 1 }
+                    : { backgroundColor: "#FFFFFF", scale: 0.9 }
+                }
                 transition={{ duration: 0.3 }}
                 className="h-2.5 rounded-sm border border-[#EAEAEA]"
               />
@@ -378,7 +375,15 @@ function BrowserPreview({ type, isActive = false }: { type: string; isActive?: b
 function parseMetric(metric: string) {
   const match = metric.match(/^([^\d]*)([\d.]+)([^\d\s]*)(.*)$/);
   if (!match) {
-    return { hasNumber: false, text: metric, prefix: "", numberVal: 0, suffix: "", label: metric, decimals: 0 };
+    return {
+      hasNumber: false,
+      text: metric,
+      prefix: "",
+      numberVal: 0,
+      suffix: "",
+      label: metric,
+      decimals: 0,
+    };
   }
   const prefix = match[1];
   const numberVal = parseFloat(match[2]);
@@ -496,8 +501,9 @@ function ProjectCard({
         transformStyle: "preserve-3d",
         perspective: 1000,
       }}
-      className={`group rounded-2xl border border-[#EAEAEA] bg-white cursor-pointer overflow-hidden flex flex-col justify-between transition-[box-shadow] duration-300 hover:shadow-[0_24px_48px_-12px_rgba(29,39,66,0.08)] ${isMobile ? "w-full min-h-[400px]" : "w-full min-h-[460px]"
-        }`}
+      className={`group rounded-2xl border border-[#EAEAEA] bg-white cursor-pointer overflow-hidden flex flex-col justify-between transition-[box-shadow] duration-300 hover:shadow-[0_24px_48px_-12px_rgba(29,39,66,0.08)] ${
+        isMobile ? "w-full min-h-[400px]" : "w-full min-h-[460px]"
+      }`}
     >
       {/* ── Mock Browser Frame Header ── */}
       <div className="flex items-center gap-2 px-4 py-3 bg-white border-b border-[#EAEAEA] select-none">
@@ -521,7 +527,9 @@ function ProjectCard({
       >
         <div className="w-full h-44 md:h-52 self-center p-6 overflow-hidden">
           {/* Parallax target class applied here */}
-          <div className={`h-full w-full rounded-lg shadow-sm border border-[#EAEAEA] overflow-hidden preview-inner-${index}`}>
+          <div
+            className={`h-full w-full rounded-lg shadow-sm border border-[#EAEAEA] overflow-hidden preview-inner-${index}`}
+          >
             <div className="scale-110 h-full w-full transition-transform duration-500 ease-out group-hover:scale-[1.14]">
               <BrowserPreview type={project.screenshotType} isActive={isActive} />
             </div>
@@ -563,6 +571,3 @@ function ProjectCard({
     </motion.div>
   );
 }
-
-
-

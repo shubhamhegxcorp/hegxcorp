@@ -11,10 +11,7 @@ export const Route = createFileRoute("/api/growth-audit")({
         try {
           body = await request.json();
         } catch {
-          return Response.json(
-            { error: "Invalid JSON body." },
-            { status: 400 },
-          );
+          return Response.json({ error: "Invalid JSON body." }, { status: 400 });
         }
 
         const parsed = growthAuditInquiryInputSchema.safeParse(body);
@@ -28,9 +25,7 @@ export const Route = createFileRoute("/api/growth-audit")({
           );
         }
 
-        const { createGrowthAuditInquiry } = await import(
-          "@/lib/growth-audit-inquiries.server"
-        );
+        const { createGrowthAuditInquiry } = await import("@/lib/growth-audit-inquiries.server");
         const inquiry = await createGrowthAuditInquiry(parsed.data);
 
         return Response.json(

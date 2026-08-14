@@ -1,11 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { Search as SearchIcon, ArrowRight, BookOpen, Sparkles, Mail, TrendingUp } from "lucide-react";
+import { getPublishedBlogs } from "@/lib/content/blogs";
+import type { Blog } from "@/data/blogs";
+import {
+  Search as SearchIcon,
+  ArrowRight,
+  BookOpen,
+  Sparkles,
+  Mail,
+  TrendingUp,
+} from "lucide-react";
 import ShapeGrid from "@/components/ShapeGrid";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useMemo } from "react";
-import { getBlogs } from "@/lib/content/blogs";
+import { useState, useMemo, useEffect } from "react";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
@@ -29,12 +37,34 @@ function BlogPage() {
   const [subscribed, setSubscribed] = useState(false);
   const [emailInput, setEmailInput] = useState("");
 
+  // Combined list: real published posts from the database + the hardcoded
+  // demo posts. Starts empty and fills in once the database responds.
+  const [allBlogs, setAllBlogs] = useState<Blog[]>([]);
+  const [blogsLoaded, setBlogsLoaded] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    getPublishedBlogs()
+      .then((result) => {
+        if (!active) return;
+        setAllBlogs(result);
+        setBlogsLoaded(true);
+      })
+      .catch((loadError) => {
+        console.error("Failed to load published blogs:", loadError);
+        if (active) setBlogsLoaded(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const articlesPerPage = 4;
 
   // Filter categories and tags
   const categories = useMemo(() => {
-    return ["All", ...Array.from(new Set(getBlogs().map((a) => a.category)))];
-  }, []);
+    return ["All", ...Array.from(new Set(allBlogs.map((a) => a.category)))];
+  }, [allBlogs]);
 
   const popularTopics = [
     { label: "#TechnicalSEO", searchVal: "Technical SEO" },
@@ -47,14 +77,13 @@ function BlogPage() {
 
   // Filter logic
   const filteredArticles = useMemo(() => {
-    return getBlogs().filter((article) => {
+    return allBlogs.filter((article) => {
       const matchesSearch =
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.content.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesCategory =
-        selectedCategory === "All" || article.category === selectedCategory;
+      const matchesCategory = selectedCategory === "All" || article.category === selectedCategory;
 
       const matchesTag =
         !selectedTag ||
@@ -64,23 +93,25 @@ function BlogPage() {
 
       return matchesSearch && matchesCategory && matchesTag;
     });
-  }, [searchQuery, selectedCategory, selectedTag]);
+  }, [allBlogs, searchQuery, selectedCategory, selectedTag]);
 
   // Featured article is always the AI Search Reshaping Traffic one, or the first matching item
   const featuredArticle = useMemo(() => {
-    return getBlogs().find((a) => a.slug === "how-ai-search-reshapes-organic-traffic") || getBlogs()[0];
-  }, []);
+    return (
+      allBlogs.find((a) => a.slug === "how-ai-search-reshapes-organic-traffic") || allBlogs[0]
+    );
+  }, [allBlogs]);
 
   const mostReadArticles = useMemo(() => {
-    return getBlogs()
-      .filter((a) => a.slug !== featuredArticle.slug)
-      .slice(0, 4);
-  }, [featuredArticle.slug]);
+    if (!featuredArticle) return [];
+    return allBlogs.filter((a) => a.slug !== featuredArticle.slug).slice(0, 4);
+  }, [allBlogs, featuredArticle]);
 
   // Filtered feed (excludes featured article to avoid duplication)
   const feedArticles = useMemo(() => {
+    if (!featuredArticle) return filteredArticles;
     return filteredArticles.filter((a) => a.slug !== featuredArticle.slug);
-  }, [filteredArticles, featuredArticle.slug]);
+  }, [filteredArticles, featuredArticle]);
 
   // Paginated articles
   const paginatedArticles = useMemo(() => {
@@ -126,6 +157,20 @@ function BlogPage() {
     });
   };
 
+  // Don't render the page (which assumes featuredArticle exists) until the
+  // combined blog list has loaded from the database.
+  if (!blogsLoaded || !featuredArticle) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col">
+        <Header />
+        <div className="flex flex-1 items-center justify-center py-40 text-sm font-semibold text-[#6B7280]">
+          Loading articles…
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white flex flex-col justify-between">
       <div>
@@ -133,12 +178,15 @@ function BlogPage() {
 
         {/* ── SECTION 1: HERO SECTION ── */}
         <section
-
           className="relative overflow-hidden bg-white border-b border-[#EAEAEA] flex items-center "
           style={{ minHeight: "85vh", paddingTop: "80px", paddingBottom: "80px" }}
         >
           {/* Hexagon background motif */}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 select-none" style={{ opacity: 0.2 }}>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 select-none"
+            style={{ opacity: 0.2 }}
+          >
             <ShapeGrid
               shape="hexagon"
               squareSize={38}
@@ -153,7 +201,6 @@ function BlogPage() {
 
           <div className="relative mx-auto grid w-full max-w-[1280px] gap-10 px-6 text-center lg:min-h-[500px] lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.75fr)] lg:items-center lg:px-10 lg:text-left">
             <div className="mx-auto max-w-[720px] space-y-6 lg:mx-0">
-
               <span
                 className="inline-flex items-center gap-1.5 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-[#FC9C44] shadow-sm"
                 style={{ fontFamily: "'Inter', sans-serif" }}
@@ -177,14 +224,18 @@ function BlogPage() {
                 style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(15px, 1.1vw, 18px)" }}
               >
                 <p className="leading-relaxed">
-                  Data-driven marketing strategies. Explore in-depth articles on SEO, performance marketing, website architecture, and conversion optimization to build digital experiences that deliver measurable results.
+                  Data-driven marketing strategies. Explore in-depth articles on SEO, performance
+                  marketing, website architecture, and conversion optimization to build digital
+                  experiences that deliver measurable results.
                 </p>
               </div>
 
               <div className="flex flex-wrap justify-center gap-4 pt-4 lg:justify-start">
                 <button
                   onClick={() => {
-                    document.getElementById("latest-articles")?.scrollIntoView({ behavior: "smooth" });
+                    document
+                      .getElementById("latest-articles")
+                      ?.scrollIntoView({ behavior: "smooth" });
                   }}
                   className="inline-flex items-center gap-2.5 rounded-full px-8 py-3.5 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#2D3A5D] transition-all cursor-pointer"
                   style={{ fontFamily: "'Inter', sans-serif" }}
@@ -203,9 +254,7 @@ function BlogPage() {
 
             <div className="mx-auto w-full max-w-[560px] lg:mx-0 lg:justify-self-end">
               <Link to="/blog/$slug" params={{ slug: featuredArticle.slug }} className="block">
-                <motion.article
-                  className="overflow-hidden rounded-xl border border-[#EAEAEA] bg-white text-left shadow-[0_16px_36px_rgba(29,39,66,0.06)] transition-shadow duration-300 hover:shadow-[0_24px_48px_rgba(29,39,66,0.1)]"
-                >
+                <motion.article className="overflow-hidden rounded-xl border border-[#EAEAEA] bg-white text-left shadow-[0_16px_36px_rgba(29,39,66,0.06)] transition-shadow duration-300 hover:shadow-[0_24px_48px_rgba(29,39,66,0.1)]">
                   <div className="group/image aspect-video overflow-hidden bg-[#FAFAF8]">
                     <img
                       src={featuredArticle.featuredImage}
@@ -246,282 +295,26 @@ function BlogPage() {
           </div>
         </section>
 
-        {/* ── SECTION 2: FEATURED ARTICLE ── */}
-        {/* <section className="py-16 md:py-24 bg-[#FAFAF8] border-b border-[#EAEAEA]">
-          <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-            <div className="rounded-2xl border border-[#EAEAEA] bg-white p-8 lg:p-12 shadow-sm relative overflow-hidden group hover:shadow-[0_20px_50px_rgba(29,39,66,0.05)] transition-all duration-300">
-              <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-                {/* Left Side: Featured Content */}
-        {/* <div className="lg:col-span-5 space-y-6 text-left">
-          <span
-            className="inline-flex items-center gap-2 rounded-full bg-[#FFF4E8] text-[#FC9C44] px-4 py-1.5 text-xs font-bold uppercase tracking-wider"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            FEATURED ARTICLE
-          </span>
-
-          <div className="space-y-3">
-            <h2
-              className="text-3xl lg:text-4.5xl font-bold text-[#1D2742] tracking-tight group-hover:text-[#FC9C44] transition-colors duration-300 leading-tight"
-              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-            >
-              {featuredArticle.title} */}
-        {/* </h2>
-            <div className="flex items-center gap-4 text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider">
-              <span>{featuredArticle.category}</span>
-              <span>•</span>
-              <span>{featuredArticle.readTime}</span>
-            </div>
-          </div>
-
-          <p
-            className="text-[#6B7280] leading-relaxed text-sm md:text-base font-normal"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            {featuredArticle.excerpt}
-          </p>
-
-          <div className="pt-2">
-            <Link
-              to="/blog/$slug"
-              params={{ slug: featuredArticle.slug }}
-              className="inline-flex items-center gap-2.5 rounded-full px-8 py-3.5 text-sm font-bold text-white bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 shadow-md hover:shadow-[0_12px_28px_-8px_rgba(252,156,68,0.4)] transition-all"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              Read Article
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div> */}
-
-        {/* Right Side: Mockup Browser */}
-        {/* <div className="lg:col-span-7 w-full">
-          <Link to="/blog/$slug" params={{ slug: featuredArticle.slug }} className="block">
-            <motion.div
-              whileHover="hover"
-              className="relative rounded-xl border border-[#EAEAEA] bg-[#FAFAF8] shadow-[0_16px_36px_rgba(29,39,66,0.06)] overflow-hidden transition-all duration-[350ms] ease-out hover:-translate-y-1 hover:shadow-[0_24px_48px_rgba(29,39,66,0.1)] group"
-            >
-              {/* Browser Chrome Header */}
-        {/* <div className="flex items-center gap-1.5 px-4 py-3 bg-white border-b border-[#EAEAEA]">
-                <div className="flex gap-1.5">
-                  <motion.span
-                    className="h-2.5 w-2.5 rounded-full bg-[#EAEAEA]"
-                    variants={{
-                      hover: { backgroundColor: "#FC9C44", transition: { delay: 0, duration: 0.2 } },
-                    }}
-                  />
-                  <motion.span
-                    className="h-2.5 w-2.5 rounded-full bg-[#EAEAEA]"
-                    variants={{
-                      hover: { backgroundColor: "#FC9C44", transition: { delay: 0.1, duration: 0.2 } },
-                    }}
-                  />
-                  <motion.span
-                    className="h-2.5 w-2.5 rounded-full bg-[#EAEAEA]"
-                    variants={{
-                      hover: { backgroundColor: "#FC9C44", transition: { delay: 0.2, duration: 0.2 } },
-                    }}
-                  />
-                // </div> */}
-
-        {/* Address Bar */}
-        {/* <div className="flex-1 max-w-[280px] mx-auto bg-[#FAFAF8] border border-[#EAEAEA] rounded py-0.5 px-3 text-[10px] text-[#9CA3AF] font-mono text-center select-none truncate">
-                  hegxcorp.com/blog/{featuredArticle.slug}
-                </div>
-              </div>
-
-              {/* Featured image preview inside browser */}
-        {/* <div className="aspect-video overflow-hidden bg-white">
-                <img
-                  src={featuredArticle.featuredImage}
-                  alt={featuredArticle.title}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            </motion.div>
-          </Link>
-        </div>
-      </div>
-    </div> */}
-        {/* </div >
-        </section > }
-} */}
-
         {/* ── SECTION 3: EDITORIAL GRID & DISCOVERY PANEL ── */}
         <section id="main-feed" className="py-20 bg-white">
           <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-            {/* <div className="mb-16 rounded-2xl border border-[#EAEAEA] bg-[#FAFAF8] p-6 shadow-sm md:p-8 lg:p-10">
-              <div className="mb-8 flex flex-col gap-4 text-left md:flex-row md:items-end md:justify-between">
-                <div className="max-w-2xl space-y-3">
-                  <span
-                    className="inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-white px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[#FC9C44]"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    <TrendingUp className="h-3.5 w-3.5" />
-                    Most Read Blogs
-                  </span>
-                  <h3
-                    className="text-2xl font-bold leading-tight text-[#1D2742] md:text-3xl"
-                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                  >
-                    The ideas readers come back to most.
-                  </h3>
-                </div>
-                <p
-                  className="max-w-md text-sm leading-relaxed text-[#6B7280]"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                  A quick path into high-value guides on search, paid media, conversion, and growth systems.
-                </p>
-              </div>
-
-              <div className="grid gap-5 lg:grid-cols-3">
-                <motion.article
-                  whileHover={{ y: -4 }}
-                  className="grid h-full overflow-hidden rounded-xl border border-[#EAEAEA] bg-white shadow-sm transition-all duration-300 hover:border-[#FC9C44]/35 hover:shadow-[0_18px_44px_rgba(29,39,66,0.08)] md:grid-cols-[0.95fr_1.05fr] lg:col-span-2"
-                >
-                  <div className="relative min-h-[280px] border-b border-[#EAEAEA] bg-[#F6F6F3] p-5 md:border-b-0 md:border-r">
-                    <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(252,156,68,0.12),transparent_42%)]" />
-                    <div className="relative grid h-full grid-rows-[auto_1fr_auto] gap-4">
-                      <div className="flex items-center justify-between">
-                        <span className="rounded-full border border-[#F5D5B6] bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-[#FC9C44]">
-                          Reader favorite
-                        </span>
-                        <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#9CA3AF]">
-                          Most opened
-                        </span>
-                      </div>
-
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        <Link
-                          to="/blog/$slug"
-                          params={{ slug: mostReadArticles[0].slug }}
-                          className="group/mini rounded-xl border border-[#EAEAEA] bg-white p-4 shadow-sm transition-all hover:border-[#FC9C44]/35 hover:shadow-[0_12px_26px_rgba(29,39,66,0.06)]"
-                        >
-                          <div className="text-2xl font-bold text-[#1D2742]">01</div>
-                          <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-[#FC9C44]">
-                            Top read
-                          </p>
-                          <p className="mt-3 text-xs leading-relaxed text-[#6B7280]">
-                            {mostReadArticles[0].title}
-                          </p>
-                        </Link>
-
-                        <Link
-                          to="/blog/$slug"
-                          params={{ slug: mostReadArticles[1].slug }}
-                          className="group/mini block h-full cursor-pointer rounded-xl border border-[#EAEAEA] bg-white p-4 shadow-sm transition-all hover:border-[#FC9C44]/35 hover:shadow-[0_12px_26px_rgba(29,39,66,0.06)]"
-                        >
-                          <div className="text-2xl font-bold text-[#1D2742]">02</div>
-                          <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-[#FC9C44]">
-                            Also popular
-                          </p>
-                          <p className="mt-3 text-xs leading-relaxed text-[#6B7280]">
-                            {mostReadArticles[1].title}
-                          </p>
-                        </Link>
-                      </div>
-
-                      <div className="rounded-xl border border-[#EAEAEA] bg-white p-4 shadow-sm">
-                        <div className="mb-3 flex items-center justify-between">
-                          <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#9CA3AF]">
-                            Why readers choose it
-                          </span>
-                          <TrendingUp className="h-4 w-4 text-[#FC9C44]" />
-                        </div>
-                        <div className="grid gap-2 text-xs font-semibold text-[#1D2742] sm:grid-cols-3">
-                          <span className="rounded-lg bg-[#FAFAF8] px-3 py-2">Clear framework</span>
-                          <span className="rounded-lg bg-[#FAFAF8] px-3 py-2">Actionable SEO</span>
-                          <span className="rounded-lg bg-[#FAFAF8] px-3 py-2">Growth focused</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col justify-between p-6 text-left md:p-7">
-                    <div className="space-y-4">
-                      <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold uppercase tracking-wider text-[#9CA3AF]">
-                        <span className="text-[#FC9C44]">{mostReadArticles[0].category}</span>
-                        <span>{mostReadArticles[0].readTime}</span>
-                      </div>
-                      <h4
-                        className="text-2xl font-bold leading-tight text-[#1D2742] transition-colors duration-200 group-hover:text-[#FC9C44]"
-                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                      >
-                        {mostReadArticles[0].title}
-                      </h4>
-                      <p
-                        className="line-clamp-3 text-sm leading-relaxed text-[#6B7280]"
-                        style={{ fontFamily: "'Inter', sans-serif" }}
-                      >
-                        {mostReadArticles[0].excerpt}
-                      </p>
-                    </div>
-                    <Link
-                      to="/blog/$slug"
-                      params={{ slug: mostReadArticles[0].slug }}
-                      className="group/read mt-8 inline-flex items-center gap-2 text-sm font-bold text-[#1D2742] transition-colors hover:text-[#FC9C44]"
-                    >
-                      Read the insight
-                      <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover/read:translate-x-1" />
-                    </Link>
-                  </div>
-                </motion.article>
-
-                <div className="grid gap-5">
-                  {mostReadArticles.slice(2).map((article, index) => (
-                    <Link
-                      key={article.slug}
-                      to="/blog/$slug"
-                      params={{ slug: article.slug }}
-                      className="group block"
-                    >
-                      <motion.article
-                        whileHover={{ x: 4 }}
-                        className="h-full rounded-xl border border-[#EAEAEA] bg-white p-5 text-left shadow-sm transition-all duration-300 hover:border-[#FC9C44]/35 hover:shadow-[0_14px_32px_rgba(29,39,66,0.06)]"
-                      >
-                        <div className="mb-4 flex items-start justify-between gap-4">
-                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#FFF4E8] text-xs font-bold text-[#FC9C44]">
-                            0{index + 3}
-                          </span>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#9CA3AF]">
-                            {article.readTime}
-                          </span>
-                        </div>
-                        <div className="space-y-2">
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-[#FC9C44]">
-                            {article.category}
-                          </span>
-                          <h4
-                            className="text-base font-bold leading-snug text-[#1D2742] transition-colors duration-200 group-hover:text-[#FC9C44]"
-                            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                          >
-                            {article.title}
-                          </h4>
-                          <p
-                            className="line-clamp-2 text-xs leading-relaxed text-[#6B7280]"
-                            style={{ fontFamily: "'Inter', sans-serif" }}
-                          >
-                            {article.excerpt}
-                          </p>
-                        </div>
-                      </motion.article>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div> */}
-
             <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
-
               {/* LEFT COLUMN: ARTICLES FEED (8 cols) */}
               <div id="latest-articles" className="scroll-mt-28 lg:col-span-8 space-y-12">
                 <div className="flex items-center justify-between border-b border-[#EAEAEA] pb-5">
-                  <h3 className="text-xl font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                    {selectedCategory === "All" && !selectedTag ? "Latest Articles" : selectedCategory !== "All" ? `Category: ${selectedCategory}` : `Topic: #${selectedTag}`}
+                  <h3
+                    className="text-xl font-bold text-[#1D2742]"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  >
+                    {selectedCategory === "All" && !selectedTag
+                      ? "Latest Articles"
+                      : selectedCategory !== "All"
+                        ? `Category: ${selectedCategory}`
+                        : `Topic: #${selectedTag}`}
                   </h3>
                   <span className="text-xs font-semibold text-[#6B7280]">
-                    Showing {filteredArticles.length} {filteredArticles.length === 1 ? "article" : "articles"}
+                    Showing {filteredArticles.length}{" "}
+                    {filteredArticles.length === 1 ? "article" : "articles"}
                   </span>
                 </div>
 
@@ -550,19 +343,28 @@ function BlogPage() {
                                 <motion.span
                                   className="h-2 w-2 rounded-full bg-[#EAEAEA]"
                                   variants={{
-                                    hover: { backgroundColor: "#FC9C44", transition: { delay: 0, duration: 0.15 } },
+                                    hover: {
+                                      backgroundColor: "#FC9C44",
+                                      transition: { delay: 0, duration: 0.15 },
+                                    },
                                   }}
                                 />
                                 <motion.span
                                   className="h-2 w-2 rounded-full bg-[#EAEAEA]"
                                   variants={{
-                                    hover: { backgroundColor: "#FC9C44", transition: { delay: 0.08, duration: 0.15 } },
+                                    hover: {
+                                      backgroundColor: "#FC9C44",
+                                      transition: { delay: 0.08, duration: 0.15 },
+                                    },
                                   }}
                                 />
                                 <motion.span
                                   className="h-2 w-2 rounded-full bg-[#EAEAEA]"
                                   variants={{
-                                    hover: { backgroundColor: "#FC9C44", transition: { delay: 0.16, duration: 0.15 } },
+                                    hover: {
+                                      backgroundColor: "#FC9C44",
+                                      transition: { delay: 0.16, duration: 0.15 },
+                                    },
                                   }}
                                 />
                               </div>
@@ -623,8 +425,16 @@ function BlogPage() {
                       <BookOpen className="h-6 w-6" />
                     </span>
                     <div className="space-y-1">
-                      <h4 className="text-base font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>No insights found</h4>
-                      <p className="text-xs text-[#6B7280]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                      <h4
+                        className="text-base font-bold text-[#1D2742]"
+                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                      >
+                        No insights found
+                      </h4>
+                      <p
+                        className="text-xs text-[#6B7280]"
+                        style={{ fontFamily: "'Inter', sans-serif" }}
+                      >
                         Try clearing search terms or modifying category selections.
                       </p>
                     </div>
@@ -690,10 +500,12 @@ function BlogPage() {
               {/* RIGHT COLUMN: STICKY DISCOVERY PANEL (4 cols) */}
               <div className="lg:col-span-4">
                 <aside className="space-y-10 lg:sticky lg:top-[120px] lg:h-fit">
-
                   {/* Search Box */}
                   <div className="space-y-3 text-left">
-                    <h4 className="text-xs font-bold text-[#1D2742] uppercase tracking-[0.1em]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <h4
+                      className="text-xs font-bold text-[#1D2742] uppercase tracking-[0.1em]"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       Search Insights
                     </h4>
                     <div className="relative">
@@ -713,7 +525,10 @@ function BlogPage() {
 
                   {/* Categories */}
                   <div className="space-y-4 text-left">
-                    <h4 className="text-xs font-bold text-[#1D2742] uppercase tracking-[0.1em]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <h4
+                      className="text-xs font-bold text-[#1D2742] uppercase tracking-[0.1em]"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       Categories
                     </h4>
                     <div className="flex flex-wrap gap-2">
@@ -734,7 +549,10 @@ function BlogPage() {
 
                   {/* Popular Topics */}
                   <div className="space-y-4 text-left">
-                    <h4 className="text-xs font-bold text-[#1D2742] uppercase tracking-[0.1em]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <h4
+                      className="text-xs font-bold text-[#1D2742] uppercase tracking-[0.1em]"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       Popular Topics
                     </h4>
                     <div className="flex flex-wrap gap-2.5">
@@ -764,11 +582,18 @@ function BlogPage() {
                       </div>
 
                       <div className="space-y-1">
-                        <h4 className="text-base font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                        <h4
+                          className="text-base font-bold text-[#1D2742]"
+                          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                        >
                           Get Weekly Growth Insights
                         </h4>
-                        <p className="text-xs text-[#6B7280] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                          Get notified when new guides, frameworks, and digital systems analysis papers go live.
+                        <p
+                          className="text-xs text-[#6B7280] leading-relaxed"
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
+                          Get notified when new guides, frameworks, and digital systems analysis
+                          papers go live.
                         </p>
                       </div>
 
@@ -803,14 +628,12 @@ function BlogPage() {
                       </AnimatePresence>
                     </div>
                   </div>
-
                 </aside>
               </div>
-
             </div>
           </div>
         </section>
-      </div >
+      </div>
       <section className="bg-white px-6 py-20 sm:py-24 lg:px-10">
         <div className="relative mx-auto max-w-[1200px] overflow-hidden rounded-[2rem] bg-[#06133D] px-6 py-14 text-center text-white sm:px-12 sm:py-16">
           <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-[#FC9C44]/20 blur-3xl" />
@@ -831,7 +654,7 @@ function BlogPage() {
                 to="/free-growth-audit"
                 className="inline-flex items-center gap-2 rounded-full bg-[#FC9C44] px-6 py-3.5 text-sm font-semibold text-[#06133D] transition hover:bg-[#ffad63]"
               >
-                Get a Free Growth Audit  <ArrowRight className="h-4 w-4" />
+                Get a Free Growth Audit <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 to="/contact"
@@ -844,7 +667,6 @@ function BlogPage() {
         </div>
       </section>
       <Footer />
-    </div >
-
+    </div>
   );
 }

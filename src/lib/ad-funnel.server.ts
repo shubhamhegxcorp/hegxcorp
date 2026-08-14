@@ -75,6 +75,7 @@ export async function listSavedAdFunnelReport() {
       WHERE "eventName" IN ('page_view', 'form_start')
         AND COALESCE(NULLIF("params" ->> 'lead_source', ''), '') <> ''
         AND COALESCE(NULLIF("params" ->> 'lead_source', ''), 'Untracked') <> 'Direct'
+        AND COALESCE(NULLIF("params" ->> 'lead_source', ''), '') !~* '^(localhost|::1|127[.]0[.]0[.]1|10[.]|192[.]168[.]|172[.](1[6-9]|2[0-9]|3[0-1])[.])'
       GROUP BY 1, 2, 3, 4
     ),
     lead_rows AS (
@@ -88,6 +89,7 @@ export async function listSavedAdFunnelReport() {
       FROM "ContactInquiry"
       WHERE COALESCE(NULLIF("leadSource", ''), '') <> ''
         AND COALESCE(NULLIF("leadSource", ''), 'Untracked') <> 'Direct'
+        AND COALESCE(NULLIF("leadSource", ''), '') !~* '^(localhost|::1|127[.]0[.]0[.]1|10[.]|192[.]168[.]|172[.](1[6-9]|2[0-9]|3[0-1])[.])'
 
       UNION ALL
 
@@ -101,6 +103,7 @@ export async function listSavedAdFunnelReport() {
       FROM "GrowthAuditInquiry"
       WHERE COALESCE(NULLIF("leadSource", ''), '') <> ''
         AND COALESCE(NULLIF("leadSource", ''), 'Untracked') <> 'Direct'
+        AND COALESCE(NULLIF("leadSource", ''), '') !~* '^(localhost|::1|127[.]0[.]0[.]1|10[.]|192[.]168[.]|172[.](1[6-9]|2[0-9]|3[0-1])[.])'
     ),
     lead_groups AS (
       SELECT

@@ -69,13 +69,19 @@ export function ServiceLeadForm({
           services: [serviceName],
         },
       });
-      trackLead({
-        form_name: "service_lead_form",
-        service_name: serviceName,
-        lead_source: `${serviceName} service page`,
-        budget: data.budget,
-        timeline: data.timeline,
-      });
+      trackLead(
+        {
+          form_name: "service_lead_form",
+          service_name: serviceName,
+          lead_source: `${serviceName} service page`,
+          budget: data.budget,
+          timeline: data.timeline,
+        },
+        {
+          email: data.email,
+          phone: data.phone,
+        },
+      );
       toast.success(`${serviceName} inquiry saved. Hegxcorp will contact you shortly.`);
       setIsSubmitted(true);
       reset({

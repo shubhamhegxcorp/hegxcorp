@@ -132,104 +132,104 @@ export function Footer() {
                 revenue through SEO, paid advertising, and conversion optimisation.
               </p>
 
-            {/* CTA pill */}
-            <Link
-              to="/free-growth-audit"
-              className="self-start inline-flex items-center gap-2 rounded-full px-5 py-2 text-[12px] font-semibold text-[#1D2742] bg-[#FC9C44] hover:bg-[#E88C35] transition-colors duration-200"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              Get Free Growth Audit <ArrowRight className="h-3 w-3" />
-            </Link>
-
-            {/* Social icons */}
-            <div className="flex gap-1.5">
-              {socialLinks.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  aria-label={s.label}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.09] text-white/35 transition-all duration-200 hover:bg-white/[0.08] hover:text-white/80 hover:border-white/20"
-                >
-                  <s.icon className="h-3.5 w-3.5" />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* ── Link columns ── */}
-          {Object.entries(footerLinks).map(([group, links]) => (
-            <div key={group} className="flex flex-col gap-3.5">
-              <h4
-                className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/35"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                {group}
-              </h4>
-              <div className="w-5 h-px bg-white/10" />
-              <ul className="flex flex-col gap-2">
-                {links.map((link) => (
-                  <li key={link.label}>
-                    {"to" in link ? (
-                      <Link
-                        to={link.to}
-                        className="group inline-flex text-[13px] text-white/55 transition-all duration-200 hover:text-white"
-                        style={{ fontFamily: "'Inter', sans-serif" }}
-                      >
-                        <span className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]">
-                          {link.label}
-                        </span>
-                      </Link>
-                    ) : (
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group inline-flex text-[13px] text-white/55 transition-all duration-200 hover:text-white"
-                        style={{ fontFamily: "'Inter', sans-serif" }}
-                      >
-                        <span className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]">
-                          {link.label}
-                        </span>
-                      </a>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Bottom bar ── */}
-      <div className="border-t border-white/[0.07]">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-10 pt-4 pb-28 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p
-            className="text-[11px] text-white/30 tracking-wide"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            © {new Date().getFullYear()} Hegxcorp. All rights reserved.
-          </p>
-          <div className="flex items-center gap-6">
-            {[
-              { label: "Privacy Policy", to: "/privacy-policy" as const },
-              { label: "Terms of Service", to: "/terms-of-service" as const },
-              { label: "Cookie Policy", to: "/cookie-policy" as const },
-            ].map((link) => (
+              {/* CTA pill */}
               <Link
-                key={link.to}
-                to={link.to}
-                className="text-[11px] text-white/30 hover:text-white/60 transition-colors duration-200 tracking-wide"
+                to="/free-growth-audit"
+                className="self-start inline-flex items-center gap-2 rounded-full px-5 py-2 text-[12px] font-semibold text-[#1D2742] bg-[#FC9C44] hover:bg-[#E88C35] transition-colors duration-200"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
-                {link.label}
+                Get Free Growth Audit <ArrowRight className="h-3 w-3" />
               </Link>
+
+              {/* Social icons */}
+              <div className="flex gap-1.5">
+                {socialLinks.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    aria-label={s.label}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-8 w-8 items-center justify-center rounded-full border border-white/[0.09] text-white/35 transition-all duration-200 hover:bg-white/[0.08] hover:text-white/80 hover:border-white/20"
+                  >
+                    <s.icon className="h-3.5 w-3.5" />
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Link columns ── */}
+            {Object.entries(footerLinks).map(([group, links]) => (
+              <div key={group} className="flex flex-col gap-3.5">
+                <h4
+                  className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/35"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {group}
+                </h4>
+                <div className="w-5 h-px bg-white/10" />
+                <ul className="flex flex-col gap-2">
+                  {links.map((link) => (
+                    <li key={link.label}>
+                      {"to" in link ? (
+                        <Link
+                          to={link.to}
+                          className="group inline-flex text-[13px] text-white/55 transition-all duration-200 hover:text-white"
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
+                          <span className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]">
+                            {link.label}
+                          </span>
+                        </Link>
+                      ) : (
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group inline-flex text-[13px] text-white/55 transition-all duration-200 hover:text-white"
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
+                          <span className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]">
+                            {link.label}
+                          </span>
+                        </a>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
           </div>
         </div>
+
+        {/* ── Bottom bar ── */}
+        <div className="border-t border-white/[0.07]">
+          <div className="mx-auto max-w-[1280px] px-6 lg:px-10 pt-4 pb-28 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p
+              className="text-[11px] text-white/30 tracking-wide"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              © {new Date().getFullYear()} Hegxcorp. All rights reserved.
+            </p>
+            <div className="flex items-center gap-6">
+              {[
+                { label: "Privacy Policy", to: "/privacy-policy" as const },
+                { label: "Terms of Service", to: "/terms-of-service" as const },
+                { label: "Cookie Policy", to: "/cookie-policy" as const },
+              ].map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className="text-[11px] text-white/30 hover:text-white/60 transition-colors duration-200 tracking-wide"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
     </footer>
   );
 }

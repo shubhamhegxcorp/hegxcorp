@@ -121,12 +121,17 @@ function FreeGrowthAuditPage() {
           leadSourceData: getLeadSourceData(),
         },
       });
-      trackLead({
-        form_name: "growth_audit_form",
-        lead_source: "Free growth audit page",
-        revenue_range: data.revenueRange,
-        goal: data.goal,
-      });
+      trackLead(
+        {
+          form_name: "growth_audit_form",
+          lead_source: "Free growth audit page",
+          revenue_range: data.revenueRange,
+          goal: data.goal,
+        },
+        {
+          email: data.email,
+        },
+      );
       toast.success("Audit request submitted successfully! We will analyze your site shortly.");
       setIsSubmitted(true);
       reset();

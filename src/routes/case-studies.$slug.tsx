@@ -4,7 +4,14 @@ import { Footer } from "@/components/site/Footer";
 import { BrowserPreview } from "@/components/site/BrowserPreview";
 import { getCaseStudyBySlug, getCaseStudies } from "@/lib/content/caseStudies";
 import ShapeGrid from "@/components/ShapeGrid";
-import { ArrowLeft, ArrowRight, CheckCircle2, ChevronRight, MessageSquare, ShieldCheck } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  ChevronRight,
+  MessageSquare,
+  ShieldCheck,
+} from "lucide-react";
 
 export const Route = createFileRoute("/case-studies/$slug")({
   loader: ({ params }: { params: { slug: string } }) => {
@@ -21,7 +28,9 @@ export const Route = createFileRoute("/case-studies/$slug")({
         { title: study ? study.seoTitle : "Case Study | Hegxcorp" },
         {
           name: "description",
-          content: study ? study.seoDescription : "Detailed case history of performance growth, organic search architectures, and digital scaling engineered by Hegxcorp.",
+          content: study
+            ? study.seoDescription
+            : "Detailed case history of performance growth, organic search architectures, and digital scaling engineered by Hegxcorp.",
         },
       ],
     };
@@ -40,11 +49,11 @@ const gridColsMap: Record<number, string> = {
 function CaseStudyDetailPage() {
   const { slug } = useParams({ strict: false });
   const study = getCaseStudyBySlug(slug || "");
-  
+
   if (!study) {
     return null;
   }
-  
+
   // Find other relevant studies for the Related section (max 2)
   const relatedStudies = getCaseStudies()
     .filter((c) => c.slug !== study.slug)
@@ -56,7 +65,13 @@ function CaseStudyDetailPage() {
         <Header />
 
         {/* ── HERO SECTION ── */}
-        <section className="relative overflow-hidden bg-[#FAFAF8] border-b border-[#EAEAEA]" style={{ paddingTop: "clamp(64px, 8vw, 100px)", paddingBottom: "clamp(64px, 8vw, 100px)" }}>
+        <section
+          className="relative overflow-hidden bg-[#FAFAF8] border-b border-[#EAEAEA]"
+          style={{
+            paddingTop: "clamp(64px, 8vw, 100px)",
+            paddingBottom: "clamp(64px, 8vw, 100px)",
+          }}
+        >
           {/* Subtle ShapeGrid motif in bg */}
           <div
             aria-hidden="true"
@@ -94,9 +109,9 @@ function CaseStudyDetailPage() {
                     <span>•</span>
                     <span>{study.services.join(" • ")}</span>
                   </div>
-                  
+
                   <div className="space-y-1">
-                    <div 
+                    <div
                       className="font-bold text-[#1D2742] leading-[0.95] tracking-tight"
                       style={{
                         fontFamily: "'Space Grotesk', sans-serif",
@@ -105,15 +120,15 @@ function CaseStudyDetailPage() {
                     >
                       {study.metricValue}
                     </div>
-                    <div 
+                    <div
                       className="text-xs font-bold uppercase tracking-[0.2em] text-[#FC9C44] mt-1"
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     >
                       {study.metricLabel.toUpperCase()}
                     </div>
                   </div>
-                  
-                  <h2 
+
+                  <h2
                     className="text-2xl font-bold text-[#6B7280]"
                     style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                   >
@@ -121,7 +136,7 @@ function CaseStudyDetailPage() {
                   </h2>
                 </div>
 
-                <p 
+                <p
                   className="text-[#4A5568] leading-relaxed text-base border-l-2 border-[#FC9C44] pl-4"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
@@ -131,8 +146,8 @@ function CaseStudyDetailPage() {
 
               {/* Browser Preview Screenshot */}
               <div className="lg:col-span-6">
-                <BrowserPreview 
-                  src={study.featuredImage} 
+                <BrowserPreview
+                  src={study.featuredImage}
                   alt={`${study.client} Case Study Screenshot`}
                   proofLabel={study.proofLabel}
                   proofDuration={study.proofDuration}
@@ -148,16 +163,21 @@ function CaseStudyDetailPage() {
         <section className="py-20 bg-white border-b border-[#EAEAEA]">
           <div className="mx-auto max-w-[960px] px-6 lg:px-10">
             <div className="space-y-16">
-              
               {/* Challenge */}
               <div className="space-y-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <span
+                  className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
                   01 / The Challenge
                 </span>
-                <h3 className="text-2xl font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                <h3
+                  className="text-2xl font-bold text-[#1D2742]"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
                   {study.challenge.title}
                 </h3>
-                <div 
+                <div
                   className="text-[#4A5568] leading-relaxed space-y-4"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
@@ -167,20 +187,25 @@ function CaseStudyDetailPage() {
 
               {/* Solution */}
               <div className="space-y-4">
-                <span className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <span
+                  className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
                   02 / The Solution
                 </span>
-                <h3 className="text-2xl font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                <h3
+                  className="text-2xl font-bold text-[#1D2742]"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
                   {study.solution.title}
                 </h3>
-                <div 
+                <div
                   className="text-[#4A5568] leading-relaxed space-y-4"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   <p>{study.solution.description}</p>
                 </div>
               </div>
-
             </div>
           </div>
         </section>
@@ -189,29 +214,52 @@ function CaseStudyDetailPage() {
         <section className="py-20 bg-[#FAFAF8] border-b border-[#EAEAEA]">
           <div className="mx-auto max-w-[960px] px-6 lg:px-10">
             <div className="text-center max-w-[640px] mx-auto mb-16 space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <span
+                className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
                 Methodology
               </span>
-              <h3 className="text-3xl font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              <h3
+                className="text-3xl font-bold text-[#1D2742]"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              >
                 Our Approach &amp; Roadmap
               </h3>
               <p className="text-[#6B7280] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                A systematic workflow engineered to isolate scaling bottlenecks and build compounding search and campaign loops.
+                A systematic workflow engineered to isolate scaling bottlenecks and build
+                compounding search and campaign loops.
               </p>
             </div>
 
             {/* Strategy Timeline Layout */}
-            <div className={`grid ${gridColsMap[study.approach?.length || 4] || "md:grid-cols-4"} gap-8 relative`}>
+            <div
+              className={`grid ${gridColsMap[study.approach?.length || 4] || "md:grid-cols-4"} gap-8 relative`}
+            >
               {/* Horizontal connection line on desktop */}
               <div className="hidden md:block absolute top-[26px] left-[10%] right-[10%] h-0.5 bg-[#EAEAEA] -z-0" />
-              
+
               {study.approach?.map((step, idx) => (
-                <div key={idx} className="relative bg-white p-6 rounded-xl border border-[#EAEAEA] text-center space-y-3 z-10 shadow-sm">
-                  <div className="mx-auto h-12 w-12 rounded-full bg-[#1D2742] text-white flex items-center justify-center font-bold text-lg" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                <div
+                  key={idx}
+                  className="relative bg-white p-6 rounded-xl border border-[#EAEAEA] text-center space-y-3 z-10 shadow-sm"
+                >
+                  <div
+                    className="mx-auto h-12 w-12 rounded-full bg-[#1D2742] text-white flex items-center justify-center font-bold text-lg"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  >
                     {step.phase}
                   </div>
-                  <h4 className="font-bold text-[#1D2742] text-sm" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{step.title}</h4>
-                  <p className="text-xs text-[#6B7280] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  <h4
+                    className="font-bold text-[#1D2742] text-sm"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  >
+                    {step.title}
+                  </h4>
+                  <p
+                    className="text-xs text-[#6B7280] leading-relaxed"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
                     {step.description}
                   </p>
                 </div>
@@ -224,10 +272,16 @@ function CaseStudyDetailPage() {
         <section className="py-20 bg-white border-b border-[#EAEAEA]">
           <div className="mx-auto max-w-[960px] px-6 lg:px-10">
             <div className="text-center max-w-[640px] mx-auto mb-16 space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <span
+                className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
                 03 / Verified Results
               </span>
-              <h3 className="text-3xl font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              <h3
+                className="text-3xl font-bold text-[#1D2742]"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              >
                 Documented Client Outcomes
               </h3>
               <p className="text-[#6B7280] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -238,24 +292,27 @@ function CaseStudyDetailPage() {
             {/* Outcomes Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {study.results.metrics.map((metric, idx) => (
-                <div 
-                  key={idx} 
+                <div
+                  key={idx}
                   className="bg-[#FAFAF8] p-6 rounded-xl border border-[#EAEAEA] flex flex-col items-center justify-center text-center space-y-2 shadow-sm"
                 >
-                  <span 
+                  <span
                     className="text-3xl md:text-4xl font-bold text-[#FC9C44]"
                     style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                   >
                     {metric.value}
                   </span>
-                  <span className="text-[11px] font-bold text-[#1D2742] uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  <span
+                    className="text-[11px] font-bold text-[#1D2742] uppercase tracking-wider"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
                     {metric.label}
                   </span>
                 </div>
               ))}
             </div>
 
-            <p 
+            <p
               className="text-[#4A5568] leading-relaxed text-sm text-center max-w-[720px] mx-auto mt-12"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
@@ -269,17 +326,23 @@ function CaseStudyDetailPage() {
           <section className="py-20 bg-[#1D2742] text-white">
             <div className="mx-auto max-w-[800px] px-6 lg:px-10 text-center space-y-6">
               <MessageSquare className="h-8 w-8 text-[#FC9C44] mx-auto opacity-80" />
-              <blockquote 
+              <blockquote
                 className="text-xl md:text-2xl font-bold leading-relaxed italic"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
                 &ldquo;{study.testimonial.quote}&rdquo;
               </blockquote>
               <div className="space-y-1">
-                <p className="font-bold text-[#FC9C44]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                <p
+                  className="font-bold text-[#FC9C44]"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
                   {study.testimonial.author}
                 </p>
-                <p className="text-xs text-[#9CA3AF] font-medium uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <p
+                  className="text-xs text-[#9CA3AF] font-medium uppercase tracking-wider"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
                   {study.testimonial.role}
                 </p>
               </div>
@@ -291,15 +354,27 @@ function CaseStudyDetailPage() {
         <section className="py-20 bg-[#FAFAF8] border-b border-[#EAEAEA]">
           <div className="mx-auto max-w-[960px] px-6 lg:px-10 space-y-8">
             <div className="text-center max-w-[640px] mx-auto mb-10 space-y-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <span
+                className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
                 Visual Proof
               </span>
-              <h3 className="text-2xl font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+              <h3
+                className="text-2xl font-bold text-[#1D2742]"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              >
                 Live System Preview
               </h3>
-              <p className="text-xs text-[#6B7280] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                Direct capture layout representing the client's optimized website presence. 
-                <br /><span className="text-[10px] font-semibold text-[#9CA3AF]">(Placeholder graphic will be replaced with real analytics screenshots)</span>
+              <p
+                className="text-xs text-[#6B7280] leading-relaxed"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                Direct capture layout representing the client's optimized website presence.
+                <br />
+                <span className="text-[10px] font-semibold text-[#9CA3AF]">
+                  (Placeholder graphic will be replaced with real analytics screenshots)
+                </span>
               </p>
             </div>
 
@@ -307,19 +382,19 @@ function CaseStudyDetailPage() {
             <div className="grid md:grid-cols-2 gap-8 max-w-[960px] mx-auto">
               {study.gallery && study.gallery.length > 0 ? (
                 study.gallery.map((img, idx) => (
-                  <BrowserPreview 
+                  <BrowserPreview
                     key={idx}
-                    src={img} 
-                    alt={`${study.client} Gallery Screen ${idx + 1}`} 
+                    src={img}
+                    alt={`${study.client} Gallery Screen ${idx + 1}`}
                     aspectRatio="video"
                     className="w-full shadow-md"
                   />
                 ))
               ) : (
                 <div className="md:col-span-2 max-w-[800px] mx-auto w-full">
-                  <BrowserPreview 
-                    src={study.featuredImage} 
-                    alt={`${study.client} Analytics Proof`} 
+                  <BrowserPreview
+                    src={study.featuredImage}
+                    alt={`${study.client} Analytics Proof`}
                     proofLabel={study.proofLabel}
                     proofDuration={study.proofDuration}
                     proofMetric={`${study.metricValue} Growth`}
@@ -335,37 +410,43 @@ function CaseStudyDetailPage() {
         {/* ── RELATED CASE STUDIES ── */}
         <section className="py-20 bg-white">
           <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-            <h3 
+            <h3
               className="text-2xl font-bold text-[#1D2742] tracking-tight mb-12 text-center"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
               Other Success Stories
             </h3>
-            
+
             <div className="grid md:grid-cols-2 gap-12 max-w-[960px] mx-auto">
               {relatedStudies.map((item) => (
-                <Link 
+                <Link
                   key={item.slug}
                   to="/case-studies/$slug"
                   params={{ slug: item.slug }}
                   className="group flex flex-col gap-4 text-left focus:outline-none"
                 >
-                  <BrowserPreview 
-                    src={item.featuredImage} 
+                  <BrowserPreview
+                    src={item.featuredImage}
                     alt={`${item.client} Case Study`}
                     className="w-full"
                   />
                   <div className="space-y-1">
-                    <span 
+                    <span
                       className="text-lg font-bold text-[#FC9C44] group-hover:text-[#E88C35] transition-colors"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
                       {item.metricValue} {item.metricLabel}
                     </span>
-                    <h4 className="text-sm font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    <h4
+                      className="text-sm font-bold text-[#1D2742]"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
                       {item.client}
                     </h4>
-                    <p className="text-xs text-[#6B7280] line-clamp-2 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <p
+                      className="text-xs text-[#6B7280] line-clamp-2 leading-relaxed"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       {item.summary}
                     </p>
                   </div>
@@ -379,21 +460,22 @@ function CaseStudyDetailPage() {
         <section className="py-20 bg-[#FAFAF8] border-t border-b border-[#EAEAEA]">
           <div className="mx-auto max-w-[800px] px-6 lg:px-10 text-center space-y-6">
             <ShieldCheck className="h-10 w-10 text-[#FC9C44] mx-auto" />
-            
-            <h3 
+
+            <h3
               className="text-3xl font-bold text-[#1D2742] tracking-tight"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
               Want Similar Results?
             </h3>
-            
-            <p 
+
+            <p
               className="text-[#6B7280] leading-relaxed max-w-[500px] mx-auto text-sm"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              We'll audit your search visibility, PPC ad spend, and conversion funnel to uncover high-impact growth paths for your business.
+              We'll audit your search visibility, PPC ad spend, and conversion funnel to uncover
+              high-impact growth paths for your business.
             </p>
-            
+
             <div className="pt-2">
               <Link
                 to="/free-growth-audit"
@@ -405,9 +487,8 @@ function CaseStudyDetailPage() {
             </div>
           </div>
         </section>
-
       </div>
-      
+
       <Footer />
     </div>
   );

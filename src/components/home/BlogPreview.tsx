@@ -67,7 +67,9 @@ export function BlogPreview() {
                   className="text-[#6B7280] leading-relaxed text-sm md:text-base"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
-                  A technical breakdown of semantic search index shifts and how search algorithms evaluate topical authority inside generative answers.                </p>
+                  A technical breakdown of semantic search index shifts and how search algorithms
+                  evaluate topical authority inside generative answers.{" "}
+                </p>
 
                 <div className="pt-2">
                   <Link
@@ -75,7 +77,7 @@ export function BlogPreview() {
                     params={{ slug: "how-ai-search-reshapes-organic-traffic" }}
                     className="inline-flex items-center gap-2.5 rounded-full px-8 py-3.5 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#E88C35] transition-colors"
                   >
-                    View  Blog
+                    View Blog
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>
@@ -88,8 +90,10 @@ export function BlogPreview() {
                   url="hegxcorp.com/blog"
                   className="w-full shadow-lg"
                 >
-
-                  <Link to="/blog/$slug" params={{ slug: "how-ai-search-reshapes-organic-traffic" }}>
+                  <Link
+                    to="/blog/$slug"
+                    params={{ slug: "how-ai-search-reshapes-organic-traffic" }}
+                  >
                     <img
                       src={aisearch}
                       alt="How Ai Search Changes Rankings"

@@ -27,10 +27,10 @@ export default function SplitText({ text, className, style }: SplitTextProps) {
           ease: "power3.out",
           stagger: 0.12, // 120ms delay between lines
           force3D: true,
-        }
+        },
       );
     },
-    { scope: containerRef }
+    { scope: containerRef },
   );
 
   return (

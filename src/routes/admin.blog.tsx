@@ -9,9 +9,11 @@ import {
   ChevronsRight,
   Eye,
   FileText,
+  Pencil,
   Search,
   Sparkles,
   Star,
+  Trash2,
   XCircle,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -19,6 +21,7 @@ import { toast } from "sonner";
 
 import type { Blog } from "@/data/blogs";
 import { getBlogs } from "@/lib/content/blogs";
+import { deleteBlogDraft, listBlogDrafts, type BlogDraft } from "@/lib/blog-drafts";
 
 export const Route = createFileRoute("/admin/blog")({
   head: () => ({
@@ -40,7 +43,33 @@ type BlogPostFilter = BlogPostStatus | "ALL" | "FEATURED";
 type ManagedBlogPost = Blog & {
   adminStatus: BlogPostStatus;
   adminFeatured: boolean;
+  draftId?: string;
 };
+
+const draftAuthor = {
+  name: "Hegxcorp Admin",
+  role: "Editor",
+};
+
+
+
+function draftToBlog(draft: BlogDraft): Blog {
+  return {
+    id: `draft-${draft.id}`,
+    slug: draft.slug,
+    title: draft.title || "Untitled draft",
+    excerpt: draft.excerpt,
+    content: draft.content,
+    category: draft.category[0] ?? "Uncategorized",
+    readTime: draft.readTime,
+    featuredImage: draft.featuredImage ?? "",
+    author: draftAuthor,
+    publishedAt: draft.updatedAt,
+    seoTitle: draft.title,
+    seoDescription: draft.seoDescription,
+    featured: draft.featured,
+  };
+}
 
 const postsPerPage = 8;
 
@@ -82,7 +111,41 @@ function getAuthorInitials(name: string) {
 }
 
 function AdminBlogPostsPage() {
-  const sourcePosts = useMemo(() => getBlogs(), []);
+  const staticPosts = useMemo(() => getBlogs(), []);
+  const [drafts, setDrafts] = useState<BlogDraft[]>([]);
+
+  // Load server-stored drafts and merge them into the library list. Drafts
+  // come first so freshly saved posts surface at the top.
+  useEffect(() => {
+    let active = true;
+    listBlogDrafts()
+      .then((rows) => {
+        if (active) setDrafts(rows);
+      })
+      .catch((loadError) => {
+        console.error("Failed to load blog drafts:", loadError);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const sourcePosts = useMemo<Blog[]>(
+    () => [...drafts.map(draftToBlog), ...staticPosts],
+    [drafts, staticPosts],
+  );
+
+  // Map the synthesized blog id (`draft-<id>`) back to the raw draft id and its
+  // real status so row actions (edit/preview/delete) can address the server
+  // record and the status column reflects the stored value.
+  const draftMetaByBlogId = useMemo(() => {
+    const lookup: Record<string, { id: string; status: BlogPostStatus }> = {};
+    for (const draft of drafts) {
+      lookup[`draft-${draft.id}`] = { id: draft.id, status: draft.status };
+    }
+    return lookup;
+  }, [drafts]);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedDateRange, setSelectedDateRange] = useState("All");
@@ -110,16 +173,20 @@ function AdminBlogPostsPage() {
 
   const managedPosts = useMemo<ManagedBlogPost[]>(() => {
     return sourcePosts
-      .map((post) => ({
-        ...post,
-        adminStatus: postState[post.id]?.status ?? getInitialStatus(post),
-        adminFeatured: postState[post.id]?.featured ?? post.featured,
-      }))
+      .map((post) => {
+        const draftMeta = draftMetaByBlogId[post.id];
+        return {
+          ...post,
+          adminStatus: postState[post.id]?.status ?? draftMeta?.status ?? getInitialStatus(post),
+          adminFeatured: postState[post.id]?.featured ?? post.featured,
+          draftId: draftMeta?.id,
+        };
+      })
       .sort(
         (left, right) =>
           new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime(),
       );
-  }, [postState, sourcePosts]);
+  }, [draftMetaByBlogId, postState, sourcePosts]);
 
   const stats = useMemo(
     () => ({
@@ -163,8 +230,7 @@ function AdminBlogPostsPage() {
         post.author.name.toLowerCase().includes(query) ||
         post.content.toLowerCase().includes(query);
 
-      const matchesCategory =
-        selectedCategory === "All" || post.category === selectedCategory;
+      const matchesCategory = selectedCategory === "All" || post.category === selectedCategory;
 
       const matchesStatus =
         activeFilter === "ALL" ||
@@ -207,19 +273,33 @@ function AdminBlogPostsPage() {
     toast.success(`Post marked as ${statusLabels[status].toLowerCase()}.`);
   }
 
-  function toggleFeatured(postId: string) {
+  function toggleFeatured(postId: string, currentStatus: BlogPostStatus) {
     setPostState((current) => {
       const nextFeatured = !(current[postId]?.featured ?? false);
 
       return {
         ...current,
         [postId]: {
-          status: current[postId]?.status ?? "PUBLISHED",
+          status: current[postId]?.status ?? currentStatus,
           featured: nextFeatured,
         },
       };
     });
     toast.success("Featured setting updated.");
+  }
+
+  async function deleteDraft(draftId: string) {
+    if (!window.confirm("Delete this draft permanently? This cannot be undone.")) {
+      return;
+    }
+    try {
+      await deleteBlogDraft({ data: { id: draftId } });
+      setDrafts((prev) => prev.filter((draft) => draft.id !== draftId));
+      toast.success("Draft deleted.");
+    } catch (deleteError) {
+      console.error("Failed to delete draft:", deleteError);
+      toast.error("Could not delete the draft. Try again.");
+    }
   }
 
   function applyBulkAction(action = selectedBulkAction) {
@@ -425,8 +505,8 @@ function AdminBlogPostsPage() {
                   key={page}
                   onClick={() => setCurrentPage(page)}
                   className={`h-9 min-w-9 rounded-md border px-3 text-sm font-black transition ${safePage === page
-                    ? "border-[#FC9C44] bg-white text-[#FC9C44]"
-                    : "border-[#D0D5DD] bg-white text-[#344054] hover:border-[#FC9C44] hover:text-[#FC9C44]"
+                      ? "border-[#FC9C44] bg-white text-[#FC9C44]"
+                      : "border-[#D0D5DD] bg-white text-[#344054] hover:border-[#FC9C44] hover:text-[#FC9C44]"
                     }`}
                 >
                   {page}
@@ -529,9 +609,7 @@ function AdminBlogPostsPage() {
                           <p className="mt-2 max-w-[420px] text-sm leading-6 text-[#667085]">
                             {post.excerpt}
                           </p>
-                          <p className="mt-2 text-xs font-bold text-[#98A2B3]">
-                            /blog/{post.slug}
-                          </p>
+                          <p className="mt-2 text-xs font-bold text-[#98A2B3]">/blog/{post.slug}</p>
                         </div>
                       </div>
                     </td>
@@ -575,11 +653,11 @@ function AdminBlogPostsPage() {
                     <td className="px-5 py-4">
                       <button
                         type="button"
-                        onClick={() => toggleFeatured(post.id)}
+                        onClick={() => toggleFeatured(post.id, post.adminStatus)}
                         aria-pressed={post.adminFeatured}
                         className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-black transition ${post.adminFeatured
-                          ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
-                          : "border-[#D0D5DD] bg-white text-[#667085] hover:border-[#FC9C44]"
+                            ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
+                            : "border-[#D0D5DD] bg-white text-[#667085] hover:border-[#FC9C44]"
                           }`}
                       >
                         <Star className={`h-4 w-4 ${post.adminFeatured ? "fill-[#FC9C44]" : ""}`} />
@@ -594,38 +672,70 @@ function AdminBlogPostsPage() {
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex min-w-[190px] flex-wrap items-center gap-2">
-                        <Link
-                          to="/blog/$slug"
-                          params={{ slug: post.slug }}
-                          className="grid h-9 w-9 place-items-center rounded-lg border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44]"
-                          aria-label={`View ${post.title}`}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                        <button
-                          type="button"
-                          onClick={() => updatePostStatus(post.id, "PUBLISHED")}
-                          className="grid h-9 w-9 place-items-center rounded-lg border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-green-300 hover:text-green-700"
-                          aria-label={`Publish ${post.title}`}
-                        >
-                          <CheckCircle2 className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => updatePostStatus(post.id, "DRAFT")}
-                          className="grid h-9 w-9 place-items-center rounded-lg border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44]"
-                          aria-label={`Move ${post.title} to draft`}
-                        >
-                          <XCircle className="h-4 w-4" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => updatePostStatus(post.id, "ARCHIVED")}
-                          className="grid h-9 w-9 place-items-center rounded-lg border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-red-300 hover:text-red-600"
-                          aria-label={`Archive ${post.title}`}
-                        >
-                          <Archive className="h-4 w-4" />
-                        </button>
+                        {post.draftId ? (
+                          <>
+                            <a
+                              href={`/admin/add-blog?draft=${encodeURIComponent(post.draftId)}`}
+                              className="grid h-9 w-9 place-items-center rounded-lg border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44]"
+                              aria-label={`Edit ${post.title}`}
+                              title="Edit draft"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </a>
+                            <a
+                              href={`/admin/blog-preview?draft=${encodeURIComponent(post.draftId)}`}
+                              className="grid h-9 w-9 place-items-center rounded-lg border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44]"
+                              aria-label={`Preview ${post.title}`}
+                              title="Preview draft"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => void deleteDraft(post.draftId!)}
+                              className="grid h-9 w-9 place-items-center rounded-lg border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-red-300 hover:text-red-600"
+                              aria-label={`Delete ${post.title}`}
+                              title="Delete draft"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <Link
+                              to="/blog/$slug"
+                              params={{ slug: post.slug }}
+                              className="grid h-9 w-9 place-items-center rounded-lg border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44]"
+                              aria-label={`View ${post.title}`}
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() => updatePostStatus(post.id, "PUBLISHED")}
+                              className="grid h-9 w-9 place-items-center rounded-lg border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-green-300 hover:text-green-700"
+                              aria-label={`Publish ${post.title}`}
+                            >
+                              <CheckCircle2 className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => updatePostStatus(post.id, "DRAFT")}
+                              className="grid h-9 w-9 place-items-center rounded-lg border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44]"
+                              aria-label={`Move ${post.title} to draft`}
+                            >
+                              <XCircle className="h-4 w-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => updatePostStatus(post.id, "ARCHIVED")}
+                              className="grid h-9 w-9 place-items-center rounded-lg border border-[#D0D5DD] bg-white text-[#344054] transition hover:border-red-300 hover:text-red-600"
+                              aria-label={`Archive ${post.title}`}
+                            >
+                              <Archive className="h-4 w-4" />
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

@@ -48,7 +48,13 @@ function CaseStudiesPage() {
         <Header />
 
         {/* ── SECTION 1: HERO SECTION ── */}
-        <section className="relative overflow-hidden bg-white border-b border-[#EAEAEA]" style={{ paddingTop: "clamp(80px, 10vw, 140px)", paddingBottom: "clamp(80px, 10vw, 140px)" }}>
+        <section
+          className="relative overflow-hidden bg-white border-b border-[#EAEAEA]"
+          style={{
+            paddingTop: "clamp(80px, 10vw, 140px)",
+            paddingBottom: "clamp(80px, 10vw, 140px)",
+          }}
+        >
           {/* Hexagon background motif (moving, no fade) */}
           <div
             aria-hidden="true"
@@ -90,7 +96,8 @@ function CaseStudiesPage() {
                 className="max-w-[600px] mx-auto text-[#6B7280] leading-relaxed"
                 style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(16px, 1.2vw, 20px)" }}
               >
-                Explore how strategy, execution and data-driven systems helped businesses achieve measurable growth.
+                Explore how strategy, execution and data-driven systems helped businesses achieve
+                measurable growth.
               </p>
 
               <div className="pt-4 flex justify-center">
@@ -110,47 +117,69 @@ function CaseStudiesPage() {
         <section className="bg-[#FC9C44] py-8 border-b border-[#E88C35]">
           <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-0 text-white">
-
               {/* Column 1 */}
               <div className="flex flex-col items-center justify-center text-center p-4">
-                <span className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-none" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                <span
+                  className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-none"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
                   80+
                 </span>
-                <span className="text-[10px] lg:text-[11px] font-semibold uppercase tracking-wider text-white/90 mt-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <span
+                  className="text-[10px] lg:text-[11px] font-semibold uppercase tracking-wider text-white/90 mt-2"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
                   Clients Served
                 </span>
               </div>
 
               {/* Column 2 */}
               <div className="flex flex-col items-center justify-center text-center p-4 border-l border-white/20">
-                <span className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-none" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                <span
+                  className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-none"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
                   13+
                 </span>
-                <span className="text-[10px] lg:text-[11px] font-semibold uppercase tracking-wider text-white/90 mt-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <span
+                  className="text-[10px] lg:text-[11px] font-semibold uppercase tracking-wider text-white/90 mt-2"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
                   Years Experience
                 </span>
               </div>
 
               {/* Column 3 */}
               <div className="flex flex-col items-center justify-center text-center p-4 border-t border-white/20 md:border-t-0 md:border-l border-white/20">
-                <span className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-none" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                <span
+                  className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-none"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
                   International
                 </span>
-                <span className="text-[10px] lg:text-[11px] font-semibold uppercase tracking-wider text-white/90 mt-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <span
+                  className="text-[10px] lg:text-[11px] font-semibold uppercase tracking-wider text-white/90 mt-2"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
                   Markets Served
                 </span>
               </div>
 
               {/* Column 4 */}
               <div className="flex flex-col items-center justify-center text-center p-4 border-l border-t border-white/20 md:border-t-0 border-white/20">
-                <span className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight leading-none" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                <span
+                  className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight leading-none"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
                   SEO • PPC • Web
                 </span>
-                <span className="text-[10px] lg:text-[11px] font-semibold uppercase tracking-wider text-white/90 mt-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <span
+                  className="text-[10px] lg:text-[11px] font-semibold uppercase tracking-wider text-white/90 mt-2"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
                   Growth Systems
                 </span>
               </div>
-
             </div>
           </div>
         </section>
@@ -159,7 +188,6 @@ function CaseStudiesPage() {
         <section className="py-20 md:py-32 bg-[#FAFAF8] relative">
           <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
             <div className="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
-
               {/* Left Column - Outcome Text */}
               <div className="lg:col-span-5 space-y-8">
                 <div className="space-y-4">
@@ -211,14 +239,25 @@ function CaseStudiesPage() {
                 </div>
 
                 {/* Challenge & Solution summaries */}
-                <div className="space-y-6 pt-6 border-t border-[#EAEAEA] text-[#4A5568]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                <div
+                  className="space-y-6 pt-6 border-t border-[#EAEAEA] text-[#4A5568]"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#1D2742]">The Challenge</h4>
-                    <p className="mt-1.5 text-sm leading-relaxed">{featuredStudy.challenge.description}</p>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#1D2742]">
+                      The Challenge
+                    </h4>
+                    <p className="mt-1.5 text-sm leading-relaxed">
+                      {featuredStudy.challenge.description}
+                    </p>
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#1D2742]">Our Solution</h4>
-                    <p className="mt-1.5 text-sm leading-relaxed">{featuredStudy.solution.description}</p>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-[#1D2742]">
+                      Our Solution
+                    </h4>
+                    <p className="mt-1.5 text-sm leading-relaxed">
+                      {featuredStudy.solution.description}
+                    </p>
                   </div>
                 </div>
 
@@ -226,20 +265,41 @@ function CaseStudiesPage() {
                 <div className="grid grid-cols-3 gap-3 pt-2">
                   <div className="bg-white border border-[#EAEAEA] p-3 rounded-lg text-center space-y-0.5 shadow-sm">
                     <PhoneCall className="h-3.5 w-3.5 mx-auto text-[#FC9C44] opacity-80" />
-                    <div className="text-sm font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>908</div>
-                    <div className="text-[8px] font-bold text-[#6B7280] uppercase tracking-wider">Phone Leads</div>
+                    <div
+                      className="text-sm font-bold text-[#1D2742]"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
+                      908
+                    </div>
+                    <div className="text-[8px] font-bold text-[#6B7280] uppercase tracking-wider">
+                      Phone Leads
+                    </div>
                   </div>
 
                   <div className="bg-white border border-[#EAEAEA] p-3 rounded-lg text-center space-y-0.5 shadow-sm">
                     <FileText className="h-3.5 w-3.5 mx-auto text-[#FC9C44] opacity-80" />
-                    <div className="text-sm font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>150</div>
-                    <div className="text-[8px] font-bold text-[#6B7280] uppercase tracking-wider">Form Subs</div>
+                    <div
+                      className="text-sm font-bold text-[#1D2742]"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
+                      150
+                    </div>
+                    <div className="text-[8px] font-bold text-[#6B7280] uppercase tracking-wider">
+                      Form Subs
+                    </div>
                   </div>
 
                   <div className="bg-white border border-[#EAEAEA] p-3 rounded-lg text-center space-y-0.5 shadow-sm">
                     <Percent className="h-3.5 w-3.5 mx-auto text-[#FC9C44] opacity-80" />
-                    <div className="text-sm font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>-48%</div>
-                    <div className="text-[8px] font-bold text-[#6B7280] uppercase tracking-wider">Lower CPL</div>
+                    <div
+                      className="text-sm font-bold text-[#1D2742]"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
+                      -48%
+                    </div>
+                    <div className="text-[8px] font-bold text-[#6B7280] uppercase tracking-wider">
+                      Lower CPL
+                    </div>
                   </div>
                 </div>
 
@@ -268,7 +328,6 @@ function CaseStudiesPage() {
                   />
                 </Link>
               </div>
-
             </div>
           </div>
         </section>
@@ -279,7 +338,6 @@ function CaseStudiesPage() {
         {/* ── SECTION 4: CASE STUDY COLLECTION ── */}
         <section className="py-12 bg-white">
           <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-
             {/* Upgrade Archive Section Header */}
             <div className="max-w-[700px] mb-20 space-y-4">
               <span
@@ -297,17 +355,19 @@ function CaseStudiesPage() {
               >
                 Documented Growth Outcomes
               </h2>
-              <p className="text-[#6B7280] leading-relaxed text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                Documented case histories of performance bidding, organic architectures, and local reach integrations built to deliver scalable pipelines.
+              <p
+                className="text-[#6B7280] leading-relaxed text-sm"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                Documented case histories of performance bidding, organic architectures, and local
+                reach integrations built to deliver scalable pipelines.
               </p>
             </div>
 
             {/* EDITORIAL RHYTHM LAYOUT GRID */}
             <div className="space-y-24">
-
               {/* ROW 1: Two standard studies side-by-side (GPen & Rollink) */}
               <div className="grid md:grid-cols-2 gap-16 lg:gap-24">
-
                 {/* G Pen */}
                 <Link
                   to="/case-studies/$slug"
@@ -333,7 +393,10 @@ function CaseStudiesPage() {
                         >
                           {gpen.metricValue}
                         </span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#FC9C44] mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        <span
+                          className="text-[10px] font-bold uppercase tracking-wider text-[#FC9C44] mt-0.5"
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
                           {gpen.metricLabel.toUpperCase()}
                         </span>
                       </div>
@@ -345,7 +408,10 @@ function CaseStudiesPage() {
                       </h3>
                     </div>
 
-                    <p className="text-sm text-[#4A5568] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <p
+                      className="text-sm text-[#4A5568] leading-relaxed"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       {gpen.summary}
                     </p>
 
@@ -362,7 +428,8 @@ function CaseStudiesPage() {
 
                     <div>
                       <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1D2742] group-hover:text-[#FC9C44] transition-colors duration-[250ms] ease-out border-b border-[#1D2742]/10 group-hover:border-[#FC9C44]/20 pb-0.5">
-                        Read Study <ArrowRight className="h-3.5 w-3.5 transition-transform duration-[250ms] ease-out group-hover:translate-x-[6px]" />
+                        Read Study{" "}
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform duration-[250ms] ease-out group-hover:translate-x-[6px]" />
                       </span>
                     </div>
                   </div>
@@ -393,7 +460,10 @@ function CaseStudiesPage() {
                         >
                           {rollink.metricValue}
                         </span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#FC9C44] mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        <span
+                          className="text-[10px] font-bold uppercase tracking-wider text-[#FC9C44] mt-0.5"
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
                           {rollink.metricLabel.toUpperCase()}
                         </span>
                       </div>
@@ -405,7 +475,10 @@ function CaseStudiesPage() {
                       </h3>
                     </div>
 
-                    <p className="text-sm text-[#4A5568] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <p
+                      className="text-sm text-[#4A5568] leading-relaxed"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       {rollink.summary}
                     </p>
 
@@ -422,12 +495,12 @@ function CaseStudiesPage() {
 
                     <div>
                       <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1D2742] group-hover:text-[#FC9C44] transition-colors duration-[250ms] ease-out border-b border-[#1D2742]/10 group-hover:border-[#FC9C44]/20 pb-0.5">
-                        Read Study <ArrowRight className="h-3.5 w-3.5 transition-transform duration-[250ms] ease-out group-hover:translate-x-[6px]" />
+                        Read Study{" "}
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform duration-[250ms] ease-out group-hover:translate-x-[6px]" />
                       </span>
                     </div>
                   </div>
                 </Link>
-
               </div>
 
               {/* Editorial Divider */}
@@ -451,7 +524,9 @@ function CaseStudiesPage() {
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Featured Performance Story</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">
+                        Featured Performance Story
+                      </span>
 
                       <div className="flex flex-col">
                         <span
@@ -460,7 +535,10 @@ function CaseStudiesPage() {
                         >
                           {learningTree.metricValue}
                         </span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#FC9C44] mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        <span
+                          className="text-[10px] font-bold uppercase tracking-wider text-[#FC9C44] mt-0.5"
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
                           {learningTree.metricLabel.toUpperCase()}
                         </span>
                       </div>
@@ -473,7 +551,10 @@ function CaseStudiesPage() {
                       </h3>
                     </div>
 
-                    <p className="text-sm text-[#4A5568] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <p
+                      className="text-sm text-[#4A5568] leading-relaxed"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       {learningTree.summary}
                     </p>
 
@@ -490,7 +571,8 @@ function CaseStudiesPage() {
 
                     <div>
                       <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1D2742] group-hover:text-[#FC9C44] transition-colors duration-[250ms] ease-out border-b border-[#1D2742]/10 group-hover:border-[#FC9C44]/20 pb-0.5">
-                        Read Study <ArrowRight className="h-3.5 w-3.5 transition-transform duration-[250ms] ease-out group-hover:translate-x-[6px]" />
+                        Read Study{" "}
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform duration-[250ms] ease-out group-hover:translate-x-[6px]" />
                       </span>
                     </div>
                   </div>
@@ -511,7 +593,9 @@ function CaseStudiesPage() {
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">Localized Brand Authority</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">
+                        Localized Brand Authority
+                      </span>
 
                       <div className="flex flex-col">
                         <span
@@ -520,7 +604,10 @@ function CaseStudiesPage() {
                         >
                           {orra.metricValue}
                         </span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#FC9C44] mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
+                        <span
+                          className="text-[10px] font-bold uppercase tracking-wider text-[#FC9C44] mt-0.5"
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
                           {orra.metricLabel.toUpperCase()}
                         </span>
                       </div>
@@ -533,7 +620,10 @@ function CaseStudiesPage() {
                       </h3>
                     </div>
 
-                    <p className="text-sm text-[#4A5568] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <p
+                      className="text-sm text-[#4A5568] leading-relaxed"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       {orra.summary}
                     </p>
 
@@ -550,14 +640,13 @@ function CaseStudiesPage() {
 
                     <div>
                       <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1D2742] group-hover:text-[#FC9C44] transition-colors duration-[250ms] ease-out border-b border-[#1D2742]/10 group-hover:border-[#FC9C44]/20 pb-0.5">
-                        Read Study <ArrowRight className="h-3.5 w-3.5 transition-transform duration-[250ms] ease-out group-hover:translate-x-[6px]" />
+                        Read Study{" "}
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform duration-[250ms] ease-out group-hover:translate-x-[6px]" />
                       </span>
                     </div>
                   </div>
-
                 </Link>
               </div>
-
             </div>
           </div>
         </section>
@@ -601,7 +690,6 @@ function CaseStudiesPage() {
             </div>
           </div>
         </section>
-
       </div>
 
       <Footer />

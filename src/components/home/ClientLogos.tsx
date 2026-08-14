@@ -18,15 +18,15 @@ import logo21 from "@/assets/logos/clients/21.webp";
 import logo22 from "@/assets/logos/clients/22.webp";
 
 const logos: { id: number; src: string; alt: string }[] = [
-  { id: 1,  src: logo1,  alt: "Client 1"  },
-  { id: 2,  src: logo2,  alt: "Client 2"  },
-  { id: 3,  src: logo7,  alt: "Client 3"  },
-  { id: 4,  src: logo8,  alt: "Client 4"  },
-  { id: 5,  src: logo9,  alt: "Client 5"  },
-  { id: 6,  src: logo10, alt: "Client 6"  },
-  { id: 7,  src: logo11, alt: "Client 7"  },
-  { id: 8,  src: logo12, alt: "Client 8"  },
-  { id: 9,  src: logo13, alt: "Client 9"  },
+  { id: 1, src: logo1, alt: "Client 1" },
+  { id: 2, src: logo2, alt: "Client 2" },
+  { id: 3, src: logo7, alt: "Client 3" },
+  { id: 4, src: logo8, alt: "Client 4" },
+  { id: 5, src: logo9, alt: "Client 5" },
+  { id: 6, src: logo10, alt: "Client 6" },
+  { id: 7, src: logo11, alt: "Client 7" },
+  { id: 8, src: logo12, alt: "Client 8" },
+  { id: 9, src: logo13, alt: "Client 9" },
   { id: 10, src: logo14, alt: "Client 10" },
   { id: 11, src: logo15, alt: "Client 11" },
   { id: 12, src: logo16, alt: "Client 12" },
@@ -67,10 +67,7 @@ export function ClientLogos() {
           style={{ background: "linear-gradient(to left, white 40%, transparent)" }}
         />
 
-        <div
-          className="flex gap-12 animate-marquee w-max"
-          style={{ willChange: "transform" }}
-        >
+        <div className="flex gap-12 animate-marquee w-max" style={{ willChange: "transform" }}>
           {track.map((logo, i) => (
             <div
               key={`${logo.id}-${i}`}

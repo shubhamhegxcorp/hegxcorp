@@ -1,9 +1,9 @@
 import { createFileRoute, Link, notFound, useParams } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { getBlogBySlug, getBlogs } from "@/lib/content/blogs";
+import { getPublishedBlogBySlug, getPublishedBlogs } from "@/lib/content/blogs";
 import { getFeaturedCaseStudies } from "@/lib/content/caseStudies";
-import { ContentBlock } from "@/data/blogs";
+import { ContentBlock, type Blog } from "@/data/blogs";
 import ShapeGrid from "@/components/ShapeGrid";
 import {
   ArrowLeft,
@@ -26,20 +26,27 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
 
 export const Route = createFileRoute("/blog/$slug")({
-  loader: ({ params }: { params: { slug: string } }) => {
-    const article = getBlogBySlug(params.slug);
+  // Loader can be async — TanStack Router waits for it before rendering,
+  // so this is the right place to hit the database (unlike head/component
+  // below, which need the already-resolved loaderData).
+  loader: async ({ params }: { params: { slug: string } }) => {
+    const article = await getPublishedBlogBySlug(params.slug);
     if (!article) {
       throw notFound();
     }
     return { article };
   },
-  head: ({ params }: { params: { slug: string } }) => {
-    const article = getBlogBySlug(params.slug);
+  head: ({ params, loaderData }: { params: { slug: string }; loaderData?: { article: Blog } }) => {
+    const article = loaderData?.article;
     const title = article ? article.seoTitle : "Insights | Hegxcorp";
-    const description = article ? article.seoDescription : "In-depth growth breakdowns and strategic frameworks from Hegxcorp.";
+    const description = article
+      ? article.seoDescription
+      : "In-depth growth breakdowns and strategic frameworks from Hegxcorp.";
     const currentUrl = `https://hegxcorp.com/blog/${params.slug}`;
-    const ogImage = article ? `https://hegxcorp.com${article.featuredImage}` : "https://hegxcorp.com/og-default.jpg";
-    
+    const ogImage = article
+      ? `https://hegxcorp.com${article.featuredImage}`
+      : "https://hegxcorp.com/og-default.jpg";
+
     return {
       meta: [
         { title },
@@ -54,9 +61,7 @@ export const Route = createFileRoute("/blog/$slug")({
         { name: "twitter:description", content: description },
         { name: "twitter:image", content: ogImage },
       ],
-      links: [
-        { rel: "canonical", href: currentUrl },
-      ],
+      links: [{ rel: "canonical", href: currentUrl }],
     };
   },
   component: BlogDetailPage,
@@ -117,7 +122,9 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 <p className="mb-2">“{block.text}”</p>
-                {block.author && <span className="text-xs text-[#6B7280] not-italic">— {block.author}</span>}
+                {block.author && (
+                  <span className="text-xs text-[#6B7280] not-italic">— {block.author}</span>
+                )}
               </blockquote>
             );
           case "pull-quote":
@@ -162,7 +169,9 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                   <IconComponent className="h-5 w-5" />
                 </span>
                 <div>
-                  {block.title && <h5 className="font-bold text-sm mb-1 text-[#1D2742]">{block.title}</h5>}
+                  {block.title && (
+                    <h5 className="font-bold text-sm mb-1 text-[#1D2742]">{block.title}</h5>
+                  )}
                   <p className="text-xs md:text-sm leading-relaxed">{block.text}</p>
                 </div>
               </div>
@@ -181,16 +190,26 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                   {block.value}
                 </div>
                 <div className="text-left space-y-1">
-                  <h5 className="font-bold text-[#1D2742] text-sm md:text-base leading-tight">{block.label}</h5>
-                  {block.description && <p className="text-xs text-[#6B7280] leading-relaxed">{block.description}</p>}
+                  <h5 className="font-bold text-[#1D2742] text-sm md:text-base leading-tight">
+                    {block.label}
+                  </h5>
+                  {block.description && (
+                    <p className="text-xs text-[#6B7280] leading-relaxed">{block.description}</p>
+                  )}
                 </div>
               </div>
             );
           case "image":
             return (
               <div key={index} className="my-8 space-y-2.5 max-w-[760px]">
-                <img src={block.src} alt={block.alt || block.caption} className="w-full rounded-xl border border-[#EAEAEA] shadow-sm" />
-                {block.caption && <p className="text-xs text-[#9CA3AF] text-center italic">{block.caption}</p>}
+                <img
+                  src={block.src}
+                  alt={block.alt || block.caption}
+                  className="w-full rounded-xl border border-[#EAEAEA] shadow-sm"
+                />
+                {block.caption && (
+                  <p className="text-xs text-[#9CA3AF] text-center italic">{block.caption}</p>
+                )}
               </div>
             );
           case "divider":
@@ -206,20 +225,30 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
             );
           case "table":
             return (
-              <div key={index} className="overflow-x-auto my-6 border border-[#EAEAEA] rounded-xl max-w-[720px]">
+              <div
+                key={index}
+                className="overflow-x-auto my-6 border border-[#EAEAEA] rounded-xl max-w-[720px]"
+              >
                 <table className="w-full text-left text-xs md:text-sm text-[#4A5568] border-collapse">
                   <thead>
                     <tr className="bg-[#FAFAF8] border-b border-[#EAEAEA]">
                       {block.headers.map((h, i) => (
-                        <th key={i} className="p-3.5 font-bold text-[#1D2742]">{h}</th>
+                        <th key={i} className="p-3.5 font-bold text-[#1D2742]">
+                          {h}
+                        </th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {block.rows.map((row, rowIndex) => (
-                      <tr key={rowIndex} className="border-b border-[#EAEAEA]/60 last:border-0 hover:bg-[#FAFAF8]/50 transition-colors">
+                      <tr
+                        key={rowIndex}
+                        className="border-b border-[#EAEAEA]/60 last:border-0 hover:bg-[#FAFAF8]/50 transition-colors"
+                      >
                         {row.map((cell, cellIndex) => (
-                          <td key={cellIndex} className="p-3.5 font-medium">{cell}</td>
+                          <td key={cellIndex} className="p-3.5 font-medium">
+                            {cell}
+                          </td>
                         ))}
                       </tr>
                     ))}
@@ -236,8 +265,10 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
 }
 
 function BlogDetailPage() {
-  const { slug } = useParams({ strict: false });
-  const article = getBlogBySlug(slug || "");
+  // Article now comes from the async route loader (already resolved by the
+  // time this component renders) instead of a synchronous getBlogBySlug call.
+  const { article } = Route.useLoaderData();
+
   const [toc, setToc] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState("");
   const [readingProgress, setReadingProgress] = useState(0);
@@ -246,9 +277,24 @@ function BlogDetailPage() {
   const [sidebarSubscribed, setSidebarSubscribed] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  if (!article) {
-    return null;
-  }
+  // Related articles now come from the database + static list together,
+  // loaded once on mount since this list isn't available synchronously.
+  const [relatedArticles, setRelatedArticles] = useState<Blog[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    getPublishedBlogs()
+      .then((all) => {
+        if (!active) return;
+        setRelatedArticles(all.filter((a) => a.slug !== article.slug).slice(0, 3));
+      })
+      .catch((loadError) => {
+        console.error("Failed to load related articles:", loadError);
+      });
+    return () => {
+      active = false;
+    };
+  }, [article.slug]);
 
   // ── READING PROGRESS & POSITION BAR ──
   const { scrollYProgress } = useScroll();
@@ -266,7 +312,7 @@ function BlogDetailPage() {
         const offsetTop = window.scrollY + rect.top;
         const currentScroll = window.scrollY - offsetTop;
         const maxScroll = elementHeight - window.innerHeight;
-        
+
         if (maxScroll > 0) {
           const progress = (currentScroll / maxScroll) * 100;
           setReadingProgress(Math.min(100, Math.max(0, progress)));
@@ -278,11 +324,6 @@ function BlogDetailPage() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Find related articles (max 3, excluding current article)
-  const relatedArticles = getBlogs()
-    .filter((a) => a.slug !== article.slug)
-    .slice(0, 3);
 
   // Find related case studies (max 2)
   const relatedCaseStudies = getFeaturedCaseStudies().slice(0, 2);
@@ -313,7 +354,7 @@ function BlogDetailPage() {
             }
           });
         },
-        { rootMargin: "0px 0px -55% 0px", threshold: 0.2 }
+        { rootMargin: "0px 0px -55% 0px", threshold: 0.2 },
       );
 
       headings.forEach((h) => observer.observe(h));
@@ -357,24 +398,24 @@ function BlogDetailPage() {
   const jsonLdSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": article.title,
-    "description": article.excerpt,
-    "image": `https://hegxcorp.com${article.featuredImage}`,
-    "datePublished": article.publishedAt,
-    "author": {
+    headline: article.title,
+    description: article.excerpt,
+    image: `https://hegxcorp.com${article.featuredImage}`,
+    datePublished: article.publishedAt,
+    author: {
       "@type": "Person",
-      "name": article.author.name,
-      "jobTitle": article.author.role,
+      name: article.author.name,
+      jobTitle: article.author.role,
     },
-    "publisher": {
+    publisher: {
       "@type": "Organization",
-      "name": "Hegxcorp",
-      "logo": {
+      name: "Hegxcorp",
+      logo: {
         "@type": "ImageObject",
-        "url": "https://hegxcorp.com/assets/cropped-hegxcorp-logo-new-web.webp",
+        url: "https://hegxcorp.com/assets/cropped-hegxcorp-logo-new-web.webp",
       },
     },
-    "mainEntityOfPage": {
+    mainEntityOfPage: {
       "@type": "WebPage",
       "@id": `https://hegxcorp.com/blog/${article.slug}`,
     },
@@ -400,7 +441,10 @@ function BlogDetailPage() {
         {/* ── ARTICLE HEADER ── */}
         <header className="relative overflow-hidden bg-[#FAFAF8] border-b border-[#EAEAEA] py-14 md:py-20 text-left">
           {/* Subtle decoration grid */}
-          <div aria-hidden="true" className="pointer-events-none absolute inset-0 select-none opacity-[0.08]">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 select-none opacity-[0.08]"
+          >
             <ShapeGrid
               shape="hexagon"
               squareSize={40}
@@ -414,7 +458,6 @@ function BlogDetailPage() {
 
           <div className="relative mx-auto max-w-[1280px] px-6 lg:px-10">
             <div className="max-w-[850px] mx-auto space-y-6">
-              
               {/* Back breadcrumb */}
               <div>
                 <Link
@@ -473,13 +516,17 @@ function BlogDetailPage() {
                   </span>
                   <div>
                     <div className="text-xs font-bold text-[#1D2742]">{article.author.name}</div>
-                    <div className="text-[10px] text-[#9CA3AF] font-semibold">{article.author.role}</div>
+                    <div className="text-[10px] text-[#9CA3AF] font-semibold">
+                      {article.author.role}
+                    </div>
                   </div>
                 </div>
 
                 {/* Share actions in header */}
                 <div className="flex items-center gap-2 text-xs font-semibold text-[#6B7280]">
-                  <span className="text-[10px] uppercase font-bold tracking-wider mr-1.5">Share article:</span>
+                  <span className="text-[10px] uppercase font-bold tracking-wider mr-1.5">
+                    Share article:
+                  </span>
                   <a
                     href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`}
                     target="_blank"
@@ -511,7 +558,6 @@ function BlogDetailPage() {
                   </button>
                 </div>
               </div>
-
             </div>
           </div>
         </header>
@@ -536,7 +582,7 @@ function BlogDetailPage() {
                 {/* Cover graphic */}
                 <div className="aspect-video bg-gradient-to-br from-[#1D2742] to-[#2D3A5D] p-8 md:p-12 flex flex-col justify-between overflow-hidden relative">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(252,156,68,0.15),transparent_40%)]" />
-                  
+
                   <div className="relative z-10 flex justify-between items-start">
                     <span className="text-[10px] font-bold tracking-[0.2em] text-[#FC9C44] uppercase border border-[#FC9C44]/30 px-3 py-1 rounded bg-[#FC9C44]/5">
                       HEGXCORP RESEARCH PAPER
@@ -545,10 +591,16 @@ function BlogDetailPage() {
                   </div>
 
                   <div className="relative z-10 max-w-[620px] space-y-3.5 text-left">
-                    <h3 className="text-xl md:text-3.5xl font-bold text-white leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    <h3
+                      className="text-xl md:text-3.5xl font-bold text-white leading-tight"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
                       {article.title}
                     </h3>
-                    <p className="text-xs md:text-sm text-white/70 font-normal leading-relaxed max-w-[500px]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <p
+                      className="text-xs md:text-sm text-white/70 font-normal leading-relaxed max-w-[500px]"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       {article.excerpt}
                     </p>
                   </div>
@@ -567,7 +619,6 @@ function BlogDetailPage() {
         <main className="py-10 bg-white">
           <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
             <div className="grid lg:grid-cols-12 gap-12 max-w-[850px] mx-auto items-start">
-              
               {/* Left Column: Article Body (~70% or 8/12) */}
               <div className="lg:col-span-8 text-left">
                 <article ref={contentRef} className="max-w-none">
@@ -594,7 +645,6 @@ function BlogDetailPage() {
 
               {/* Right Column: Sticky Sidebar (~30% or 4/12) */}
               <aside className="lg:col-span-4 lg:sticky lg:top-28 space-y-8 text-left">
-                
                 {/* 1. Progress Indicator & Read time */}
                 <div className="flex items-center gap-3 bg-[#FAFAF8] border border-[#EAEAEA] p-3.5 rounded-xl">
                   <div className="relative h-10 w-10 shrink-0">
@@ -624,8 +674,12 @@ function BlogDetailPage() {
                     </div>
                   </div>
                   <div className="text-left">
-                    <span className="text-[10px] uppercase font-bold text-[#FC9C44] tracking-wider block">Reading Progress</span>
-                    <span className="text-xs font-semibold text-[#1D2742]">{article.readTime} est. time</span>
+                    <span className="text-[10px] uppercase font-bold text-[#FC9C44] tracking-wider block">
+                      Reading Progress
+                    </span>
+                    <span className="text-xs font-semibold text-[#1D2742]">
+                      {article.readTime} est. time
+                    </span>
                   </div>
                 </div>
 
@@ -641,11 +695,10 @@ function BlogDetailPage() {
                           <a
                             href={`#${item.id}`}
                             onClick={(e) => handleTocClick(e, item.id)}
-                            className={`block text-xs font-semibold leading-relaxed transition-all duration-200 hover:text-[#FC9C44] ${
-                              activeId === item.id
+                            className={`block text-xs font-semibold leading-relaxed transition-all duration-200 hover:text-[#FC9C44] ${activeId === item.id
                                 ? "text-[#FC9C44] border-l-2 border-[#FC9C44] pl-3"
                                 : "text-[#9CA3AF] border-l border-[#EAEAEA] pl-3"
-                            }`}
+                              }`}
                           >
                             {item.text}
                           </a>
@@ -681,7 +734,11 @@ function BlogDetailPage() {
                       onClick={handleCopyLink}
                       className="p-2 border border-[#EAEAEA] rounded-lg hover:bg-[#FFF4E8] hover:text-[#FC9C44] transition-all flex items-center justify-center shrink-0"
                     >
-                      {copied ? <Check className="h-4 w-4 text-emerald-600 animate-pulse" /> : <Link2 className="h-4 w-4" />}
+                      {copied ? (
+                        <Check className="h-4 w-4 text-emerald-600 animate-pulse" />
+                      ) : (
+                        <Link2 className="h-4 w-4" />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -692,14 +749,21 @@ function BlogDetailPage() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FFF4E8] text-[#FC9C44] mb-2">
                       <Mail className="h-4 w-4" />
                     </div>
-                    <h4 className="text-sm font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    <h4
+                      className="text-sm font-bold text-[#1D2742]"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
                       Weekly Industry Reports
                     </h4>
                     <p className="text-[11px] text-[#6B7280] leading-relaxed">
-                      Deep marketing experiments, performance methodologies, and growth frameworks sent straight to your inbox.
+                      Deep marketing experiments, performance methodologies, and growth frameworks
+                      sent straight to your inbox.
                     </p>
                   </div>
-                  <form onSubmit={handleSidebarNewsletterSubmit} className="space-y-2 relative z-10">
+                  <form
+                    onSubmit={handleSidebarNewsletterSubmit}
+                    className="space-y-2 relative z-10"
+                  >
                     <input
                       type="email"
                       required
@@ -724,13 +788,20 @@ function BlogDetailPage() {
 
                 {/* 5. Business Growth CTA */}
                 <div className="border border-[#EAEAEA] rounded-xl p-5 bg-[#1D2742] text-white space-y-4 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(252,156,68,0.1),transparent_50%)] animate-pulse" style={{ animationDuration: "6s" }} />
+                  <div
+                    className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(252,156,68,0.1),transparent_50%)] animate-pulse"
+                    style={{ animationDuration: "6s" }}
+                  />
                   <div className="space-y-1.5 relative z-10">
-                    <h4 className="text-sm font-bold leading-tight" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    <h4
+                      className="text-sm font-bold leading-tight"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
                       Need help growing your business?
                     </h4>
                     <p className="text-[11px] text-white/70 leading-relaxed">
-                      Claim a free manual performance audit of acquisition loops and visual conversion tracks.
+                      Claim a free manual performance audit of acquisition loops and visual
+                      conversion tracks.
                     </p>
                   </div>
                   <div className="relative z-10 pt-1">
@@ -742,9 +813,7 @@ function BlogDetailPage() {
                     </Link>
                   </div>
                 </div>
-
               </aside>
-
             </div>
           </div>
         </main>
@@ -753,7 +822,6 @@ function BlogDetailPage() {
         <section className="py-12 border-t border-[#EAEAEA] bg-[#FAFAF8]">
           <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
             <div className="max-w-[850px] mx-auto space-y-14">
-              
               {/* 1. Author Card */}
               <div className="bg-white border border-[#EAEAEA] rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start text-left shadow-sm">
                 <span className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-[#1D2742] text-white flex items-center justify-center font-bold text-lg select-none shrink-0">
@@ -764,13 +832,19 @@ function BlogDetailPage() {
                 </span>
                 <div className="space-y-3">
                   <div>
-                    <h4 className="text-base font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    <h4
+                      className="text-base font-bold text-[#1D2742]"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
                       {article.author.name}
                     </h4>
                     <p className="text-xs text-[#9CA3AF] font-semibold">{article.author.role}</p>
                   </div>
                   {article.author.bio && (
-                    <p className="text-xs md:text-sm text-[#6B7280] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <p
+                      className="text-xs md:text-sm text-[#6B7280] leading-relaxed"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       {article.author.bio}
                     </p>
                   )}
@@ -780,7 +854,10 @@ function BlogDetailPage() {
               {/* 2. Related Case Studies */}
               {relatedCaseStudies.length > 0 && (
                 <div className="space-y-6 text-left">
-                  <h3 className="text-xl font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                  <h3
+                    className="text-xl font-bold text-[#1D2742]"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  >
                     Visual Proof: Related Case Studies
                   </h3>
                   <div className="grid md:grid-cols-2 gap-6">
@@ -802,7 +879,10 @@ function BlogDetailPage() {
                               </span>
                             </div>
                             <div>
-                              <h4 className="text-base font-bold text-[#1D2742] leading-snug group-hover:text-[#FC9C44] transition-colors mb-1.5" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                              <h4
+                                className="text-base font-bold text-[#1D2742] leading-snug group-hover:text-[#FC9C44] transition-colors mb-1.5"
+                                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                              >
                                 {cs.client}
                               </h4>
                               <p className="text-xs text-[#6B7280] leading-relaxed line-clamp-3">
@@ -811,7 +891,8 @@ function BlogDetailPage() {
                             </div>
                           </div>
                           <div className="text-[10px] font-bold text-[#FC9C44] flex items-center gap-1 mt-6 border-t border-[#FAFAF8] pt-4">
-                            View Case Study <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                            View Case Study{" "}
+                            <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
                           </div>
                         </div>
                       </Link>
@@ -824,7 +905,10 @@ function BlogDetailPage() {
               {relatedArticles.length > 0 && (
                 <div className="space-y-6 text-left">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-[#1D2742]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                    <h3
+                      className="text-xl font-bold text-[#1D2742]"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
                       Related Articles
                     </h3>
                     <Link
@@ -847,13 +931,17 @@ function BlogDetailPage() {
                           <span className="text-[9px] font-bold text-[#FC9C44] uppercase tracking-wider mb-2 block">
                             {rel.category}
                           </span>
-                          <h4 className="text-sm font-bold text-[#1D2742] group-hover:text-[#FC9C44] transition-colors line-clamp-2 leading-snug mb-3 flex-1" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
+                          <h4
+                            className="text-sm font-bold text-[#1D2742] group-hover:text-[#FC9C44] transition-colors line-clamp-2 leading-snug mb-3 flex-1"
+                            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                          >
                             {rel.title}
                           </h4>
                           <div className="flex justify-between items-center text-[9px] text-[#9CA3AF] font-semibold border-t border-[#FAFAF8] pt-3">
                             <span>{rel.readTime}</span>
                             <span className="group-hover:text-[#FC9C44] transition-colors flex items-center gap-0.5">
-                              Read <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                              Read{" "}
+                              <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
                             </span>
                           </div>
                         </div>
@@ -866,15 +954,18 @@ function BlogDetailPage() {
               {/* 4. Final CTA */}
               <div className="rounded-2xl bg-[#1D2742] text-white p-8 md:p-12 relative overflow-hidden text-center shadow-lg border border-white/5">
                 {/* Background glow effects */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(252,156,68,0.12),transparent_50%)] animate-pulse" style={{ animationDuration: "8s" }} />
+                <div
+                  className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(252,156,68,0.12),transparent_50%)] animate-pulse"
+                  style={{ animationDuration: "8s" }}
+                />
                 <div className="absolute -bottom-16 -left-16 h-32 w-32 rounded-full bg-[#FC9C44]/5 blur-2xl" />
-                
+
                 <div className="relative z-10 max-w-[620px] mx-auto space-y-6">
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-[#FC9C44]">
                     <Sparkles className="h-3 w-3 animate-pulse text-[#FC9C44]" />
                     Growth Execution
                   </span>
-                  
+
                   <h2
                     className="font-bold tracking-tight"
                     style={{
@@ -885,12 +976,13 @@ function BlogDetailPage() {
                   >
                     Ready to Grow Your Business?
                   </h2>
-                  
+
                   <p
                     className="text-xs md:text-sm text-white/70 leading-relaxed font-normal max-w-[500px] mx-auto"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
-                    Partner with Hegxcorp to design, build, and optimize scalable acquisition channels, conversion loops, and technical marketing systems.
+                    Partner with Hegxcorp to design, build, and optimize scalable acquisition
+                    channels, conversion loops, and technical marketing systems.
                   </p>
 
                   <div className="flex flex-wrap gap-4 justify-center pt-2">
@@ -910,7 +1002,6 @@ function BlogDetailPage() {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </section>

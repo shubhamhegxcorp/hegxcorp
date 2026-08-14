@@ -76,7 +76,7 @@ const appreciationLogos = [
 
 function AboutPage() {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-white text-[#06133D]">
+    <div className="min-h-screen  bg-white text-[#06133D]">
       <Header />
 
       <main>
