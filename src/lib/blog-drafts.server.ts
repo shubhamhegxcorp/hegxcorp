@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import process from "node:process";
+import { blogDraftStatuses } from "./blog-drafts";
 
 import postgres from "postgres";
 
@@ -11,6 +12,38 @@ type GlobalWithSql = typeof globalThis & {
   hegxcorpSql?: SqlClient;
   hegxcorpBlogDraftReady?: Promise<void>;
 };
+
+// Public-safe: no admin session required. Only ever returns PUBLISHED
+// posts, so nothing sensitive (drafts) is exposed to site visitors.
+export async function listPublishedBlogDrafts() {
+  const sql = getSql();
+  await ensureBlogDraftTable(sql);
+  const rows = await sql<BlogDraftRow[]>`
+    SELECT
+      "id",
+      "title",
+      "slug",
+      "excerpt",
+      "content",
+      "readTime",
+      "seoDescription",
+      "status",
+      "featured",
+      "category",
+      "tags",
+      "featuredImage",
+      "authorname",
+      "seotitle",
+      "createdAt",
+      "updatedAt"
+    FROM "BlogDraft"
+    WHERE "status" = 'PUBLISHED'
+    ORDER BY "updatedAt" DESC
+    LIMIT 200
+  `;
+
+  return rows.map(mapDraft);
+}
 
 type BlogDraftRow = {
   id: string;
@@ -141,8 +174,7 @@ export async function saveBlogDraft(input: BlogDraftInput) {
   await ensureBlogDraftTable(sql);
 
   const id = input.id?.trim() || randomUUID();
-  const status = input.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT";
-  const category = sql.array(cleanList(input.category));
+  const status = blogDraftStatuses.includes(input.status) ? input.status : "DRAFT"; const category = sql.array(cleanList(input.category));
   const tags = sql.array(cleanList(input.tags));
   const featuredImage = input.featuredImage?.trim() ? input.featuredImage : null;
   const authorname = input.authorname?.trim() ? input.authorname.trim() : "Hegxcorp Team";

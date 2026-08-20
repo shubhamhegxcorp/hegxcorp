@@ -12,7 +12,7 @@ CREATE TABLE "BlogDraft" (
     "category" TEXT[],
     "tags" TEXT[],
     "featuredImage" TEXT,
-      "authorname" TEXT NOT NULL DEFAULT 'Hegxcorp Team',
+    "authorname" TEXT NOT NULL DEFAULT 'Hegxcorp Team',
     "seotitle" TEXT NOT NULL DEFAULT '',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

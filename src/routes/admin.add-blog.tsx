@@ -101,12 +101,12 @@ function CreateBlogPage() {
 
 
   async function handlePublishClick() {
+    if (!validateForm()) return;
+
     updateField("status", "PUBLISHED");
     setSaving(true);
     try {
-      await saveBlogDraft({
-        data: { ...buildPayload(), status: "PUBLISHED" },
-      });
+      await saveBlogDraft({ data: { ...buildPayload(), status: "PUBLISHED" } });
       toast.success("Published successfully!");
     } catch (publishError) {
       console.error("Failed to publish:", publishError);
@@ -115,7 +115,6 @@ function CreateBlogPage() {
       setSaving(false);
     }
   }
-
   function readFileAsDataUrl(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -229,9 +228,18 @@ function CreateBlogPage() {
       featuredImage: fallbackImage,
     };
   }
+  function validateForm(): boolean {
+    if (!form.title.trim()) {
+      toast.error("Title is required before you can save or publish.");
+      return false;
+    }
+    return true;
+  }
 
   // Persists the current form to the server. Returns true on success.
   async function saveNow() {
+    if (!validateForm()) return false;
+
     setSaving(true);
     try {
       await saveBlogDraft({ data: buildPayload() });
@@ -276,7 +284,7 @@ function CreateBlogPage() {
           >
             {saving ? "Saving…" : "Preview"}
           </button>
-         // top bar "Publish post" button
+
           <button
             type="button"
             onClick={handlePublishClick}
@@ -317,7 +325,7 @@ function CreateBlogPage() {
               Slug
             </label>
             <div className="flex gap-3">
-              <div className="flex-1 rounded-lg border border-[#D0D5DD] bg-[#F9FAFB] px-4 py-2.5 text-sm font-bold text-[#667085]">
+              <div className="flex-1 rounded-lg border border-[#D0D5DD] bg-[#F9FAFB] px-4 py-5 text-sm font-bold text-[#667085]">
                 {form.slug}
               </div>
 
@@ -333,7 +341,7 @@ function CreateBlogPage() {
               onChange={(e) => updateField("excerpt", e.target.value)}
 
               rows={1}
-              className="w-full rounded-lg border border-[#D0D5DD] px-4 py-3 text-sm text-[#101828] outline-none focus:border-[#FC9C44]"
+              className="w-full rounded-lg border border-[#D0D5DD] px-4 py-2 text-sm text-[#101828] outline-none focus:border-[#FC9C44]"
             />
           </div>
           <div>
@@ -447,7 +455,7 @@ function CreateBlogPage() {
           </div>
 
           {/* Publish settings */}
-          <div className="rounded-xl border border-[#E4E7EC] p-5">
+          {/* <div className="rounded-xl border border-[#E4E7EC] p-5">
             <h3 className="mb-4 text-sm font-black text-[#06133D]">Publish settings</h3>
 
             <p className="mb-2 text-xs font-bold text-[#667085]">Status</p>
@@ -480,7 +488,7 @@ function CreateBlogPage() {
             >
               {form.featured ? "★ Featured" : "☆ Not featured"}
             </button>
-          </div>
+          </div> */}
 
           {/* Category — checkbox-list UI, single select */}
           <PostCategoryPicker
@@ -523,9 +531,12 @@ function CreateBlogPage() {
               </button>
               <button
                 type="button"
+                onClick={() => {
+                  window.location.href = "/admin/add-blog";
+                }}
                 className="flex-1 rounded-lg bg-[#FC9C44] py-2 text-xs font-black text-white"
               >
-                Publish now
+                Start a New Post
               </button>
             </div>
           </div>

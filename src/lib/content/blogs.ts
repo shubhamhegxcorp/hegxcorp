@@ -1,7 +1,7 @@
 import { blogs } from "@/data/blogs";
 import type { Blog } from "@/data/blogs";
-import { listBlogDrafts } from "@/lib/blog-drafts";
 import type { BlogDraft } from "@/lib/blog-drafts";
+import { listPublishedBlogDrafts } from "@/lib/blog-drafts";
 
 export function getBlogs(): Blog[] {
   return blogs;
@@ -35,7 +35,7 @@ function draftToBlogCard(draft: BlogDraft): Blog {
     previewImage: draft.featuredImage ?? "",
     author: { name: draft.authorname ?? "Hegxcorp Team", role: "Editor" },
     publishedAt: draft.updatedAt,
-    seoTitle: draft.title,
+    seoTitle: draft.seotitle?.trim() ? draft.seotitle : draft.title,
     seoDescription: draft.seoDescription,
     featured: draft.featured,
   };
@@ -45,12 +45,9 @@ function draftToBlogCard(draft: BlogDraft): Blog {
 // hardcoded demo posts. Use this on the public /blog page instead of
 // getBlogs() so real published posts actually show up.
 export async function getPublishedBlogs(): Promise<Blog[]> {
-  const drafts = await listBlogDrafts();
-  const published = drafts
-    .filter((d) => d.status === "PUBLISHED")
-    .map(draftToBlogCard);
-
-  return [...published, ...blogs]; // real posts + demo posts together
+  const drafts = await listPublishedBlogDrafts();
+  const published = drafts.map(draftToBlogCard); // no need to filter — already filtered in SQL
+  return [...published, ...blogs];
 }
 
 export async function getPublishedBlogBySlug(slug: string): Promise<Blog | null> {

@@ -15,7 +15,7 @@ export const Route = createFileRoute("/admin/blog-preview")({
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
-  component: BlogPreviewPage,
+  component: BlogPreviewPage, 
 } as never);
 
 type LoadState = "loading" | "ready" | "notfound" | "error";

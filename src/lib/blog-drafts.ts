@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import * as z from "zod";
 
-export const blogDraftStatuses = ["DRAFT", "PUBLISHED"] as const;
+export const blogDraftStatuses = ["DRAFT", "PUBLISHED", "ARCHIVED"] as const;
 export type BlogDraftStatus = (typeof blogDraftStatuses)[number];
 
 export const blogDraftInputSchema = z.object({
@@ -11,6 +11,7 @@ export const blogDraftInputSchema = z.object({
   excerpt: z.string().max(2000).default(""),
   content: z.string().default(""),
   readTime: z.string().max(120).default(""),
+  seotitle: z.string().max(300).default(""),
   seoDescription: z.string().max(2000).default(""),
   status: z.enum(blogDraftStatuses).default("DRAFT"),
   featured: z.boolean().default(false),
@@ -29,6 +30,7 @@ export type BlogDraft = {
   excerpt: string;
   content: string;
   readTime: string;
+  seotitle: string;
   seoDescription: string;
   status: BlogDraftStatus;
   featured: boolean;
@@ -65,3 +67,7 @@ export const deleteBlogDraft = createServerFn({ method: "POST" })
     const { deleteBlogDraft: remove } = await import("./blog-drafts.server");
     return remove(data.id);
   });
+export const listPublishedBlogDrafts = createServerFn({ method: "POST" }).handler(async () => {
+  const { listPublishedBlogDrafts: list } = await import("./blog-drafts.server");
+  return list();
+});

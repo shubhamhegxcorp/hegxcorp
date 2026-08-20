@@ -199,6 +199,34 @@ export function Header() {
   const [mobileCountriesOpen, setMobileCountriesOpen] = useState(false);
   const [hasMegaOpened, setHasMegaOpened] = useState(false);
 
+  // Mega menu positioning fix: instead of centering with a transform trick
+  // and re-measuring after the fact (which raced with the CSS transition
+  // and caused a visible "slide left" on the second hover), we compute the
+  // menu's fixed-position coordinates directly from the trigger's bounding
+  // box every time it opens. No reset step, no re-measure, no race.
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const MEGA_MENU_WIDTH = 1180;
+  const [megaMenuPos, setMegaMenuPos] = useState({ top: 0, left: 0, width: MEGA_MENU_WIDTH });
+
+  useEffect(() => {
+    if (!megaOpen || !triggerRef.current) return;
+
+    const updatePosition = () => {
+      if (!triggerRef.current) return;
+      const rect = triggerRef.current.getBoundingClientRect();
+      const padding = 16;
+      const width = Math.min(MEGA_MENU_WIDTH, window.innerWidth - padding * 2);
+      const centerX = rect.left + rect.width / 2;
+      let left = centerX - width / 2;
+      left = Math.max(padding, Math.min(left, window.innerWidth - padding - width));
+      setMegaMenuPos({ top: rect.bottom, left, width });
+    };
+
+    updatePosition();
+    window.addEventListener("resize", updatePosition);
+    return () => window.removeEventListener("resize", updatePosition);
+  }, [megaOpen]);
+
   useEffect(() => {
     if (megaOpen) {
       setHasMegaOpened(true);
@@ -272,6 +300,7 @@ export function Header() {
           <nav className="hidden lg:flex items-center gap-1">
             {/* Services with mega menu */}
             <div
+              ref={triggerRef}
               className="relative"
               onMouseEnter={() => setMegaOpen(true)}
               onMouseLeave={() => setMegaOpen(false)}
@@ -295,12 +324,17 @@ export function Header() {
               {/* Mega menu */}
               <div
                 className={cn(
-                  "absolute left-1/2 -translate-x-1/2 top-full pt-3 w-[1180px] max-w-[calc(100vw-3rem)]",
-                  "transition-all duration-200",
+                  "fixed pt-3",
+                  "transition-opacity duration-200",
                   megaOpen
-                    ? "opacity-100 translate-y-0 pointer-events-auto"
-                    : "opacity-0 -translate-y-2 pointer-events-none",
+                    ? "opacity-100 pointer-events-auto"
+                    : "opacity-0 pointer-events-none",
                 )}
+                style={{
+                  top: megaMenuPos.top,
+                  left: megaMenuPos.left,
+                  width: megaMenuPos.width,
+                }}
               >
                 <div className="rounded-2xl border border-[#EAEAEA]/60 bg-white p-8 shadow-[0_24px_60px_-20px_rgba(17,24,39,0.18)]">
                   <div className="grid grid-cols-4 gap-6">
