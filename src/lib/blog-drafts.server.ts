@@ -174,11 +174,15 @@ export async function saveBlogDraft(input: BlogDraftInput) {
   await ensureBlogDraftTable(sql);
 
   const id = input.id?.trim() || randomUUID();
-  const status = blogDraftStatuses.includes(input.status) ? input.status : "DRAFT"; const category = sql.array(cleanList(input.category));
+  const status = blogDraftStatuses.includes(input.status) ? input.status : "DRAFT";
+  const category = sql.array(cleanList(input.category));
   const tags = sql.array(cleanList(input.tags));
   const featuredImage = input.featuredImage?.trim() ? input.featuredImage : null;
   const authorname = input.authorname?.trim() ? input.authorname.trim() : "Hegxcorp Team";
   const seotitle = input.seotitle?.trim() ? input.seotitle.trim() : "";
+  if (input.featured) {
+    await sql`UPDATE "BlogDraft" SET "featured" = false WHERE "id" <> ${id}`;
+  }
 
   const rows = await sql<BlogDraftRow[]>`
     INSERT INTO "BlogDraft" (

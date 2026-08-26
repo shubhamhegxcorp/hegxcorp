@@ -14,6 +14,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { ServiceDirectory } from "@/components/site/ServiceDirectory";
 import ShapeGrid from "@/components/ShapeGrid";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -90,6 +91,9 @@ const processHighlights = [
 ];
 
 function OurServicesPage() {
+  const { data: heroData } = useWebsiteSection("services.hero");
+  const { data: benefitsData } = useWebsiteSection("services.benefits");
+  const { data: processData } = useWebsiteSection("services.process");
   const [openStep, setOpenStep] = useState<number | null>(null);
 
   return (
@@ -119,16 +123,15 @@ function OurServicesPage() {
             <div className="max-w-4xl">
               <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#FC9C44] shadow-sm">
                 <Wrench className="h-4 w-4" />
-                Our Services
+                {heroData.tagline}
               </p>
 
               <h1 className="max-w-5xl text-4xl font-bold leading-[1.08] tracking-[-0.035em] text-[#06133D] sm:text-5xl lg:text-7xl">
-                Digital services built for business growth
+                {heroData.title}
               </h1>
 
               <p className="mt-7 max-w-3xl text-base leading-8 text-[#52607A] sm:text-lg">
-                From websites and web applications to ecommerce, WordPress, SEO, marketing, and
-                maintenance, Hegxcorp helps businesses build a stronger digital presence.
+                {heroData.description}
               </p>
 
               <div className="mt-10 grid gap-4 border-y border-slate-200 py-6 sm:grid-cols-2 lg:grid-cols-5">
@@ -158,16 +161,15 @@ function OurServicesPage() {
           <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#FC9C44]">
-                Why Hegxcorp
+                {benefitsData.tagline}
               </p>
 
               <h2 className="mt-4 text-4xl font-black leading-tight md:text-6xl">
-                Practical digital systems, not repeated templates.
+                {benefitsData.title}
               </h2>
 
               <p className="mt-7 max-w-xl text-base leading-8 text-white/70">
-                We focus on building digital solutions that are useful, scalable, fast, and easy to
-                improve after launch.
+                {benefitsData.description}
               </p>
 
               <Link
@@ -180,7 +182,7 @@ function OurServicesPage() {
             </div>
 
             <div className="grid gap-px overflow-hidden rounded-[32px] bg-white/15 sm:grid-cols-2">
-              {benefits.map((benefit) => (
+              {(benefitsData.benefits || []).map((benefit: string) => (
                 <div key={benefit} className="bg-[#06133D] p-6">
                   <CheckCircle2 className="mb-5 h-5 w-5 text-[#FC9C44]" />
                   <p className="text-base font-bold leading-7 text-white/85">{benefit}</p>
@@ -195,16 +197,15 @@ function OurServicesPage() {
             <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr]">
               <div>
                 <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#FC9C44]">
-                  Our Process
+                  {processData.tagline}
                 </p>
 
                 <h2 className="mt-4 text-4xl font-black leading-tight md:text-5xl">
-                  From first discussion to launch.
+                  {processData.title}
                 </h2>
 
                 <p className="mt-7 max-w-md text-base leading-8 text-[#52607A]">
-                  Every stage is a real conversation, not a black box. Tap any step to see what
-                  actually happens, so you always know where your project stands.
+                  {processData.description}
                 </p>
 
                 <div className="mt-10 space-y-5">
@@ -218,7 +219,7 @@ function OurServicesPage() {
               </div>
 
               <div className="space-y-0">
-                {process.map((item, index) => {
+                {(processData.steps || []).map((item: any, index: number) => {
                   const isOpen = openStep === index;
 
                   return (

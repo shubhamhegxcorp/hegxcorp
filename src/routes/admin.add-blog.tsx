@@ -7,7 +7,6 @@ import { TagInput } from "@/components/admin/TAginput";
 import { getBlogDraft, saveBlogDraft } from "@/lib/blog-drafts";
 import { generateId } from "@/lib/id";
 
-
 function extractFirstImageFromContent(html: string): string | null {
   const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
   return match ? match[1] : null;
@@ -98,8 +97,6 @@ function CreateBlogPage() {
     }
   }
 
-
-
   async function handlePublishClick() {
     if (!validateForm()) return;
 
@@ -155,7 +152,10 @@ function CreateBlogPage() {
     setCategories((prev) => prev.filter((c) => c !== name));
 
     if (form.category.includes(name)) {
-      updateField("category", form.category.filter((c) => c !== name));
+      updateField(
+        "category",
+        form.category.filter((c) => c !== name),
+      );
     }
   }
 
@@ -163,9 +163,9 @@ function CreateBlogPage() {
   // whatever submits this form), but the chip UI works off an array.
   const tagList = form.tags
     ? form.tags
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean)
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean)
     : [];
 
   function handleTagsChange(nextTags: string[]) {
@@ -306,7 +306,6 @@ function CreateBlogPage() {
             <input
               value={form.title}
               onChange={(e) => handleTitleChange(e.target.value)}
-
               className="w-full rounded-lg border border-[#D0D5DD] px-4 py-3 text-base font-semibold text-[#101828] outline-none focus:border-[#FC9C44]"
             />
           </div>
@@ -328,7 +327,6 @@ function CreateBlogPage() {
               <div className="flex-1 rounded-lg border border-[#D0D5DD] bg-[#F9FAFB] px-4 py-5 text-sm font-bold text-[#667085]">
                 {form.slug}
               </div>
-
             </div>
           </div>
 
@@ -339,7 +337,6 @@ function CreateBlogPage() {
             <textarea
               value={form.excerpt}
               onChange={(e) => updateField("excerpt", e.target.value)}
-
               rows={1}
               className="w-full rounded-lg border border-[#D0D5DD] px-4 py-2 text-sm text-[#101828] outline-none focus:border-[#FC9C44]"
             />
@@ -351,7 +348,6 @@ function CreateBlogPage() {
             <input
               value={form.seotitle}
               onChange={(e) => updateField("seotitle", e.target.value)}
-
               className="w-full rounded-lg border border-[#D0D5DD] px-4 py-2.5 text-sm font-bold text-[#344054] outline-none focus:border-[#FC9C44]"
             />
           </div>
@@ -364,7 +360,6 @@ function CreateBlogPage() {
             <input
               value={form.seoDescription}
               onChange={(e) => updateField("seoDescription", e.target.value)}
-
               className="w-full rounded-lg border border-[#D0D5DD] px-4 py-2.5 text-sm text-[#101828] outline-none focus:border-[#FC9C44]"
             />
           </div>
@@ -375,7 +370,6 @@ function CreateBlogPage() {
             <input
               value={form.authorname}
               onChange={(e) => updateField("authorname", e.target.value)}
-
               className="w-full rounded-lg border border-[#D0D5DD] px-4 py-2.5 text-sm text-[#101828] outline-none focus:border-[#FC9C44]"
             />
           </div>
@@ -400,7 +394,11 @@ function CreateBlogPage() {
 
             {imagePreview ? (
               <div className="relative overflow-hidden rounded-lg border border-[#E4E7EC]">
-                <img src={imagePreview} alt={imageFile?.name} className="h-28 w-full object-cover" />
+                <img
+                  src={imagePreview}
+                  alt={imageFile?.name}
+                  className="h-28 w-full object-cover"
+                />
                 <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-black/50 px-3 py-1.5">
                   <p className="truncate text-[10px] font-bold text-white">{imageFile?.name}</p>
                   <div className="flex shrink-0 gap-2">
@@ -429,7 +427,9 @@ function CreateBlogPage() {
                 role="button"
                 tabIndex={0}
                 onClick={() => fileInputRef.current?.click()}
-                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && fileInputRef.current?.click()}
+                onKeyDown={(e) =>
+                  (e.key === "Enter" || e.key === " ") && fileInputRef.current?.click()
+                }
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => {
                   e.preventDefault();

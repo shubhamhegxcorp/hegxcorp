@@ -69,8 +69,7 @@ export function RichTextEditor({
     content: value,
     editorProps: {
       attributes: {
-        class:
-          "prose-editor min-h-[320px] w-full px-4 py-3 text-sm text-[#101828] outline-none",
+        class: "prose-editor min-h-[320px] w-full px-4 py-3 text-sm text-[#101828] outline-none",
       },
     },
     onUpdate: ({ editor: current }) => {

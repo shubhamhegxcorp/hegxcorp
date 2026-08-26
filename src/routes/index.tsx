@@ -10,6 +10,7 @@ import { FeaturedCaseStudy } from "@/components/home/FeaturedCaseStudy";
 import { Process } from "@/components/home/Process";
 import { Testimonials } from "@/components/home/Testimonials";
 import { BlogPreview } from "@/components/home/BlogPreview";
+import { HomeFAQ } from "@/components/home/HomeFAQ";
 import { FinalCTA } from "@/components/home/FinalCTA";
 import { Footer } from "@/components/site/Footer";
 import { StickyMobileCTA } from "@/components/site/StickyMobileCTA";
@@ -74,6 +75,9 @@ function Index() {
 
       {/* ── Section 9: Insights / Blog ──────── */}
       <BlogPreview />
+
+      {/* ── Section 9.5: Dynamic FAQ ────────── */}
+      <HomeFAQ />
 
       {/* ── Section 10: Final CTA ───────────── */}
       <FinalCTA />

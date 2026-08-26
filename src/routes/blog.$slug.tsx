@@ -2,7 +2,6 @@ import { createFileRoute, Link, notFound, useParams } from "@tanstack/react-rout
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { getPublishedBlogBySlug, getPublishedBlogs } from "@/lib/content/blogs";
-import { getFeaturedCaseStudies } from "@/lib/content/caseStudies";
 import { ContentBlock, type Blog } from "@/data/blogs";
 import ShapeGrid from "@/components/ShapeGrid";
 import {
@@ -11,8 +10,6 @@ import {
   Calendar,
   Clock,
   Bookmark,
-  Twitter,
-  Linkedin,
   Link2,
   Mail,
   TrendingUp,
@@ -22,8 +19,40 @@ import {
   Lightbulb,
   Check,
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
+
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+function injectHeadingIds(html: string): {
+  parsedHtml: string;
+  toc: { id: string; text: string }[];
+} {
+  const headings: { id: string; text: string }[] = [];
+  let index = 0;
+
+  const parsedHtml = html.replace(
+    /<(h[23])([^>]*)>([\s\S]*?)<\/\1>/gi,
+    (match, tag, attrs, content) => {
+      const cleanText = content.replace(/<[^>]+>/g, "").trim();
+      const id = `toc-heading-${index++}`;
+      headings.push({ id, text: cleanText });
+
+      if (attrs.includes("id=")) {
+        return match;
+      }
+      return `<${tag}${attrs} id="${id}">${content}</${tag}>`;
+    },
+  );
+
+  return { parsedHtml, toc: headings };
+}
 
 export const Route = createFileRoute("/blog/$slug")({
   // Loader can be async — TanStack Router waits for it before rendering,
@@ -43,9 +72,7 @@ export const Route = createFileRoute("/blog/$slug")({
       ? article.seoDescription
       : "In-depth growth breakdowns and strategic frameworks from Hegxcorp.";
     const currentUrl = `https://hegxcorp.com/blog/${params.slug}`;
-    const ogImage = article
-      ? `https://hegxcorp.com${article.featuredImage}`
-      : "https://hegxcorp.com/og-default.jpg";
+    const ogImage = article ? article.featuredImage : "https://hegxcorp.com/og-default.jpg";
 
     return {
       meta: [
@@ -87,7 +114,7 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 dangerouslySetInnerHTML={{ __html: block.text }}
               />
             );
-          case "heading":
+          case "heading": {
             const HeadingTag = block.level === 2 ? "h2" : "h3";
             const headingClass =
               block.level === 2
@@ -96,12 +123,14 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
             return (
               <HeadingTag
                 key={index}
+                id={slugify(block.text)}
                 className={headingClass}
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
                 {block.text}
               </HeadingTag>
             );
+          }
           case "list":
             return (
               <ul
@@ -141,7 +170,7 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 </p>
               </div>
             );
-          case "callout":
+          case "callout": {
             const variantStyles = {
               info: "bg-blue-50/70 border-blue-200 text-blue-900",
               warning: "bg-amber-50/70 border-amber-200 text-amber-900",
@@ -176,6 +205,7 @@ function ContentBlockRenderer({ blocks }: { blocks: ContentBlock[] }) {
                 </div>
               </div>
             );
+          }
           case "statistics":
             return (
               <div
@@ -269,7 +299,23 @@ function BlogDetailPage() {
   // time this component renders) instead of a synchronous getBlogBySlug call.
   const { article } = Route.useLoaderData();
 
-  const [toc, setToc] = useState<TocItem[]>([]);
+  const { parsedHtml, toc } = useMemo(() => {
+    if (article.blocks) {
+      const headings: TocItem[] = [];
+      article.blocks.forEach((block) => {
+        if (block.type === "heading") {
+          headings.push({
+            id: slugify(block.text),
+            text: block.text,
+          });
+        }
+      });
+      return { parsedHtml: "", toc: headings };
+    } else {
+      return injectHeadingIds(article.content);
+    }
+  }, [article]);
+
   const [activeId, setActiveId] = useState("");
   const [readingProgress, setReadingProgress] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -325,26 +371,10 @@ function BlogDetailPage() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Find related case studies (max 2)
-  const relatedCaseStudies = getFeaturedCaseStudies().slice(0, 2);
-
-  // ── DYNAMIC TABLE OF CONTENTS GENERATOR ──
+  // ── TABLE OF CONTENTS ACTIVE TRACKING ──
   useEffect(() => {
     if (contentRef.current) {
       const headings = contentRef.current.querySelectorAll("h2, h3");
-      const extracted: TocItem[] = [];
-
-      headings.forEach((h, index) => {
-        const id = `toc-heading-${index}`;
-        h.setAttribute("id", id);
-        h.classList.add("scroll-mt-28");
-        extracted.push({
-          id,
-          text: h.textContent || "",
-        });
-      });
-
-      setToc(extracted);
 
       const observer = new IntersectionObserver(
         (entries) => {
@@ -363,13 +393,20 @@ function BlogDetailPage() {
         headings.forEach((h) => observer.unobserve(h));
       };
     }
-  }, [article.slug]);
+  }, [article.slug, toc]);
 
   const handleTocClick = (e: React.MouseEvent, id: string) => {
     e.preventDefault();
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      const lenis = (window as any).lenis;
+      if (lenis) {
+        lenis.scrollTo(element, { offset: -110 });
+      } else {
+        const yOffset = -110; // offset to account for sticky header
+        const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+        window.scrollTo({ top: y, behavior: "smooth" });
+      }
       setActiveId(id);
     }
   };
@@ -400,7 +437,7 @@ function BlogDetailPage() {
     "@type": "BlogPosting",
     headline: article.title,
     description: article.excerpt,
-    image: `https://hegxcorp.com${article.featuredImage}`,
+    image: article.featuredImage || "",
     datePublished: article.publishedAt,
     author: {
       "@type": "Person",
@@ -497,14 +534,6 @@ function BlogDetailPage() {
                 {article.title}
               </h1>
 
-              {/* Excerpt */}
-              <p
-                className="text-base md:text-lg text-[#6B7280] leading-relaxed font-normal max-w-[780px]"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                {article.excerpt}
-              </p>
-
               {/* Author & Actions Section */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pt-6 border-t border-[#EAEAEA]">
                 <div className="flex items-center gap-3">
@@ -528,22 +557,20 @@ function BlogDetailPage() {
                     Share article:
                   </span>
                   <a
-                    href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`}
+                    href={`https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 border border-[#EAEAEA] rounded-full hover:bg-[#FFF4E8] hover:text-[#FC9C44] transition-all"
-                    aria-label="Share on X"
+                    className="p-2 border border-[#EAEAEA] rounded-full hover:bg-[#FFF4E8] hover:text-[#FC9C44] transition-all flex items-center justify-center"
+                    aria-label="Share on WhatsApp"
                   >
-                    <Twitter className="h-3.5 w-3.5" />
-                  </a>
-                  <a
-                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 border border-[#EAEAEA] rounded-full hover:bg-[#FFF4E8] hover:text-[#FC9C44] transition-all"
-                    aria-label="Share on LinkedIn"
-                  >
-                    <Linkedin className="h-3.5 w-3.5" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 448 512"
+                      fill="currentColor"
+                      className="h-3.5 w-3.5"
+                    >
+                      <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 .9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" />
+                    </svg>
                   </a>
                   <button
                     onClick={handleCopyLink}
@@ -580,36 +607,38 @@ function BlogDetailPage() {
                 </div>
 
                 {/* Cover graphic */}
-                <div className="aspect-video bg-gradient-to-br from-[#1D2742] to-[#2D3A5D] p-8 md:p-12 flex flex-col justify-between overflow-hidden relative">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(252,156,68,0.15),transparent_40%)]" />
+                {article.featuredImage ? (
+                  <img
+                    src={article.featuredImage}
+                    alt={article.title}
+                    className="aspect-video w-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                ) : (
+                  <div className="aspect-video bg-gradient-to-br from-[#1D2742] to-[#2D3A5D] p-8 md:p-12 flex flex-col justify-between overflow-hidden relative">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(252,156,68,0.15),transparent_40%)]" />
 
-                  <div className="relative z-10 flex justify-between items-start">
-                    <span className="text-[10px] font-bold tracking-[0.2em] text-[#FC9C44] uppercase border border-[#FC9C44]/30 px-3 py-1 rounded bg-[#FC9C44]/5">
-                      HEGXCORP RESEARCH PAPER
-                    </span>
-                    <Bookmark className="h-5 w-5 text-white/55" />
-                  </div>
+                    <div className="relative z-10 flex justify-between items-start">
+                      <span className="text-[10px] font-bold tracking-[0.2em] text-[#FC9C44] uppercase border border-[#FC9C44]/30 px-3 py-1 rounded bg-[#FC9C44]/5">
+                        HEGXCORP RESEARCH PAPER
+                      </span>
+                      <Bookmark className="h-5 w-5 text-white/55" />
+                    </div>
 
-                  <div className="relative z-10 max-w-[620px] space-y-3.5 text-left">
-                    <h3
-                      className="text-xl md:text-3.5xl font-bold text-white leading-tight"
-                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                    >
-                      {article.title}
-                    </h3>
-                    <p
-                      className="text-xs md:text-sm text-white/70 font-normal leading-relaxed max-w-[500px]"
-                      style={{ fontFamily: "'Inter', sans-serif" }}
-                    >
-                      {article.excerpt}
-                    </p>
-                  </div>
+                    <div className="relative z-10 max-w-[620px] space-y-3.5 text-left">
+                      <h3
+                        className="text-xl md:text-3.5xl font-bold text-white leading-tight"
+                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                      >
+                        {article.title}
+                      </h3>
+                    </div>
 
-                  <div className="relative z-10 flex items-center justify-between border-t border-white/10 pt-4 text-white/45 text-[9px] uppercase tracking-wider font-semibold">
-                    <span>© {new Date().getFullYear()} Hegxcorp Systems</span>
-                    <span className="text-[#FC9C44]">Author: {article.author.name}</span>
+                    <div className="relative z-10 flex items-center justify-between border-t border-white/10 pt-4 text-white/45 text-[9px] uppercase tracking-wider font-semibold">
+                      <span>© {new Date().getFullYear()} Hegxcorp Systems</span>
+                      <span className="text-[#FC9C44]">Author: {article.author.name}</span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
@@ -637,7 +666,7 @@ function BlogDetailPage() {
                       style={{
                         fontFamily: "'Inter', sans-serif",
                       }}
-                      dangerouslySetInnerHTML={{ __html: article.content }}
+                      dangerouslySetInnerHTML={{ __html: parsedHtml }}
                     />
                   )}
                 </article>
@@ -695,10 +724,11 @@ function BlogDetailPage() {
                           <a
                             href={`#${item.id}`}
                             onClick={(e) => handleTocClick(e, item.id)}
-                            className={`block text-xs font-semibold leading-relaxed transition-all duration-200 hover:text-[#FC9C44] ${activeId === item.id
+                            className={`block text-xs font-semibold leading-relaxed transition-all duration-200 hover:text-[#FC9C44] ${
+                              activeId === item.id
                                 ? "text-[#FC9C44] border-l-2 border-[#FC9C44] pl-3"
                                 : "text-[#9CA3AF] border-l border-[#EAEAEA] pl-3"
-                              }`}
+                            }`}
                           >
                             {item.text}
                           </a>
@@ -715,20 +745,20 @@ function BlogDetailPage() {
                   </h4>
                   <div className="flex gap-2">
                     <a
-                      href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`}
+                      href={`https://api.whatsapp.com/send?text=${shareText}%20${shareUrl}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex-1 flex justify-center items-center gap-1.5 py-2 border border-[#EAEAEA] rounded-lg text-xs font-semibold text-[#4A5568] hover:bg-[#FFF4E8] hover:text-[#FC9C44] transition-all"
                     >
-                      <Twitter className="h-3.5 w-3.5" /> X
-                    </a>
-                    <a
-                      href={`https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 flex justify-center items-center gap-1.5 py-2 border border-[#EAEAEA] rounded-lg text-xs font-semibold text-[#4A5568] hover:bg-[#FFF4E8] hover:text-[#FC9C44] transition-all"
-                    >
-                      <Linkedin className="h-3.5 w-3.5" /> LinkedIn
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 448 512"
+                        fill="currentColor"
+                        className="h-3.5 w-3.5"
+                      >
+                        <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 .9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z" />
+                      </svg>
+                      WhatsApp
                     </a>
                     <button
                       onClick={handleCopyLink}
@@ -850,56 +880,6 @@ function BlogDetailPage() {
                   )}
                 </div>
               </div>
-
-              {/* 2. Related Case Studies */}
-              {relatedCaseStudies.length > 0 && (
-                <div className="space-y-6 text-left">
-                  <h3
-                    className="text-xl font-bold text-[#1D2742]"
-                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                  >
-                    Visual Proof: Related Case Studies
-                  </h3>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {relatedCaseStudies.map((cs) => (
-                      <Link
-                        key={cs.slug}
-                        to="/case-studies/$slug"
-                        params={{ slug: cs.slug }}
-                        className="group block"
-                      >
-                        <div className="bg-white border border-[#EAEAEA] rounded-xl p-6 flex flex-col justify-between h-full hover:shadow-[0_12px_24px_rgba(29,39,66,0.04)] hover:-translate-y-0.5 transition-all duration-300">
-                          <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] font-bold text-[#FC9C44] uppercase tracking-wider bg-[#FFF4E8] px-2.5 py-1 rounded">
-                                {cs.industry}
-                              </span>
-                              <span className="text-2xl font-black text-[#1D2742] tracking-tight group-hover:text-[#FC9C44] transition-colors">
-                                {cs.metricValue}
-                              </span>
-                            </div>
-                            <div>
-                              <h4
-                                className="text-base font-bold text-[#1D2742] leading-snug group-hover:text-[#FC9C44] transition-colors mb-1.5"
-                                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                              >
-                                {cs.client}
-                              </h4>
-                              <p className="text-xs text-[#6B7280] leading-relaxed line-clamp-3">
-                                {cs.summary}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="text-[10px] font-bold text-[#FC9C44] flex items-center gap-1 mt-6 border-t border-[#FAFAF8] pt-4">
-                            View Case Study{" "}
-                            <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* 3. Related Articles */}
               {relatedArticles.length > 0 && (

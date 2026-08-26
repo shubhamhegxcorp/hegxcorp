@@ -95,11 +95,17 @@ function BlogPage() {
     });
   }, [allBlogs, searchQuery, selectedCategory, selectedTag]);
 
-  // Featured article is always the AI Search Reshaping Traffic one, or the first matching item
+  // Featured article prioritizes the one marked as featured (newest first).
+  // If none is featured, it falls back to "how-ai-search-reshapes-organic-traffic" or the first blog.
   const featuredArticle = useMemo(() => {
-    return (
-      allBlogs.find((a) => a.slug === "how-ai-search-reshapes-organic-traffic") || allBlogs[0]
-    );
+    const featuredList = allBlogs.filter((a) => a.featured);
+    if (featuredList.length > 0) {
+      return featuredList.sort(
+        (left, right) =>
+          new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime(),
+      )[0];
+    }
+    return allBlogs.find((a) => a.slug === "how-ai-search-reshapes-organic-traffic") || allBlogs[0];
   }, [allBlogs]);
 
   const mostReadArticles = useMemo(() => {
@@ -107,11 +113,10 @@ function BlogPage() {
     return allBlogs.filter((a) => a.slug !== featuredArticle.slug).slice(0, 4);
   }, [allBlogs, featuredArticle]);
 
-  // Filtered feed (excludes featured article to avoid duplication)
+  // Filtered feed (includes featured article)
   const feedArticles = useMemo(() => {
-    if (!featuredArticle) return filteredArticles;
-    return filteredArticles.filter((a) => a.slug !== featuredArticle.slug);
-  }, [filteredArticles, featuredArticle]);
+    return filteredArticles;
+  }, [filteredArticles]);
 
   // Paginated articles
   const paginatedArticles = useMemo(() => {
@@ -313,8 +318,8 @@ function BlogPage() {
                         : `Topic: #${selectedTag}`}
                   </h3>
                   <span className="text-xs font-semibold text-[#6B7280]">
-                    Showing {filteredArticles.length}{" "}
-                    {filteredArticles.length === 1 ? "article" : "articles"}
+                    Showing {feedArticles.length}{" "}
+                    {feedArticles.length === 1 ? "article" : "articles"}
                   </span>
                 </div>
 
@@ -473,10 +478,11 @@ function BlogPage() {
                             setCurrentPage(i + 1);
                             scrollToLatestArticles();
                           }}
-                          className={`h-9 w-9 text-xs font-bold rounded-lg border transition-all ${currentPage === i + 1
-                            ? "bg-[#FC9C44] text-white border-[#FC9C44]"
-                            : "bg-white text-[#6B7280] border-[#EAEAEA] hover:border-[#FC9C44]"
-                            }`}
+                          className={`h-9 w-9 text-xs font-bold rounded-lg border transition-all ${
+                            currentPage === i + 1
+                              ? "bg-[#FC9C44] text-white border-[#FC9C44]"
+                              : "bg-white text-[#6B7280] border-[#EAEAEA] hover:border-[#FC9C44]"
+                          }`}
                         >
                           {i + 1}
                         </button>
@@ -536,10 +542,11 @@ function BlogPage() {
                         <button
                           key={cat}
                           onClick={() => handleCategoryClick(cat)}
-                          className={`px-4 py-2 text-xs font-semibold rounded-full border transition-all cursor-pointer ${selectedCategory === cat
-                            ? "bg-[#1D2742] text-white border-[#1D2742]"
-                            : "bg-[#FAFAF8] text-[#6B7280] border-[#EAEAEA] hover:border-[#FC9C44]/30 hover:bg-[#FFF4E8]/20"
-                            }`}
+                          className={`px-4 py-2 text-xs font-semibold rounded-full border transition-all cursor-pointer ${
+                            selectedCategory === cat
+                              ? "bg-[#1D2742] text-white border-[#1D2742]"
+                              : "bg-[#FAFAF8] text-[#6B7280] border-[#EAEAEA] hover:border-[#FC9C44]/30 hover:bg-[#FFF4E8]/20"
+                          }`}
                         >
                           {cat}
                         </button>
@@ -560,10 +567,11 @@ function BlogPage() {
                         <button
                           key={topic.label}
                           onClick={() => handleTagClick(topic.searchVal)}
-                          className={`px-3 py-1.5 text-[11px] font-semibold rounded-lg border transition-all cursor-pointer ${selectedTag === topic.searchVal
-                            ? "bg-[#FC9C44] text-white border-[#FC9C44]"
-                            : "bg-white text-[#4A5568] border-[#EAEAEA] hover:border-[#FC9C44]/20 hover:bg-[#FAFAF8]"
-                            }`}
+                          className={`px-3 py-1.5 text-[11px] font-semibold rounded-lg border transition-all cursor-pointer ${
+                            selectedTag === topic.searchVal
+                              ? "bg-[#FC9C44] text-white border-[#FC9C44]"
+                              : "bg-white text-[#4A5568] border-[#EAEAEA] hover:border-[#FC9C44]/20 hover:bg-[#FAFAF8]"
+                          }`}
                         >
                           {topic.label}
                         </button>

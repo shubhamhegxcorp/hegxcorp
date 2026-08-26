@@ -11,6 +11,7 @@ import {
   Variants,
 } from "framer-motion";
 import ShapeGrid from "@/components/ShapeGrid";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
 const dashboardMetrics = [
   {
@@ -75,6 +76,7 @@ const iconVariants: Variants = {
 };
 
 export function Hero() {
+  const { data: heroData } = useWebsiteSection("home.hero");
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -117,7 +119,7 @@ export function Hero() {
             {/* Category badge */}
             <div className="inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-[#FC9C44] shadow-sm">
               <span className="h-1.5 w-1.5 rounded-full bg-[#FC9C44] animate-pulse" />
-              Growth Consultancy &amp; Digital Transformation Partner
+              {heroData.badge}
             </div>
 
             {/* Headline */}
@@ -128,15 +130,21 @@ export function Hero() {
                 fontSize: "clamp(40px, 4.8vw, 68px)",
               }}
             >
-              Generate More{" "}
-              <span className="relative">
-                Leads, Sales
-                <span
-                  className="absolute bottom-0 left-0 right-0 h-[3px] rounded-full"
-                  style={{ background: "#FC9C44", bottom: "-4px" }}
-                />
-              </span>{" "}
-              &amp; Revenue
+              {heroData.title.includes("Leads, Sales") ? (
+                <>
+                  Generate More{" "}
+                  <span className="relative">
+                    Leads, Sales
+                    <span
+                      className="absolute bottom-0 left-0 right-0 h-[3px] rounded-full"
+                      style={{ background: "#FC9C44", bottom: "-4px" }}
+                    />
+                  </span>{" "}
+                  &amp; Revenue
+                </>
+              ) : (
+                heroData.title
+              )}
             </h1>
 
             {/* Subheadline */}
@@ -144,26 +152,25 @@ export function Hero() {
               className="max-w-[540px] text-[#6B7280] leading-relaxed"
               style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(16px, 1.2vw, 19px)" }}
             >
-              We design and execute data-driven growth marketing systems, custom engineering, and
-              search optimization built to position enterprise firms for compounding scale.
+              {heroData.description}
             </p>
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-3 pt-2">
               <Link
-                to="/free-growth-audit"
+                to={heroData.buttonUrl}
                 className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-semibold text-white transition-[background-color,transform,box-shadow] duration-200 ease-out bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(252,156,68,0.5)]"
                 id="hero-cta-audit"
               >
-                Get Free Growth Audit
+                {heroData.buttonText}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                to="/case-studies"
+                to={heroData.secondaryButtonUrl}
                 className="inline-flex items-center gap-2.5 rounded-full border border-[#EAEAEA] bg-white px-7 py-3.5 text-sm font-semibold text-[#232323] transition-[background-color,border-color] duration-200 ease-out hover:bg-[#FFF4E8] hover:border-[#FC9C44]"
                 id="hero-cta-case-studies"
               >
-                View Case Studies
+                {heroData.secondaryButtonText}
               </Link>
             </div>
 

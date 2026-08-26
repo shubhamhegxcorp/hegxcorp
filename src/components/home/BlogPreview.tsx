@@ -4,8 +4,47 @@ import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { BrowserPreview } from "@/components/site/BrowserPreview";
 import aisearch from "@/assets/Blog/How AI Search Changes Rankings.png";
+import { useState, useEffect, useMemo } from "react";
+import { getPublishedBlogs } from "@/lib/content/blogs";
+import type { Blog } from "@/data/blogs";
 
 export function BlogPreview() {
+  const [allBlogs, setAllBlogs] = useState<Blog[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    getPublishedBlogs()
+      .then((result) => {
+        if (active) setAllBlogs(result);
+      })
+      .catch((loadError) => {
+        console.error("Failed to load published blogs:", loadError);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const featuredArticle = useMemo(() => {
+    if (allBlogs.length === 0) return null;
+    const featuredList = allBlogs.filter((a) => a.featured);
+    if (featuredList.length > 0) {
+      return featuredList.sort(
+        (left, right) =>
+          new Date(right.publishedAt).getTime() - new Date(left.publishedAt).getTime(),
+      )[0];
+    }
+    return allBlogs.find((a) => a.slug === "how-ai-search-reshapes-organic-traffic") || allBlogs[0];
+  }, [allBlogs]);
+
+  // Fallbacks if blogs aren't loaded yet
+  const title = featuredArticle?.title ?? "How AI Search Changes Rankings";
+  const excerpt =
+    featuredArticle?.excerpt ??
+    "A technical breakdown of semantic search index shifts and how search algorithms evaluate topical authority inside generative answers.";
+  const slug = featuredArticle?.slug ?? "how-ai-search-reshapes-organic-traffic";
+  const imageSrc = featuredArticle?.featuredImage || aisearch;
+
   return (
     <section
       className="bg-[#FAFAF8] overflow-hidden"
@@ -60,21 +99,20 @@ export function BlogPreview() {
                   className="text-3xl lg:text-4xl font-bold text-[#1D2742] tracking-tight"
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                 >
-                  How AI Search Changes Rankings
+                  {title}
                 </h3>
 
                 <p
                   className="text-[#6B7280] leading-relaxed text-sm md:text-base"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
-                  A technical breakdown of semantic search index shifts and how search algorithms
-                  evaluate topical authority inside generative answers.{" "}
+                  {excerpt}
                 </p>
 
                 <div className="pt-2">
                   <Link
                     to="/blog/$slug"
-                    params={{ slug: "how-ai-search-reshapes-organic-traffic" }}
+                    params={{ slug: slug }}
                     className="inline-flex items-center gap-2.5 rounded-full px-8 py-3.5 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#E88C35] transition-colors"
                   >
                     View Blog
@@ -90,15 +128,8 @@ export function BlogPreview() {
                   url="hegxcorp.com/blog"
                   className="w-full shadow-lg"
                 >
-                  <Link
-                    to="/blog/$slug"
-                    params={{ slug: "how-ai-search-reshapes-organic-traffic" }}
-                  >
-                    <img
-                      src={aisearch}
-                      alt="How Ai Search Changes Rankings"
-                      className="w-full h-full object-cover"
-                    />
+                  <Link to="/blog/$slug" params={{ slug: slug }}>
+                    <img src={imageSrc} alt={title} className="w-full h-full object-cover" />
                   </Link>
                 </BrowserPreview>
               </div>

@@ -172,6 +172,8 @@ function RootComponent() {
       smoothWheel: true,
     });
 
+    (window as any).lenis = lenis;
+
     let rafId: number;
     function raf(time: number) {
       lenis.raf(time);
@@ -183,6 +185,7 @@ function RootComponent() {
     return () => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
+      (window as any).lenis = undefined;
     };
   }, []);
 

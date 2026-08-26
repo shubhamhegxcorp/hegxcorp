@@ -4,6 +4,7 @@ import { Footer } from "@/components/site/Footer";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { Check, ChevronDown, Mail, MapPin, Phone, Send, Sparkles } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Toaster, toast } from "sonner";
@@ -91,23 +92,27 @@ const selectBaseClass =
 const errorMessageClass = "text-xs font-medium text-red-500";
 
 function getFieldClass(hasError: boolean) {
-  return `${fieldBaseClass} ${hasError ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
-    }`;
+  return `${fieldBaseClass} ${
+    hasError ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
+  }`;
 }
 
 function getSelectClass(hasError: boolean) {
-  return `${selectBaseClass} ${hasError ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
-    }`;
+  return `${selectBaseClass} ${
+    hasError ? "border-red-500 focus:border-red-500" : "border-[#EAEAEA] focus:border-[#FC9C44]"
+  }`;
 }
 
 function getPhoneFieldClass(hasError: boolean) {
-  return `flex overflow-hidden rounded-lg border bg-white transition-all focus-within:border-[#FC9C44] ${hasError ? "border-red-500 focus-within:border-red-500" : "border-[#EAEAEA]"
-    }`;
+  return `flex overflow-hidden rounded-lg border bg-white transition-all focus-within:border-[#FC9C44] ${
+    hasError ? "border-red-500 focus-within:border-red-500" : "border-[#EAEAEA]"
+  }`;
 }
 
 function getServiceButtonClass(hasError: boolean) {
-  return `flex w-full items-center justify-between rounded-lg border bg-white px-4 py-3 text-left text-sm outline-none transition-all ${hasError ? "border-red-500" : "border-[#EAEAEA] hover:border-[#FC9C44]"
-    }`;
+  return `flex w-full items-center justify-between rounded-lg border bg-white px-4 py-3 text-left text-sm outline-none transition-all ${
+    hasError ? "border-red-500" : "border-[#EAEAEA] hover:border-[#FC9C44]"
+  }`;
 }
 
 function blockInvalidNameKey(event: KeyboardEvent<HTMLInputElement>, onInvalidInput: () => void) {
@@ -170,6 +175,10 @@ const contactSchema = z.object({
 type ContactFormValues = z.infer<typeof contactSchema>;
 
 function ContactPage() {
+  const { data: heroData } = useWebsiteSection("contact.hero");
+  const { data: detailsData } = useWebsiteSection("contact.details");
+  const { data: serviceGroupsData } = useWebsiteSection("contact.serviceGroups");
+
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const serviceDropdownRef = useRef<HTMLDivElement>(null);
@@ -300,9 +309,9 @@ function ContactPage() {
               >
                 <div className="space-y-6">
                   <SectionHeading
-                    tagline="Connect With Us"
-                    heading="Let's Talk About Growth"
-                    description="Whether you're looking to scale organic traffic, improve paid advertising performance, or build a high-converting website, our team is ready to help you identify the fastest path forward."
+                    tagline={heroData.tagline}
+                    heading={heroData.title}
+                    description={heroData.description}
                   />
 
                   <div
@@ -332,7 +341,7 @@ function ContactPage() {
 
                 <div className="space-y-6">
                   <a
-                    href="tel:+918369207836"
+                    href={`tel:${detailsData.phone.replace(/\s+/g, "")}`}
                     onClick={() => trackContactClick("phone", "contact_page_hotline")}
                     className="group flex gap-4 items-start cursor-pointer w-fit transition-transform duration-300 ease-out hover:translate-x-1"
                   >
@@ -350,13 +359,13 @@ function ContactPage() {
                         className="text-sm font-semibold text-[#232323] group-hover:text-[#FC9C44] transition-colors duration-300"
                         style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                       >
-                        +91 836 920 7836
+                        {detailsData.phone}
                       </span>
                     </div>
                   </a>
 
                   <a
-                    href="mailto:hegxcorp@gmail.com"
+                    href={`mailto:${detailsData.email}`}
                     onClick={() => trackContactClick("email", "contact_page_email")}
                     className="group flex gap-4 items-start cursor-pointer w-fit transition-transform duration-300 ease-out hover:translate-x-1"
                   >
@@ -374,7 +383,7 @@ function ContactPage() {
                         className="text-sm font-semibold text-[#232323] group-hover:text-[#FC9C44] transition-colors duration-300"
                         style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                       >
-                        hegxcorp@gmail.com
+                        {detailsData.email}
                       </span>
                     </div>
                   </a>
@@ -394,8 +403,7 @@ function ContactPage() {
                         className="text-sm text-[#232323] group-hover:text-[#FC9C44] transition-colors duration-300 leading-relaxed"
                         style={{ fontFamily: "'Inter', sans-serif" }}
                       >
-                        10th Floor Building 4, Nesco IT Park, Western Express Highway, Goregaon
-                        (East) Mumbai, Maharashtra 400063
+                        {detailsData.address}
                       </p>
                     </div>
                   </div>
@@ -601,12 +609,12 @@ function ContactPage() {
                             className="absolute left-0 right-0 z-30 mt-2 max-h-[190px] overflow-y-scroll overscroll-contain rounded-xl border border-[#EAEAEA] bg-white p-4 pr-2 shadow-[0_22px_60px_rgba(29,39,66,0.14)] [scrollbar-gutter:stable] sm:max-h-[210px]"
                           >
                             <div className="grid gap-4 pr-2 md:grid-cols-3">
-                              {serviceGroups.map((group) => (
+                              {(serviceGroupsData.groups || []).map((group: any) => (
                                 <div key={group.title} className="space-y-2">
                                   <p className="text-[11px] font-bold uppercase tracking-wider text-[#FC9C44]">
                                     {group.title}
                                   </p>
-                                  {group.services.map((service) => (
+                                  {(group.services || []).map((service: any) => (
                                     <label
                                       key={service.name}
                                       className="flex cursor-pointer gap-3 rounded-lg p-2 transition-colors hover:bg-[#FFF4E8]"

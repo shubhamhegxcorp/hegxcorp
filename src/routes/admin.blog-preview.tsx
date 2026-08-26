@@ -10,12 +10,9 @@ export const Route = createFileRoute("/admin/blog-preview")({
     draft: typeof search.draft === "string" ? search.draft : undefined,
   }),
   head: () => ({
-    meta: [
-      { title: "Preview | Hegxcorp Admin" },
-      { name: "robots", content: "noindex,nofollow" },
-    ],
+    meta: [{ title: "Preview | Hegxcorp Admin" }, { name: "robots", content: "noindex,nofollow" }],
   }),
-  component: BlogPreviewPage, 
+  component: BlogPreviewPage,
 } as never);
 
 type LoadState = "loading" | "ready" | "notfound" | "error";

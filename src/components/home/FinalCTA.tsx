@@ -3,8 +3,10 @@ import { ArrowRight, CalendarCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { MagneticButton } from "@/components/site/PremiumInteractions";
 import { trackEvent } from "@/lib/analytics";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
 export function FinalCTA() {
+  const { data: ctaData } = useWebsiteSection("home.cta");
   return (
     <section className="relative bg-[#1D2742] overflow-hidden grain-overlay pt-10 pb-28 md:pt-12 md:pb-12 lg:pt-16 lg:pb-14">
       {/* Subtle animated background glow — absolutely positioned, does not affect section height */}
@@ -49,7 +51,7 @@ export function FinalCTA() {
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               <CalendarCheck className="h-3.5 w-3.5" />
-              Free Strategy Session · No Commitment
+              {ctaData.badge}
             </span>
           </div>
 
@@ -61,7 +63,7 @@ export function FinalCTA() {
               fontSize: "clamp(32px, 5vw, 64px)",
             }}
           >
-            Let's identify what's limiting your growth.
+            {ctaData.heading}
           </h2>
 
           {/* Subheading */}
@@ -69,9 +71,7 @@ export function FinalCTA() {
             className="text-white/75 max-w-[620px] mx-auto leading-relaxed"
             style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(15px, 1.2vw, 18px)" }}
           >
-            Book a free strategy session and receive a practical growth roadmap tailored to your
-            business. We'll review your website, acquisition channels, and conversion opportunities
-            and show you the highest-impact next steps.
+            {ctaData.description}
           </p>
 
           {/* CTAs with magnetic spring + snappy button hover elevations */}
@@ -85,19 +85,19 @@ export function FinalCTA() {
                 transition={{ duration: 0.2, ease: "easeOut" }}
               >
                 <Link
-                  to="/contact"
+                  to={ctaData.buttonUrl}
                   onClick={() =>
                     trackEvent("cta_click", {
                       cta_name: "book_free_strategy_call",
                       cta_location: "final_cta",
-                      destination: "/contact",
+                      destination: ctaData.buttonUrl,
                     })
                   }
                   className="group inline-flex items-center gap-2.5 rounded-full px-8 py-4 text-sm font-bold text-[#1D2742] bg-[#FC9C44] transition-colors duration-200 hover:bg-[#E88C35]"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                   id="final-cta-strategy-call"
                 >
-                  Book a Free Strategy Call
+                  {ctaData.buttonText}
                   <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
               </motion.div>

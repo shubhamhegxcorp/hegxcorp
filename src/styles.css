@@ -305,7 +305,7 @@
 }
 
 /* Children of .grain-overlay need explicit z-index to appear above grain */
-.grain-overlay>* {
+.grain-overlay > * {
   position: relative;
   z-index: 1;
 }
@@ -523,19 +523,23 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(to top,
+    linear-gradient(
+      to top,
       rgba(10, 15, 40, 0.94) 0%,
       rgba(10, 15, 40, 0.36) 70%,
-      rgba(10, 15, 40, 0.22) 100%),
+      rgba(10, 15, 40, 0.22) 100%
+    ),
     linear-gradient(120deg, rgba(252, 156, 68, 0.18), transparent 45%);
 }
 
 .seo-slide-tint.service-slide-tint {
   background:
-    linear-gradient(to top,
+    linear-gradient(
+      to top,
       rgba(6, 19, 61, 0.82) 0%,
       rgba(6, 19, 61, 0.36) 50%,
-      rgba(6, 19, 61, 0.06) 100%),
+      rgba(6, 19, 61, 0.06) 100%
+    ),
     linear-gradient(120deg, rgba(252, 156, 68, 0.2), transparent 44%);
 }
 
@@ -655,7 +659,6 @@
    play, but at instant / near-instant duration.
 ───────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
@@ -665,8 +668,6 @@
     scroll-behavior: auto !important;
   }
 }
-
-
 
 @plugin "@tailwindcss/typography";
 

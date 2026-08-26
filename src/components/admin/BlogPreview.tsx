@@ -199,9 +199,12 @@ export function BlogPreview({ data, backHref }: BlogPreviewProps) {
                     hegxcorp.com/blog/{slug}
                   </div>
                 </div>
-
                 {imagePreview ? (
-                  <img src={imagePreview} alt={title} className="aspect-video w-full object-cover" />
+                  <img
+                    src={imagePreview}
+                    alt={title}
+                    className="aspect-video w-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
                 ) : (
                   <div className="aspect-video bg-gradient-to-br from-[#1D2742] to-[#2D3A5D] p-8 md:p-12 flex flex-col justify-between overflow-hidden relative">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(252,156,68,0.15),transparent_40%)]" />

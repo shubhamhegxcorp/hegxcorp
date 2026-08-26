@@ -37,7 +37,11 @@ try {
   console.log(`✓ Connected OK in ${Date.now() - start}ms. Result:`, r[0]);
 
   const t = await sql`SELECT to_regclass('"BlogDraft"') AS tbl`;
-  console.log(t[0].tbl ? '✓ "BlogDraft" table exists.' : 'ℹ "BlogDraft" table does not exist yet (that is fine — the app creates it).');
+  console.log(
+    t[0].tbl
+      ? '✓ "BlogDraft" table exists.'
+      : 'ℹ "BlogDraft" table does not exist yet (that is fine — the app creates it).',
+  );
 
   await sql.end();
   process.exit(0);
@@ -46,6 +50,8 @@ try {
   console.error("  name:", err.name);
   console.error("  code:", err.code);
   console.error("  message:", err.message);
-  try { await sql.end(); } catch {}
+  try {
+    await sql.end();
+  } catch {}
   process.exit(2);
 }

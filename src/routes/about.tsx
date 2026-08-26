@@ -23,6 +23,7 @@ import similarwebLogo from "@/assets/about/similarweb-logo.webp";
 import ShapeGrid from "@/components/ShapeGrid";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -74,7 +75,18 @@ const appreciationLogos = [
   { src: ahrefsLogo, alt: "Ahrefs" },
 ];
 
+const valueIconMap: Record<number, React.ComponentType<any>> = {
+  0: Lightbulb,
+  1: ShieldCheck,
+  2: BadgeCheck,
+  3: Handshake,
+};
+
 function AboutPage() {
+  const { data: heroData } = useWebsiteSection("about.hero");
+  const { data: whoWeAreData } = useWebsiteSection("about.whoWeAre");
+  const { data: ourMissionData } = useWebsiteSection("about.ourMission");
+  const { data: ourValuesData } = useWebsiteSection("about.ourValues");
   return (
     <div className="min-h-screen  bg-white text-[#06133D]">
       <Header />
@@ -101,27 +113,26 @@ function AboutPage() {
             <div className="max-w-3xl">
               <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#FC9C44] shadow-sm">
                 <Sparkles className="h-4 w-4" />
-                About Hegxcorp
+                {heroData.tagline}
               </span>
               <h1 className="text-4xl font-bold leading-[1.08] tracking-[-0.035em] text-[#06133D] sm:text-5xl lg:text-7xl">
-                One partner for digital growth, built to help you stand out.
+                {heroData.title}
               </h1>
               <p className="mt-7 max-w-2xl text-base leading-8 text-[#52607A] sm:text-lg">
-                We bring technology, design, and marketing together to help ambitious businesses
-                build stronger brands, reach more people, and create lasting momentum.
+                {heroData.description}
               </p>
               <div className="mt-9 flex flex-wrap gap-4">
                 <Link
-                  to="/free-growth-audit"
+                  to={heroData.buttonUrl}
                   className="inline-flex items-center gap-2 rounded-full bg-[#FC9C44] px-6 py-3.5 text-sm font-semibold text-[#06133D] transition hover:-translate-y-0.5 hover:bg-[#ffad63]"
                 >
-                  Claim Your Growth Audit <ArrowRight className="h-4 w-4" />
+                  {heroData.buttonText} <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
-                  to="/services"
+                  to={heroData.secondaryButtonUrl}
                   className="inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-white px-6 py-3.5 text-sm font-semibold text-[#06133D] shadow-sm transition hover:bg-[#FAFAF8]"
                 >
-                  Explore Our Services
+                  {heroData.secondaryButtonText}
                 </Link>
               </div>
             </div>
@@ -145,19 +156,17 @@ function AboutPage() {
 
             <div className="pt-8 lg:pt-0">
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#E87922]">
-                Who We Are
+                {whoWeAreData.tagline}
               </p>
               <h2 className="mt-4 text-3xl font-bold leading-tight tracking-[-0.025em] sm:text-4xl lg:text-5xl">
-                A forward-thinking partner for the digital world.
+                {whoWeAreData.title}
               </h2>
-              <p className="mt-6 text-base leading-8 text-[#52607A] sm:text-lg">
-                Hegxcorp legally known as AKSHAY JADIA ENTERPRISE is a technology, digital
-                development, and marketing agency serving businesses across the world.
-              </p>
-              <p className="mt-4 text-base leading-8 text-[#52607A] sm:text-lg">
-                We connect creative thinking with practical strategy so every website, campaign, and
-                digital experience has a clear purpose: moving the business forward.
-              </p>
+              <div
+                className="mt-6 text-base leading-8 text-[#52607A] sm:text-lg space-y-4"
+                dangerouslySetInnerHTML={{
+                  __html: whoWeAreData.description.replace(/\n/g, "<br/>"),
+                }}
+              />
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-[#E8ECF5] bg-[#F8F9FC] p-5">
                   <Target className="h-6 w-6 text-[#FC9C44]" />
@@ -214,19 +223,17 @@ function AboutPage() {
             </div>
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#FFB36E]">
-                Our Mission
+                {ourMissionData.tagline}
               </p>
               <h2 className="mt-4 text-3xl font-bold leading-tight tracking-[-0.025em] sm:text-4xl lg:text-5xl">
-                Turn digital challenges into opportunities for growth.
+                {ourMissionData.title}
               </h2>
-              <p className="mt-6 text-base leading-8 text-white/70 sm:text-lg">
-                Our mission is to empower businesses in the digital ecosystem by combining
-                technology, thoughtful design, and results-led marketing.
-              </p>
-              <p className="mt-4 text-base leading-8 text-white/70 sm:text-lg">
-                We help growing companies expand their reach, improve their visibility, and compete
-                with confidence wherever their customers may be.
-              </p>
+              <div
+                className="mt-6 text-base leading-8 text-white/70 sm:text-lg space-y-4"
+                dangerouslySetInnerHTML={{
+                  __html: ourMissionData.description.replace(/\n/g, "<br/>"),
+                }}
+              />
               <Link
                 to="/contact"
                 className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-[#FFB36E] transition hover:text-white"
@@ -241,14 +248,13 @@ function AboutPage() {
           <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
             <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#E87922]">
-                Our Values
+                {ourValuesData.tagline}
               </p>
               <h2 className="mt-4 text-3xl font-bold leading-tight tracking-[-0.025em] sm:text-4xl lg:text-5xl">
-                The principles behind every partnership.
+                {ourValuesData.title}
               </h2>
               <p className="mt-5 text-base leading-8 text-[#52607A] sm:text-lg">
-                Our values shape how we think, collaborate, and deliver work that supports real
-                business progress.
+                {ourValuesData.description}
               </p>
             </div>
 
@@ -259,21 +265,24 @@ function AboutPage() {
                 className="h-full min-h-[420px] w-full rounded-[1.75rem] object-cover"
               />
               <div className="grid gap-6 sm:grid-cols-2">
-                {values.map(({ icon: Icon, title, description }, index) => (
-                  <article
-                    key={title}
-                    className="group rounded-[1.5rem] border border-[#E7EAF2] bg-white p-7 transition duration-300 hover:-translate-y-1 hover:border-[#FC9C44]/60 hover:shadow-[0_20px_50px_rgba(6,19,61,0.1)]"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#FFF1E3] text-[#E87922] transition group-hover:bg-[#FC9C44] group-hover:text-[#06133D]">
-                        <Icon className="h-6 w-6" />
-                      </span>
-                      <span className="text-sm font-bold text-[#06133D]/25">0{index + 1}</span>
-                    </div>
-                    <h3 className="mt-6 text-xl font-bold">{title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-[#647089]">{description}</p>
-                  </article>
-                ))}
+                {(ourValuesData.values || []).map(({ title, description }: any, index: number) => {
+                  const Icon = valueIconMap[index % 4] || Lightbulb;
+                  return (
+                    <article
+                      key={title}
+                      className="group rounded-[1.5rem] border border-[#E7EAF2] bg-white p-7 transition duration-300 hover:-translate-y-1 hover:border-[#FC9C44]/60 hover:shadow-[0_20px_50px_rgba(6,19,61,0.1)]"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#FFF1E3] text-[#E87922] transition group-hover:bg-[#FC9C44] group-hover:text-[#06133D]">
+                          <Icon className="h-6 w-6" />
+                        </span>
+                        <span className="text-sm font-bold text-[#06133D]/25">0{index + 1}</span>
+                      </div>
+                      <h3 className="mt-6 text-xl font-bold">{title}</h3>
+                      <p className="mt-3 text-sm leading-7 text-[#647089]">{description}</p>
+                    </article>
+                  );
+                })}
               </div>
             </div>
           </div>

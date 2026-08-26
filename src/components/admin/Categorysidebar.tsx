@@ -158,10 +158,7 @@ export function CategorySidebar({
                 const canScrollDown = scrollTop + clientHeight < scrollHeight;
                 const canScrollUp = scrollTop > 0;
 
-                if (
-                  (isScrollingDown && canScrollDown) ||
-                  (isScrollingUp && canScrollUp)
-                ) {
+                if ((isScrollingDown && canScrollDown) || (isScrollingUp && canScrollUp)) {
                   e.preventDefault();
                   e.stopPropagation();
                   el.scrollTop += e.deltaY;
@@ -315,11 +312,8 @@ export function PostCategoryPicker({
       const raw = window.localStorage.getItem(storageKey);
       const saved: string[] = raw ? JSON.parse(raw) : [];
 
-      window.localStorage.setItem(
-        storageKey,
-        JSON.stringify(saved.filter((c) => c !== name))
-      );
-    } catch { }
+      window.localStorage.setItem(storageKey, JSON.stringify(saved.filter((c) => c !== name)));
+    } catch {}
   }
 
   const handleAdd = () => {
@@ -332,7 +326,6 @@ export function PostCategoryPicker({
     }
   };
 
-
   useEffect(() => {
     const el = scrollRef.current;
 
@@ -342,13 +335,9 @@ export function PostCategoryPicker({
       const { scrollTop, scrollHeight, clientHeight } = el;
 
       const canScrollUp = scrollTop > -1;
-      const canScrollDown =
-        scrollTop + clientHeight < scrollHeight;
+      const canScrollDown = scrollTop + clientHeight < scrollHeight;
 
-      if (
-        (e.deltaY < 0 && canScrollUp) ||
-        (e.deltaY > 0 && canScrollDown)
-      ) {
+      if ((e.deltaY < 0 && canScrollUp) || (e.deltaY > 0 && canScrollDown)) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -389,10 +378,7 @@ export function PostCategoryPicker({
         {filteredCategories.map((cat) => {
           const isChecked = selected.includes(cat);
           return (
-            <div
-              key={cat}
-              className="flex items-center justify-between"
-            >
+            <div key={cat} className="flex items-center justify-between">
               <label className="flex cursor-pointer items-center gap-2 text-xs font-bold text-[#344054] hover:text-[#06133D]">
                 <input
                   type="checkbox"

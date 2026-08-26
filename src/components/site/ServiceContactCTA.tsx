@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Check, Mail, MapPin, Phone, Send, Sparkles } from "lucide-react";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
 type ServiceContactCTAProps = {
   eyebrow: string;
@@ -28,6 +29,8 @@ export function ServiceContactCTA({
   serviceName,
   primaryLabel,
 }: ServiceContactCTAProps) {
+  const { data: contactDetails } = useWebsiteSection("contact.details");
+
   return (
     <section className="relative overflow-hidden bg-[#050B24] px-6 py-24 text-white lg:px-10">
       <div
@@ -106,7 +109,7 @@ export function ServiceContactCTA({
             </a>
 
             <a
-              href="tel:+918369207836"
+              href={`tel:${(contactDetails?.phone || "+918369207836").replace(/\s+/g, "")}`}
               className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/8 px-7 py-3.5 text-sm font-bold text-white transition hover:border-[#FC9C44] hover:bg-white/12"
             >
               Call Now
@@ -138,7 +141,7 @@ export function ServiceContactCTA({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <a
-                href="tel:+918369207836"
+                href={`tel:${(contactDetails?.phone || "+918369207836").replace(/\s+/g, "")}`}
                 className="group rounded-2xl border border-white/10 bg-white/[0.06] p-4 transition hover:border-[#FC9C44]/60 hover:bg-white/[0.09]"
               >
                 <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-[#FC9C44] transition group-hover:bg-[#FC9C44] group-hover:text-white">
@@ -147,11 +150,13 @@ export function ServiceContactCTA({
                 <span className="block text-xs font-bold uppercase tracking-[0.12em] text-white/44">
                   Direct Hotline
                 </span>
-                <span className="mt-2 block text-sm font-bold text-white">+91 836 920 7836</span>
+                <span className="mt-2 block text-sm font-bold text-white">
+                  {contactDetails?.phone || "+91 836 920 7836"}
+                </span>
               </a>
 
               <a
-                href="mailto:hegxcorp@gmail.com"
+                href={`mailto:${contactDetails?.email || "hegxcorp@gmail.com"}`}
                 className="group rounded-2xl border border-white/10 bg-white/[0.06] p-4 transition hover:border-[#FC9C44]/60 hover:bg-white/[0.09]"
               >
                 <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-[#FC9C44] transition group-hover:bg-[#FC9C44] group-hover:text-white">
@@ -160,7 +165,9 @@ export function ServiceContactCTA({
                 <span className="block text-xs font-bold uppercase tracking-[0.12em] text-white/44">
                   Inquiries
                 </span>
-                <span className="mt-2 block text-sm font-bold text-white">hegxcorp@gmail.com</span>
+                <span className="mt-2 block text-sm font-bold text-white">
+                  {contactDetails?.email || "hegxcorp@gmail.com"}
+                </span>
               </a>
             </div>
 
@@ -170,8 +177,8 @@ export function ServiceContactCTA({
                 <span className="text-xs font-bold uppercase tracking-[0.12em]">Mumbai Office</span>
               </div>
               <p className="text-sm leading-7 text-white/68">
-                10th Floor Building 4, Nesco IT Park, Western Express Highway, Goregaon (East)
-                Mumbai, Maharashtra 400063
+                {contactDetails?.address ||
+                  "10th Floor Building 4, Nesco IT Park, Western Express Highway, Goregaon (East) Mumbai, Maharashtra 400063"}
               </p>
             </div>
 

@@ -15,12 +15,7 @@ import { toast } from "sonner";
 
 import type { Blog } from "@/data/blogs";
 import { getBlogs } from "@/lib/content/blogs";
-import {
-  deleteBlogDraft,
-  listBlogDrafts,
-  saveBlogDraft,
-  type BlogDraft,
-} from "@/lib/blog-drafts";
+import { deleteBlogDraft, listBlogDrafts, saveBlogDraft, type BlogDraft } from "@/lib/blog-drafts";
 
 export const Route = createFileRoute("/admin/blog")({
   head: () => ({
@@ -258,8 +253,12 @@ function AdminBlogPostsPage() {
     const draft = drafts.find((d) => d.id === post.draftId);
     if (!draft) return;
 
-    const ok = await persistDraftUpdate(draft, { featured: !draft.featured });
+    const nextFeatured = !draft.featured;
+    const ok = await persistDraftUpdate(draft, { featured: nextFeatured });
     if (ok) {
+      if (nextFeatured) {
+        setDrafts((prev) => prev.map((d) => (d.id === draft.id ? d : { ...d, featured: false })));
+      }
       toast.success("Featured setting updated.");
     } else {
       toast.error("Could not update featured status. Try again.");
@@ -399,9 +398,7 @@ function AdminBlogPostsPage() {
                             {getAuthorInitials(post.author.name)}
                           </span>
                           <div>
-                            <p className="text-sm font-black text-[#06133D]">
-                              {post.author.name}
-                            </p>
+                            <p className="text-sm font-black text-[#06133D]">{post.author.name}</p>
                             <p className="text-xs font-semibold text-[#667085]">
                               {post.author.role}
                             </p>
@@ -441,10 +438,11 @@ function AdminBlogPostsPage() {
                           onClick={() => handleToggleFeatured(post)}
                           disabled={!post.draftId || isUpdating}
                           aria-pressed={post.adminFeatured}
-                          className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-50 ${post.adminFeatured
-                            ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
-                            : "border-[#D0D5DD] bg-white text-[#667085] hover:border-[#FC9C44]"
-                            }`}
+                          className={`inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-50 ${
+                            post.adminFeatured
+                              ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
+                              : "border-[#D0D5DD] bg-white text-[#667085] hover:border-[#FC9C44]"
+                          }`}
                         >
                           <Star
                             className={`h-4 w-4 ${post.adminFeatured ? "fill-[#FC9C44]" : ""}`}

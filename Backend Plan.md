@@ -219,8 +219,8 @@
 
 **```**
 
-**User**
-=======
+# **User**
+
 I actually want to make one more improvement to the roadmap before you start.
 
 You're no longer just "learning backend."
@@ -235,18 +235,18 @@ So instead of learning random things, every phase should produce something usabl
 
 Current Architecture Summary (updated):
 
-* **Frontend:** React + TanStack Router + TypeScript + Tailwind
-* **Backend:** Node.js + Express
-* **Database:** PostgreSQL
-* **ORM:** Prisma
-* **Storage:** Cloudinary
-* **Authentication:** JWT + Refresh Tokens + HTTP-only Cookies
-* **CMS:** `/admin`
-* **Content Models:** User, Role, Blog, Category, Tag, Author, CaseStudy, Media, Lead, SeoMetadata
-* **SEO:** Managed entirely through CMS
-* **Leads:** Stored in database and managed from CMS
+- **Frontend:** React + TanStack Router + TypeScript + Tailwind
+- **Backend:** Node.js + Express
+- **Database:** PostgreSQL
+- **ORM:** Prisma
+- **Storage:** Cloudinary
+- **Authentication:** JWT + Refresh Tokens + HTTP-only Cookies
+- **CMS:** `/admin`
+- **Content Models:** User, Role, Blog, Category, Tag, Author, CaseStudy, Media, Lead, SeoMetadata
+- **SEO:** Managed entirely through CMS
+- **Leads:** Stored in database and managed from CMS
 
-This reflects the updated direction from our discussion, replacing the earlier `admin.hegxcorp.com` approach with an integrated `/admin` CMS. 
+This reflects the updated direction from our discussion, replacing the earlier `admin.hegxcorp.com` approach with an integrated `/admin` CMS.
 
 ---
 
@@ -258,11 +258,11 @@ Freeze the architecture before writing backend code.
 
 Deliverables
 
-* Final architecture
-* Folder structure
-* Database planning
-* Feature roadmap
-* CMS planning
+- Final architecture
+- Folder structure
+- Database planning
+- Feature roadmap
+- CMS planning
 
 Output
 
@@ -302,9 +302,9 @@ Remaining
 
 ### Production Pages
 
-* 404
-* Robots
-* Sitemap
+- 404
+- Robots
+- Sitemap
 
 ### SEO Meta
 
@@ -326,10 +326,10 @@ Learn
 
 ## PostgreSQL
 
-* Tables
-* Relations
-* Foreign Keys
-* Indexes
+- Tables
+- Relations
+- Foreign Keys
+- Indexes
 
 ---
 
@@ -405,7 +405,7 @@ Design every model before writing APIs.
 
 Models
 
-```
+````
 User
 >>>>>>> 9740366999cc9309a0e43a1f04cac0d5be4913df
 
@@ -1115,7 +1115,7 @@ User
 **This roadmap is sequential on purpose—each phase builds on the previous one, so you avoid rework and end up with a maintainable CMS rather than a collection of disconnected features.**
 =======
 SeoMetadata
-```
+````
 
 Relationships
 
@@ -1263,11 +1263,11 @@ Dashboard
 
 Features
 
-* Login
-* Logout
-* Protected Routes
-* Password Hashing
-* Refresh Token
+- Login
+- Logout
+- Protected Routes
+- Password Hashing
+- Refresh Token
 
 Output
 
@@ -1669,34 +1669,35 @@ Follow this exact sequence:
 
 ### Day 1
 
-* Install PostgreSQL
-* Install Prisma
-* Learn Prisma Studio
-* Create a practice database
+- Install PostgreSQL
+- Install Prisma
+- Learn Prisma Studio
+- Create a practice database
 
 ### Day 2
 
-* Design all Prisma models
-* Understand relationships
-* Create `schema.prisma`
+- Design all Prisma models
+- Understand relationships
+- Create `schema.prisma`
 
 ### Day 3
 
-* Learn Prisma CRUD (`create`, `findMany`, `update`, `delete`)
-* Seed the database with sample data
+- Learn Prisma CRUD (`create`, `findMany`, `update`, `delete`)
+- Seed the database with sample data
 
 ### Day 4
 
-* Set up Express
-* Connect Express ↔ Prisma ↔ PostgreSQL
-* Create your first `GET /blogs` API
+- Set up Express
+- Connect Express ↔ Prisma ↔ PostgreSQL
+- Create your first `GET /blogs` API
 
 ### Day 5
 
-* Build admin authentication (`/admin/login`)
-* Protect `/admin` routes
+- Build admin authentication (`/admin/login`)
+- Protect `/admin` routes
 
 Only after these foundations are solid should you start building the Blog CMS, Case Study CMS, Media Library, and Lead Manager.
 
 This roadmap is sequential on purpose—each phase builds on the previous one, so you avoid rework and end up with a maintainable CMS rather than a collection of disconnected features.
->>>>>>> 9740366999cc9309a0e43a1f04cac0d5be4913df
+
+> > > > > > > 9740366999cc9309a0e43a1f04cac0d5be4913df

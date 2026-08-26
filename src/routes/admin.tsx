@@ -15,6 +15,7 @@ import {
   ChevronRight,
   PlusCircle,
   ChevronDown,
+  Globe,
 } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { Toaster, toast } from "sonner";
@@ -64,11 +65,22 @@ function AdminLayout() {
   const [isFormsMenuHovered, setIsFormsMenuHovered] = useState(false);
   const isFormsMenuVisible = isFormsMenuOpen || isFormsMenuHovered;
 
+  const [isWebsiteContentMenuOpen, setIsWebsiteContentMenuOpen] = useState(false);
+  const [isWebsiteContentMenuHovered, setIsWebsiteContentMenuHovered] = useState(false);
+  const isWebsiteContentMenuVisible = isWebsiteContentMenuOpen || isWebsiteContentMenuHovered;
+
   const isContactLeadsRoute = location.pathname.startsWith("/admin/contact-leads");
   const isGrowthLeadsRoute = location.pathname.startsWith("/admin/growth-leads");
   const isBlogRoute = location.pathname.startsWith("/admin/blog");
   const isAddBlogRoute = location.pathname.startsWith("/admin/add-blog");
   const isAdLeadsRoute = location.pathname.startsWith("/admin/ad-leads");
+  const isWebsiteContentRoute = location.pathname.startsWith("/admin/website-content");
+
+  const isHomeContentRoute = location.pathname === "/admin/website-content/home";
+  const isAboutContentRoute = location.pathname === "/admin/website-content/about";
+  const isServicesContentRoute = location.pathname === "/admin/website-content/services";
+  const isProductsContentRoute = location.pathname === "/admin/website-content/products";
+  const isContactContentRoute = location.pathname === "/admin/website-content/contact";
 
   const pageTitle = isContactLeadsRoute
     ? "Contact Form submissions"
@@ -80,7 +92,17 @@ function AdminLayout() {
           ? "Create blog post"
           : isAdLeadsRoute
             ? "Ad lead performance"
-            : "Admin";
+            : isHomeContentRoute
+              ? "Home Content CMS"
+              : isAboutContentRoute
+                ? "About Content CMS"
+                : isServicesContentRoute
+                  ? "Services Content CMS"
+                  : isProductsContentRoute
+                    ? "Products Content CMS"
+                    : isContactContentRoute
+                      ? "Contact Content CMS"
+                      : "Admin";
 
   async function loadInquiries() {
     setIsLoading(true);
@@ -374,10 +396,11 @@ function AdminLayout() {
                   type="button"
                   onClick={() => setIsFormsMenuOpen((current) => !current)}
                   aria-expanded={isFormsMenuVisible}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${isContactLeadsRoute || isGrowthLeadsRoute
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${
+                    isContactLeadsRoute || isGrowthLeadsRoute
                       ? "bg-[#06133D] text-white"
                       : "bg-white text-[#344054] hover:bg-[#F9FAFB] hover:text-[#06133D]"
-                    }`}
+                  }`}
                 >
                   <span className="flex items-center gap-2">
                     <Inbox
@@ -386,8 +409,9 @@ function AdminLayout() {
                     Forms Leads
                   </span>
                   <ChevronDown
-                    className={`h-4 w-4 transition ${isContactLeadsRoute || isGrowthLeadsRoute ? "text-white/70" : "text-[#98A2B3]"
-                      } ${isFormsMenuVisible ? "rotate-180" : ""}`}
+                    className={`h-4 w-4 transition ${
+                      isContactLeadsRoute || isGrowthLeadsRoute ? "text-white/70" : "text-[#98A2B3]"
+                    } ${isFormsMenuVisible ? "rotate-180" : ""}`}
                   />
                 </button>
 
@@ -399,10 +423,11 @@ function AdminLayout() {
                         setIsFormsMenuOpen(false);
                         setIsFormsMenuHovered(false);
                       }}
-                      className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${isContactLeadsRoute
+                      className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${
+                        isContactLeadsRoute
                           ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
                           : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
-                        }`}
+                      }`}
                     >
                       <span className="flex items-center gap-2">
                         <Inbox className="h-4 w-4" />
@@ -417,10 +442,11 @@ function AdminLayout() {
                         setIsFormsMenuOpen(false);
                         setIsFormsMenuHovered(false);
                       }}
-                      className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${isGrowthLeadsRoute
+                      className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${
+                        isGrowthLeadsRoute
                           ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
                           : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
-                        }`}
+                      }`}
                     >
                       <span className="flex items-center gap-2">
                         <ClipboardList className="h-4 w-4" />
@@ -442,10 +468,11 @@ function AdminLayout() {
                   to="/admin/blog"
                   onClick={() => setIsBlogMenuOpen(false)}
                   aria-expanded={isBlogMenuVisible}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${isBlogRoute || isAddBlogRoute
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${
+                    isBlogRoute || isAddBlogRoute
                       ? "bg-[#06133D] text-white"
                       : "bg-white text-[#344054] hover:bg-[#F9FAFB] hover:text-[#06133D]"
-                    }`}
+                  }`}
                 >
                   <span className="flex items-center gap-2">
                     <BookOpenText
@@ -454,8 +481,9 @@ function AdminLayout() {
                     Blog
                   </span>
                   <ChevronDown
-                    className={`h-4 w-4 transition ${isBlogRoute || isAddBlogRoute ? "text-white/70" : "text-[#98A2B3]"
-                      } ${isBlogMenuVisible ? "rotate-180" : ""}`}
+                    className={`h-4 w-4 transition ${
+                      isBlogRoute || isAddBlogRoute ? "text-white/70" : "text-[#98A2B3]"
+                    } ${isBlogMenuVisible ? "rotate-180" : ""}`}
                   />
                 </Link>
 
@@ -467,10 +495,11 @@ function AdminLayout() {
                         setIsBlogMenuOpen(false);
                         setIsBlogMenuHovered(false);
                       }}
-                      className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${isBlogRoute
+                      className={`flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${
+                        isBlogRoute
                           ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
                           : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
-                        }`}
+                      }`}
                     >
                       <span className="flex items-center gap-2">
                         <BookOpenText className="h-4 w-4" />
@@ -485,10 +514,11 @@ function AdminLayout() {
                         setIsBlogMenuOpen(false);
                         setIsBlogMenuHovered(false);
                       }}
-                      className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${isAddBlogRoute
+                      className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${
+                        isAddBlogRoute
                           ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
                           : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
-                        }`}
+                      }`}
                     >
                       <PlusCircle className="h-4 w-4" />
                       Add Blog
@@ -499,10 +529,11 @@ function AdminLayout() {
 
               <Link
                 to="/admin/ad-leads"
-                className={`flex items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${isAdLeadsRoute
+                className={`flex items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${
+                  isAdLeadsRoute
                     ? "bg-[#06133D] text-white"
                     : "bg-white text-[#344054] hover:bg-[#F9FAFB] hover:text-[#06133D]"
-                  }`}
+                }`}
               >
                 <span className="flex items-center gap-2">
                   <Megaphone
@@ -511,6 +542,68 @@ function AdminLayout() {
                   Ad Leads
                 </span>
               </Link>
+
+              {/* Website Content dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setIsWebsiteContentMenuHovered(true)}
+                onMouseLeave={() => setIsWebsiteContentMenuHovered(false)}
+              >
+                <button
+                  type="button"
+                  onClick={() => setIsWebsiteContentMenuOpen((current) => !current)}
+                  aria-expanded={isWebsiteContentMenuVisible}
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-3 text-left text-sm font-black transition ${
+                    isWebsiteContentRoute
+                      ? "bg-[#06133D] text-white"
+                      : "bg-white text-[#344054] hover:bg-[#F9FAFB] hover:text-[#06133D]"
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    <Globe
+                      className={`h-4 w-4 ${isWebsiteContentRoute ? "text-[#FC9C44]" : "text-[#667085]"}`}
+                    />
+                    Website Content
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 transition ${
+                      isWebsiteContentRoute ? "text-white/70" : "text-[#98A2B3]"
+                    } ${isWebsiteContentMenuVisible ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                {isWebsiteContentMenuVisible && (
+                  <div className="absolute left-0 right-0 top-full z-20 mt-2 grid gap-2 border border-[#E4E7EC] bg-white p-2 shadow-xl shadow-[#06133D]/10 lg:static lg:shadow-none">
+                    {[
+                      { to: "/admin/website-content/home", label: "Home" },
+                      { to: "/admin/website-content/about", label: "About" },
+                      { to: "/admin/website-content/services", label: "Services" },
+                      { to: "/admin/website-content/products", label: "Products" },
+                      { to: "/admin/website-content/contact", label: "Contact" },
+                    ].map((item) => {
+                      const isActive = location.pathname === item.to;
+                      return (
+                        <Link
+                          key={item.to}
+                          to={item.to}
+                          onClick={() => {
+                            setIsWebsiteContentMenuOpen(false);
+                            setIsWebsiteContentMenuHovered(false);
+                          }}
+                          className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm font-bold transition ${
+                            isActive
+                              ? "border-[#FC9C44] bg-[#FFF4E8] text-[#C96A13]"
+                              : "border-[#E4E7EC] bg-white text-[#344054] hover:border-[#FC9C44]/50"
+                          }`}
+                        >
+                          <ChevronRight className="h-3 w-3 shrink-0" />
+                          {item.label}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </nav>
 
             <div className="mt-auto hidden border-t border-[#E4E7EC] pt-4 lg:block">

@@ -1,6 +1,7 @@
 import { Target, GitMerge, BarChart2, Users, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { SectionHeading } from "@/components/site/SectionHeading";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
 /* ── Comparison table data ─────────────────────────────────── */
 const rows = [
@@ -55,7 +56,22 @@ const fadeUp = {
   }),
 };
 
+const iconMap: Record<number, React.ComponentType<any>> = {
+  0: Target,
+  1: GitMerge,
+  2: BarChart2,
+  3: Users,
+  4: TrendingUp,
+};
+
 export function WhyHegxcorp() {
+  const { data: sectionData } = useWebsiteSection("home.features");
+
+  const mappedPillars = (sectionData.items || []).map((item: any, idx: number) => ({
+    ...item,
+    icon: iconMap[idx % 5] || Target,
+    desc: item.description,
+  }));
   return (
     <section
       className="bg-[#FAFAF8] overflow-hidden"
@@ -71,9 +87,9 @@ export function WhyHegxcorp() {
           variants={fadeUp}
         >
           <SectionHeading
-            tagline="WHY CLIENTS SWITCH TO HEGXCORP"
-            heading="Most agencies run campaigns. We build growth systems."
-            description="The difference isn't the channels we use. It's how we connect strategy, execution, reporting and optimisation into one growth engine."
+            tagline={sectionData.tagline}
+            heading={sectionData.heading}
+            description={sectionData.description}
           />
         </motion.div>
 
@@ -188,7 +204,7 @@ export function WhyHegxcorp() {
 
         {/* ── Five outcome pillars ──────────────────────────── */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-px bg-[#EAEAEA] border border-[#EAEAEA] rounded-2xl overflow-hidden">
-          {pillars.map((p, i) => (
+          {mappedPillars.map((p: any, i: number) => (
             <motion.div
               key={p.title}
               initial="hidden"

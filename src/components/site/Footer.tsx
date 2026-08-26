@@ -1,6 +1,16 @@
 import { Link } from "@tanstack/react-router";
 import logoAsset from "@/assets/cropped-hegxcorp-logo-new-web.webp";
-import { Linkedin, Twitter, Instagram, Facebook, ArrowRight } from "lucide-react";
+import {
+  Linkedin,
+  Twitter,
+  Instagram,
+  Facebook,
+  ArrowRight,
+  Mail,
+  Phone,
+  MapPin,
+} from "lucide-react";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
 const footerLinks = {
   Services: [
@@ -34,6 +44,8 @@ const socialLinks = [
 ];
 
 export function Footer() {
+  const { data: footerData } = useWebsiteSection("home.footer");
+
   return (
     <footer className="bg-[#1D2742] relative overflow-hidden grain-overlay">
       {/*
@@ -132,6 +144,43 @@ export function Footer() {
                 revenue through SEO, paid advertising, and conversion optimisation.
               </p>
 
+              {/* Dynamic contact details in footer */}
+              {footerData && (
+                <div
+                  className="space-y-2 mt-1 text-[13px] text-white/55"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {footerData.phone && (
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-3.5 w-3.5 text-[#FC9C44] shrink-0" />
+                      <a
+                        href={`tel:${footerData.phone.replace(/\s+/g, "")}`}
+                        className="hover:text-white transition-colors"
+                      >
+                        {footerData.phone}
+                      </a>
+                    </div>
+                  )}
+                  {footerData.email && (
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-3.5 w-3.5 text-[#FC9C44] shrink-0" />
+                      <a
+                        href={`mailto:${footerData.email}`}
+                        className="hover:text-white transition-colors"
+                      >
+                        {footerData.email}
+                      </a>
+                    </div>
+                  )}
+                  {footerData.address && (
+                    <div className="flex items-start gap-2">
+                      <MapPin className="h-3.5 w-3.5 text-[#FC9C44] shrink-0 mt-0.5" />
+                      <span>{footerData.address}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* CTA pill */}
               <Link
                 to="/free-growth-audit"
@@ -209,7 +258,8 @@ export function Footer() {
               className="text-[11px] text-white/30 tracking-wide"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              © {new Date().getFullYear()} Hegxcorp. All rights reserved.
+              {footerData?.copyright ||
+                `© ${new Date().getFullYear()} Hegxcorp. All rights reserved.`}
             </p>
             <div className="flex items-center gap-6">
               {[

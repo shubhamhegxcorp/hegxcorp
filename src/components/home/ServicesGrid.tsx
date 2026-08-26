@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/site/SectionHeading";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
 /* ─────────────────────────────────────────────────────────────
    BLUEPRINT CONNECTOR SVG — updated for 2+4 layout
@@ -500,9 +501,25 @@ function ServiceCard({
 /* ─────────────────────────────────────────────────────────────
    EXPORT
 ───────────────────────────────────────────────────────────── */
+const visualMap: Record<string, React.ComponentType> = {
+  SEO: SEOVisual,
+  PPC: PPCVisual,
+  WEB: WebDevVisual,
+  CRO: CROVisual,
+  BRAND: BrandVisual,
+  SMM: SMMVisual,
+};
+
 export function ServicesGrid() {
-  const featured = services.slice(0, 2); // SEO + PPC
-  const standard = services.slice(2); // WEB, CRO, BRAND, SMM
+  const { data: sectionData } = useWebsiteSection("home.services");
+
+  const mappedServices = (sectionData.services || []).map((item: any) => ({
+    ...item,
+    Visual: visualMap[item.slug] || WebDevVisual,
+  }));
+
+  const featured = mappedServices.slice(0, 2); // SEO + PPC
+  const standard = mappedServices.slice(2); // WEB, CRO, BRAND, SMM
   return (
     <section
       className="bg-[#FAFAF8] overflow-hidden"
@@ -524,9 +541,9 @@ export function ServicesGrid() {
           className="mb-14 flex flex-col md:flex-row md:items-end md:justify-between gap-6"
         >
           <SectionHeading
-            tagline="One Growth Engine · Six Capabilities"
-            heading="Services built for growth"
-            description="Not six separate services. One integrated system where every capability strengthens the next."
+            tagline={sectionData.tagline}
+            heading={sectionData.heading}
+            description={sectionData.description}
           />
           <motion.div
             whileHover={{ scale: 1.03 }}

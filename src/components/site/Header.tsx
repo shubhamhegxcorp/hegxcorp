@@ -25,6 +25,7 @@ import logoAsset from "@/assets/cropped-hegxcorp-logo-new-web.webp";
 import { trackContactClick, trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
 type ServiceItem = {
   icon: React.ComponentType<{ className?: string }>;
@@ -132,6 +133,7 @@ const countries = [
 ];
 
 const navLinks = [
+  { label: "Products", to: "/products" as const },
   { label: "Case Studies", to: "/case-studies" as const },
   { label: "About Us", to: "/about" as const },
   { label: "Blog", to: "/blog" as const },
@@ -190,6 +192,7 @@ function StatCounter({
 }
 
 export function Header() {
+  const { data: contactDetails } = useWebsiteSection("contact.details");
   const [scrolled, setScrolled] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
@@ -263,12 +266,12 @@ export function Header() {
             <span className="text-white/60">24/7 Support</span>
             <span className="text-white/20">|</span>
             <a
-              href="tel:+918369207836"
+              href={`tel:${(contactDetails?.phone || "+918369207836").replace(/\s+/g, "")}`}
               onClick={() => trackContactClick("phone", "header_utility_phone")}
               className="flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
             >
               <Phone className="h-3.5 w-3.5" />
-              +91 836 920 7836
+              {contactDetails?.phone || "+91 836 920 7836"}
             </a>
           </div>
         </div>
@@ -326,9 +329,7 @@ export function Header() {
                 className={cn(
                   "fixed pt-3",
                   "transition-opacity duration-200",
-                  megaOpen
-                    ? "opacity-100 pointer-events-auto"
-                    : "opacity-0 pointer-events-none",
+                  megaOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
                 )}
                 style={{
                   top: megaMenuPos.top,
@@ -649,11 +650,11 @@ export function Header() {
               <ArrowRight className="h-4 w-4" />
             </Link>
             <a
-              href="tel:+918369207836"
+              href={`tel:${(contactDetails?.phone || "+918369207836").replace(/\s+/g, "")}`}
               onClick={() => trackContactClick("phone", "mobile_menu_support_phone")}
               className="flex items-center justify-center gap-2 text-sm text-muted-foreground"
             >
-              <Phone className="h-4 w-4" /> Support: +91 836 920 7836
+              <Phone className="h-4 w-4" /> Support: {contactDetails?.phone || "+91 836 920 7836"}
             </a>
           </div>
         </aside>

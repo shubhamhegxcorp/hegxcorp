@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
 /* ── Testimonials with result metrics attached ──────────── */
 const testimonials = [
@@ -53,6 +54,7 @@ const rowVariant = {
 };
 
 export function Testimonials() {
+  const { data: sectionData } = useWebsiteSection("home.testimonials");
   return (
     <section
       className="bg-white overflow-hidden"
@@ -79,14 +81,13 @@ export function Testimonials() {
               className="text-[11px] font-bold tracking-[0.16em] text-[#FC9C44] uppercase"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              Client Stories
+              {sectionData.tagline}
             </span>
             <h2
               className="mt-3 text-[clamp(24px,3.5vw,36px)] font-bold text-[#1D2742] leading-tight"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
-              Results that speak
-              <br className="hidden sm:block" /> for themselves.
+              {sectionData.heading}
             </h2>
           </div>
           <Link
@@ -101,7 +102,7 @@ export function Testimonials() {
 
         {/* ── Editorial strip — full-width rows, divided by rules ── */}
         <div className="divide-y divide-[#EAEAEA]">
-          {testimonials.map((t, i) => (
+          {(sectionData.testimonials || []).map((t: any, i: number) => (
             <motion.div
               key={t.id}
               custom={i}
@@ -117,13 +118,13 @@ export function Testimonials() {
                   className="text-[clamp(36px,5vw,52px)] font-black text-[#1D2742] leading-none tracking-tight"
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                 >
-                  {t.result.value}
+                  {t.resultValue}
                 </div>
                 <div
                   className="mt-1.5 text-[11px] font-bold tracking-[0.1em] text-[#FC9C44] uppercase"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
-                  {t.result.label}
+                  {t.resultLabel}
                 </div>
               </div>
 
@@ -134,7 +135,7 @@ export function Testimonials() {
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   <span className="text-[#C4C9D4] mr-0.5 font-serif text-[18px]">"</span>
-                  {t.quote}
+                  {t.review}
                   <span className="text-[#C4C9D4] ml-0.5 font-serif text-[18px]">"</span>
                 </p>
               </div>
@@ -160,7 +161,7 @@ export function Testimonials() {
                       className="text-xs text-[#9CA3AF]"
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     >
-                      {t.role}
+                      {t.designation}
                     </div>
                   </div>
                 </div>
