@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import {
   ArrowLeft,
   BookOpenText,
@@ -47,6 +47,7 @@ const blogPostCount = getBlogs().length;
 
 function AdminLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -141,6 +142,9 @@ function AdminLayout() {
         if (session.isAuthenticated) {
           setEmail(session.email ?? "");
           await loadInquiries();
+          if (location.pathname === "/admin" || location.pathname === "/admin/") {
+            void navigate({ to: "/admin/contact-leads" });
+          }
         } else {
           window.sessionStorage.removeItem(adminTabSessionKey);
         }
@@ -170,6 +174,7 @@ function AdminLayout() {
       setPassword("");
       window.sessionStorage.setItem(adminTabSessionKey, "active");
       await loadInquiries();
+      void navigate({ to: "/admin/contact-leads" });
     } catch (loginError) {
       console.error("Admin login failed:", loginError);
       setError(

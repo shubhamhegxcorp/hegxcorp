@@ -24,6 +24,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CaseStudiesIndexRouteImport } from './routes/case-studies.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ServiceWordpressRouteImport } from './routes/service.wordpress'
 import { Route as ServiceWebDevRouteImport } from './routes/service.web-dev'
 import { Route as ServiceWebAppRouteImport } from './routes/service.web-app'
@@ -123,6 +124,11 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => BlogRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const ServiceWordpressRoute = ServiceWordpressRouteImport.update({
   id: '/service/wordpress',
@@ -282,6 +288,7 @@ export interface FileRoutesByFullPath {
   '/service/web-app': typeof ServiceWebAppRoute
   '/service/web-dev': typeof ServiceWebDevRoute
   '/service/wordpress': typeof ServiceWordpressRoute
+  '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/case-studies/': typeof CaseStudiesIndexRoute
   '/admin/website-content/about': typeof AdminWebsiteContentAboutRoute
@@ -292,7 +299,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
   '/free-growth-audit': typeof FreeGrowthAuditRoute
@@ -321,6 +327,7 @@ export interface FileRoutesByTo {
   '/service/web-app': typeof ServiceWebAppRoute
   '/service/web-dev': typeof ServiceWebDevRoute
   '/service/wordpress': typeof ServiceWordpressRoute
+  '/admin': typeof AdminIndexRoute
   '/blog': typeof BlogIndexRoute
   '/case-studies': typeof CaseStudiesIndexRoute
   '/admin/website-content/about': typeof AdminWebsiteContentAboutRoute
@@ -363,6 +370,7 @@ export interface FileRoutesById {
   '/service/web-app': typeof ServiceWebAppRoute
   '/service/web-dev': typeof ServiceWebDevRoute
   '/service/wordpress': typeof ServiceWordpressRoute
+  '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/case-studies/': typeof CaseStudiesIndexRoute
   '/admin/website-content/about': typeof AdminWebsiteContentAboutRoute
@@ -406,6 +414,7 @@ export interface FileRouteTypes {
     | '/service/web-app'
     | '/service/web-dev'
     | '/service/wordpress'
+    | '/admin/'
     | '/blog/'
     | '/case-studies/'
     | '/admin/website-content/about'
@@ -416,7 +425,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/admin'
     | '/contact'
     | '/cookie-policy'
     | '/free-growth-audit'
@@ -445,6 +453,7 @@ export interface FileRouteTypes {
     | '/service/web-app'
     | '/service/web-dev'
     | '/service/wordpress'
+    | '/admin'
     | '/blog'
     | '/case-studies'
     | '/admin/website-content/about'
@@ -486,6 +495,7 @@ export interface FileRouteTypes {
     | '/service/web-app'
     | '/service/web-dev'
     | '/service/wordpress'
+    | '/admin/'
     | '/blog/'
     | '/case-studies/'
     | '/admin/website-content/about'
@@ -628,6 +638,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof BlogRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/service/wordpress': {
       id: '/service/wordpress'
@@ -807,6 +824,7 @@ interface AdminRouteChildren {
   AdminBlogPreviewRoute: typeof AdminBlogPreviewRoute
   AdminContactLeadsRoute: typeof AdminContactLeadsRoute
   AdminGrowthLeadsRoute: typeof AdminGrowthLeadsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   AdminWebsiteContentAboutRoute: typeof AdminWebsiteContentAboutRoute
   AdminWebsiteContentContactRoute: typeof AdminWebsiteContentContactRoute
   AdminWebsiteContentHomeRoute: typeof AdminWebsiteContentHomeRoute
@@ -820,6 +838,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminBlogPreviewRoute: AdminBlogPreviewRoute,
   AdminContactLeadsRoute: AdminContactLeadsRoute,
   AdminGrowthLeadsRoute: AdminGrowthLeadsRoute,
+  AdminIndexRoute: AdminIndexRoute,
   AdminWebsiteContentAboutRoute: AdminWebsiteContentAboutRoute,
   AdminWebsiteContentContactRoute: AdminWebsiteContentContactRoute,
   AdminWebsiteContentHomeRoute: AdminWebsiteContentHomeRoute,
