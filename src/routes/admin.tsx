@@ -79,7 +79,6 @@ function AdminLayout() {
   const isHomeContentRoute = location.pathname === "/admin/website-content/home";
   const isAboutContentRoute = location.pathname === "/admin/website-content/about";
   const isServicesContentRoute = location.pathname === "/admin/website-content/services";
-  const isProductsContentRoute = location.pathname === "/admin/website-content/products";
   const isContactContentRoute = location.pathname === "/admin/website-content/contact";
 
   const pageTitle = isContactLeadsRoute
@@ -98,11 +97,9 @@ function AdminLayout() {
                 ? "About Content CMS"
                 : isServicesContentRoute
                   ? "Services Content CMS"
-                  : isProductsContentRoute
-                    ? "Products Content CMS"
-                    : isContactContentRoute
-                      ? "Contact Content CMS"
-                      : "Admin";
+                  : isContactContentRoute
+                    ? "Contact Content CMS"
+                    : "Admin";
 
   async function loadInquiries() {
     setIsLoading(true);
@@ -578,7 +575,6 @@ function AdminLayout() {
                       { to: "/admin/website-content/home", label: "Home" },
                       { to: "/admin/website-content/about", label: "About" },
                       { to: "/admin/website-content/services", label: "Services" },
-                      { to: "/admin/website-content/products", label: "Products" },
                       { to: "/admin/website-content/contact", label: "Contact" },
                     ].map((item) => {
                       const isActive = location.pathname === item.to;

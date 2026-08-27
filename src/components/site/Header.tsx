@@ -133,7 +133,6 @@ const countries = [
 ];
 
 const navLinks = [
-  { label: "Products", to: "/products" as const },
   { label: "Case Studies", to: "/case-studies" as const },
   { label: "About Us", to: "/about" as const },
   { label: "Blog", to: "/blog" as const },

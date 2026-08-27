@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicesRouteImport } from './routes/services'
-import { Route as ProductsRouteImport } from './routes/products'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as IndustriesRouteImport } from './routes/industries'
 import { Route as FreeGrowthAuditRouteImport } from './routes/free-growth-audit'
@@ -46,7 +45,6 @@ import { Route as AdminBlogRouteImport } from './routes/admin.blog'
 import { Route as AdminAddBlogRouteImport } from './routes/admin.add-blog'
 import { Route as AdminAdLeadsRouteImport } from './routes/admin.ad-leads'
 import { Route as AdminWebsiteContentServicesRouteImport } from './routes/admin.website-content.services'
-import { Route as AdminWebsiteContentProductsRouteImport } from './routes/admin.website-content.products'
 import { Route as AdminWebsiteContentHomeRouteImport } from './routes/admin.website-content.home'
 import { Route as AdminWebsiteContentContactRouteImport } from './routes/admin.website-content.contact'
 import { Route as AdminWebsiteContentAboutRouteImport } from './routes/admin.website-content.about'
@@ -64,11 +62,6 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProductsRoute = ProductsRouteImport.update({
-  id: '/products',
-  path: '/products',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
@@ -237,12 +230,6 @@ const AdminWebsiteContentServicesRoute =
     path: '/website-content/services',
     getParentRoute: () => AdminRoute,
   } as any)
-const AdminWebsiteContentProductsRoute =
-  AdminWebsiteContentProductsRouteImport.update({
-    id: '/website-content/products',
-    path: '/website-content/products',
-    getParentRoute: () => AdminRoute,
-  } as any)
 const AdminWebsiteContentHomeRoute = AdminWebsiteContentHomeRouteImport.update({
   id: '/website-content/home',
   path: '/website-content/home',
@@ -272,7 +259,6 @@ export interface FileRoutesByFullPath {
   '/free-growth-audit': typeof FreeGrowthAuditRoute
   '/industries': typeof IndustriesRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/products': typeof ProductsRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
@@ -301,7 +287,6 @@ export interface FileRoutesByFullPath {
   '/admin/website-content/about': typeof AdminWebsiteContentAboutRoute
   '/admin/website-content/contact': typeof AdminWebsiteContentContactRoute
   '/admin/website-content/home': typeof AdminWebsiteContentHomeRoute
-  '/admin/website-content/products': typeof AdminWebsiteContentProductsRoute
   '/admin/website-content/services': typeof AdminWebsiteContentServicesRoute
 }
 export interface FileRoutesByTo {
@@ -313,7 +298,6 @@ export interface FileRoutesByTo {
   '/free-growth-audit': typeof FreeGrowthAuditRoute
   '/industries': typeof IndustriesRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/products': typeof ProductsRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
@@ -342,7 +326,6 @@ export interface FileRoutesByTo {
   '/admin/website-content/about': typeof AdminWebsiteContentAboutRoute
   '/admin/website-content/contact': typeof AdminWebsiteContentContactRoute
   '/admin/website-content/home': typeof AdminWebsiteContentHomeRoute
-  '/admin/website-content/products': typeof AdminWebsiteContentProductsRoute
   '/admin/website-content/services': typeof AdminWebsiteContentServicesRoute
 }
 export interface FileRoutesById {
@@ -357,7 +340,6 @@ export interface FileRoutesById {
   '/free-growth-audit': typeof FreeGrowthAuditRoute
   '/industries': typeof IndustriesRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/products': typeof ProductsRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
@@ -386,7 +368,6 @@ export interface FileRoutesById {
   '/admin/website-content/about': typeof AdminWebsiteContentAboutRoute
   '/admin/website-content/contact': typeof AdminWebsiteContentContactRoute
   '/admin/website-content/home': typeof AdminWebsiteContentHomeRoute
-  '/admin/website-content/products': typeof AdminWebsiteContentProductsRoute
   '/admin/website-content/services': typeof AdminWebsiteContentServicesRoute
 }
 export interface FileRouteTypes {
@@ -402,7 +383,6 @@ export interface FileRouteTypes {
     | '/free-growth-audit'
     | '/industries'
     | '/privacy-policy'
-    | '/products'
     | '/services'
     | '/sitemap.xml'
     | '/terms-of-service'
@@ -431,7 +411,6 @@ export interface FileRouteTypes {
     | '/admin/website-content/about'
     | '/admin/website-content/contact'
     | '/admin/website-content/home'
-    | '/admin/website-content/products'
     | '/admin/website-content/services'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -443,7 +422,6 @@ export interface FileRouteTypes {
     | '/free-growth-audit'
     | '/industries'
     | '/privacy-policy'
-    | '/products'
     | '/services'
     | '/sitemap.xml'
     | '/terms-of-service'
@@ -472,7 +450,6 @@ export interface FileRouteTypes {
     | '/admin/website-content/about'
     | '/admin/website-content/contact'
     | '/admin/website-content/home'
-    | '/admin/website-content/products'
     | '/admin/website-content/services'
   id:
     | '__root__'
@@ -486,7 +463,6 @@ export interface FileRouteTypes {
     | '/free-growth-audit'
     | '/industries'
     | '/privacy-policy'
-    | '/products'
     | '/services'
     | '/sitemap.xml'
     | '/terms-of-service'
@@ -515,7 +491,6 @@ export interface FileRouteTypes {
     | '/admin/website-content/about'
     | '/admin/website-content/contact'
     | '/admin/website-content/home'
-    | '/admin/website-content/products'
     | '/admin/website-content/services'
   fileRoutesById: FileRoutesById
 }
@@ -530,7 +505,6 @@ export interface RootRouteChildren {
   FreeGrowthAuditRoute: typeof FreeGrowthAuditRoute
   IndustriesRoute: typeof IndustriesRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
-  ProductsRoute: typeof ProductsRoute
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
@@ -569,13 +543,6 @@ declare module '@tanstack/react-router' {
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/products': {
-      id: '/products'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: typeof ProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy-policy': {
@@ -809,13 +776,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminWebsiteContentServicesRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/website-content/products': {
-      id: '/admin/website-content/products'
-      path: '/website-content/products'
-      fullPath: '/admin/website-content/products'
-      preLoaderRoute: typeof AdminWebsiteContentProductsRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/website-content/home': {
       id: '/admin/website-content/home'
       path: '/website-content/home'
@@ -850,7 +810,6 @@ interface AdminRouteChildren {
   AdminWebsiteContentAboutRoute: typeof AdminWebsiteContentAboutRoute
   AdminWebsiteContentContactRoute: typeof AdminWebsiteContentContactRoute
   AdminWebsiteContentHomeRoute: typeof AdminWebsiteContentHomeRoute
-  AdminWebsiteContentProductsRoute: typeof AdminWebsiteContentProductsRoute
   AdminWebsiteContentServicesRoute: typeof AdminWebsiteContentServicesRoute
 }
 
@@ -864,7 +823,6 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminWebsiteContentAboutRoute: AdminWebsiteContentAboutRoute,
   AdminWebsiteContentContactRoute: AdminWebsiteContentContactRoute,
   AdminWebsiteContentHomeRoute: AdminWebsiteContentHomeRoute,
-  AdminWebsiteContentProductsRoute: AdminWebsiteContentProductsRoute,
   AdminWebsiteContentServicesRoute: AdminWebsiteContentServicesRoute,
 }
 
@@ -907,7 +865,6 @@ const rootRouteChildren: RootRouteChildren = {
   FreeGrowthAuditRoute: FreeGrowthAuditRoute,
   IndustriesRoute: IndustriesRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
-  ProductsRoute: ProductsRoute,
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,
