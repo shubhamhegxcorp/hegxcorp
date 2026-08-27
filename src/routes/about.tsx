@@ -11,12 +11,12 @@ import {
 } from "lucide-react";
 
 import ahrefsLogo from "@/assets/about/ahrefs-logo.webp";
-import hegxcorpStory from "@/assets/about/hegxcorp-story.webp";
+import hegxcorpStory from "@/assets/about/team-loft.jpg";
 import majesticLogo from "@/assets/about/majestic-logo.webp";
 import mozLogo from "@/assets/about/moz-logo.webp";
-import ourMission from "@/assets/about/our-mission.webp";
-import ourStory from "@/assets/about/our-story.webp";
-import ourValues from "@/assets/about/our-values.webp";
+import ourMission from "@/assets/about/team-workshop.jpg";
+import ourStory from "@/assets/about/team-meeting.jpg";
+import ourValues from "@/assets/about/team-smiles.jpg";
 import searchEngineLandLogo from "@/assets/about/search-engine-land.webp";
 import semrushLogo from "@/assets/about/appreciation-3.webp";
 import similarwebLogo from "@/assets/about/similarweb-logo.webp";
