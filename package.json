@@ -8,6 +8,8 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
+    "start": "node .output/server/index.mjs",
+    "postinstall": "prisma generate",
     "db:visitor-tracking": "prisma db execute --file prisma/sql/add_visitor_tracking.sql",
     "db:blog-drafts": "node scripts/setup-blog-draft-table.mjs",
     "lint": "eslint .",
