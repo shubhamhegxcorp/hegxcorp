@@ -6,9 +6,12 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+// Detect target platform based on environment variables
+const nitroPreset = process.env.VERCEL ? "vercel" : "netlify";
+
 export default defineConfig({
   nitro: {
-    preset: "netlify",
+    preset: nitroPreset,
   },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
