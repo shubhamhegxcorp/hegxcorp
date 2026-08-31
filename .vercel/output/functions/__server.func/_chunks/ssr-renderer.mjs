@@ -13,6 +13,4 @@ function fetchViteEnv(viteEnvName, input, init) {
 function ssrRenderer({ req }) {
   return fetchViteEnv("ssr", req);
 }
-export {
-  ssrRenderer as default
-};
+export { ssrRenderer as default };

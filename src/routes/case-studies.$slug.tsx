@@ -21,22 +21,33 @@ export const Route = createFileRoute("/case-studies/$slug")({
     }
     return { study };
   },
-  head: ({ params }: { params: { slug: string } }) => {
+  head: ({ params }) => {
     const study = getCaseStudyBySlug(params.slug);
+    const title = study ? `${study.seoTitle} | Hegxcorp Case Study` : "Case Study | Hegxcorp";
+    const description = study
+      ? study.seoDescription
+      : "Detailed case history of performance growth, organic search architectures, and digital scaling engineered by Hegxcorp.";
+    const currentUrl = `https://hegxcorp.com/case-studies/${params.slug}`;
+
     return {
       meta: [
-        { title: study ? study.seoTitle : "Case Study | Hegxcorp" },
-        {
-          name: "description",
-          content: study
-            ? study.seoDescription
-            : "Detailed case history of performance growth, organic search architectures, and digital scaling engineered by Hegxcorp.",
-        },
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "article" },
+        { property: "og:url", content: currentUrl },
+        { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+        { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
       ],
+      links: [{ rel: "canonical", href: currentUrl }],
     };
   },
   component: CaseStudyDetailPage,
-} as never);
+});
 
 const gridColsMap: Record<number, string> = {
   1: "md:grid-cols-1",

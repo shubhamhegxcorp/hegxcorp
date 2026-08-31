@@ -1,4 +1,10 @@
-import { N as Node3, n as nodeInputRule, m as mergeAttributes, R as ResizableNodeView, g as getRenderedAttributes } from "./tiptap__core.mjs";
+import {
+  N as Node3,
+  n as nodeInputRule,
+  m as mergeAttributes,
+  R as ResizableNodeView,
+  g as getRenderedAttributes,
+} from "./tiptap__core.mjs";
 var inputRegex = /(?:^|\s)(!\[(.+|:?)]\((\S+)(?:(?:\s+)["'](\S+)["'])?\))$/;
 var Image = Node3.create({
   name: "image",
@@ -7,7 +13,7 @@ var Image = Node3.create({
       inline: false,
       allowBase64: false,
       HTMLAttributes: {},
-      resize: false
+      resize: false,
     };
   },
   inline() {
@@ -20,27 +26,27 @@ var Image = Node3.create({
   addAttributes() {
     return {
       src: {
-        default: null
+        default: null,
       },
       alt: {
-        default: null
+        default: null,
       },
       title: {
-        default: null
+        default: null,
       },
       width: {
-        default: null
+        default: null,
       },
       height: {
-        default: null
-      }
+        default: null,
+      },
     };
   },
   parseHTML() {
     return [
       {
-        tag: this.options.allowBase64 ? "img[src]" : 'img[src]:not([src^="data:"])'
-      }
+        tag: this.options.allowBase64 ? "img[src]" : 'img[src]:not([src^="data:"])',
+      },
     ];
   },
   renderHTML({ HTMLAttributes }) {
@@ -50,7 +56,7 @@ var Image = Node3.create({
     return helpers.createNode("image", {
       src: token.href,
       title: token.title,
-      alt: token.text
+      alt: token.text,
     });
   },
   renderMarkdown: (node) => {
@@ -107,7 +113,7 @@ var Image = Node3.create({
           return false;
         }
         const extensionAttributes = editor.extensionManager.attributes.filter(
-          (attribute) => attribute.type === updatedNode.type.name
+          (attribute) => attribute.type === updatedNode.type.name,
         );
         const newHTMLAttributes = getRenderedAttributes(updatedNode, extensionAttributes);
         Object.keys(previousHTMLAttributes).forEach((key) => {
@@ -143,20 +149,24 @@ var Image = Node3.create({
           if (pos === void 0) {
             return;
           }
-          this.editor.chain().setNodeSelection(pos).updateAttributes(this.name, {
-            width,
-            height
-          }).run();
+          this.editor
+            .chain()
+            .setNodeSelection(pos)
+            .updateAttributes(this.name, {
+              width,
+              height,
+            })
+            .run();
         },
         onUpdate,
         options: {
           directions,
           min: {
             width: minWidth,
-            height: minHeight
+            height: minHeight,
           },
-          preserveAspectRatio: alwaysPreserveAspectRatio === true
-        }
+          preserveAspectRatio: alwaysPreserveAspectRatio === true,
+        },
       });
       const dom = nodeView.dom;
       dom.style.visibility = "hidden";
@@ -170,12 +180,14 @@ var Image = Node3.create({
   },
   addCommands() {
     return {
-      setImage: (options) => ({ commands }) => {
-        return commands.insertContent({
-          type: this.name,
-          attrs: options
-        });
-      }
+      setImage:
+        (options) =>
+        ({ commands }) => {
+          return commands.insertContent({
+            type: this.name,
+            attrs: options,
+          });
+        },
     };
   },
   addInputRules() {
@@ -186,12 +198,10 @@ var Image = Node3.create({
         getAttributes: (match) => {
           const [, , alt, src, title] = match;
           return { src, alt, title };
-        }
-      })
+        },
+      }),
     ];
-  }
+  },
 });
 var index_default = Image;
-export {
-  index_default as i
-};
+export { index_default as i };

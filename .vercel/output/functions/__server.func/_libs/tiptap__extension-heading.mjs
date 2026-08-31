@@ -4,7 +4,7 @@ var Heading = Node3.create({
   addOptions() {
     return {
       levels: [1, 2, 3, 4, 5, 6],
-      HTMLAttributes: {}
+      HTMLAttributes: {},
     };
   },
   content: "inline*",
@@ -14,14 +14,14 @@ var Heading = Node3.create({
     return {
       level: {
         default: 1,
-        rendered: false
-      }
+        rendered: false,
+      },
     };
   },
   parseHTML() {
     return this.options.levels.map((level) => ({
       tag: `h${level}`,
-      attrs: { level }
+      attrs: { level },
     }));
   },
   renderHTML({ node, HTMLAttributes }) {
@@ -33,12 +33,14 @@ var Heading = Node3.create({
     return helpers.createNode(
       "heading",
       { level: token.depth || 1 },
-      helpers.parseInline(token.tokens || [])
+      helpers.parseInline(token.tokens || []),
     );
   },
   renderMarkdown: (node, h) => {
     var _a;
-    const level = ((_a = node.attrs) == null ? void 0 : _a.level) ? parseInt(node.attrs.level, 10) : 1;
+    const level = ((_a = node.attrs) == null ? void 0 : _a.level)
+      ? parseInt(node.attrs.level, 10)
+      : 1;
     const headingChars = "#".repeat(level);
     if (!node.content) {
       return "";
@@ -47,27 +49,31 @@ var Heading = Node3.create({
   },
   addCommands() {
     return {
-      setHeading: (attributes) => ({ commands }) => {
-        if (!this.options.levels.includes(attributes.level)) {
-          return false;
-        }
-        return commands.setNode(this.name, attributes);
-      },
-      toggleHeading: (attributes) => ({ commands }) => {
-        if (!this.options.levels.includes(attributes.level)) {
-          return false;
-        }
-        return commands.toggleNode(this.name, "paragraph", attributes);
-      }
+      setHeading:
+        (attributes) =>
+        ({ commands }) => {
+          if (!this.options.levels.includes(attributes.level)) {
+            return false;
+          }
+          return commands.setNode(this.name, attributes);
+        },
+      toggleHeading:
+        (attributes) =>
+        ({ commands }) => {
+          if (!this.options.levels.includes(attributes.level)) {
+            return false;
+          }
+          return commands.toggleNode(this.name, "paragraph", attributes);
+        },
     };
   },
   addKeyboardShortcuts() {
     return this.options.levels.reduce(
       (items, level) => ({
         ...items,
-        [`Mod-Alt-${level}`]: () => this.editor.commands.toggleHeading({ level })
+        [`Mod-Alt-${level}`]: () => this.editor.commands.toggleHeading({ level }),
       }),
-      {}
+      {},
     );
   },
   addInputRules() {
@@ -76,12 +82,10 @@ var Heading = Node3.create({
         find: new RegExp(`^(#{${Math.min(...this.options.levels)},${level}})\\s$`),
         type: this.type,
         getAttributes: {
-          level
-        }
+          level,
+        },
       });
     });
-  }
+  },
 });
-export {
-  Heading as H
-};
+export { Heading as H };

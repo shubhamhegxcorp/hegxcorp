@@ -7,11 +7,7 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 // Detect target platform based on environment variables
-const nitroPreset = process.env.VERCEL 
-  ? "vercel" 
-  : process.env.RENDER 
-  ? "node-server" 
-  : "netlify";
+const nitroPreset = process.env.VERCEL ? "vercel" : process.env.RENDER ? "node-server" : "netlify";
 
 export default defineConfig({
   nitro: {

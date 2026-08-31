@@ -20,56 +20,63 @@ import "async_hooks";
 import "crypto";
 import "stream";
 import "../_libs/isbot.mjs";
-const getWebsiteSection_createServerFn_handler = createServerRpc({
-  id: "096eae861181842f6b9c58fdf329b679903d62e276f435e2d50c4de2148abd8f",
-  name: "getWebsiteSection",
-  filename: "src/lib/website-content.ts"
-}, (opts) => getWebsiteSection.__executeServer(opts));
+const getWebsiteSection_createServerFn_handler = createServerRpc(
+  {
+    id: "096eae861181842f6b9c58fdf329b679903d62e276f435e2d50c4de2148abd8f",
+    name: "getWebsiteSection",
+    filename: "src/lib/website-content.ts",
+  },
+  (opts) => getWebsiteSection.__executeServer(opts),
+);
 const getWebsiteSection = createServerFn({
-  method: "POST"
-}).validator(objectType({
-  key: stringType()
-})).handler(getWebsiteSection_createServerFn_handler, async ({
-  data
-}) => {
-  const {
-    getWebsiteSection: get
-  } = await import("./website-content.server-DMtLWwi3.mjs");
-  return get(data.key);
-});
-const saveWebsiteSection_createServerFn_handler = createServerRpc({
-  id: "bd287953a9b9b285a2e93c5ade22438047a6fd33d89b4d08447dc39f567442b9",
-  name: "saveWebsiteSection",
-  filename: "src/lib/website-content.ts"
-}, (opts) => saveWebsiteSection.__executeServer(opts));
+  method: "POST",
+})
+  .validator(
+    objectType({
+      key: stringType(),
+    }),
+  )
+  .handler(getWebsiteSection_createServerFn_handler, async ({ data }) => {
+    const { getWebsiteSection: get } = await import("./website-content.server-DMtLWwi3.mjs");
+    return get(data.key);
+  });
+const saveWebsiteSection_createServerFn_handler = createServerRpc(
+  {
+    id: "bd287953a9b9b285a2e93c5ade22438047a6fd33d89b4d08447dc39f567442b9",
+    name: "saveWebsiteSection",
+    filename: "src/lib/website-content.ts",
+  },
+  (opts) => saveWebsiteSection.__executeServer(opts),
+);
 const saveWebsiteSection = createServerFn({
-  method: "POST"
-}).validator(objectType({
-  key: stringType(),
-  value: anyType()
-})).handler(saveWebsiteSection_createServerFn_handler, async ({
-  data
-}) => {
-  const {
-    saveWebsiteSection: save
-  } = await import("./website-content.server-DMtLWwi3.mjs");
-  return save(data.key, data.value);
-});
-const listWebsiteSections_createServerFn_handler = createServerRpc({
-  id: "5426afc6adc66c89bf460964cdef01750ec1b7318a5ba8b72615e21c932f3d44",
-  name: "listWebsiteSections",
-  filename: "src/lib/website-content.ts"
-}, (opts) => listWebsiteSections.__executeServer(opts));
+  method: "POST",
+})
+  .validator(
+    objectType({
+      key: stringType(),
+      value: anyType(),
+    }),
+  )
+  .handler(saveWebsiteSection_createServerFn_handler, async ({ data }) => {
+    const { saveWebsiteSection: save } = await import("./website-content.server-DMtLWwi3.mjs");
+    return save(data.key, data.value);
+  });
+const listWebsiteSections_createServerFn_handler = createServerRpc(
+  {
+    id: "5426afc6adc66c89bf460964cdef01750ec1b7318a5ba8b72615e21c932f3d44",
+    name: "listWebsiteSections",
+    filename: "src/lib/website-content.ts",
+  },
+  (opts) => listWebsiteSections.__executeServer(opts),
+);
 const listWebsiteSections = createServerFn({
-  method: "POST"
+  method: "POST",
 }).handler(listWebsiteSections_createServerFn_handler, async () => {
-  const {
-    listWebsiteSections: list
-  } = await import("./website-content.server-DMtLWwi3.mjs");
+  const { listWebsiteSections: list } = await import("./website-content.server-DMtLWwi3.mjs");
   return list();
 });
 export {
   getWebsiteSection_createServerFn_handler,
   listWebsiteSections_createServerFn_handler,
-  saveWebsiteSection_createServerFn_handler
+  saveWebsiteSection_createServerFn_handler,
 };

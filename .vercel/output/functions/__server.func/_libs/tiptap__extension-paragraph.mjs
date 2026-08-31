@@ -6,7 +6,7 @@ var Paragraph = Node3.create({
   priority: 1e3,
   addOptions() {
     return {
-      HTMLAttributes: {}
+      HTMLAttributes: {},
     };
   },
   group: "block",
@@ -23,8 +23,19 @@ var Paragraph = Node3.create({
       return helpers.parseChildren([tokens[0]]);
     }
     const content = helpers.parseInline(tokens);
-    const hasExplicitEmptyParagraphMarker = tokens.length === 1 && tokens[0].type === "text" && (tokens[0].raw === EMPTY_PARAGRAPH_MARKDOWN || tokens[0].text === EMPTY_PARAGRAPH_MARKDOWN || tokens[0].raw === NBSP_CHAR || tokens[0].text === NBSP_CHAR);
-    if (hasExplicitEmptyParagraphMarker && content.length === 1 && content[0].type === "text" && (content[0].text === EMPTY_PARAGRAPH_MARKDOWN || content[0].text === NBSP_CHAR)) {
+    const hasExplicitEmptyParagraphMarker =
+      tokens.length === 1 &&
+      tokens[0].type === "text" &&
+      (tokens[0].raw === EMPTY_PARAGRAPH_MARKDOWN ||
+        tokens[0].text === EMPTY_PARAGRAPH_MARKDOWN ||
+        tokens[0].raw === NBSP_CHAR ||
+        tokens[0].text === NBSP_CHAR);
+    if (
+      hasExplicitEmptyParagraphMarker &&
+      content.length === 1 &&
+      content[0].type === "text" &&
+      (content[0].text === EMPTY_PARAGRAPH_MARKDOWN || content[0].text === NBSP_CHAR)
+    ) {
       return helpers.createNode("paragraph", void 0, []);
     }
     return helpers.createNode("paragraph", void 0, content);
@@ -36,25 +47,31 @@ var Paragraph = Node3.create({
     }
     const content = Array.isArray(node.content) ? node.content : [];
     if (content.length === 0) {
-      const previousContent = Array.isArray((_a = ctx == null ? void 0 : ctx.previousNode) == null ? void 0 : _a.content) ? ctx.previousNode.content : [];
-      const previousNodeIsEmptyParagraph = ((_b = ctx == null ? void 0 : ctx.previousNode) == null ? void 0 : _b.type) === "paragraph" && previousContent.length === 0;
+      const previousContent = Array.isArray(
+        (_a = ctx == null ? void 0 : ctx.previousNode) == null ? void 0 : _a.content,
+      )
+        ? ctx.previousNode.content
+        : [];
+      const previousNodeIsEmptyParagraph =
+        ((_b = ctx == null ? void 0 : ctx.previousNode) == null ? void 0 : _b.type) ===
+          "paragraph" && previousContent.length === 0;
       return previousNodeIsEmptyParagraph ? EMPTY_PARAGRAPH_MARKDOWN : "";
     }
     return h.renderChildren(content);
   },
   addCommands() {
     return {
-      setParagraph: () => ({ commands }) => {
-        return commands.setNode(this.name);
-      }
+      setParagraph:
+        () =>
+        ({ commands }) => {
+          return commands.setNode(this.name);
+        },
     };
   },
   addKeyboardShortcuts() {
     return {
-      "Mod-Alt-0": () => this.editor.commands.setParagraph()
+      "Mod-Alt-0": () => this.editor.commands.setParagraph(),
     };
-  }
+  },
 });
-export {
-  Paragraph as P
-};
+export { Paragraph as P };

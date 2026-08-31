@@ -1,4 +1,16 @@
-import { M as Mark, a as markPasteRule, m as mergeAttributes, c as combineTransactionSteps, b as getChangedRanges, f as findChildrenInRange, d as getMarksBetween, e as getAttributes, P as PasteRule, h as markInputRule, I as InputRule } from "./tiptap__core.mjs";
+import {
+  M as Mark,
+  a as markPasteRule,
+  m as mergeAttributes,
+  c as combineTransactionSteps,
+  b as getChangedRanges,
+  f as findChildrenInRange,
+  d as getMarksBetween,
+  e as getAttributes,
+  P as PasteRule,
+  h as markInputRule,
+  I as InputRule,
+} from "./tiptap__core.mjs";
 import { r as registerCustomProtocol, t as tokenize, f as find, a as reset } from "./linkifyjs.mjs";
 import { P as Plugin, a as PluginKey } from "./prosemirror-state.mjs";
 var UNICODE_WHITESPACE_PATTERN = "[\0-   ᠎ -\u2029 　]";
@@ -18,9 +30,11 @@ function autolink(options) {
   return new Plugin({
     key: new PluginKey("autolink"),
     appendTransaction: (transactions, oldState, newState) => {
-      const docChanges = transactions.some((transaction) => transaction.docChanged) && !oldState.doc.eq(newState.doc);
-      const preventAutolink = transactions.some(
-        (transaction) => transaction.getMeta("preventAutolink")
+      const docChanges =
+        transactions.some((transaction) => transaction.docChanged) &&
+        !oldState.doc.eq(newState.doc);
+      const preventAutolink = transactions.some((transaction) =>
+        transaction.getMeta("preventAutolink"),
       );
       if (!docChanges || preventAutolink) {
         return;
@@ -32,7 +46,7 @@ function autolink(options) {
         const nodesInChangedRanges = findChildrenInRange(
           newState.doc,
           newRange,
-          (node) => node.isTextblock
+          (node) => node.isTextblock,
         );
         let textBlock;
         let textBeforeWhitespace;
@@ -42,7 +56,7 @@ function autolink(options) {
             textBlock.pos,
             textBlock.pos + textBlock.node.nodeSize,
             void 0,
-            " "
+            " ",
           );
         } else if (nodesInChangedRanges.length) {
           const endText = newState.doc.textBetween(newRange.from, newRange.to, " ", " ");
@@ -50,59 +64,65 @@ function autolink(options) {
             return;
           }
           textBlock = nodesInChangedRanges[0];
-          textBeforeWhitespace = newState.doc.textBetween(
-            textBlock.pos,
-            newRange.to,
-            void 0,
-            " "
-          );
+          textBeforeWhitespace = newState.doc.textBetween(textBlock.pos, newRange.to, void 0, " ");
         }
         if (textBlock && textBeforeWhitespace) {
-          const wordsBeforeWhitespace = textBeforeWhitespace.split(UNICODE_WHITESPACE_REGEX).filter(Boolean);
+          const wordsBeforeWhitespace = textBeforeWhitespace
+            .split(UNICODE_WHITESPACE_REGEX)
+            .filter(Boolean);
           if (wordsBeforeWhitespace.length <= 0) {
             return false;
           }
           const lastWordBeforeSpace = wordsBeforeWhitespace[wordsBeforeWhitespace.length - 1];
-          const lastWordAndBlockOffset = textBlock.pos + textBeforeWhitespace.lastIndexOf(lastWordBeforeSpace);
+          const lastWordAndBlockOffset =
+            textBlock.pos + textBeforeWhitespace.lastIndexOf(lastWordBeforeSpace);
           if (!lastWordBeforeSpace) {
             return false;
           }
-          const linksBeforeSpace = tokenize(lastWordBeforeSpace).map(
-            (t) => t.toObject(options.defaultProtocol)
+          const linksBeforeSpace = tokenize(lastWordBeforeSpace).map((t) =>
+            t.toObject(options.defaultProtocol),
           );
           if (!isValidLinkStructure(linksBeforeSpace)) {
             return false;
           }
-          linksBeforeSpace.filter((link) => link.isLink).map((link) => ({
-            ...link,
-            from: lastWordAndBlockOffset + link.start + 1,
-            to: lastWordAndBlockOffset + link.end + 1
-          })).filter((link) => {
-            if (!newState.schema.marks.code) {
-              return true;
-            }
-            return !newState.doc.rangeHasMark(link.from, link.to, newState.schema.marks.code);
-          }).filter((link) => options.validate(link.value)).filter((link) => options.shouldAutoLink(link.value)).forEach((link) => {
-            if (getMarksBetween(link.from, link.to, newState.doc).some(
-              (item) => item.mark.type === options.type
-            )) {
-              return;
-            }
-            tr.addMark(
-              link.from,
-              link.to,
-              options.type.create({
-                href: link.href
-              })
-            );
-          });
+          linksBeforeSpace
+            .filter((link) => link.isLink)
+            .map((link) => ({
+              ...link,
+              from: lastWordAndBlockOffset + link.start + 1,
+              to: lastWordAndBlockOffset + link.end + 1,
+            }))
+            .filter((link) => {
+              if (!newState.schema.marks.code) {
+                return true;
+              }
+              return !newState.doc.rangeHasMark(link.from, link.to, newState.schema.marks.code);
+            })
+            .filter((link) => options.validate(link.value))
+            .filter((link) => options.shouldAutoLink(link.value))
+            .forEach((link) => {
+              if (
+                getMarksBetween(link.from, link.to, newState.doc).some(
+                  (item) => item.mark.type === options.type,
+                )
+              ) {
+                return;
+              }
+              tr.addMark(
+                link.from,
+                link.to,
+                options.type.create({
+                  href: link.href,
+                }),
+              );
+            });
         }
       });
       if (!tr.steps.length) {
         return;
       }
       return tr;
-    }
+    },
   });
 }
 function clickHandler(options) {
@@ -149,12 +169,14 @@ function clickHandler(options) {
           }
         }
         return handled;
-      }
-    }
+      },
+    },
   });
 }
-var MARKDOWN_LINK_INPUT_REGEX = /\[([^[\]]+)\]\(((?:[^\s()]|\([^\s()]*\))+)(?:\s+(?:(["'])(.*?)\3|“(.*?)”|‘(.*?)’))?\)$/;
-var MARKDOWN_LINK_PASTE_REGEX = /\[([^[\]]+)\]\(((?:[^\s()]|\([^\s()]*\))+)(?:\s+(?:(["'])(.*?)\3|“(.*?)”|‘(.*?)’))?\)/g;
+var MARKDOWN_LINK_INPUT_REGEX =
+  /\[([^[\]]+)\]\(((?:[^\s()]|\([^\s()]*\))+)(?:\s+(?:(["'])(.*?)\3|“(.*?)”|‘(.*?)’))?\)$/;
+var MARKDOWN_LINK_PASTE_REGEX =
+  /\[([^[\]]+)\]\(((?:[^\s()]|\([^\s()]*\))+)(?:\s+(?:(["'])(.*?)\3|“(.*?)”|‘(.*?)’))?\)/g;
 function isEscaped(text, index) {
   let backslashes = 0;
   for (let position = index - 1; position >= 0 && text[position] === "\\"; position -= 1) {
@@ -201,8 +223,12 @@ function isConvertibleLink(text, match, isAllowedHref) {
 }
 function toRuleMatch(match) {
   var _a, _b;
-  const [linkSyntax, linkText, href, , straightQuotedTitle, curlyDoubleTitle, curlySingleTitle] = match;
-  const title = (_a = straightQuotedTitle != null ? straightQuotedTitle : curlyDoubleTitle) != null ? _a : curlySingleTitle;
+  const [linkSyntax, linkText, href, , straightQuotedTitle, curlyDoubleTitle, curlySingleTitle] =
+    match;
+  const title =
+    (_a = straightQuotedTitle != null ? straightQuotedTitle : curlyDoubleTitle) != null
+      ? _a
+      : curlySingleTitle;
   return {
     index: (_b = match.index) != null ? _b : 0,
     text: linkSyntax,
@@ -211,8 +237,8 @@ function toRuleMatch(match) {
       href,
       // an empty title ("") counts as no title, as in CommonMark
       title: title || null,
-      markdown: true
-    }
+      markdown: true,
+    },
   };
 }
 function matchesOverlap(a, b) {
@@ -222,7 +248,7 @@ function getMarkdownLinkAttributes(match) {
   var _a, _b, _c;
   return {
     href: (_a = match.data) == null ? void 0 : _a.href,
-    title: (_c = (_b = match.data) == null ? void 0 : _b.title) != null ? _c : null
+    title: (_c = (_b = match.data) == null ? void 0 : _b.title) != null ? _c : null,
   };
 }
 function markdownLinkInputRule(config) {
@@ -235,7 +261,7 @@ function markdownLinkInputRule(config) {
       return toRuleMatch(match);
     },
     type: config.type,
-    getAttributes: getMarkdownLinkAttributes
+    getAttributes: getMarkdownLinkAttributes,
   });
   return new InputRule({
     find: rule.find,
@@ -245,7 +271,7 @@ function markdownLinkInputRule(config) {
         props.state.tr.setMeta("preventAutolink", true);
       }
       return result;
-    }
+    },
   });
 }
 function markdownLinkPasteRule(config) {
@@ -258,24 +284,33 @@ function markdownLinkPasteRule(config) {
           markdownMatches.push(toRuleMatch(match));
         }
       }
-      const plainUrlMatches = ((_b = (_a = config.findPlainUrls) == null ? void 0 : _a.call(config, text)) != null ? _b : []).filter(
-        (urlMatch) => !markdownMatches.some((markdownMatch) => matchesOverlap(markdownMatch, urlMatch))
+      const plainUrlMatches = (
+        (_b = (_a = config.findPlainUrls) == null ? void 0 : _a.call(config, text)) != null
+          ? _b
+          : []
+      ).filter(
+        (urlMatch) =>
+          !markdownMatches.some((markdownMatch) => matchesOverlap(markdownMatch, urlMatch)),
       );
       return [...markdownMatches, ...plainUrlMatches];
     },
     type: config.type,
-    getAttributes: getMarkdownLinkAttributes
+    getAttributes: getMarkdownLinkAttributes,
   });
   return new PasteRule({
     find: rule.find,
     handler: (props) => {
       var _a;
       const result = rule.handler(props);
-      if (result !== null && props.state.tr.steps.length && ((_a = props.match.data) == null ? void 0 : _a.markdown)) {
+      if (
+        result !== null &&
+        props.state.tr.steps.length &&
+        ((_a = props.match.data) == null ? void 0 : _a.markdown)
+      ) {
         props.state.tr.setMeta("preventAutolink", true);
       }
       return result;
-    }
+    },
   });
 }
 function pasteHandler(options) {
@@ -295,16 +330,16 @@ function pasteHandler(options) {
           textContent += node.textContent;
         });
         const link = find(textContent, { defaultProtocol: options.defaultProtocol }).find(
-          (item) => item.isLink && item.value === textContent
+          (item) => item.isLink && item.value === textContent,
         );
-        if (!textContent || !link || shouldAutoLink !== void 0 && !shouldAutoLink(link.value)) {
+        if (!textContent || !link || (shouldAutoLink !== void 0 && !shouldAutoLink(link.value))) {
           return false;
         }
         return options.editor.commands.setMark(options.type, {
-          href: link.href
+          href: link.href,
         });
-      }
-    }
+      },
+    },
   });
 }
 function isAllowedUri(uri, protocols) {
@@ -318,7 +353,7 @@ function isAllowedUri(uri, protocols) {
     "callto",
     "sms",
     "cid",
-    "xmpp"
+    "xmpp",
   ];
   if (protocols) {
     protocols.forEach((protocol) => {
@@ -328,11 +363,16 @@ function isAllowedUri(uri, protocols) {
       }
     });
   }
-  return !uri || uri.replace(UNICODE_WHITESPACE_REGEX_GLOBAL, "").match(
-    new RegExp(
-      `^(?:(?:${allowedProtocols.map((protocol) => protocol.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")).join("|")}):|[^a-z]|[a-z0-9+.\\-]+(?:[^a-z+.\\-:]|$))`,
-      "i"
-    )
+  return (
+    !uri ||
+    uri
+      .replace(UNICODE_WHITESPACE_REGEX_GLOBAL, "")
+      .match(
+        new RegExp(
+          `^(?:(?:${allowedProtocols.map((protocol) => protocol.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")).join("|")}):|[^a-z]|[a-z0-9+.\\-]+(?:[^a-z+.\\-:]|$))`,
+          "i",
+        ),
+      )
   );
 }
 var Link = Mark.create({
@@ -344,7 +384,7 @@ var Link = Mark.create({
     if (this.options.validate && !this.options.shouldAutoLink) {
       this.options.shouldAutoLink = this.options.validate;
       console.warn(
-        "The `validate` option is deprecated. Rename to the `shouldAutoLink` option instead."
+        "The `validate` option is deprecated. Rename to the `shouldAutoLink` option instead.",
       );
     }
     this.options.protocols.forEach((protocol) => {
@@ -374,14 +414,14 @@ var Link = Mark.create({
       HTMLAttributes: {
         target: "_blank",
         rel: "noopener noreferrer nofollow",
-        class: null
+        class: null,
       },
       isAllowedUri: (url, ctx) => !!isAllowedUri(url, ctx.protocols),
       validate: (url) => !!url,
       shouldAutoLink: (url) => {
         const hasProtocol = /^[a-z][a-z0-9+.-]*:\/\//i.test(url);
         const hasMaybeProtocol = /^[a-z][a-z0-9+.-]*:/i.test(url);
-        if (hasProtocol || hasMaybeProtocol && !url.includes("@")) {
+        if (hasProtocol || (hasMaybeProtocol && !url.includes("@"))) {
           return true;
         }
         const urlWithoutUserinfo = url.includes("@") ? url.split("@").pop() : url;
@@ -393,7 +433,7 @@ var Link = Mark.create({
           return false;
         }
         return true;
-      }
+      },
     };
   },
   addAttributes() {
@@ -403,23 +443,23 @@ var Link = Mark.create({
         default: null,
         parseHTML(element) {
           return element.getAttribute("href");
-        }
+        },
       },
       target: {
         // Coerce `undefined` to `null` because `undefined` is an invalid attribute value
-        default: (_a = this.options.HTMLAttributes.target) != null ? _a : null
+        default: (_a = this.options.HTMLAttributes.target) != null ? _a : null,
       },
       rel: {
         // Coerce `undefined` to `null` because `undefined` is an invalid attribute value
-        default: (_b = this.options.HTMLAttributes.rel) != null ? _b : null
+        default: (_b = this.options.HTMLAttributes.rel) != null ? _b : null,
       },
       class: {
         // Coerce `undefined` to `null` because `undefined` is an invalid attribute value
-        default: (_c = this.options.HTMLAttributes.class) != null ? _c : null
+        default: (_c = this.options.HTMLAttributes.class) != null ? _c : null,
       },
       title: {
-        default: null
-      }
+        default: null,
+      },
     };
   },
   parseHTML() {
@@ -428,25 +468,34 @@ var Link = Mark.create({
         tag: "a[href]",
         getAttrs: (dom) => {
           const href = dom.getAttribute("href");
-          if (!href || !this.options.isAllowedUri(href, {
-            defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
-            protocols: this.options.protocols,
-            defaultProtocol: this.options.defaultProtocol
-          })) {
+          if (
+            !href ||
+            !this.options.isAllowedUri(href, {
+              defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
+              protocols: this.options.protocols,
+              defaultProtocol: this.options.defaultProtocol,
+            })
+          ) {
             return false;
           }
           return null;
-        }
-      }
+        },
+      },
     ];
   },
   renderHTML({ HTMLAttributes }) {
-    if (!this.options.isAllowedUri(HTMLAttributes.href, {
-      defaultValidate: (href) => !!isAllowedUri(href, this.options.protocols),
-      protocols: this.options.protocols,
-      defaultProtocol: this.options.defaultProtocol
-    })) {
-      return ["a", mergeAttributes(this.options.HTMLAttributes, { ...HTMLAttributes, href: "" }), 0];
+    if (
+      !this.options.isAllowedUri(HTMLAttributes.href, {
+        defaultValidate: (href) => !!isAllowedUri(href, this.options.protocols),
+        protocols: this.options.protocols,
+        defaultProtocol: this.options.defaultProtocol,
+      })
+    ) {
+      return [
+        "a",
+        mergeAttributes(this.options.HTMLAttributes, { ...HTMLAttributes, href: "" }),
+        0,
+      ];
     }
     return ["a", mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), 0];
   },
@@ -454,7 +503,7 @@ var Link = Mark.create({
   parseMarkdown: (token, helpers) => {
     return helpers.applyMark("link", helpers.parseInline(token.tokens || []), {
       href: token.href,
-      title: token.title || null
+      title: token.title || null,
     });
   },
   renderMarkdown: (node, h) => {
@@ -466,31 +515,48 @@ var Link = Mark.create({
   },
   addCommands() {
     return {
-      setLink: (attributes) => ({ chain }) => {
-        const { href } = attributes;
-        if (!this.options.isAllowedUri(href, {
-          defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
-          protocols: this.options.protocols,
-          defaultProtocol: this.options.defaultProtocol
-        })) {
-          return false;
-        }
-        return chain().setMark(this.name, attributes).setMeta("preventAutolink", true).run();
-      },
-      toggleLink: (attributes) => ({ chain }) => {
-        const { href } = attributes || {};
-        if (href && !this.options.isAllowedUri(href, {
-          defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
-          protocols: this.options.protocols,
-          defaultProtocol: this.options.defaultProtocol
-        })) {
-          return false;
-        }
-        return chain().toggleMark(this.name, attributes, { extendEmptyMarkRange: true }).setMeta("preventAutolink", true).run();
-      },
-      unsetLink: () => ({ chain }) => {
-        return chain().unsetMark(this.name, { extendEmptyMarkRange: true }).setMeta("preventAutolink", true).run();
-      }
+      setLink:
+        (attributes) =>
+        ({ chain }) => {
+          const { href } = attributes;
+          if (
+            !this.options.isAllowedUri(href, {
+              defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
+              protocols: this.options.protocols,
+              defaultProtocol: this.options.defaultProtocol,
+            })
+          ) {
+            return false;
+          }
+          return chain().setMark(this.name, attributes).setMeta("preventAutolink", true).run();
+        },
+      toggleLink:
+        (attributes) =>
+        ({ chain }) => {
+          const { href } = attributes || {};
+          if (
+            href &&
+            !this.options.isAllowedUri(href, {
+              defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
+              protocols: this.options.protocols,
+              defaultProtocol: this.options.defaultProtocol,
+            })
+          ) {
+            return false;
+          }
+          return chain()
+            .toggleMark(this.name, attributes, { extendEmptyMarkRange: true })
+            .setMeta("preventAutolink", true)
+            .run();
+        },
+      unsetLink:
+        () =>
+        ({ chain }) => {
+          return chain()
+            .unsetMark(this.name, { extendEmptyMarkRange: true })
+            .setMeta("preventAutolink", true)
+            .run();
+        },
     };
   },
   addInputRules() {
@@ -500,12 +566,13 @@ var Link = Mark.create({
     return [
       markdownLinkInputRule({
         type: this.type,
-        isAllowedHref: (href) => this.options.isAllowedUri(href, {
-          defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
-          protocols: this.options.protocols,
-          defaultProtocol: this.options.defaultProtocol
-        })
-      })
+        isAllowedHref: (href) =>
+          this.options.isAllowedUri(href, {
+            defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
+            protocols: this.options.protocols,
+            defaultProtocol: this.options.defaultProtocol,
+          }),
+      }),
     ];
   },
   addPasteRules() {
@@ -514,11 +581,13 @@ var Link = Mark.create({
       if (text) {
         const { protocols, defaultProtocol } = this.options;
         const links = find(text).filter(
-          (item) => item.isLink && this.options.isAllowedUri(item.value, {
-            defaultValidate: (href) => !!isAllowedUri(href, protocols),
-            protocols,
-            defaultProtocol
-          })
+          (item) =>
+            item.isLink &&
+            this.options.isAllowedUri(item.value, {
+              defaultValidate: (href) => !!isAllowedUri(href, protocols),
+              protocols,
+              defaultProtocol,
+            }),
         );
         links.forEach((link) => {
           if (!this.options.shouldAutoLink(link.value)) {
@@ -527,9 +596,9 @@ var Link = Mark.create({
           foundLinks.push({
             text: link.value,
             data: {
-              href: link.href
+              href: link.href,
             },
-            index: link.start
+            index: link.start,
           });
         });
       }
@@ -539,13 +608,14 @@ var Link = Mark.create({
       return [
         markdownLinkPasteRule({
           type: this.type,
-          isAllowedHref: (href) => this.options.isAllowedUri(href, {
-            defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
-            protocols: this.options.protocols,
-            defaultProtocol: this.options.defaultProtocol
-          }),
-          findPlainUrls
-        })
+          isAllowedHref: (href) =>
+            this.options.isAllowedUri(href, {
+              defaultValidate: (url) => !!isAllowedUri(url, this.options.protocols),
+              protocols: this.options.protocols,
+              defaultProtocol: this.options.defaultProtocol,
+            }),
+          findPlainUrls,
+        }),
       ];
     }
     return [
@@ -555,10 +625,10 @@ var Link = Mark.create({
         getAttributes: (match) => {
           var _a;
           return {
-            href: (_a = match.data) == null ? void 0 : _a.href
+            href: (_a = match.data) == null ? void 0 : _a.href,
           };
-        }
-      })
+        },
+      }),
     ];
   },
   addProseMirrorPlugins() {
@@ -569,22 +639,24 @@ var Link = Mark.create({
         autolink({
           type: this.type,
           defaultProtocol: this.options.defaultProtocol,
-          validate: (url) => this.options.isAllowedUri(url, {
-            defaultValidate: (href) => !!isAllowedUri(href, protocols),
-            protocols,
-            defaultProtocol
-          }),
-          shouldAutoLink: this.options.shouldAutoLink
-        })
+          validate: (url) =>
+            this.options.isAllowedUri(url, {
+              defaultValidate: (href) => !!isAllowedUri(href, protocols),
+              protocols,
+              defaultProtocol,
+            }),
+          shouldAutoLink: this.options.shouldAutoLink,
+        }),
       );
     }
     plugins.push(
       clickHandler({
         type: this.type,
         editor: this.editor,
-        openOnClick: this.options.openOnClick === "whenNotEditable" ? true : this.options.openOnClick,
-        enableClickSelection: this.options.enableClickSelection
-      })
+        openOnClick:
+          this.options.openOnClick === "whenNotEditable" ? true : this.options.openOnClick,
+        enableClickSelection: this.options.enableClickSelection,
+      }),
     );
     if (this.options.linkOnPaste) {
       plugins.push(
@@ -592,15 +664,12 @@ var Link = Mark.create({
           editor: this.editor,
           defaultProtocol: this.options.defaultProtocol,
           type: this.type,
-          shouldAutoLink: this.options.shouldAutoLink
-        })
+          shouldAutoLink: this.options.shouldAutoLink,
+        }),
       );
     }
     return plugins;
-  }
+  },
 });
 var index_default = Link;
-export {
-  Link as L,
-  index_default as i
-};
+export { Link as L, index_default as i };

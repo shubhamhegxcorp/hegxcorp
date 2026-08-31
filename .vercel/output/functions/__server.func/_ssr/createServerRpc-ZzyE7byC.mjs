@@ -4,9 +4,7 @@ var createServerRpc = (serverFnMeta, splitImportFn) => {
   return Object.assign(splitImportFn, {
     url,
     serverFnMeta,
-    [TSS_SERVER_FUNCTION]: true
+    [TSS_SERVER_FUNCTION]: true,
   });
 };
-export {
-  createServerRpc as c
-};
+export { createServerRpc as c };

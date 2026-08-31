@@ -1,5 +1,10 @@
 import { N as Node3, t as textblockTypeInputRule, m as mergeAttributes } from "./tiptap__core.mjs";
-import { P as Plugin, a as PluginKey, T as TextSelection, S as Selection } from "./prosemirror-state.mjs";
+import {
+  P as Plugin,
+  a as PluginKey,
+  T as TextSelection,
+  S as Selection,
+} from "./prosemirror-state.mjs";
 var DEFAULT_TAB_SIZE = 4;
 var backtickInputRegex = /^```([a-z]+)?[\s\n]$/;
 var tildeInputRegex = /^~~~([a-z]+)?[\s\n]$/;
@@ -14,7 +19,7 @@ var CodeBlock = Node3.create({
       defaultLanguage: null,
       enableTabIndentation: false,
       tabSize: DEFAULT_TAB_SIZE,
-      HTMLAttributes: {}
+      HTMLAttributes: {},
     };
   },
   content: "text*",
@@ -32,24 +37,28 @@ var CodeBlock = Node3.create({
           if (!languageClassPrefix) {
             return null;
           }
-          const classNames = [...((_a = element.firstElementChild) == null ? void 0 : _a.classList) || []];
-          const languages = classNames.filter((className) => className.startsWith(languageClassPrefix)).map((className) => className.replace(languageClassPrefix, ""));
+          const classNames = [
+            ...(((_a = element.firstElementChild) == null ? void 0 : _a.classList) || []),
+          ];
+          const languages = classNames
+            .filter((className) => className.startsWith(languageClassPrefix))
+            .map((className) => className.replace(languageClassPrefix, ""));
           const language = languages[0];
           if (!language) {
             return null;
           }
           return language;
         },
-        rendered: false
-      }
+        rendered: false,
+      },
     };
   },
   parseHTML() {
     return [
       {
         tag: "pre",
-        preserveWhitespace: "full"
-      }
+        preserveWhitespace: "full",
+      },
     ];
   },
   renderHTML({ node, HTMLAttributes }) {
@@ -59,22 +68,28 @@ var CodeBlock = Node3.create({
       [
         "code",
         {
-          class: node.attrs.language ? this.options.languageClassPrefix + node.attrs.language : null
+          class: node.attrs.language
+            ? this.options.languageClassPrefix + node.attrs.language
+            : null,
         },
-        0
-      ]
+        0,
+      ],
     ];
   },
   markdownTokenName: "code",
   parseMarkdown: (token, helpers) => {
     var _a, _b;
-    if (((_a = token.raw) == null ? void 0 : _a.startsWith("```")) === false && ((_b = token.raw) == null ? void 0 : _b.startsWith("~~~")) === false && token.codeBlockStyle !== "indented") {
+    if (
+      ((_a = token.raw) == null ? void 0 : _a.startsWith("```")) === false &&
+      ((_b = token.raw) == null ? void 0 : _b.startsWith("~~~")) === false &&
+      token.codeBlockStyle !== "indented"
+    ) {
       return [];
     }
     return helpers.createNode(
       "codeBlock",
       { language: token.lang || null },
-      token.text ? [helpers.createTextNode(token.text)] : []
+      token.text ? [helpers.createTextNode(token.text)] : [],
     );
   },
   renderMarkdown: (node, h) => {
@@ -93,12 +108,16 @@ var CodeBlock = Node3.create({
   },
   addCommands() {
     return {
-      setCodeBlock: (attributes) => ({ commands }) => {
-        return commands.setNode(this.name, attributes);
-      },
-      toggleCodeBlock: (attributes) => ({ commands }) => {
-        return commands.toggleNode(this.name, "paragraph", attributes);
-      }
+      setCodeBlock:
+        (attributes) =>
+        ({ commands }) => {
+          return commands.setNode(this.name, attributes);
+        },
+      toggleCodeBlock:
+        (attributes) =>
+        ({ commands }) => {
+          return commands.toggleNode(this.name, "paragraph", attributes);
+        },
     };
   },
   addKeyboardShortcuts() {
@@ -174,7 +193,8 @@ var CodeBlock = Node3.create({
               charCount += lines[i].length + 1;
             }
             const currentLine = lines[currentLineIndex];
-            const leadingSpaces = ((_a2 = currentLine.match(/^ */)) == null ? void 0 : _a2[0]) || "";
+            const leadingSpaces =
+              ((_a2 = currentLine.match(/^ */)) == null ? void 0 : _a2[0]) || "";
             const spacesToRemove = Math.min(leadingSpaces.length, tabSize);
             if (spacesToRemove === 0) {
               return true;
@@ -195,12 +215,14 @@ var CodeBlock = Node3.create({
           const { from, to } = selection;
           const text = state.doc.textBetween(from, to, "\n", "\n");
           const lines = text.split("\n");
-          const reverseIndentText = lines.map((line) => {
-            var _a2;
-            const leadingSpaces = ((_a2 = line.match(/^ */)) == null ? void 0 : _a2[0]) || "";
-            const spacesToRemove = Math.min(leadingSpaces.length, tabSize);
-            return line.slice(spacesToRemove);
-          }).join("\n");
+          const reverseIndentText = lines
+            .map((line) => {
+              var _a2;
+              const leadingSpaces = ((_a2 = line.match(/^ */)) == null ? void 0 : _a2[0]) || "";
+              const spacesToRemove = Math.min(leadingSpaces.length, tabSize);
+              return line.slice(spacesToRemove);
+            })
+            .join("\n");
           tr.replaceWith(from, to, state.schema.text(reverseIndentText));
           return true;
         });
@@ -221,10 +243,14 @@ var CodeBlock = Node3.create({
         if (!isAtEnd || !endsWithDoubleNewline) {
           return false;
         }
-        return editor.chain().command(({ tr }) => {
-          tr.delete($from.pos - 2, $from.pos);
-          return true;
-        }).exitCode().run();
+        return editor
+          .chain()
+          .command(({ tr }) => {
+            tr.delete($from.pos - 2, $from.pos);
+            return true;
+          })
+          .exitCode()
+          .run();
       },
       // exit node on arrow up if there is no node before it
       ArrowUp: ({ editor }) => {
@@ -273,7 +299,7 @@ var CodeBlock = Node3.create({
           });
         }
         return editor.commands.exitCode();
-      }
+      },
     };
   },
   addInputRules() {
@@ -282,16 +308,16 @@ var CodeBlock = Node3.create({
         find: backtickInputRegex,
         type: this.type,
         getAttributes: (match) => ({
-          language: match[1]
-        })
+          language: match[1],
+        }),
       }),
       textblockTypeInputRule({
         find: tildeInputRegex,
         type: this.type,
         getAttributes: (match) => ({
-          language: match[1]
-        })
-      })
+          language: match[1],
+        }),
+      }),
     ];
   },
   addProseMirrorPlugins() {
@@ -320,18 +346,16 @@ var CodeBlock = Node3.create({
             tr.replaceSelectionWith(this.type.create({ language }, textNode));
             if (tr.selection.$from.parent.type !== this.type) {
               tr.setSelection(
-                TextSelection.near(tr.doc.resolve(Math.max(0, tr.selection.from - 2)))
+                TextSelection.near(tr.doc.resolve(Math.max(0, tr.selection.from - 2))),
               );
             }
             tr.setMeta("paste", true);
             view.dispatch(tr);
             return true;
-          }
-        }
-      })
+          },
+        },
+      }),
     ];
-  }
+  },
 });
-export {
-  CodeBlock as C
-};
+export { CodeBlock as C };

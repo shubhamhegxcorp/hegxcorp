@@ -45,7 +45,7 @@ function getSql() {
     globalForSql.hegxcorpSql = Postgres(databaseUrl, {
       max: 5,
       idle_timeout: 20,
-      connect_timeout: 10
+      connect_timeout: 10,
     });
   }
   return globalForSql.hegxcorpSql;
@@ -54,7 +54,7 @@ function mapInquiry(row) {
   return {
     ...row,
     createdAt: new Date(row.createdAt).toISOString(),
-    updatedAt: new Date(row.updatedAt).toISOString()
+    updatedAt: new Date(row.updatedAt).toISOString(),
   };
 }
 async function createContactInquiry(input) {
@@ -198,8 +198,4 @@ async function updateSavedContactInquiryStatus(id, status) {
   }
   return mapInquiry(rows[0]);
 }
-export {
-  createContactInquiry,
-  listSavedContactInquiries,
-  updateSavedContactInquiryStatus
-};
+export { createContactInquiry, listSavedContactInquiries, updateSavedContactInquiryStatus };

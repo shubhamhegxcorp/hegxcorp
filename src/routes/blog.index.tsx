@@ -18,16 +18,34 @@ import { useState, useMemo, useEffect } from "react";
 export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
-      { title: "Growth Lab Insights - SEO, Paid Media & CRO | Hegxcorp" },
+      { title: "Growth Lab Insights — SEO, Paid Media & CRO | Hegxcorp" },
       {
         name: "description",
         content:
           "Strategic breakdowns of organic search systems, campaign performance optimization, and high-converting website engineering.",
       },
+      { property: "og:title", content: "Growth Lab Insights — SEO, Paid Media & CRO | Hegxcorp" },
+      {
+        property: "og:description",
+        content:
+          "Strategic breakdowns of organic search systems, campaign performance optimization, and high-converting website engineering.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://hegxcorp.com/blog" },
+      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Growth Lab Insights — SEO, Paid Media & CRO | Hegxcorp" },
+      {
+        name: "twitter:description",
+        content:
+          "Strategic breakdowns of organic search systems, campaign performance optimization, and high-converting website engineering.",
+      },
+      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
     ],
+    links: [{ rel: "canonical", href: "https://hegxcorp.com/blog" }],
   }),
   component: BlogPage,
-} as never);
+});
 
 function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("");

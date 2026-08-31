@@ -184,6 +184,8 @@ model BlogDraft {
   category       String[]
   tags           String[]
   featuredImage  String?
+  authorname     String  @default("Hegxcorp Team")
+  seotitle       String  @default("")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

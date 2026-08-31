@@ -72,8 +72,8 @@ function getSql() {
       // Any single query that runs longer than 20s is aborted with a clear
       // error instead of hanging the HTTP request into a gateway timeout.
       connection: {
-        statement_timeout: 2e4
-      }
+        statement_timeout: 2e4,
+      },
     });
   }
   return globalForSql.hegxcorpSql;
@@ -140,7 +140,7 @@ function mapDraft(row) {
     authorname: row.authorname,
     seotitle: row.seotitle,
     createdAt: new Date(row.createdAt).toISOString(),
-    updatedAt: new Date(row.updatedAt).toISOString()
+    updatedAt: new Date(row.updatedAt).toISOString(),
   };
 }
 async function saveBlogDraft(input) {
@@ -295,5 +295,5 @@ export {
   getBlogDraftById,
   listBlogDrafts,
   listPublishedBlogDrafts,
-  saveBlogDraft
+  saveBlogDraft,
 };

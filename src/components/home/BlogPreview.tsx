@@ -89,12 +89,6 @@ export function BlogPreview() {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Left Side */}
               <div className="space-y-6 text-left">
-                {/* <span
-                  className="inline-flex items-center gap-2 rounded-full bg-[#FFF4E8] text-[#FC9C44] px-4 py-1.5 text-xs font-bold uppercase tracking-wider"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                </span> */}
-
                 <h3
                   className="text-3xl lg:text-4xl font-bold text-[#1D2742] tracking-tight"
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}

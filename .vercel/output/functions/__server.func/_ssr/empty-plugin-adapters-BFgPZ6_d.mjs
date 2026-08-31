@@ -1,6 +1,3 @@
 var pluginSerializationAdapters = [];
 var hasPluginAdapters = false;
-export {
-  hasPluginAdapters,
-  pluginSerializationAdapters
-};
+export { hasPluginAdapters, pluginSerializationAdapters };

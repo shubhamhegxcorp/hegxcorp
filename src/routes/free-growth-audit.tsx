@@ -26,22 +26,34 @@ import { submitGrowthAuditInquiry } from "@/lib/growth-audit-inquiries";
 export const Route = createFileRoute("/free-growth-audit")({
   head: () => ({
     meta: [
-      { title: "Get Your Free Custom Growth Audit | Hegxcorp" },
+      { title: "Free Digital Growth & SEO Audit | Hegxcorp" },
       {
         name: "description",
         content:
-          "Request a custom-tailored search optimization, advertising, and conversion rate audit from our consultants. Free of charge, no obligation.",
+          "Request a comprehensive growth and conversion audit from Hegxcorp. We analyze your SEO ranking potential, paid advertising efficiency, and website conversion funnels.",
       },
-      { property: "og:title", content: "Free Custom Digital Growth Audit | Hegxcorp" },
+      { property: "og:title", content: "Free Digital Growth & SEO Audit | Hegxcorp" },
       {
         property: "og:description",
         content:
-          "Optimize your customer acquisition funnel. Claim your free SEO and PPC growth audit.",
+          "Request a comprehensive growth and conversion audit from Hegxcorp. We analyze your SEO ranking potential, paid advertising efficiency, and website conversion funnels.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://hegxcorp.com/free-growth-audit" },
+      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Free Digital Growth & SEO Audit | Hegxcorp" },
+      {
+        name: "twitter:description",
+        content:
+          "Request a comprehensive growth and conversion audit from Hegxcorp. We analyze your SEO ranking potential, paid advertising efficiency, and website conversion funnels.",
+      },
+      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
     ],
+    links: [{ rel: "canonical", href: "https://hegxcorp.com/free-growth-audit" }],
   }),
   component: FreeGrowthAuditPage,
-} as never);
+});
 
 const auditSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),

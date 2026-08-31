@@ -37,7 +37,7 @@ function getSql() {
     globalForSql.hegxcorpSql = Postgres(databaseUrl, {
       max: 5,
       idle_timeout: 20,
-      connect_timeout: 10
+      connect_timeout: 10,
     });
   }
   return globalForSql.hegxcorpSql;
@@ -53,7 +53,9 @@ function mapReportRow(row) {
     leadsGenerated: toNumber(row.leadsGenerated),
     genuineLeads: toNumber(row.genuineLeads),
     newLeads: toNumber(row.newLeads),
-    latestActivityAt: row.latestActivityAt ? new Date(row.latestActivityAt).toISOString() : (/* @__PURE__ */ new Date(0)).toISOString()
+    latestActivityAt: row.latestActivityAt
+      ? new Date(row.latestActivityAt).toISOString()
+      : /* @__PURE__ */ new Date(0).toISOString(),
   };
 }
 async function listSavedAdFunnelReport() {
@@ -152,6 +154,4 @@ async function listSavedAdFunnelReport() {
   `;
   return rows.map(mapReportRow);
 }
-export {
-  listSavedAdFunnelReport
-};
+export { listSavedAdFunnelReport };

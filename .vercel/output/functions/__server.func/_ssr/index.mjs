@@ -5,10 +5,7 @@ function record(error) {
 }
 if (typeof globalThis.addEventListener === "function") {
   globalThis.addEventListener("error", (event) => record(event.error ?? event));
-  globalThis.addEventListener(
-    "unhandledrejection",
-    (event) => record(event.reason)
-  );
+  globalThis.addEventListener("unhandledrejection", (event) => record(event.reason));
 }
 function consumeLastCapturedError() {
   if (!lastCapturedError) return void 0;
@@ -53,9 +50,9 @@ function renderErrorPage() {
 let serverEntryPromise;
 async function getServerEntry() {
   if (!serverEntryPromise) {
-    serverEntryPromise = import("./server-yv7ZiuMh.mjs").then((n) => n.s).then(
-      (m) => m.default ?? m
-    );
+    serverEntryPromise = import("./server-yv7ZiuMh.mjs")
+      .then((n) => n.s)
+      .then((m) => m.default ?? m);
   }
   return serverEntryPromise;
 }
@@ -70,7 +67,7 @@ async function normalizeCatastrophicSsrResponse(response) {
   console.error(consumeLastCapturedError() ?? new Error(`h3 swallowed SSR error: ${body}`));
   return new Response(renderErrorPage(), {
     status: 500,
-    headers: { "content-type": "text/html; charset=utf-8" }
+    headers: { "content-type": "text/html; charset=utf-8" },
   });
 }
 const server = {
@@ -83,11 +80,9 @@ const server = {
       console.error(error);
       return new Response(renderErrorPage(), {
         status: 500,
-        headers: { "content-type": "text/html; charset=utf-8" }
+        headers: { "content-type": "text/html; charset=utf-8" },
       });
     }
-  }
+  },
 };
-export {
-  server as default
-};
+export { server as default };

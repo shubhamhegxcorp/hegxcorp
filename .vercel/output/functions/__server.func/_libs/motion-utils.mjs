@@ -1,21 +1,16 @@
 function addUniqueItem(arr, item) {
-  if (arr.indexOf(item) === -1)
-    arr.push(item);
+  if (arr.indexOf(item) === -1) arr.push(item);
 }
 function removeItem(arr, item) {
   const index = arr.indexOf(item);
-  if (index > -1)
-    arr.splice(index, 1);
+  if (index > -1) arr.splice(index, 1);
 }
 const clamp = (min, max, v) => {
-  if (v > max)
-    return max;
-  if (v < min)
-    return min;
+  if (v > max) return max;
+  if (v < min) return min;
   return v;
 };
-let invariant = () => {
-};
+let invariant = () => {};
 const MotionGlobalConfig = {};
 const isNumericalString = (v) => /^-?(?:\d+(?:\.\d+)?|\.\d+)$/u.test(v);
 const isObject = (value) => typeof value === "object" && value !== null;
@@ -24,8 +19,7 @@ const isZeroValueString = (v) => /^0[^.\s]+$/u.test(v);
 function memo(callback) {
   let result;
   return () => {
-    if (result === void 0)
-      result = callback();
+    if (result === void 0) result = callback();
     return result;
   };
 }
@@ -45,8 +39,7 @@ class SubscriptionManager {
   }
   notify(a, b, c) {
     const numSubscriptions = this.subscriptions.length;
-    if (!numSubscriptions)
-      return;
+    if (!numSubscriptions) return;
     if (numSubscriptions === 1) {
       this.subscriptions[0](a, b, c);
     } else {
@@ -65,12 +58,14 @@ class SubscriptionManager {
 }
 const secondsToMilliseconds = /* @__NO_SIDE_EFFECTS__ */ (seconds) => seconds * 1e3;
 const millisecondsToSeconds = /* @__NO_SIDE_EFFECTS__ */ (milliseconds) => milliseconds / 1e3;
-const velocityPerSecond = /* @__NO_SIDE_EFFECTS__ */ (velocity, frameDuration) => frameDuration ? velocity * (1e3 / frameDuration) : 0;
+const velocityPerSecond = /* @__NO_SIDE_EFFECTS__ */ (velocity, frameDuration) =>
+  frameDuration ? velocity * (1e3 / frameDuration) : 0;
 const wrap = (min, max, v) => {
   const rangeSize = max - min;
-  return ((v - min) % rangeSize + rangeSize) % rangeSize + min;
+  return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
 };
-const calcBezier = (t, a1, a2) => (((1 - 3 * a2 + 3 * a1) * t + (3 * a2 - 6 * a1)) * t + 3 * a1) * t;
+const calcBezier = (t, a1, a2) =>
+  (((1 - 3 * a2 + 3 * a1) * t + (3 * a2 - 6 * a1)) * t + 3 * a1) * t;
 const subdivisionPrecision = 1e-7;
 const subdivisionMaxIterations = 12;
 function binarySubdivide(x, lowerBound, upperBound, mX1, mX2) {
@@ -90,17 +85,18 @@ function binarySubdivide(x, lowerBound, upperBound, mX1, mX2) {
 }
 // @__NO_SIDE_EFFECTS__
 function cubicBezier(mX1, mY1, mX2, mY2) {
-  if (mX1 === mY1 && mX2 === mY2)
-    return noop;
+  if (mX1 === mY1 && mX2 === mY2) return noop;
   const getTForX = (aX) => binarySubdivide(aX, 0, 1, mX1, mX2);
-  return (t) => t === 0 || t === 1 ? t : calcBezier(getTForX(t), mY1, mY2);
+  return (t) => (t === 0 || t === 1 ? t : calcBezier(getTForX(t), mY1, mY2));
 }
-const mirrorEasing = /* @__NO_SIDE_EFFECTS__ */ (easing) => (p) => p <= 0.5 ? easing(2 * p) / 2 : (2 - easing(2 * (1 - p))) / 2;
+const mirrorEasing = /* @__NO_SIDE_EFFECTS__ */ (easing) => (p) =>
+  p <= 0.5 ? easing(2 * p) / 2 : (2 - easing(2 * (1 - p))) / 2;
 const reverseEasing = /* @__NO_SIDE_EFFECTS__ */ (easing) => (p) => 1 - easing(1 - p);
 const backOut = /* @__PURE__ */ cubicBezier(0.33, 1.53, 0.69, 0.99);
 const backIn = /* @__PURE__ */ reverseEasing(backOut);
 const backInOut = /* @__PURE__ */ mirrorEasing(backIn);
-const anticipate = (p) => p >= 1 ? 1 : (p *= 2) < 1 ? 0.5 * backIn(p) : 0.5 * (2 - Math.pow(2, -10 * (p - 1)));
+const anticipate = (p) =>
+  p >= 1 ? 1 : (p *= 2) < 1 ? 0.5 * backIn(p) : 0.5 * (2 - Math.pow(2, -10 * (p - 1)));
 const circIn = (p) => 1 - Math.sin(Math.acos(p));
 const circOut = /* @__PURE__ */ reverseEasing(circIn);
 const circInOut = /* @__PURE__ */ mirrorEasing(circIn);
@@ -114,7 +110,8 @@ const isEasingArray = /* @__NO_SIDE_EFFECTS__ */ (ease) => {
 function getEasingForSegment(easing, i) {
   return /* @__PURE__ */ isEasingArray(easing) ? easing[wrap(0, easing.length, i)] : easing;
 }
-const isBezierDefinition = /* @__NO_SIDE_EFFECTS__ */ (easing) => Array.isArray(easing) && typeof easing[0] === "number";
+const isBezierDefinition = /* @__NO_SIDE_EFFECTS__ */ (easing) =>
+  Array.isArray(easing) && typeof easing[0] === "number";
 const easingLookup = {
   linear: noop,
   easeIn,
@@ -126,7 +123,7 @@ const easingLookup = {
   backIn,
   backInOut,
   backOut,
-  anticipate
+  anticipate,
 };
 const isValidEasing = (easing) => {
   return typeof easing === "string";
@@ -167,5 +164,5 @@ export {
   isObject as u,
   velocityPerSecond as v,
   circOut as w,
-  addUniqueItem as x
+  addUniqueItem as x,
 };

@@ -1,4 +1,11 @@
-import { E as Extension, i as callOrReturn, j as getExtensionField, k as isNodeEmpty, b as getChangedRanges, l as isNodeSelection } from "./tiptap__core.mjs";
+import {
+  E as Extension,
+  i as callOrReturn,
+  j as getExtensionField,
+  k as isNodeEmpty,
+  b as getChangedRanges,
+  l as isNodeSelection,
+} from "./tiptap__core.mjs";
 import { a as PluginKey, P as Plugin } from "./prosemirror-state.mjs";
 import { d as dropCursor } from "./prosemirror-dropcursor.mjs";
 import { D as DecorationSet, a as Decoration } from "./prosemirror-view.mjs";
@@ -12,13 +19,13 @@ Extension.create({
       autoTrim: true,
       mode: "textSize",
       textCounter: (text) => text.length,
-      wordCounter: (text) => text.split(" ").filter((word) => word !== "").length
+      wordCounter: (text) => text.split(" ").filter((word) => word !== "").length,
     };
   },
   addStorage() {
     return {
       characters: () => 0,
-      words: () => 0
+      words: () => 0,
     };
   },
   onBeforeCreate() {
@@ -58,7 +65,7 @@ Extension.create({
             const from = 0;
             const to = over;
             console.warn(
-              `[CharacterCount] Initial content exceeded limit of ${limit} characters. Content was automatically trimmed.`
+              `[CharacterCount] Initial content exceeded limit of ${limit} characters. Content was automatically trimmed.`,
             );
             const tr = newState.tr.deleteRange(from, to);
             initialEvaluationDone = true;
@@ -96,10 +103,10 @@ Extension.create({
             return false;
           }
           return true;
-        }
-      })
+        },
+      }),
     ];
-  }
+  },
 });
 var Dropcursor = Extension.create({
   name: "dropCursor",
@@ -107,19 +114,19 @@ var Dropcursor = Extension.create({
     return {
       color: "currentColor",
       width: 1,
-      class: void 0
+      class: void 0,
     };
   },
   addProseMirrorPlugins() {
     return [dropCursor(this.options)];
-  }
+  },
 });
 Extension.create({
   name: "focus",
   addOptions() {
     return {
       className: "has-focus",
-      mode: "all"
+      mode: "all",
     };
   },
   addProseMirrorPlugins() {
@@ -157,22 +164,24 @@ Extension.create({
                 return false;
               }
               currentLevel += 1;
-              const outOfScope = this.options.mode === "deepest" && maxLevels - currentLevel > 0 || this.options.mode === "shallowest" && currentLevel > 1;
+              const outOfScope =
+                (this.options.mode === "deepest" && maxLevels - currentLevel > 0) ||
+                (this.options.mode === "shallowest" && currentLevel > 1);
               if (outOfScope) {
                 return this.options.mode === "deepest";
               }
               decorations.push(
                 Decoration.node(pos, pos + node.nodeSize, {
-                  class: this.options.className
-                })
+                  class: this.options.className,
+                }),
               );
             });
             return DecorationSet.create(doc, decorations);
-          }
-        }
-      })
+          },
+        },
+      }),
     ];
-  }
+  },
 });
 var Gapcursor = Extension.create({
   name: "gapCursor",
@@ -184,12 +193,15 @@ var Gapcursor = Extension.create({
     const context = {
       name: extension.name,
       options: extension.options,
-      storage: extension.storage
+      storage: extension.storage,
     };
     return {
-      allowGapCursor: (_a = callOrReturn(getExtensionField(extension, "allowGapCursor", context))) != null ? _a : null
+      allowGapCursor:
+        (_a = callOrReturn(getExtensionField(extension, "allowGapCursor", context))) != null
+          ? _a
+          : null,
     };
-  }
+  },
 });
 var DEFAULT_DATA_ATTRIBUTE = "placeholder";
 var PLUGIN_KEY = new PluginKey("tiptap__placeholder");
@@ -202,7 +214,7 @@ function createPlaceholderDecoration(options) {
     node,
     isEmptyDoc,
     hasAnchor,
-    classes: { emptyNode, emptyEditor }
+    classes: { emptyNode, emptyEditor },
   } = options;
   const classes = [emptyNode];
   if (isEmptyDoc) {
@@ -210,26 +222,21 @@ function createPlaceholderDecoration(options) {
   }
   return Decoration.node(pos, pos + node.nodeSize, {
     class: classes.join(" "),
-    [dataAttribute]: typeof placeholder === "function" ? placeholder({
-      editor,
-      node,
-      pos,
-      hasAnchor
-    }) : placeholder
+    [dataAttribute]:
+      typeof placeholder === "function"
+        ? placeholder({
+            editor,
+            node,
+            pos,
+            hasAnchor,
+          })
+        : placeholder,
   });
 }
 function resolveEmptyNodeClass(emptyNodeClass, props) {
   return typeof emptyNodeClass === "function" ? emptyNodeClass(props) : emptyNodeClass;
 }
-function scanRangeForDecorations({
-  editor,
-  options,
-  dataAttribute,
-  doc,
-  selection,
-  from,
-  to
-}) {
+function scanRangeForDecorations({ editor, options, dataAttribute, doc, selection, from, to }) {
   const { anchor } = selection;
   const decorations = [];
   const isEmptyDoc = editor.isEmpty;
@@ -253,25 +260,19 @@ function scanRangeForDecorations({
               editor,
               node,
               pos,
-              hasAnchor
-            })
+              hasAnchor,
+            }),
           },
           node,
-          pos
-        })
+          pos,
+        }),
       );
     }
     return options.includeChildren;
   });
   return decorations;
 }
-function buildPlaceholderDecorations({
-  editor,
-  options,
-  dataAttribute,
-  doc,
-  selection
-}) {
+function buildPlaceholderDecorations({ editor, options, dataAttribute, doc, selection }) {
   const active = editor.isEditable || !options.showOnlyWhenEditable;
   if (!active) {
     return null;
@@ -299,12 +300,12 @@ function buildPlaceholderDecorations({
               editor,
               node,
               pos: nodeStart,
-              hasAnchor
-            })
+              hasAnchor,
+            }),
           },
           node,
-          pos: nodeStart
-        })
+          pos: nodeStart,
+        }),
       );
     }
   } else {
@@ -316,8 +317,8 @@ function buildPlaceholderDecorations({
         doc,
         selection,
         from: 0,
-        to: doc.content.size
-      })
+        to: doc.content.size,
+      }),
     );
   }
   return DecorationSet.create(doc, decorations);
@@ -340,7 +341,7 @@ function resolveTopLevelRange(doc, pos) {
 function toContentRelativeRange(doc, range) {
   return {
     from: Math.max(0, range.from - 1),
-    to: Math.min(doc.content.size, range.to - 1)
+    to: Math.min(doc.content.size, range.to - 1),
   };
 }
 function getTopLevelBlocksInRange(doc, from, to) {
@@ -380,15 +381,15 @@ function collectBlocksForChange(doc, change) {
     ranges.push(
       toContentRelativeRange(
         doc,
-        resolveTopLevelRange(doc, Math.min(change.to, doc.content.size + 1) - 1)
-      )
+        resolveTopLevelRange(doc, Math.min(change.to, doc.content.size + 1) - 1),
+      ),
     );
   } else if (change.from < doc.content.size + 1) {
     ranges.push(
       toContentRelativeRange(
         doc,
-        resolveTopLevelRange(doc, Math.min(change.from + 1, doc.content.size))
-      )
+        resolveTopLevelRange(doc, Math.min(change.from + 1, doc.content.size)),
+      ),
     );
   }
   return ranges;
@@ -405,14 +406,14 @@ function collectRescanRanges(tr, oldState, newState) {
     ranges.push(
       toContentRelativeRange(
         newState.doc,
-        resolveTopLevelRange(newState.doc, tr.mapping.map(oldState.selection.anchor))
-      )
+        resolveTopLevelRange(newState.doc, tr.mapping.map(oldState.selection.anchor)),
+      ),
     );
     ranges.push(
       toContentRelativeRange(
         newState.doc,
-        resolveTopLevelRange(newState.doc, newState.selection.anchor)
-      )
+        resolveTopLevelRange(newState.doc, newState.selection.anchor),
+      ),
     );
   }
   return mergeRanges(ranges);
@@ -429,12 +430,14 @@ function updateDecorationsInRanges({
   options,
   dataAttribute,
   doc,
-  selection
+  selection,
 }) {
   let next = decorations;
   for (const range of ranges) {
     const { from, to } = clampRange(range.from, range.to, doc);
-    const existing = next.find(from, to).filter((decoration) => decoration.from >= from && decoration.to <= to);
+    const existing = next
+      .find(from, to)
+      .filter((decoration) => decoration.from >= from && decoration.to <= to);
     if (existing.length) {
       next = next.remove(existing);
     }
@@ -445,7 +448,7 @@ function updateDecorationsInRanges({
       doc,
       selection,
       from,
-      to
+      to,
     });
     if (newDecos.length) {
       next = next.add(doc, newDecos);
@@ -453,11 +456,7 @@ function updateDecorationsInRanges({
   }
   return next;
 }
-function createPlaceholderStateField({
-  editor,
-  options,
-  dataAttribute
-}) {
+function createPlaceholderStateField({ editor, options, dataAttribute }) {
   return {
     init(_config, state) {
       const decorations = buildPlaceholderDecorations({
@@ -465,7 +464,7 @@ function createPlaceholderStateField({
         options,
         dataAttribute,
         doc: state.doc,
-        selection: state.selection
+        selection: state.selection,
       });
       return decorations != null ? decorations : DecorationSet.empty;
     },
@@ -482,31 +481,43 @@ function createPlaceholderStateField({
         options,
         dataAttribute,
         doc: newState.doc,
-        selection: newState.selection
+        selection: newState.selection,
       });
-    }
+    },
   };
 }
 function preparePlaceholderAttribute(attr) {
-  return attr.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-]/g, "").replace(/^[0-9-]+/, "").replace(/^-+/, "").toLowerCase();
+  return attr
+    .replace(/\s+/g, "-")
+    .replace(/[^a-zA-Z0-9-]/g, "")
+    .replace(/^[0-9-]+/, "")
+    .replace(/^-+/, "")
+    .toLowerCase();
 }
 function createPlaceholderPlugin({ editor, options }) {
-  const dataAttribute = options.dataAttribute ? `data-${preparePlaceholderAttribute(options.dataAttribute)}` : `data-${DEFAULT_DATA_ATTRIBUTE}`;
+  const dataAttribute = options.dataAttribute
+    ? `data-${preparePlaceholderAttribute(options.dataAttribute)}`
+    : `data-${DEFAULT_DATA_ATTRIBUTE}`;
   const useResolvedPath = options.showOnlyCurrent && !options.includeChildren;
   return new Plugin({
     key: PLUGIN_KEY,
-    ...useResolvedPath ? {} : {
-      state: createPlaceholderStateField({ editor, options, dataAttribute })
-    },
+    ...(useResolvedPath
+      ? {}
+      : {
+          state: createPlaceholderStateField({ editor, options, dataAttribute }),
+        }),
     props: {
-      decorations: useResolvedPath ? ({ doc, selection }) => buildPlaceholderDecorations({ editor, options, dataAttribute, doc, selection }) : (state) => {
-        var _a;
-        if (options.showOnlyWhenEditable && !editor.isEditable) {
-          return DecorationSet.empty;
-        }
-        return (_a = PLUGIN_KEY.getState(state)) != null ? _a : DecorationSet.empty;
-      }
-    }
+      decorations: useResolvedPath
+        ? ({ doc, selection }) =>
+            buildPlaceholderDecorations({ editor, options, dataAttribute, doc, selection })
+        : (state) => {
+            var _a;
+            if (options.showOnlyWhenEditable && !editor.isEditable) {
+              return DecorationSet.empty;
+            }
+            return (_a = PLUGIN_KEY.getState(state)) != null ? _a : DecorationSet.empty;
+          },
+    },
   });
 }
 var Placeholder = Extension.create({
@@ -519,12 +530,12 @@ var Placeholder = Extension.create({
       placeholder: "Write something …",
       showOnlyWhenEditable: true,
       showOnlyCurrent: true,
-      includeChildren: false
+      includeChildren: false,
     };
   },
   addProseMirrorPlugins() {
     return [createPlaceholderPlugin({ editor: this.editor, options: this.options })];
-  }
+  },
 });
 function shouldSyncDomSelection(state, editor) {
   return !state.selection.empty && !isNodeSelection(state.selection) && editor.isEditable;
@@ -543,7 +554,7 @@ Extension.create({
   name: "selection",
   addOptions() {
     return {
-      className: "selection"
+      className: "selection",
     };
   },
   addProseMirrorPlugins() {
@@ -558,8 +569,8 @@ Extension.create({
             }
             return DecorationSet.create(state.doc, [
               Decoration.inline(state.selection.from, state.selection.to, {
-                class: options.className
-              })
+                class: options.className,
+              }),
             ]);
           },
           handleDOMEvents: {
@@ -580,33 +591,38 @@ Extension.create({
                 }
               });
               return false;
-            }
-          }
-        }
-      })
+            },
+          },
+        },
+      }),
     ];
-  }
+  },
 });
 var skipTrailingNodeMeta = "skipTrailingNode";
-function nodeEqualsType({
-  types,
-  node
-}) {
-  return node && Array.isArray(types) && types.includes(node.type) || (node == null ? void 0 : node.type) === types;
+function nodeEqualsType({ types, node }) {
+  return (
+    (node && Array.isArray(types) && types.includes(node.type)) ||
+    (node == null ? void 0 : node.type) === types
+  );
 }
 var TrailingNode = Extension.create({
   name: "trailingNode",
   addOptions() {
     return {
       node: void 0,
-      notAfter: []
+      notAfter: [],
     };
   },
   addProseMirrorPlugins() {
     var _a;
     const plugin = new PluginKey(this.name);
-    const defaultNode = this.options.node || ((_a = this.editor.schema.topNodeType.contentMatch.defaultType) == null ? void 0 : _a.name) || "paragraph";
-    const disabledNodes = Object.entries(this.editor.schema.nodes).map(([, value]) => value).filter((node) => (this.options.notAfter || []).concat(defaultNode).includes(node.name));
+    const defaultNode =
+      this.options.node ||
+      ((_a = this.editor.schema.topNodeType.contentMatch.defaultType) == null ? void 0 : _a.name) ||
+      "paragraph";
+    const disabledNodes = Object.entries(this.editor.schema.nodes)
+      .map(([, value]) => value)
+      .filter((node) => (this.options.notAfter || []).concat(defaultNode).includes(node.name));
     return [
       new Plugin({
         key: plugin,
@@ -637,28 +653,32 @@ var TrailingNode = Extension.create({
             }
             const lastNode = tr.doc.lastChild;
             return !nodeEqualsType({ node: lastNode, types: disabledNodes });
-          }
-        }
-      })
+          },
+        },
+      }),
     ];
-  }
+  },
 });
 var UndoRedo = Extension.create({
   name: "undoRedo",
   addOptions() {
     return {
       depth: 100,
-      newGroupDelay: 500
+      newGroupDelay: 500,
     };
   },
   addCommands() {
     return {
-      undo: () => ({ state, dispatch }) => {
-        return undo(state, dispatch);
-      },
-      redo: () => ({ state, dispatch }) => {
-        return redo(state, dispatch);
-      }
+      undo:
+        () =>
+        ({ state, dispatch }) => {
+          return undo(state, dispatch);
+        },
+      redo:
+        () =>
+        ({ state, dispatch }) => {
+          return redo(state, dispatch);
+        },
     };
   },
   addProseMirrorPlugins() {
@@ -671,14 +691,8 @@ var UndoRedo = Extension.create({
       "Mod-y": () => this.editor.commands.redo(),
       // Russian keyboard layouts
       "Mod-я": () => this.editor.commands.undo(),
-      "Shift-Mod-я": () => this.editor.commands.redo()
+      "Shift-Mod-я": () => this.editor.commands.redo(),
     };
-  }
+  },
 });
-export {
-  Dropcursor as D,
-  Gapcursor as G,
-  Placeholder as P,
-  TrailingNode as T,
-  UndoRedo as U
-};
+export { Dropcursor as D, Gapcursor as G, Placeholder as P, TrailingNode as T, UndoRedo as U };

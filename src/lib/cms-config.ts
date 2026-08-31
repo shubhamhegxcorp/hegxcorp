@@ -345,9 +345,10 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
 
   "home.footer": {
     copyright: "© 2026 Hegxcorp Systems. All rights reserved.",
-    phone: "+91 98765 43210",
+    phone: "+91 836 920 7836",
     email: "growth@hegxcorp.com",
-    address: "Mumbai, Maharashtra, India",
+    address:
+      "10th Floor Building 4, Nesco IT Park, Western Express Highway, Goregaon (East) Mumbai, Maharashtra 400063",
   } as FooterSection,
 
   // --- ABOUT PAGE ---
@@ -529,9 +530,10 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
   } as ContactHeroSection,
 
   "contact.details": {
-    phone: "+91 98765 43210",
+    phone: "+91 836 920 7836",
     email: "growth@hegxcorp.com",
-    address: "Mumbai, Maharashtra, India",
+    address:
+      "10th Floor Building 4, Nesco IT Park, Western Express Highway, Goregaon (East) Mumbai, Maharashtra 400063",
   } as ContactDetailsSection,
 
   "contact.serviceGroups": {

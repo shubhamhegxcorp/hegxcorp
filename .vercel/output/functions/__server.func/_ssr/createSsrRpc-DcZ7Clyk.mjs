@@ -8,9 +8,7 @@ var createSsrRpc = (functionId) => {
   return Object.assign(fn, {
     url,
     serverFnMeta,
-    [TSS_SERVER_FUNCTION]: true
+    [TSS_SERVER_FUNCTION]: true,
   });
 };
-export {
-  createSsrRpc as c
-};
+export { createSsrRpc as c };

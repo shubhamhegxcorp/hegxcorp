@@ -2,7 +2,13 @@ import { c as createServerRpc } from "./createServerRpc-ZzyE7byC.mjs";
 import { c as createServerFn } from "./server-yv7ZiuMh.mjs";
 import "../_libs/seroval.mjs";
 import "../_libs/react.mjs";
-import { o as objectType, s as stringType, c as arrayType, d as booleanType, e as enumType } from "../_libs/zod.mjs";
+import {
+  o as objectType,
+  s as stringType,
+  c as arrayType,
+  d as booleanType,
+  e as enumType,
+} from "../_libs/zod.mjs";
 import "node:async_hooks";
 import "../_libs/h3-v2.mjs";
 import "../_libs/rou3.mjs";
@@ -35,81 +41,90 @@ const blogDraftInputSchema = objectType({
   category: arrayType(stringType()).default([]),
   tags: arrayType(stringType()).default([]),
   featuredImage: stringType().nullable().optional(),
-  authorname: stringType().default(" Hegxcorp Team")
+  authorname: stringType().default(" Hegxcorp Team"),
 });
-const saveBlogDraft_createServerFn_handler = createServerRpc({
-  id: "0e1779af80c894c113b1721c46d6885c222b484c508961600836e2d830b45254",
-  name: "saveBlogDraft",
-  filename: "src/lib/blog-drafts.ts"
-}, (opts) => saveBlogDraft.__executeServer(opts));
+const saveBlogDraft_createServerFn_handler = createServerRpc(
+  {
+    id: "0e1779af80c894c113b1721c46d6885c222b484c508961600836e2d830b45254",
+    name: "saveBlogDraft",
+    filename: "src/lib/blog-drafts.ts",
+  },
+  (opts) => saveBlogDraft.__executeServer(opts),
+);
 const saveBlogDraft = createServerFn({
-  method: "POST"
-}).validator(blogDraftInputSchema).handler(saveBlogDraft_createServerFn_handler, async ({
-  data
-}) => {
-  const {
-    saveBlogDraft: save
-  } = await import("./blog-drafts.server-CCZtesrK.mjs");
-  return save(data);
-});
-const listBlogDrafts_createServerFn_handler = createServerRpc({
-  id: "f17c332ab77bfe4879fdbbf26b86d27d530df7b6fdc206532e1930e4719e95bc",
-  name: "listBlogDrafts",
-  filename: "src/lib/blog-drafts.ts"
-}, (opts) => listBlogDrafts.__executeServer(opts));
+  method: "POST",
+})
+  .validator(blogDraftInputSchema)
+  .handler(saveBlogDraft_createServerFn_handler, async ({ data }) => {
+    const { saveBlogDraft: save } = await import("./blog-drafts.server-CCZtesrK.mjs");
+    return save(data);
+  });
+const listBlogDrafts_createServerFn_handler = createServerRpc(
+  {
+    id: "f17c332ab77bfe4879fdbbf26b86d27d530df7b6fdc206532e1930e4719e95bc",
+    name: "listBlogDrafts",
+    filename: "src/lib/blog-drafts.ts",
+  },
+  (opts) => listBlogDrafts.__executeServer(opts),
+);
 const listBlogDrafts = createServerFn({
-  method: "POST"
+  method: "POST",
 }).handler(listBlogDrafts_createServerFn_handler, async () => {
-  const {
-    listBlogDrafts: list
-  } = await import("./blog-drafts.server-CCZtesrK.mjs");
+  const { listBlogDrafts: list } = await import("./blog-drafts.server-CCZtesrK.mjs");
   return list();
 });
-const getBlogDraft_createServerFn_handler = createServerRpc({
-  id: "983218b694621fd4275bb2abecf27833c39f922ac3767b7fbddfb391a14430bb",
-  name: "getBlogDraft",
-  filename: "src/lib/blog-drafts.ts"
-}, (opts) => getBlogDraft.__executeServer(opts));
+const getBlogDraft_createServerFn_handler = createServerRpc(
+  {
+    id: "983218b694621fd4275bb2abecf27833c39f922ac3767b7fbddfb391a14430bb",
+    name: "getBlogDraft",
+    filename: "src/lib/blog-drafts.ts",
+  },
+  (opts) => getBlogDraft.__executeServer(opts),
+);
 const getBlogDraft = createServerFn({
-  method: "POST"
-}).validator(objectType({
-  id: stringType().min(1)
-})).handler(getBlogDraft_createServerFn_handler, async ({
-  data
-}) => {
-  const {
-    getBlogDraftById
-  } = await import("./blog-drafts.server-CCZtesrK.mjs");
-  return getBlogDraftById(data.id);
-});
-const deleteBlogDraft_createServerFn_handler = createServerRpc({
-  id: "b8a1f8b38c58c62ef64d82022b91f1c57107fa0816da76d5e4668dd2a2b59e6e",
-  name: "deleteBlogDraft",
-  filename: "src/lib/blog-drafts.ts"
-}, (opts) => deleteBlogDraft.__executeServer(opts));
+  method: "POST",
+})
+  .validator(
+    objectType({
+      id: stringType().min(1),
+    }),
+  )
+  .handler(getBlogDraft_createServerFn_handler, async ({ data }) => {
+    const { getBlogDraftById } = await import("./blog-drafts.server-CCZtesrK.mjs");
+    return getBlogDraftById(data.id);
+  });
+const deleteBlogDraft_createServerFn_handler = createServerRpc(
+  {
+    id: "b8a1f8b38c58c62ef64d82022b91f1c57107fa0816da76d5e4668dd2a2b59e6e",
+    name: "deleteBlogDraft",
+    filename: "src/lib/blog-drafts.ts",
+  },
+  (opts) => deleteBlogDraft.__executeServer(opts),
+);
 const deleteBlogDraft = createServerFn({
-  method: "POST"
-}).validator(objectType({
-  id: stringType().min(1)
-})).handler(deleteBlogDraft_createServerFn_handler, async ({
-  data
-}) => {
-  const {
-    deleteBlogDraft: remove
-  } = await import("./blog-drafts.server-CCZtesrK.mjs");
-  return remove(data.id);
-});
-const listPublishedBlogDrafts_createServerFn_handler = createServerRpc({
-  id: "28b4a06d71f0eb130ad12a5fe7db87b119db7c6b041b1d063bf44d0f91630763",
-  name: "listPublishedBlogDrafts",
-  filename: "src/lib/blog-drafts.ts"
-}, (opts) => listPublishedBlogDrafts.__executeServer(opts));
+  method: "POST",
+})
+  .validator(
+    objectType({
+      id: stringType().min(1),
+    }),
+  )
+  .handler(deleteBlogDraft_createServerFn_handler, async ({ data }) => {
+    const { deleteBlogDraft: remove } = await import("./blog-drafts.server-CCZtesrK.mjs");
+    return remove(data.id);
+  });
+const listPublishedBlogDrafts_createServerFn_handler = createServerRpc(
+  {
+    id: "28b4a06d71f0eb130ad12a5fe7db87b119db7c6b041b1d063bf44d0f91630763",
+    name: "listPublishedBlogDrafts",
+    filename: "src/lib/blog-drafts.ts",
+  },
+  (opts) => listPublishedBlogDrafts.__executeServer(opts),
+);
 const listPublishedBlogDrafts = createServerFn({
-  method: "POST"
+  method: "POST",
 }).handler(listPublishedBlogDrafts_createServerFn_handler, async () => {
-  const {
-    listPublishedBlogDrafts: list
-  } = await import("./blog-drafts.server-CCZtesrK.mjs");
+  const { listPublishedBlogDrafts: list } = await import("./blog-drafts.server-CCZtesrK.mjs");
   return list();
 });
 export {
@@ -117,5 +132,5 @@ export {
   getBlogDraft_createServerFn_handler,
   listBlogDrafts_createServerFn_handler,
   listPublishedBlogDrafts_createServerFn_handler,
-  saveBlogDraft_createServerFn_handler
+  saveBlogDraft_createServerFn_handler,
 };

@@ -1,12 +1,16 @@
 var GOOD_LEAF_SIZE = 200;
-var RopeSequence = function RopeSequence2() {
-};
+var RopeSequence = function RopeSequence2() {};
 RopeSequence.prototype.append = function append(other) {
   if (!other.length) {
     return this;
   }
   other = RopeSequence.from(other);
-  return !this.length && other || other.length < GOOD_LEAF_SIZE && this.leafAppend(other) || this.length < GOOD_LEAF_SIZE && other.leafPrepend(this) || this.appendInner(other);
+  return (
+    (!this.length && other) ||
+    (other.length < GOOD_LEAF_SIZE && this.leafAppend(other)) ||
+    (this.length < GOOD_LEAF_SIZE && other.leafPrepend(this)) ||
+    this.appendInner(other)
+  );
 };
 RopeSequence.prototype.prepend = function prepend(other) {
   if (!other.length) {
@@ -44,9 +48,13 @@ RopeSequence.prototype.map = function map(f, from2, to) {
   if (from2 === void 0) from2 = 0;
   if (to === void 0) to = this.length;
   var result = [];
-  this.forEach(function(elt, i) {
-    return result.push(f(elt, i));
-  }, from2, to);
+  this.forEach(
+    function (elt, i) {
+      return result.push(f(elt, i));
+    },
+    from2,
+    to,
+  );
   return result;
 };
 RopeSequence.from = function from(values) {
@@ -55,7 +63,7 @@ RopeSequence.from = function from(values) {
   }
   return values && values.length ? new Leaf(values) : RopeSequence.empty;
 };
-var Leaf = /* @__PURE__ */ (function(RopeSequence3) {
+var Leaf = /* @__PURE__ */ (function (RopeSequence3) {
   function Leaf2(values) {
     RopeSequence3.call(this);
     this.values = values;
@@ -100,17 +108,17 @@ var Leaf = /* @__PURE__ */ (function(RopeSequence3) {
       return new Leaf2(other.flatten().concat(this.values));
     }
   };
-  prototypeAccessors.length.get = function() {
+  prototypeAccessors.length.get = function () {
     return this.values.length;
   };
-  prototypeAccessors.depth.get = function() {
+  prototypeAccessors.depth.get = function () {
     return 0;
   };
   Object.defineProperties(Leaf2.prototype, prototypeAccessors);
   return Leaf2;
 })(RopeSequence);
 RopeSequence.empty = new Leaf([]);
-var Append = /* @__PURE__ */ (function(RopeSequence3) {
+var Append = /* @__PURE__ */ (function (RopeSequence3) {
   function Append2(left, right) {
     RopeSequence3.call(this);
     this.left = left;
@@ -129,19 +137,41 @@ var Append = /* @__PURE__ */ (function(RopeSequence3) {
   };
   Append2.prototype.forEachInner = function forEachInner(f, from2, to, start) {
     var leftLen = this.left.length;
-    if (from2 < leftLen && this.left.forEachInner(f, from2, Math.min(to, leftLen), start) === false) {
+    if (
+      from2 < leftLen &&
+      this.left.forEachInner(f, from2, Math.min(to, leftLen), start) === false
+    ) {
       return false;
     }
-    if (to > leftLen && this.right.forEachInner(f, Math.max(from2 - leftLen, 0), Math.min(this.length, to) - leftLen, start + leftLen) === false) {
+    if (
+      to > leftLen &&
+      this.right.forEachInner(
+        f,
+        Math.max(from2 - leftLen, 0),
+        Math.min(this.length, to) - leftLen,
+        start + leftLen,
+      ) === false
+    ) {
       return false;
     }
   };
   Append2.prototype.forEachInvertedInner = function forEachInvertedInner(f, from2, to, start) {
     var leftLen = this.left.length;
-    if (from2 > leftLen && this.right.forEachInvertedInner(f, from2 - leftLen, Math.max(to, leftLen) - leftLen, start + leftLen) === false) {
+    if (
+      from2 > leftLen &&
+      this.right.forEachInvertedInner(
+        f,
+        from2 - leftLen,
+        Math.max(to, leftLen) - leftLen,
+        start + leftLen,
+      ) === false
+    ) {
       return false;
     }
-    if (to < leftLen && this.left.forEachInvertedInner(f, Math.min(from2, leftLen), to, start) === false) {
+    if (
+      to < leftLen &&
+      this.left.forEachInvertedInner(f, Math.min(from2, leftLen), to, start) === false
+    ) {
       return false;
     }
   };
@@ -178,6 +208,4 @@ var Append = /* @__PURE__ */ (function(RopeSequence3) {
   };
   return Append2;
 })(RopeSequence);
-export {
-  RopeSequence as R
-};
+export { RopeSequence as R };

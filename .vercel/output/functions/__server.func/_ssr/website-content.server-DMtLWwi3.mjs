@@ -40,8 +40,8 @@ function getSql() {
       idle_timeout: 20,
       connect_timeout: 10,
       connection: {
-        statement_timeout: 2e4
-      }
+        statement_timeout: 2e4,
+      },
     });
   }
   return globalForSql.hegxcorpSql;
@@ -108,8 +108,4 @@ async function listWebsiteSections() {
   }
   return sections;
 }
-export {
-  getWebsiteSection,
-  listWebsiteSections,
-  saveWebsiteSection
-};
+export { getWebsiteSection, listWebsiteSections, saveWebsiteSection };

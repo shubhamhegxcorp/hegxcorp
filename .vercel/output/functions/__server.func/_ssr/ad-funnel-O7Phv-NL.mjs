@@ -19,19 +19,18 @@ import "async_hooks";
 import "crypto";
 import "stream";
 import "../_libs/isbot.mjs";
-const listAdFunnelReport_createServerFn_handler = createServerRpc({
-  id: "f08ca2ced5afa418ebc61986ca8a389f8d75019bdfd71cc709c3f0a0e806a15b",
-  name: "listAdFunnelReport",
-  filename: "src/lib/ad-funnel.ts"
-}, (opts) => listAdFunnelReport.__executeServer(opts));
+const listAdFunnelReport_createServerFn_handler = createServerRpc(
+  {
+    id: "f08ca2ced5afa418ebc61986ca8a389f8d75019bdfd71cc709c3f0a0e806a15b",
+    name: "listAdFunnelReport",
+    filename: "src/lib/ad-funnel.ts",
+  },
+  (opts) => listAdFunnelReport.__executeServer(opts),
+);
 const listAdFunnelReport = createServerFn({
-  method: "POST"
+  method: "POST",
 }).handler(listAdFunnelReport_createServerFn_handler, async () => {
-  const {
-    listSavedAdFunnelReport
-  } = await import("./ad-funnel.server-BYPsSVaL.mjs");
+  const { listSavedAdFunnelReport } = await import("./ad-funnel.server-BYPsSVaL.mjs");
   return listSavedAdFunnelReport();
 });
-export {
-  listAdFunnelReport_createServerFn_handler
-};
+export { listAdFunnelReport_createServerFn_handler };

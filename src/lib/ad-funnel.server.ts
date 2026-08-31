@@ -1,14 +1,6 @@
-import process from "node:process";
-
-import postgres from "postgres";
-
 import { assertAdminSession } from "./admin-auth.server";
+import { getDbClient } from "./db.server";
 import type { AdFunnelReportRow } from "./ad-funnel";
-
-type SqlClient = ReturnType<typeof postgres>;
-type GlobalWithSql = typeof globalThis & {
-  hegxcorpSql?: SqlClient;
-};
 
 type AdFunnelReportDbRow = Omit<
   AdFunnelReportRow,
@@ -21,24 +13,6 @@ type AdFunnelReportDbRow = Omit<
   newLeads: number | string | null;
   latestActivityAt: Date | string | null;
 };
-
-function getSql() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not configured.");
-  }
-
-  const globalForSql = globalThis as GlobalWithSql;
-  if (!globalForSql.hegxcorpSql) {
-    globalForSql.hegxcorpSql = postgres(databaseUrl, {
-      max: 5,
-      idle_timeout: 20,
-      connect_timeout: 10,
-    });
-  }
-
-  return globalForSql.hegxcorpSql;
-}
 
 function toNumber(value: number | string | null) {
   return Number(value ?? 0);
@@ -60,7 +34,7 @@ function mapReportRow(row: AdFunnelReportDbRow): AdFunnelReportRow {
 
 export async function listSavedAdFunnelReport() {
   await assertAdminSession();
-  const sql = getSql();
+  const sql = getDbClient();
   const rows = await sql<AdFunnelReportDbRow[]>`
     WITH event_groups AS (
       SELECT

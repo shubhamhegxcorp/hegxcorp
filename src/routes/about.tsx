@@ -28,16 +28,40 @@ import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Hegxcorp | Digital Transformation & Growth Partners" },
+      { title: "About Hegxcorp — Digital Transformation & Growth Engineering" },
       {
         name: "description",
         content:
-          "Meet Hegxcorp, a Mumbai-founded digital growth agency helping businesses turn technology, design, and marketing into measurable progress.",
+          "Meet Hegxcorp, a digital growth consultancy helping ambitious companies scale through data-driven SEO, paid media, high-performance web systems, and brand strategy.",
       },
+      {
+        property: "og:title",
+        content: "About Hegxcorp — Digital Transformation & Growth Engineering",
+      },
+      {
+        property: "og:description",
+        content:
+          "Meet Hegxcorp, a digital growth consultancy helping ambitious companies scale through data-driven SEO, paid media, high-performance web systems, and brand strategy.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://hegxcorp.com/about" },
+      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content: "About Hegxcorp — Digital Transformation & Growth Engineering",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Meet Hegxcorp, a digital growth consultancy helping ambitious companies scale through data-driven SEO, paid media, high-performance web systems, and brand strategy.",
+      },
+      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
     ],
+    links: [{ rel: "canonical", href: "https://hegxcorp.com/about" }],
   }),
   component: AboutPage,
-} as never);
+});
 
 const values = [
   {

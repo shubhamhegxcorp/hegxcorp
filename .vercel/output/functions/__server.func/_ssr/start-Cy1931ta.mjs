@@ -38,7 +38,7 @@ var createStart = (getOptions) => {
       }
       return options;
     },
-    createMiddleware
+    createMiddleware,
   };
 };
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
@@ -47,13 +47,11 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
   } catch (error) {
     console.error(error);
     return new Response("Something went wrong!", {
-      status: 500
+      status: 500,
     });
   }
 });
 const startInstance = createStart(() => ({
-  requestMiddleware: [errorMiddleware]
+  requestMiddleware: [errorMiddleware],
 }));
-export {
-  startInstance
-};
+export { startInstance };

@@ -9,12 +9,22 @@ import { H as Heading } from "./tiptap__extension-heading.mjs";
 import { H as HorizontalRule } from "./@tiptap/extension-horizontal-rule+[...].mjs";
 import { I as Italic } from "./tiptap__extension-italic.mjs";
 import { L as Link } from "./tiptap__extension-link.mjs";
-import { B as BulletList, L as ListItem, a as ListKeymap, O as OrderedList } from "./tiptap__extension-list.mjs";
+import {
+  B as BulletList,
+  L as ListItem,
+  a as ListKeymap,
+  O as OrderedList,
+} from "./tiptap__extension-list.mjs";
 import { P as Paragraph } from "./tiptap__extension-paragraph.mjs";
 import { S as Strike } from "./tiptap__extension-strike.mjs";
 import { T as Text } from "./tiptap__extension-text.mjs";
 import { U as Underline } from "./tiptap__extension-underline.mjs";
-import { D as Dropcursor, G as Gapcursor, U as UndoRedo, T as TrailingNode } from "./tiptap__extensions.mjs";
+import {
+  D as Dropcursor,
+  G as Gapcursor,
+  U as UndoRedo,
+  T as TrailingNode,
+} from "./tiptap__extensions.mjs";
 var StarterKit = Extension.create({
   name: "starterKit",
   addExtensions() {
@@ -84,12 +94,12 @@ var StarterKit = Extension.create({
       extensions.push(Underline.configure((_c = this.options) == null ? void 0 : _c.underline));
     }
     if (this.options.trailingNode !== false) {
-      extensions.push(TrailingNode.configure((_d = this.options) == null ? void 0 : _d.trailingNode));
+      extensions.push(
+        TrailingNode.configure((_d = this.options) == null ? void 0 : _d.trailingNode),
+      );
     }
     return extensions;
-  }
+  },
 });
 var index_default = StarterKit;
-export {
-  index_default as i
-};
+export { index_default as i };

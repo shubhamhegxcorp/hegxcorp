@@ -569,14 +569,14 @@ export function ServicesGrid() {
 
           {/* ── Row 1: Featured — SEO + PPC (2 wide cards) ── */}
           <div className="relative z-10 grid sm:grid-cols-2 gap-5">
-            {featured.map((s, i) => (
+            {featured.map((s: any, i: number) => (
               <ServiceCard key={s.slug} s={s} i={i} size="featured" />
             ))}
           </div>
 
           {/* ── Row 2: Standard — WEB, CRO, BRAND, SMM (4 compact cards) ── */}
           <div className="relative z-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {standard.map((s, i) => (
+            {standard.map((s: any, i: number) => (
               <ServiceCard key={s.slug} s={s} i={i + 2} size="standard" />
             ))}
           </div>

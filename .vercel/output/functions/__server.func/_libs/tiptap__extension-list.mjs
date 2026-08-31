@@ -1,10 +1,22 @@
-import { N as Node3, w as wrappingInputRule, m as mergeAttributes, r as renderNestedMarkdownContent, E as Extension, s as isNodeActive, u as isAtStartOfNode, v as isAtEndOfNode, x as getNodeAtPosition, y as getNodeType, g as getRenderedAttributes, z as parseIndentedBlocks } from "./tiptap__core.mjs";
+import {
+  N as Node3,
+  w as wrappingInputRule,
+  m as mergeAttributes,
+  r as renderNestedMarkdownContent,
+  E as Extension,
+  s as isNodeActive,
+  u as isAtStartOfNode,
+  v as isAtEndOfNode,
+  x as getNodeAtPosition,
+  y as getNodeType,
+  g as getRenderedAttributes,
+  z as parseIndentedBlocks,
+} from "./tiptap__core.mjs";
 import { F as Fragment } from "./prosemirror-model.mjs";
 import { P as Plugin } from "./prosemirror-state.mjs";
 var __defProp = Object.defineProperty;
 var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
+  for (var name in all) __defProp(target, name, { get: all[name], enumerable: true });
 };
 var ListItemName = "listItem";
 var TextStyleName = "textStyle";
@@ -16,7 +28,7 @@ var BulletList = Node3.create({
       itemTypeName: "listItem",
       HTMLAttributes: {},
       keepMarks: false,
-      keepAttributes: false
+      keepAttributes: false,
     };
   },
   group: "block list",
@@ -36,7 +48,7 @@ var BulletList = Node3.create({
     }
     return {
       type: "bulletList",
-      content: token.items ? helpers.parseChildren(token.items) : []
+      content: token.items ? helpers.parseChildren(token.items) : [],
     };
   },
   renderMarkdown: (node, h) => {
@@ -46,27 +58,32 @@ var BulletList = Node3.create({
     return h.renderChildren(node.content, "\n");
   },
   markdownOptions: {
-    indentsContent: true
+    indentsContent: true,
   },
   addCommands() {
     return {
-      toggleBulletList: () => ({ commands, chain }) => {
-        if (this.options.keepAttributes) {
-          return chain().toggleList(this.name, this.options.itemTypeName, this.options.keepMarks).updateAttributes(ListItemName, this.editor.getAttributes(TextStyleName)).run();
-        }
-        return commands.toggleList(this.name, this.options.itemTypeName, this.options.keepMarks);
-      }
+      toggleBulletList:
+        () =>
+        ({ commands, chain }) => {
+          if (this.options.keepAttributes) {
+            return chain()
+              .toggleList(this.name, this.options.itemTypeName, this.options.keepMarks)
+              .updateAttributes(ListItemName, this.editor.getAttributes(TextStyleName))
+              .run();
+          }
+          return commands.toggleList(this.name, this.options.itemTypeName, this.options.keepMarks);
+        },
     };
   },
   addKeyboardShortcuts() {
     return {
-      "Mod-Shift-8": () => this.editor.commands.toggleBulletList()
+      "Mod-Shift-8": () => this.editor.commands.toggleBulletList(),
     };
   },
   addInputRules() {
     let inputRule = wrappingInputRule({
       find: bulletListInputRegex,
-      type: this.type
+      type: this.type,
     });
     if (this.options.keepMarks || this.options.keepAttributes) {
       inputRule = wrappingInputRule({
@@ -77,11 +94,11 @@ var BulletList = Node3.create({
         getAttributes: () => {
           return this.editor.getAttributes(TextStyleName);
         },
-        editor: this.editor
+        editor: this.editor,
       });
     }
     return [inputRule];
-  }
+  },
 });
 var getBranchingNestedListAtCursor = (state, itemName, wrapperNames) => {
   const { selection } = state;
@@ -140,7 +157,7 @@ var getBranchingNestedListAtCursor = (state, itemName, wrapperNames) => {
     nestedList: nodeAfter,
     nestedListPos: $from.after(),
     insertPos: $from.after(listItemDepth),
-    items
+    items,
   };
 };
 var hoistBranchingNestedList = (state, dispatch, itemName, wrapperNames) => {
@@ -168,12 +185,13 @@ var createBranchingListDeleteKeymap = (itemName, wrapperNames) => {
     name: `${itemName}BranchingDeleteKeymap`,
     priority: 101,
     addKeyboardShortcuts() {
-      const handleDelete2 = () => handleDeleteBranchingNestedList(this.editor, itemName, wrapperNames);
+      const handleDelete2 = () =>
+        handleDeleteBranchingNestedList(this.editor, itemName, wrapperNames);
       return {
         Delete: handleDelete2,
-        "Mod-Delete": handleDelete2
+        "Mod-Delete": handleDelete2,
       };
-    }
+    },
   });
 };
 var ROMAN_NUMERALS = [
@@ -189,7 +207,7 @@ var ROMAN_NUMERALS = [
   [9, "ix"],
   [5, "v"],
   [4, "iv"],
-  [1, "i"]
+  [1, "i"],
 ];
 var ALPHA_NUMERALS = "abcdefghijklmnopqrstuvwxyz";
 var ORDERED_LIST_ALPHA_MARKER_PATTERN = "[a-zA-Z]{1,2}";
@@ -330,7 +348,7 @@ function areOrderedListMarkersSequential(markers) {
 function parseListMarker(marker) {
   return {
     type: detectMarkerType(marker),
-    start: markerToStart(marker)
+    start: markerToStart(marker),
   };
 }
 function buildOrderedListAttrsFromMarker(marker) {
@@ -366,7 +384,11 @@ function isSameLineOrderedListToken(token) {
   var _a, _b;
   const nestedToken = (_a = token.tokens) == null ? void 0 : _a[0];
   return Boolean(
-    token.text && ((_b = token.tokens) == null ? void 0 : _b.length) === 1 && (nestedToken == null ? void 0 : nestedToken.type) === "list" && nestedToken.ordered && nestedToken.raw === token.text
+    token.text &&
+    ((_b = token.tokens) == null ? void 0 : _b.length) === 1 &&
+    (nestedToken == null ? void 0 : nestedToken.type) === "list" &&
+    nestedToken.ordered &&
+    nestedToken.raw === token.text,
   );
 }
 function parseSameLineOrderedListText(text, helpers) {
@@ -377,8 +399,8 @@ function parseSameLineOrderedListText(text, helpers) {
     {
       type: "text",
       raw: text,
-      text
-    }
+      text,
+    },
   ]);
 }
 var ListItem = Node3.create({
@@ -387,7 +409,7 @@ var ListItem = Node3.create({
     return {
       HTMLAttributes: {},
       bulletListTypeName: "bulletList",
-      orderedListTypeName: "orderedList"
+      orderedListTypeName: "orderedList",
     };
   },
   content: "paragraph block*",
@@ -395,8 +417,8 @@ var ListItem = Node3.create({
   parseHTML() {
     return [
       {
-        tag: "li"
-      }
+        tag: "li",
+      },
     ];
   },
   renderHTML({ HTMLAttributes }) {
@@ -408,7 +430,8 @@ var ListItem = Node3.create({
     if (token.type !== "list_item") {
       return [];
     }
-    const parseBlockChildren = (_a = helpers.parseBlockChildren) != null ? _a : helpers.parseChildren;
+    const parseBlockChildren =
+      (_a = helpers.parseBlockChildren) != null ? _a : helpers.parseChildren;
     let content = [];
     if (token.tokens && token.tokens.length > 0) {
       if (isSameLineOrderedListToken(token)) {
@@ -417,9 +440,9 @@ var ListItem = Node3.create({
           content: [
             {
               type: "paragraph",
-              content: parseSameLineOrderedListText(token.text || "", helpers)
-            }
-          ]
+              content: parseSameLineOrderedListText(token.text || "", helpers),
+            },
+          ],
         };
       }
       const hasParagraphTokens = token.tokens.some((t) => t.type === "paragraph");
@@ -427,13 +450,18 @@ var ListItem = Node3.create({
         content = parseBlockChildren(token.tokens);
       } else {
         const firstToken = token.tokens[0];
-        if (firstToken && firstToken.type === "text" && firstToken.tokens && firstToken.tokens.length > 0) {
+        if (
+          firstToken &&
+          firstToken.type === "text" &&
+          firstToken.tokens &&
+          firstToken.tokens.length > 0
+        ) {
           const inlineContent = helpers.parseInline(firstToken.tokens);
           content = [
             {
               type: "paragraph",
-              content: inlineContent
-            }
+              content: inlineContent,
+            },
           ];
           if (token.tokens.length > 1) {
             const remainingTokens = token.tokens.slice(1);
@@ -449,13 +477,13 @@ var ListItem = Node3.create({
       content = [
         {
           type: "paragraph",
-          content: []
-        }
+          content: [],
+        },
       ];
     }
     return {
       type: "listItem",
-      content
+      content,
     };
   },
   renderMarkdown: (node, h, ctx) => {
@@ -468,31 +496,35 @@ var ListItem = Node3.create({
           return "- ";
         }
         if (context.parentType === "orderedList") {
-          const start = ((_b = (_a = context.meta) == null ? void 0 : _a.parentAttrs) == null ? void 0 : _b.start) || 1;
-          const type = (_d = (_c = context.meta) == null ? void 0 : _c.parentAttrs) == null ? void 0 : _d.type;
+          const start =
+            ((_b = (_a = context.meta) == null ? void 0 : _a.parentAttrs) == null
+              ? void 0
+              : _b.start) || 1;
+          const type =
+            (_d = (_c = context.meta) == null ? void 0 : _c.parentAttrs) == null ? void 0 : _d.type;
           const index = start - 1 + (context.index || 0);
           return getListMarker(type, index, ". ");
         }
         return "- ";
       },
-      ctx
+      ctx,
     );
   },
   addExtensions() {
     return [
       createBranchingListDeleteKeymap(this.name, [
         this.options.bulletListTypeName,
-        this.options.orderedListTypeName
-      ])
+        this.options.orderedListTypeName,
+      ]),
     ];
   },
   addKeyboardShortcuts() {
     return {
       Enter: () => this.editor.commands.splitListItem(this.name),
       Tab: () => this.editor.commands.sinkListItem(this.name),
-      "Shift-Tab": () => this.editor.commands.liftListItem(this.name)
+      "Shift-Tab": () => this.editor.commands.liftListItem(this.name),
     };
-  }
+  },
 });
 var listHelpers_exports = {};
 __export(listHelpers_exports, {
@@ -505,7 +537,7 @@ __export(listHelpers_exports, {
   hasListItemBefore: () => hasListItemBefore,
   listItemHasSubList: () => listItemHasSubList,
   nextListIsDeeper: () => nextListIsDeeper,
-  nextListIsHigher: () => nextListIsHigher
+  nextListIsHigher: () => nextListIsHigher,
 });
 var findListItemPos = (typeOrName, state) => {
   const { $from } = state.selection;
@@ -566,7 +598,11 @@ var handleBackspace = (editor, name, parentListTypes) => {
       return false;
     }
     const $lastItemPos = editor.state.doc.resolve($listPos.start() + lastItem.pos + 1);
-    return editor.chain().cut({ from: $anchor.start() - 1, to: $anchor.end() + 1 }, $lastItemPos.end()).joinForward().run();
+    return editor
+      .chain()
+      .cut({ from: $anchor.start() - 1, to: $anchor.end() + 1 }, $lastItemPos.end())
+      .joinForward()
+      .run();
   }
   if (!isNodeActive(editor.state, name)) {
     return false;
@@ -611,7 +647,12 @@ var handleDelete = (editor, name) => {
     return false;
   }
   if (nextListIsDeeper(name, editor.state)) {
-    return editor.chain().focus(editor.state.selection.from + 4).lift(name).joinBackward().run();
+    return editor
+      .chain()
+      .focus(editor.state.selection.from + 4)
+      .lift(name)
+      .joinBackward()
+      .run();
   }
   if (nextListIsHigher(name, editor.state)) {
     return editor.chain().joinForward().joinBackward().run();
@@ -662,13 +703,13 @@ var ListKeymap = Extension.create({
       listTypes: [
         {
           itemName: "listItem",
-          wrapperNames: ["bulletList", "orderedList"]
+          wrapperNames: ["bulletList", "orderedList"],
         },
         {
           itemName: "taskItem",
-          wrapperNames: ["taskList"]
-        }
-      ]
+          wrapperNames: ["taskList"],
+        },
+      ],
     };
   },
   addKeyboardShortcuts() {
@@ -720,29 +761,32 @@ var ListKeymap = Extension.create({
           }
         });
         return handled;
-      }
+      },
     };
-  }
+  },
 });
-var ORDERED_LIST_ITEM_REGEX = new RegExp(
-  `^(\\s*)(${ORDERED_LIST_MARKER_PATTERN})([.)])\\s+(.*)$`
-);
+var ORDERED_LIST_ITEM_REGEX = new RegExp(`^(\\s*)(${ORDERED_LIST_MARKER_PATTERN})([.)])\\s+(.*)$`);
 var INDENTED_LINE_REGEX = /^\s/;
 var PARAGRAPH_INTERRUPTERS = {
   heading: /^#{1,6}(?:\s|$)/,
   bulletItem: /^[-+*]\s+/,
   codeFence: /^(?:```|~~~)/,
-  thematicBreak: /^(?:(?:-[ \t]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})$/
+  thematicBreak: /^(?:(?:-[ \t]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})$/,
 };
 function isOrderedListMarkerLine(line) {
   return ORDERED_LIST_ITEM_REGEX.test(line.trimStart());
 }
 function isBlockContentLine(line) {
   const trimmedLine = line.trimStart();
-  return PARAGRAPH_INTERRUPTERS.bulletItem.test(trimmedLine) || isOrderedListMarkerLine(trimmedLine) || PARAGRAPH_INTERRUPTERS.heading.test(trimmedLine) || // dash breaks are excluded: "---" directly below paragraph text is a
-  // setext heading underline, not a thematic break
-  PARAGRAPH_INTERRUPTERS.thematicBreak.test(trimmedLine) && !trimmedLine.startsWith("-") || // oxlint-disable-next-line prefer-string-starts-ends-with
-  /^>\s?/.test(trimmedLine) || PARAGRAPH_INTERRUPTERS.codeFence.test(trimmedLine);
+  return (
+    PARAGRAPH_INTERRUPTERS.bulletItem.test(trimmedLine) ||
+    isOrderedListMarkerLine(trimmedLine) ||
+    PARAGRAPH_INTERRUPTERS.heading.test(trimmedLine) || // dash breaks are excluded: "---" directly below paragraph text is a
+    // setext heading underline, not a thematic break
+    (PARAGRAPH_INTERRUPTERS.thematicBreak.test(trimmedLine) && !trimmedLine.startsWith("-")) || // oxlint-disable-next-line prefer-string-starts-ends-with
+    /^>\s?/.test(trimmedLine) ||
+    PARAGRAPH_INTERRUPTERS.codeFence.test(trimmedLine)
+  );
 }
 function interruptsLazyContinuation(line) {
   return Object.values(PARAGRAPH_INTERRUPTERS).some((pattern) => pattern.test(line));
@@ -770,7 +814,7 @@ function splitItemContent(contentLines) {
   });
   return {
     paragraphLines,
-    blockLines
+    blockLines,
   };
 }
 function collectOrderedListItems(lines) {
@@ -824,7 +868,7 @@ function collectOrderedListItems(lines) {
       type: markerType,
       content: itemContentLines.join("\n").trim(),
       contentLines: itemContentLines,
-      raw: itemLines.join("\n")
+      raw: itemLines.join("\n"),
     });
     consumed = nextLineIndex;
     currentLineIndex = nextLineIndex;
@@ -832,7 +876,7 @@ function collectOrderedListItems(lines) {
   return [listItems, consumed];
 }
 var PLAIN_TEXT_ORDERED_LIST_LINE_REGEX = new RegExp(
-  `^(${ORDERED_LIST_MARKER_PATTERN})([.)])\\s+(.+)$`
+  `^(${ORDERED_LIST_MARKER_PATTERN})([.)])\\s+(.+)$`,
 );
 function parsePlainTextOrderedListPaste(text) {
   const lines = text.split("\n").filter((l) => l.trim().length > 0);
@@ -847,7 +891,7 @@ function parsePlainTextOrderedListPaste(text) {
     }
     parsedItems.push({
       marker: match[1],
-      content: match[3]
+      content: match[3],
     });
   }
   const markers = parsedItems.map((item) => item.marker);
@@ -863,10 +907,10 @@ function parsePlainTextOrderedListPaste(text) {
       content: [
         {
           type: "paragraph",
-          content: [{ type: "text", text: item.content }]
-        }
-      ]
-    }))
+          content: [{ type: "text", text: item.content }],
+        },
+      ],
+    })),
   };
 }
 function buildNestedStructure(items, baseIndent, lexer) {
@@ -882,7 +926,7 @@ function buildNestedStructure(items, baseIndent, lexer) {
         tokens.push({
           type: "paragraph",
           raw: mainText,
-          tokens: lexer.inlineTokens(mainText)
+          tokens: lexer.inlineTokens(mainText),
         });
       }
       const additionalContent = blockLines.join("\n").trim();
@@ -905,13 +949,13 @@ function buildNestedStructure(items, baseIndent, lexer) {
           start: nestedItems[0].number,
           typeMarker: nestedItems[0].type,
           items: nestedListItems,
-          raw: nestedItems.map((nestedItem) => nestedItem.raw).join("\n")
+          raw: nestedItems.map((nestedItem) => nestedItem.raw).join("\n"),
         });
       }
       result.push({
         type: "list_item",
         raw: item.raw,
-        tokens
+        tokens,
       });
       currentIndex = lookAheadIndex;
     } else {
@@ -928,13 +972,18 @@ function parseListItems(items, helpers) {
     const content = [];
     if (item.tokens && item.tokens.length > 0) {
       item.tokens.forEach((itemToken) => {
-        if (itemToken.type === "paragraph" || itemToken.type === "list" || itemToken.type === "blockquote" || itemToken.type === "code") {
+        if (
+          itemToken.type === "paragraph" ||
+          itemToken.type === "list" ||
+          itemToken.type === "blockquote" ||
+          itemToken.type === "code"
+        ) {
           content.push(...helpers.parseChildren([itemToken]));
         } else if (itemToken.type === "text" && itemToken.tokens) {
           const inlineContent = helpers.parseChildren([itemToken]);
           content.push({
             type: "paragraph",
-            content: inlineContent
+            content: inlineContent,
           });
         } else {
           const parsed = helpers.parseChildren([itemToken]);
@@ -946,7 +995,7 @@ function parseListItems(items, helpers) {
     }
     return {
       type: "listItem",
-      content
+      content,
     };
   });
 }
@@ -981,7 +1030,7 @@ var OrderedList = Node3.create({
       itemTypeName: "listItem",
       HTMLAttributes: {},
       keepMarks: false,
-      keepAttributes: false
+      keepAttributes: false,
     };
   },
   group: "block list",
@@ -993,8 +1042,10 @@ var OrderedList = Node3.create({
       start: {
         default: 1,
         parseHTML: (element) => {
-          return element.hasAttribute("start") ? parseInt(element.getAttribute("start") || "", 10) : 1;
-        }
+          return element.hasAttribute("start")
+            ? parseInt(element.getAttribute("start") || "", 10)
+            : 1;
+        },
       },
       type: {
         default: null,
@@ -1021,15 +1072,15 @@ var OrderedList = Node3.create({
             }
           }
           return null;
-        }
-      }
+        },
+      },
     };
   },
   parseHTML() {
     return [
       {
-        tag: "ol"
-      }
+        tag: "ol",
+      },
     ];
   },
   renderHTML({ HTMLAttributes }) {
@@ -1062,12 +1113,12 @@ var OrderedList = Node3.create({
       return {
         type: "orderedList",
         attrs,
-        content
+        content,
       };
     }
     return {
       type: "orderedList",
-      content
+      content,
     };
   },
   renderMarkdown: (node, h) => {
@@ -1104,26 +1155,31 @@ var OrderedList = Node3.create({
         start: startValue,
         typeMarker,
         items,
-        raw: lines.slice(0, consumed).join("\n")
+        raw: lines.slice(0, consumed).join("\n"),
       };
-    }
+    },
   },
   markdownOptions: {
-    indentsContent: true
+    indentsContent: true,
   },
   addCommands() {
     return {
-      toggleOrderedList: () => ({ commands, chain }) => {
-        if (this.options.keepAttributes) {
-          return chain().toggleList(this.name, this.options.itemTypeName, this.options.keepMarks).updateAttributes(ListItemName2, this.editor.getAttributes(TextStyleName2)).run();
-        }
-        return commands.toggleList(this.name, this.options.itemTypeName, this.options.keepMarks);
-      }
+      toggleOrderedList:
+        () =>
+        ({ commands, chain }) => {
+          if (this.options.keepAttributes) {
+            return chain()
+              .toggleList(this.name, this.options.itemTypeName, this.options.keepMarks)
+              .updateAttributes(ListItemName2, this.editor.getAttributes(TextStyleName2))
+              .run();
+          }
+          return commands.toggleList(this.name, this.options.itemTypeName, this.options.keepMarks);
+        },
     };
   },
   addKeyboardShortcuts() {
     return {
-      "Mod-Shift-7": () => this.editor.commands.toggleOrderedList()
+      "Mod-Shift-7": () => this.editor.commands.toggleOrderedList(),
     };
   },
   addProseMirrorPlugins() {
@@ -1152,9 +1208,9 @@ var OrderedList = Node3.create({
             } catch {
               return false;
             }
-          }
-        }
-      })
+          },
+        },
+      }),
     ];
   },
   addInputRules() {
@@ -1166,7 +1222,7 @@ var OrderedList = Node3.create({
       find: orderedListInputRegex,
       type: this.type,
       getAttributes: (match) => ({ start: +match[1] }),
-      joinPredicate
+      joinPredicate,
     });
     if (this.options.keepMarks || this.options.keepAttributes) {
       inputRule = wrappingInputRule({
@@ -1174,13 +1230,16 @@ var OrderedList = Node3.create({
         type: this.type,
         keepMarks: this.options.keepMarks,
         keepAttributes: this.options.keepAttributes,
-        getAttributes: (match) => ({ start: +match[1], ...this.editor.getAttributes(TextStyleName2) }),
+        getAttributes: (match) => ({
+          start: +match[1],
+          ...this.editor.getAttributes(TextStyleName2),
+        }),
         joinPredicate,
-        editor: this.editor
+        editor: this.editor,
       });
     }
     return [inputRule];
-  }
+  },
 });
 var inputRegex = /^\s*(\[([( |x])?\])\s$/;
 var TaskItem = Node3.create({
@@ -1190,7 +1249,7 @@ var TaskItem = Node3.create({
       nested: false,
       HTMLAttributes: {},
       taskListTypeName: "taskList",
-      a11y: void 0
+      a11y: void 0,
     };
   },
   content() {
@@ -1207,24 +1266,24 @@ var TaskItem = Node3.create({
           return dataChecked === "" || dataChecked === "true";
         },
         renderHTML: (attributes) => ({
-          "data-checked": attributes.checked
-        })
-      }
+          "data-checked": attributes.checked,
+        }),
+      },
     };
   },
   parseHTML() {
     return [
       {
         tag: `li[data-type="${this.name}"]`,
-        priority: 51
-      }
+        priority: 51,
+      },
     ];
   },
   renderHTML({ node, HTMLAttributes }) {
     return [
       "li",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-        "data-type": this.name
+        "data-type": this.name,
       }),
       [
         "label",
@@ -1232,12 +1291,12 @@ var TaskItem = Node3.create({
           "input",
           {
             type: "checkbox",
-            checked: node.attrs.checked ? "checked" : null
-          }
+            checked: node.attrs.checked ? "checked" : null,
+          },
         ],
-        ["span"]
+        ["span"],
       ],
-      ["div", 0]
+      ["div", 0],
     ];
   },
   parseMarkdown: (token, h) => {
@@ -1270,14 +1329,14 @@ var TaskItem = Node3.create({
   addKeyboardShortcuts() {
     const shortcuts = {
       Enter: () => this.editor.commands.splitListItem(this.name),
-      "Shift-Tab": () => this.editor.commands.liftListItem(this.name)
+      "Shift-Tab": () => this.editor.commands.liftListItem(this.name),
     };
     if (!this.options.nested) {
       return shortcuts;
     }
     return {
       ...shortcuts,
-      Tab: () => this.editor.commands.sinkListItem(this.name)
+      Tab: () => this.editor.commands.sinkListItem(this.name),
     };
   },
   addNodeView() {
@@ -1289,7 +1348,11 @@ var TaskItem = Node3.create({
       const content = document.createElement("div");
       const updateA11Y = (currentNode) => {
         var _a, _b;
-        checkbox.ariaLabel = ((_b = (_a = this.options.a11y) == null ? void 0 : _a.checkboxLabel) == null ? void 0 : _b.call(_a, currentNode, checkbox.checked)) || `Task item checkbox for ${currentNode.textContent || "empty task item"}`;
+        checkbox.ariaLabel =
+          ((_b = (_a = this.options.a11y) == null ? void 0 : _a.checkboxLabel) == null
+            ? void 0
+            : _b.call(_a, currentNode, checkbox.checked)) ||
+          `Task item checkbox for ${currentNode.textContent || "empty task item"}`;
       };
       updateA11Y(node);
       checkboxWrapper.contentEditable = "false";
@@ -1302,18 +1365,22 @@ var TaskItem = Node3.create({
         }
         const { checked } = event.target;
         if (editor.isEditable && typeof getPos === "function") {
-          editor.chain().focus(void 0, { scrollIntoView: false }).command(({ tr }) => {
-            const position = getPos();
-            if (typeof position !== "number") {
-              return false;
-            }
-            const currentNode = tr.doc.nodeAt(position);
-            tr.setNodeMarkup(position, void 0, {
-              ...currentNode == null ? void 0 : currentNode.attrs,
-              checked
-            });
-            return true;
-          }).run();
+          editor
+            .chain()
+            .focus(void 0, { scrollIntoView: false })
+            .command(({ tr }) => {
+              const position = getPos();
+              if (typeof position !== "number") {
+                return false;
+              }
+              const currentNode = tr.doc.nodeAt(position);
+              tr.setNodeMarkup(position, void 0, {
+                ...(currentNode == null ? void 0 : currentNode.attrs),
+                checked,
+              });
+              return true;
+            })
+            .run();
         }
         if (!editor.isEditable && this.options.onReadOnlyChecked) {
           if (!this.options.onReadOnlyChecked(node, checked)) {
@@ -1368,7 +1435,7 @@ var TaskItem = Node3.create({
           });
           prevRenderedAttributeKeys = newKeys;
           return true;
-        }
+        },
       };
     };
   },
@@ -1378,18 +1445,18 @@ var TaskItem = Node3.create({
         find: inputRegex,
         type: this.type,
         getAttributes: (match) => ({
-          checked: match[match.length - 1] === "x"
-        })
-      })
+          checked: match[match.length - 1] === "x",
+        }),
+      }),
     ];
-  }
+  },
 });
 var TaskList = Node3.create({
   name: "taskList",
   addOptions() {
     return {
       itemTypeName: "taskItem",
-      HTMLAttributes: {}
+      HTMLAttributes: {},
     };
   },
   group: "block list",
@@ -1400,15 +1467,15 @@ var TaskList = Node3.create({
     return [
       {
         tag: `ul[data-type="${this.name}"]`,
-        priority: 51
-      }
+        priority: 51,
+      },
     ];
   },
   renderHTML({ HTMLAttributes }) {
     return [
       "ul",
       mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, { "data-type": this.name }),
-      0
+      0,
     ];
   },
   parseMarkdown: (token, h) => {
@@ -1437,7 +1504,7 @@ var TaskList = Node3.create({
             extractItemData: (match) => ({
               indentLevel: match[1].length,
               mainContent: match[4],
-              checked: match[3].toLowerCase() === "x"
+              checked: match[3].toLowerCase() === "x",
             }),
             createToken: (data, nestedTokens) => ({
               type: "taskItem",
@@ -1447,18 +1514,18 @@ var TaskList = Node3.create({
               checked: data.checked,
               text: data.mainContent,
               tokens: lexer.inlineTokens(data.mainContent),
-              nestedTokens
+              nestedTokens,
             }),
             // Allow recursive nesting
-            customNestedParser: parseTaskListContent
+            customNestedParser: parseTaskListContent,
           },
-          lexer
+          lexer,
         );
         if (nestedResult) {
           const taskListToken = {
             type: "taskList",
             raw: nestedResult.raw,
-            items: nestedResult.items
+            items: nestedResult.items,
           };
           const remainder = content.slice(nestedResult.raw.length);
           if (remainder.trim()) {
@@ -1475,7 +1542,7 @@ var TaskList = Node3.create({
           extractItemData: (match) => ({
             indentLevel: match[1].length,
             mainContent: match[4],
-            checked: match[3].toLowerCase() === "x"
+            checked: match[3].toLowerCase() === "x",
           }),
           createToken: (data, nestedTokens) => ({
             type: "taskItem",
@@ -1485,12 +1552,12 @@ var TaskList = Node3.create({
             checked: data.checked,
             text: data.mainContent,
             tokens: lexer.inlineTokens(data.mainContent),
-            nestedTokens
+            nestedTokens,
           }),
           // Use the recursive parser for nested content
-          customNestedParser: parseTaskListContent
+          customNestedParser: parseTaskListContent,
         },
-        lexer
+        lexer,
       );
       if (!result) {
         return void 0;
@@ -1498,25 +1565,27 @@ var TaskList = Node3.create({
       return {
         type: "taskList",
         raw: result.raw,
-        items: result.items
+        items: result.items,
       };
-    }
+    },
   },
   markdownOptions: {
-    indentsContent: true
+    indentsContent: true,
   },
   addCommands() {
     return {
-      toggleTaskList: () => ({ commands }) => {
-        return commands.toggleList(this.name, this.options.itemTypeName);
-      }
+      toggleTaskList:
+        () =>
+        ({ commands }) => {
+          return commands.toggleList(this.name, this.options.itemTypeName);
+        },
     };
   },
   addKeyboardShortcuts() {
     return {
-      "Mod-Shift-9": () => this.editor.commands.toggleTaskList()
+      "Mod-Shift-9": () => this.editor.commands.toggleTaskList(),
     };
-  }
+  },
 });
 Extension.create({
   name: "listKit",
@@ -1541,11 +1610,6 @@ Extension.create({
       extensions.push(TaskList.configure(this.options.taskList));
     }
     return extensions;
-  }
+  },
 });
-export {
-  BulletList as B,
-  ListItem as L,
-  OrderedList as O,
-  ListKeymap as a
-};
+export { BulletList as B, ListItem as L, OrderedList as O, ListKeymap as a };

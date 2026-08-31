@@ -30,12 +30,11 @@ function getShortTag(value) {
 function getStrictProperties(object) {
   return getOwnPropertyNames(object).concat(getOwnPropertySymbols(object));
 }
-const hasOwn = (
+const hasOwn =
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  Object.hasOwn || ((object, property) => hasOwnProperty.call(object, property))
-);
+  Object.hasOwn || ((object, property) => hasOwnProperty.call(object, property));
 function sameValueZeroEqual(a, b) {
-  return a === b || !a && !b && a !== a && b !== b;
+  return a === b || (!a && !b && a !== a && b !== b);
 }
 const PREACT_VNODE = "__v";
 const PREACT_OWNER = "__o";
@@ -57,7 +56,13 @@ function areArraysEqual(a, b, state) {
   return true;
 }
 function areDataViewsEqual(a, b) {
-  return a.byteLength === b.byteLength && areTypedArraysEqual(new Uint8Array(a.buffer, a.byteOffset, a.byteLength), new Uint8Array(b.buffer, b.byteOffset, b.byteLength));
+  return (
+    a.byteLength === b.byteLength &&
+    areTypedArraysEqual(
+      new Uint8Array(a.buffer, a.byteOffset, a.byteLength),
+      new Uint8Array(b.buffer, b.byteOffset, b.byteLength),
+    )
+  );
 }
 function areDatesEqual(a, b) {
   return sameValueZeroEqual(a.getTime(), b.getTime());
@@ -81,14 +86,14 @@ function areMapsEqual(a, b, state) {
   let aResult;
   let bResult;
   let index = 0;
-  while (aResult = aIterable.next()) {
+  while ((aResult = aIterable.next())) {
     if (aResult.done) {
       break;
     }
     const bIterable = b.entries();
     let hasMatch = false;
     let matchIndex = 0;
-    while (bResult = bIterable.next()) {
+    while ((bResult = bIterable.next())) {
       if (bResult.done) {
         break;
       }
@@ -98,7 +103,10 @@ function areMapsEqual(a, b, state) {
       }
       const aEntry = aResult.value;
       const bEntry = bResult.value;
-      if (state.equals(aEntry[0], bEntry[0], index, matchIndex, a, b, state) && state.equals(aEntry[1], bEntry[1], aEntry[0], bEntry[0], a, b, state)) {
+      if (
+        state.equals(aEntry[0], bEntry[0], index, matchIndex, a, b, state) &&
+        state.equals(aEntry[1], bEntry[1], aEntry[0], bEntry[0], a, b, state)
+      ) {
         hasMatch = matchedIndices[matchIndex] = true;
         break;
       }
@@ -141,7 +149,14 @@ function areObjectsEqualStrict(a, b, state) {
     }
     descriptorA = getOwnPropertyDescriptor(a, property);
     descriptorB = getOwnPropertyDescriptor(b, property);
-    if ((descriptorA || descriptorB) && (!descriptorA || !descriptorB || descriptorA.configurable !== descriptorB.configurable || descriptorA.enumerable !== descriptorB.enumerable || descriptorA.writable !== descriptorB.writable)) {
+    if (
+      (descriptorA || descriptorB) &&
+      (!descriptorA ||
+        !descriptorB ||
+        descriptorA.configurable !== descriptorB.configurable ||
+        descriptorA.enumerable !== descriptorB.enumerable ||
+        descriptorA.writable !== descriptorB.writable)
+    ) {
       return false;
     }
   }
@@ -165,18 +180,21 @@ function areSetsEqual(a, b, state) {
   const aIterable = a.values();
   let aResult;
   let bResult;
-  while (aResult = aIterable.next()) {
+  while ((aResult = aIterable.next())) {
     if (aResult.done) {
       break;
     }
     const bIterable = b.values();
     let hasMatch = false;
     let matchIndex = 0;
-    while (bResult = bIterable.next()) {
+    while ((bResult = bIterable.next())) {
       if (bResult.done) {
         break;
       }
-      if (!matchedIndices[matchIndex] && state.equals(aResult.value, bResult.value, aResult.value, bResult.value, a, b, state)) {
+      if (
+        !matchedIndices[matchIndex] &&
+        state.equals(aResult.value, bResult.value, aResult.value, bResult.value, a, b, state)
+      ) {
         hasMatch = matchedIndices[matchIndex] = true;
         break;
       }
@@ -201,13 +219,26 @@ function areTypedArraysEqual(a, b) {
   return true;
 }
 function areUrlsEqual(a, b) {
-  return a.hostname === b.hostname && a.pathname === b.pathname && a.protocol === b.protocol && a.port === b.port && a.hash === b.hash && a.username === b.username && a.password === b.password;
+  return (
+    a.hostname === b.hostname &&
+    a.pathname === b.pathname &&
+    a.protocol === b.protocol &&
+    a.port === b.port &&
+    a.hash === b.hash &&
+    a.username === b.username &&
+    a.password === b.password
+  );
 }
 function isPropertyEqual(a, b, state, property) {
-  if ((property === REACT_OWNER || property === PREACT_OWNER || property === PREACT_VNODE) && (a.$$typeof || b.$$typeof)) {
+  if (
+    (property === REACT_OWNER || property === PREACT_OWNER || property === PREACT_VNODE) &&
+    (a.$$typeof || b.$$typeof)
+  ) {
     return true;
   }
-  return hasOwn(b, property) && state.equals(a[property], b[property], property, property, a, b, state);
+  return (
+    hasOwn(b, property) && state.equals(a[property], b[property], property, property, a, b, state)
+  );
 }
 const ARRAY_BUFFER_TAG = "[object ArrayBuffer]";
 const ARGUMENTS_TAG = "[object Arguments]";
@@ -233,11 +264,27 @@ const TYPED_ARRAY_TAGS = {
   "[object Float32Array]": true,
   "[object Float64Array]": true,
   "[object BigInt64Array]": true,
-  "[object BigUint64Array]": true
+  "[object BigUint64Array]": true,
 };
 const URL_TAG = "[object URL]";
 const toString = Object.prototype.toString;
-function createEqualityComparator({ areArrayBuffersEqual: areArrayBuffersEqual2, areArraysEqual: areArraysEqual2, areDataViewsEqual: areDataViewsEqual2, areDatesEqual: areDatesEqual2, areErrorsEqual: areErrorsEqual2, areFunctionsEqual: areFunctionsEqual2, areMapsEqual: areMapsEqual2, areNumbersEqual: areNumbersEqual2, areObjectsEqual: areObjectsEqual2, arePrimitiveWrappersEqual: arePrimitiveWrappersEqual2, areRegExpsEqual: areRegExpsEqual2, areSetsEqual: areSetsEqual2, areTypedArraysEqual: areTypedArraysEqual2, areUrlsEqual: areUrlsEqual2, unknownTagComparators }) {
+function createEqualityComparator({
+  areArrayBuffersEqual: areArrayBuffersEqual2,
+  areArraysEqual: areArraysEqual2,
+  areDataViewsEqual: areDataViewsEqual2,
+  areDatesEqual: areDatesEqual2,
+  areErrorsEqual: areErrorsEqual2,
+  areFunctionsEqual: areFunctionsEqual2,
+  areMapsEqual: areMapsEqual2,
+  areNumbersEqual: areNumbersEqual2,
+  areObjectsEqual: areObjectsEqual2,
+  arePrimitiveWrappersEqual: arePrimitiveWrappersEqual2,
+  areRegExpsEqual: areRegExpsEqual2,
+  areSetsEqual: areSetsEqual2,
+  areTypedArraysEqual: areTypedArraysEqual2,
+  areUrlsEqual: areUrlsEqual2,
+  unknownTagComparators,
+}) {
   return function comparator(a, b, state) {
     if (a === b) {
       return true;
@@ -294,7 +341,11 @@ function createEqualityComparator({ areArrayBuffersEqual: areArrayBuffersEqual2,
       return areSetsEqual2(a, b, state);
     }
     if (tag === OBJECT_TAG) {
-      return typeof a.then !== "function" && typeof b.then !== "function" && areObjectsEqual2(a, b, state);
+      return (
+        typeof a.then !== "function" &&
+        typeof b.then !== "function" &&
+        areObjectsEqual2(a, b, state)
+      );
     }
     if (tag === URL_TAG) {
       return areUrlsEqual2(a, b, state);
@@ -346,9 +397,11 @@ function createEqualityComparatorConfig({ circular, createCustomConfig, strict }
     arePrimitiveWrappersEqual,
     areRegExpsEqual,
     areSetsEqual: strict ? combineComparators(areSetsEqual, areObjectsEqualStrict) : areSetsEqual,
-    areTypedArraysEqual: strict ? combineComparators(areTypedArraysEqual, areObjectsEqualStrict) : areTypedArraysEqual,
+    areTypedArraysEqual: strict
+      ? combineComparators(areTypedArraysEqual, areObjectsEqualStrict)
+      : areTypedArraysEqual,
     areUrlsEqual,
-    unknownTagComparators: void 0
+    unknownTagComparators: void 0,
   };
   if (createCustomConfig) {
     config = Object.assign({}, config, createCustomConfig(config));
@@ -362,13 +415,13 @@ function createEqualityComparatorConfig({ circular, createCustomConfig, strict }
       areArraysEqual: areArraysEqual2,
       areMapsEqual: areMapsEqual2,
       areObjectsEqual: areObjectsEqual2,
-      areSetsEqual: areSetsEqual2
+      areSetsEqual: areSetsEqual2,
     });
   }
   return config;
 }
 function createInternalEqualityComparator(compare) {
-  return function(a, b, _indexOrKeyA, _indexOrKeyB, _parentA, _parentB, state) {
+  return function (a, b, _indexOrKeyA, _indexOrKeyB, _parentA, _parentB, state) {
     return compare(a, b, state);
   };
 }
@@ -380,7 +433,7 @@ function createIsEqual({ circular, comparator, createState, equals, strict }) {
         cache,
         equals,
         meta,
-        strict
+        strict,
       });
     };
   }
@@ -390,7 +443,7 @@ function createIsEqual({ circular, comparator, createState, equals, strict }) {
         cache: /* @__PURE__ */ new WeakMap(),
         equals,
         meta: void 0,
-        strict
+        strict,
       });
     };
   }
@@ -398,7 +451,7 @@ function createIsEqual({ circular, comparator, createState, equals, strict }) {
     cache: void 0,
     equals,
     meta: void 0,
-    strict
+    strict,
   };
   return function isEqual(a, b) {
     return comparator(a, b, state);
@@ -409,31 +462,36 @@ createCustomEqual({ strict: true });
 createCustomEqual({ circular: true });
 createCustomEqual({
   circular: true,
-  strict: true
+  strict: true,
 });
 createCustomEqual({
-  createInternalComparator: () => sameValueZeroEqual
+  createInternalComparator: () => sameValueZeroEqual,
 });
 createCustomEqual({
   strict: true,
-  createInternalComparator: () => sameValueZeroEqual
-});
-createCustomEqual({
-  circular: true,
-  createInternalComparator: () => sameValueZeroEqual
+  createInternalComparator: () => sameValueZeroEqual,
 });
 createCustomEqual({
   circular: true,
   createInternalComparator: () => sameValueZeroEqual,
-  strict: true
+});
+createCustomEqual({
+  circular: true,
+  createInternalComparator: () => sameValueZeroEqual,
+  strict: true,
 });
 function createCustomEqual(options = {}) {
-  const { circular = false, createInternalComparator: createCustomInternalComparator, createState, strict = false } = options;
+  const {
+    circular = false,
+    createInternalComparator: createCustomInternalComparator,
+    createState,
+    strict = false,
+  } = options;
   const config = createEqualityComparatorConfig(options);
   const comparator = createEqualityComparator(config);
-  const equals = createCustomInternalComparator ? createCustomInternalComparator(comparator) : createInternalEqualityComparator(comparator);
+  const equals = createCustomInternalComparator
+    ? createCustomInternalComparator(comparator)
+    : createInternalEqualityComparator(comparator);
   return createIsEqual({ circular, comparator, createState, equals, strict });
 }
-export {
-  deepEqual as d
-};
+export { deepEqual as d };

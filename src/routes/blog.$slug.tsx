@@ -58,14 +58,14 @@ export const Route = createFileRoute("/blog/$slug")({
   // Loader can be async — TanStack Router waits for it before rendering,
   // so this is the right place to hit the database (unlike head/component
   // below, which need the already-resolved loaderData).
-  loader: async ({ params }: { params: { slug: string } }) => {
+  loader: async ({ params }) => {
     const article = await getPublishedBlogBySlug(params.slug);
     if (!article) {
       throw notFound();
     }
     return { article };
   },
-  head: ({ params, loaderData }: { params: { slug: string }; loaderData?: { article: Blog } }) => {
+  head: ({ params, loaderData }) => {
     const article = loaderData?.article;
     const title = article ? article.seoTitle : "Insights | Hegxcorp";
     const description = article
@@ -92,7 +92,7 @@ export const Route = createFileRoute("/blog/$slug")({
     };
   },
   component: BlogDetailPage,
-} as never);
+});
 
 interface TocItem {
   id: string;
@@ -302,7 +302,7 @@ function BlogDetailPage() {
   const { parsedHtml, toc } = useMemo(() => {
     if (article.blocks) {
       const headings: TocItem[] = [];
-      article.blocks.forEach((block) => {
+      article.blocks.forEach((block: ContentBlock) => {
         if (block.type === "heading") {
           headings.push({
             id: slugify(block.text),
@@ -540,7 +540,7 @@ function BlogDetailPage() {
                   <span className="h-10 w-10 rounded-full bg-[#1D2742] text-white flex items-center justify-center font-bold text-xs select-none">
                     {article.author.name
                       .split(" ")
-                      .map((n) => n[0])
+                      .map((n: string) => n[0])
                       .join("")}
                   </span>
                   <div>
@@ -817,32 +817,6 @@ function BlogDetailPage() {
                 </div>
 
                 {/* 5. Business Growth CTA */}
-                <div className="border border-[#EAEAEA] rounded-xl p-5 bg-[#1D2742] text-white space-y-4 relative overflow-hidden">
-                  <div
-                    className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(252,156,68,0.1),transparent_50%)] animate-pulse"
-                    style={{ animationDuration: "6s" }}
-                  />
-                  <div className="space-y-1.5 relative z-10">
-                    <h4
-                      className="text-sm font-bold leading-tight"
-                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                    >
-                      Need help growing your business?
-                    </h4>
-                    <p className="text-[11px] text-white/70 leading-relaxed">
-                      Claim a free manual performance audit of acquisition loops and visual
-                      conversion tracks.
-                    </p>
-                  </div>
-                  <div className="relative z-10 pt-1">
-                    <Link
-                      to="/free-growth-audit"
-                      className="w-full inline-flex justify-center items-center gap-1.5 rounded-lg bg-[#FC9C44] py-2 text-xs font-bold text-[#1D2742] hover:bg-[#E88C35] hover:-translate-y-0.5 transition-all"
-                    >
-                      Book Free Growth Audit <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  </div>
-                </div>
               </aside>
             </div>
           </div>
@@ -852,35 +826,6 @@ function BlogDetailPage() {
         <section className="py-12 border-t border-[#EAEAEA] bg-[#FAFAF8]">
           <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
             <div className="max-w-[850px] mx-auto space-y-14">
-              {/* 1. Author Card */}
-              <div className="bg-white border border-[#EAEAEA] rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start text-left shadow-sm">
-                <span className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-[#1D2742] text-white flex items-center justify-center font-bold text-lg select-none shrink-0">
-                  {article.author.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </span>
-                <div className="space-y-3">
-                  <div>
-                    <h4
-                      className="text-base font-bold text-[#1D2742]"
-                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                    >
-                      {article.author.name}
-                    </h4>
-                    <p className="text-xs text-[#9CA3AF] font-semibold">{article.author.role}</p>
-                  </div>
-                  {article.author.bio && (
-                    <p
-                      className="text-xs md:text-sm text-[#6B7280] leading-relaxed"
-                      style={{ fontFamily: "'Inter', sans-serif" }}
-                    >
-                      {article.author.bio}
-                    </p>
-                  )}
-                </div>
-              </div>
-
               {/* 3. Related Articles */}
               {relatedArticles.length > 0 && (
                 <div className="space-y-6 text-left">

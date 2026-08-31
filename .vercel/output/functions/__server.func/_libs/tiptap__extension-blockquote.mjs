@@ -1,4 +1,9 @@
-import { N as Node3, w as wrappingInputRule, p as h, m as mergeAttributes } from "./tiptap__core.mjs";
+import {
+  N as Node3,
+  w as wrappingInputRule,
+  p as h,
+  m as mergeAttributes,
+} from "./tiptap__core.mjs";
 import { T as TextSelection } from "./prosemirror-state.mjs";
 var handleBackspace = (editor, type) => {
   var _a;
@@ -33,7 +38,7 @@ var Blockquote = Node3.create({
   name: "blockquote",
   addOptions() {
     return {
-      HTMLAttributes: {}
+      HTMLAttributes: {},
     };
   },
   content: "block+",
@@ -43,11 +48,15 @@ var Blockquote = Node3.create({
     return [{ tag: "blockquote" }];
   },
   renderHTML({ HTMLAttributes }) {
-    return /* @__PURE__ */ h("blockquote", { ...mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), children: /* @__PURE__ */ h("slot", {}) });
+    return /* @__PURE__ */ h("blockquote", {
+      ...mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
+      children: /* @__PURE__ */ h("slot", {}),
+    });
   },
   parseMarkdown: (token, helpers) => {
     var _a;
-    const parseBlockChildren = (_a = helpers.parseBlockChildren) != null ? _a : helpers.parseChildren;
+    const parseBlockChildren =
+      (_a = helpers.parseBlockChildren) != null ? _a : helpers.parseChildren;
     return helpers.createNode("blockquote", void 0, parseBlockChildren(token.tokens || []));
   },
   renderMarkdown: (node, h2) => {
@@ -58,7 +67,10 @@ var Blockquote = Node3.create({
     const result = [];
     node.content.forEach((child, index) => {
       var _a, _b;
-      const childContent = (_b = (_a = h2.renderChild) == null ? void 0 : _a.call(h2, child, index)) != null ? _b : h2.renderChildren([child]);
+      const childContent =
+        (_b = (_a = h2.renderChild) == null ? void 0 : _a.call(h2, child, index)) != null
+          ? _b
+          : h2.renderChildren([child]);
       const lines = childContent.split("\n");
       const linesWithPrefix = lines.map((line) => {
         if (line.trim() === "") {
@@ -74,32 +86,36 @@ ${prefix}
   },
   addCommands() {
     return {
-      setBlockquote: () => ({ commands }) => {
-        return commands.wrapIn(this.name);
-      },
-      toggleBlockquote: () => ({ commands }) => {
-        return commands.toggleWrap(this.name);
-      },
-      unsetBlockquote: () => ({ commands }) => {
-        return commands.lift(this.name);
-      }
+      setBlockquote:
+        () =>
+        ({ commands }) => {
+          return commands.wrapIn(this.name);
+        },
+      toggleBlockquote:
+        () =>
+        ({ commands }) => {
+          return commands.toggleWrap(this.name);
+        },
+      unsetBlockquote:
+        () =>
+        ({ commands }) => {
+          return commands.lift(this.name);
+        },
     };
   },
   addKeyboardShortcuts() {
     return {
       "Mod-Shift-b": () => this.editor.commands.toggleBlockquote(),
-      Backspace: () => handleBackspace(this.editor, this.type)
+      Backspace: () => handleBackspace(this.editor, this.type),
     };
   },
   addInputRules() {
     return [
       wrappingInputRule({
         find: inputRegex,
-        type: this.type
-      })
+        type: this.type,
+      }),
     ];
-  }
+  },
 });
-export {
-  Blockquote as B
-};
+export { Blockquote as B };

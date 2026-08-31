@@ -37,8 +37,8 @@ const footerLinks = {
 
 const socialLinks = [
   { icon: Linkedin, href: "https://linkedin.com/company/hegxcorp", label: "LinkedIn" },
-  { icon: Twitter, href: "https://twitter.com/hegxcorp", label: "X (Twitter)" },
-  { icon: Instagram, href: "https://instagram.com/hegxcorp", label: "Instagram" },
+  { icon: Twitter, href: "https://x.com/thehegxcorp", label: "X (Twitter)" },
+  { icon: Instagram, href: "https://www.instagram.com/hegxcorp?igsi=MWx3aXlsOWp5bWV5dg==", label: "Instagram" },
   { icon: Facebook, href: "https://facebook.com/hegxcorp", label: "Facebook" },
   // { icon: Youtube, href: "https://youtube.com/@hegxcorp", label: "YouTube" },
 ];

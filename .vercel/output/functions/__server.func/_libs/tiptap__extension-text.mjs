@@ -5,11 +5,9 @@ var Text = Node3.create({
   parseMarkdown: (token) => {
     return {
       type: "text",
-      text: token.text || ""
+      text: token.text || "",
     };
   },
-  renderMarkdown: (node) => node.text || ""
+  renderMarkdown: (node) => node.text || "",
 });
-export {
-  Text as T
-};
+export { Text as T };

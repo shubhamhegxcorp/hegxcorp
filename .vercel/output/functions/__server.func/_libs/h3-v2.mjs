@@ -23,7 +23,7 @@ var H3Event = class {
     this.url = url;
   }
   get res() {
-    return this[kEventRes] ||= new H3EventResponse();
+    return (this[kEventRes] ||= new H3EventResponse());
   }
   get runtime() {
     return this.req.runtime;
@@ -54,10 +54,10 @@ var H3EventResponse = class {
   status;
   statusText;
   get headers() {
-    return this[kEventResHeaders] ||= new Headers();
+    return (this[kEventResHeaders] ||= new Headers());
   }
   get errHeaders() {
-    return this[kEventResErrHeaders] ||= new Headers();
+    return (this[kEventResErrHeaders] ||= new Headers());
   }
 };
 const DISALLOWED_STATUS_CHARS = /[^\u0009\u0020-\u007E]/g;
@@ -88,7 +88,7 @@ var HTTPError = class HTTPError2 extends Error {
     return new HTTPError2({
       ...details,
       statusText,
-      status
+      status,
     });
   }
   constructor(arg1, arg2) {
@@ -98,13 +98,26 @@ var HTTPError = class HTTPError2 extends Error {
       messageInput = arg1;
       details = arg2;
     } else details = arg1;
-    const status = sanitizeStatusCode(details?.status || details?.statusCode || details?.cause?.status || details?.cause?.statusCode, 500);
-    const statusText = sanitizeStatusMessage(details?.statusText || details?.statusMessage || details?.cause?.statusText || details?.cause?.statusMessage);
-    const message = messageInput || details?.message || details?.cause?.message || details?.statusText || details?.statusMessage || [
-      "HTTPError",
-      status,
-      statusText
-    ].filter(Boolean).join(" ");
+    const status = sanitizeStatusCode(
+      details?.status ||
+        details?.statusCode ||
+        details?.cause?.status ||
+        details?.cause?.statusCode,
+      500,
+    );
+    const statusText = sanitizeStatusMessage(
+      details?.statusText ||
+        details?.statusMessage ||
+        details?.cause?.statusText ||
+        details?.cause?.statusMessage,
+    );
+    const message =
+      messageInput ||
+      details?.message ||
+      details?.cause?.message ||
+      details?.statusText ||
+      details?.statusMessage ||
+      ["HTTPError", status, statusText].filter(Boolean).join(" ");
     super(message, { cause: details });
     this.cause = details;
     this.status = status;
@@ -129,7 +142,7 @@ var HTTPError = class HTTPError2 extends Error {
       unhandled,
       message: unhandled ? "HTTPError" : this.message,
       data: unhandled ? void 0 : this.data,
-      ...unhandled ? void 0 : this.body
+      ...(unhandled ? void 0 : this.body),
     };
   }
 };
@@ -146,7 +159,10 @@ function isJSONSerializable(value, _type) {
 const kNotFound = /* @__PURE__ */ Symbol.for("h3.notFound");
 const kHandled = /* @__PURE__ */ Symbol.for("h3.handled");
 function toResponse(val, event, config = {}) {
-  if (typeof val?.then === "function") return (val.catch?.((error) => error) || Promise.resolve(val)).then((resolvedVal) => toResponse(resolvedVal, event, config));
+  if (typeof val?.then === "function")
+    return (val.catch?.((error) => error) || Promise.resolve(val)).then((resolvedVal) =>
+      toResponse(resolvedVal, event, config),
+    );
   const response = prepareResponse(val, event, config);
   if (typeof response?.then === "function") return toResponse(response, event, config);
   const { onResponse } = config;
@@ -167,15 +183,16 @@ var HTTPResponse = class {
     return this.#init?.statusText || "OK";
   }
   get headers() {
-    return this.#headers ||= new Headers(this.#init?.headers);
+    return (this.#headers ||= new Headers(this.#init?.headers));
   }
 };
 function prepareResponse(val, event, config, nested) {
   if (val === kHandled) return new NodeResponse(null);
-  if (val === kNotFound) val = new HTTPError({
-    status: 404,
-    message: `Cannot find any route matching [${event.req.method}] ${event.url}`
-  });
+  if (val === kNotFound)
+    val = new HTTPError({
+      status: 404,
+      message: `Cannot find any route matching [${event.req.method}] ${event.url}`,
+    });
   if (val && val instanceof Error) {
     const isHTTPError = HTTPError.isError(val);
     const error = isHTTPError ? val : new HTTPError(val);
@@ -186,7 +203,11 @@ function prepareResponse(val, event, config, nested) {
     if (error.unhandled && !config.silent) console.error(error);
     const { onError } = config;
     const errHeaders = event[kEventRes]?.[kEventResErrHeaders];
-    return onError && !nested ? Promise.resolve(onError(error, event)).catch((error2) => error2).then((newVal) => prepareResponse(newVal ?? val, event, config, true)) : errorResponse(error, config.debug, errHeaders);
+    return onError && !nested
+      ? Promise.resolve(onError(error, event))
+          .catch((error2) => error2)
+          .then((newVal) => prepareResponse(newVal ?? val, event, config, true))
+      : errorResponse(error, config.debug, errHeaders);
   }
   const preparedRes = event[kEventRes];
   const preparedHeaders = preparedRes?.[kEventResHeaders];
@@ -197,7 +218,10 @@ function prepareResponse(val, event, config, nested) {
     return new NodeResponse(nullBody(event.req.method, status) ? null : res.body, {
       status,
       statusText: res.statusText || preparedRes?.statusText,
-      headers: res.headers && preparedHeaders ? mergeHeaders$1(res.headers, preparedHeaders) : res.headers || preparedHeaders
+      headers:
+        res.headers && preparedHeaders
+          ? mergeHeaders$1(res.headers, preparedHeaders)
+          : res.headers || preparedHeaders,
     });
   }
   if (!preparedHeaders || nested || !val.ok) return val;
@@ -208,30 +232,36 @@ function prepareResponse(val, event, config, nested) {
     return new NodeResponse(nullBody(event.req.method, val.status) ? null : val.body, {
       status: val.status,
       statusText: val.statusText,
-      headers: mergeHeaders$1(val.headers, preparedHeaders)
+      headers: mergeHeaders$1(val.headers, preparedHeaders),
     });
   }
 }
 function mergeHeaders$1(base, overrides, target = new Headers(base)) {
-  for (const [name, value] of overrides) if (name === "set-cookie") target.append(name, value);
-  else target.set(name, value);
+  for (const [name, value] of overrides)
+    if (name === "set-cookie") target.append(name, value);
+    else target.set(name, value);
   return target;
 }
-const frozen = (name) => (...args) => {
-  throw new Error(`Headers are frozen (${name} ${args.join(", ")})`);
-};
+const frozen =
+  (name) =>
+  (...args) => {
+    throw new Error(`Headers are frozen (${name} ${args.join(", ")})`);
+  };
 var FrozenHeaders = class extends Headers {
   set = frozen("set");
   append = frozen("append");
   delete = frozen("delete");
 };
 const emptyHeaders = /* @__PURE__ */ new FrozenHeaders({ "content-length": "0" });
-const jsonHeaders = /* @__PURE__ */ new FrozenHeaders({ "content-type": "application/json;charset=UTF-8" });
+const jsonHeaders = /* @__PURE__ */ new FrozenHeaders({
+  "content-type": "application/json;charset=UTF-8",
+});
 function prepareResponseBody(val, event, config) {
-  if (val === null || val === void 0) return {
-    body: "",
-    headers: emptyHeaders
-  };
+  if (val === null || val === void 0)
+    return {
+      body: "",
+      headers: emptyHeaders,
+    };
   const valType = typeof val;
   if (valType === "string") return { body: val };
   if (val instanceof Uint8Array) {
@@ -239,18 +269,20 @@ function prepareResponseBody(val, event, config) {
     return { body: val };
   }
   if (val instanceof HTTPResponse || val?.constructor?.name === "HTTPResponse") return val;
-  if (isJSONSerializable(val, valType)) return {
-    body: JSON.stringify(val, void 0, config.debug ? 2 : void 0),
-    headers: jsonHeaders
-  };
-  if (valType === "bigint") return {
-    body: val.toString(),
-    headers: jsonHeaders
-  };
+  if (isJSONSerializable(val, valType))
+    return {
+      body: JSON.stringify(val, void 0, config.debug ? 2 : void 0),
+      headers: jsonHeaders,
+    };
+  if (valType === "bigint")
+    return {
+      body: val.toString(),
+      headers: jsonHeaders,
+    };
   if (val instanceof Blob) {
     const headers = new Headers({
       "content-type": val.type,
-      "content-length": val.size.toString()
+      "content-length": val.size.toString(),
     });
     let filename = val.name;
     if (filename) {
@@ -259,7 +291,7 @@ function prepareResponseBody(val, event, config) {
     }
     return {
       body: val.stream(),
-      headers
+      headers,
     };
   }
   if (valType === "symbol") return { body: val.toString() };
@@ -267,19 +299,36 @@ function prepareResponseBody(val, event, config) {
   return { body: val };
 }
 function nullBody(method, status) {
-  return method === "HEAD" || status === 100 || status === 101 || status === 102 || status === 204 || status === 205 || status === 304;
+  return (
+    method === "HEAD" ||
+    status === 100 ||
+    status === 101 ||
+    status === 102 ||
+    status === 204 ||
+    status === 205 ||
+    status === 304
+  );
 }
 function errorResponse(error, debug, errHeaders) {
-  let headers = error.headers ? mergeHeaders$1(jsonHeaders, error.headers) : new Headers(jsonHeaders);
+  let headers = error.headers
+    ? mergeHeaders$1(jsonHeaders, error.headers)
+    : new Headers(jsonHeaders);
   if (errHeaders) headers = mergeHeaders$1(headers, errHeaders);
-  return new NodeResponse(JSON.stringify({
-    ...error.toJSON(),
-    stack: debug && error.stack ? error.stack.split("\n").map((l) => l.trim()) : void 0
-  }, void 0, debug ? 2 : void 0), {
-    status: error.status,
-    statusText: error.statusText,
-    headers
-  });
+  return new NodeResponse(
+    JSON.stringify(
+      {
+        ...error.toJSON(),
+        stack: debug && error.stack ? error.stack.split("\n").map((l) => l.trim()) : void 0,
+      },
+      void 0,
+      debug ? 2 : void 0,
+    ),
+    {
+      status: error.status,
+      statusText: error.statusText,
+      headers,
+    },
+  );
 }
 function getEventContext(event) {
   if (event.context) return event.context;
@@ -289,70 +338,9 @@ function getEventContext(event) {
 const textEncoder = /* @__PURE__ */ new TextEncoder();
 const textDecoder = /* @__PURE__ */ new TextDecoder();
 const base64Code = [
-  65,
-  66,
-  67,
-  68,
-  69,
-  70,
-  71,
-  72,
-  73,
-  74,
-  75,
-  76,
-  77,
-  78,
-  79,
-  80,
-  81,
-  82,
-  83,
-  84,
-  85,
-  86,
-  87,
-  88,
-  89,
-  90,
-  97,
-  98,
-  99,
-  100,
-  101,
-  102,
-  103,
-  104,
-  105,
-  106,
-  107,
-  108,
-  109,
-  110,
-  111,
-  112,
-  113,
-  114,
-  115,
-  116,
-  117,
-  118,
-  119,
-  120,
-  121,
-  122,
-  48,
-  49,
-  50,
-  51,
-  52,
-  53,
-  54,
-  55,
-  56,
-  57,
-  45,
-  95
+  65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88,
+  89, 90, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114,
+  115, 116, 117, 118, 119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 45, 95,
 ];
 function base64Encode(data) {
   const buff = validateBinaryLike(data);
@@ -360,9 +348,20 @@ function base64Encode(data) {
   const bytes = [];
   let i;
   const len = buff.length;
-  for (i = 2; i < len; i += 3) bytes.push(base64Code[buff[i - 2] >> 2], base64Code[(buff[i - 2] & 3) << 4 | buff[i - 1] >> 4], base64Code[(buff[i - 1] & 15) << 2 | buff[i] >> 6], base64Code[buff[i] & 63]);
+  for (i = 2; i < len; i += 3)
+    bytes.push(
+      base64Code[buff[i - 2] >> 2],
+      base64Code[((buff[i - 2] & 3) << 4) | (buff[i - 1] >> 4)],
+      base64Code[((buff[i - 1] & 15) << 2) | (buff[i] >> 6)],
+      base64Code[buff[i] & 63],
+    );
   if (i === len + 1) bytes.push(base64Code[buff[i - 2] >> 2], base64Code[(buff[i - 2] & 3) << 4]);
-  if (i === len) bytes.push(base64Code[buff[i - 2] >> 2], base64Code[(buff[i - 2] & 3) << 4 | buff[i - 1] >> 4], base64Code[(buff[i - 1] & 15) << 2]);
+  if (i === len)
+    bytes.push(
+      base64Code[buff[i - 2] >> 2],
+      base64Code[((buff[i - 2] & 3) << 4) | (buff[i - 1] >> 4)],
+      base64Code[(buff[i - 1] & 15) << 2],
+    );
   return String.fromCharCode(...bytes);
 }
 function base64Decode(b64Url) {
@@ -405,8 +404,7 @@ function valueSlice(str, min, max) {
   return str.slice(start, end);
 }
 const NullObject = /* @__PURE__ */ (() => {
-  const C = function() {
-  };
+  const C = function () {};
   C.prototype = /* @__PURE__ */ Object.create(null);
   return C;
 })();
@@ -441,79 +439,102 @@ function decode(str) {
 }
 const cookieNameRegExp = /^[\u0021-\u003A\u003C\u003E-\u007E]+$/;
 const cookieValueRegExp = /^[\u0021-\u003A\u003C-\u007E]*$/;
-const domainValueRegExp = /^([.]?[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)([.][a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i;
+const domainValueRegExp =
+  /^([.]?[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)([.][a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)*$/i;
 const pathValueRegExp = /^[\u0020-\u003A\u003C-\u007E]*$/;
 const __toString = Object.prototype.toString;
 function serialize(_a0, _a1, _a2) {
   const isObj = typeof _a0 === "object" && _a0 !== null;
-  const cookie = isObj ? _a0 : {
-    ..._a2,
-    name: _a0,
-    value: ""
-  };
+  const cookie = isObj
+    ? _a0
+    : {
+        ..._a2,
+        name: _a0,
+        value: "",
+      };
   const enc = encodeURIComponent;
-  if (!cookieNameRegExp.test(cookie.name)) throw new TypeError(`argument name is invalid: ${cookie.name}`);
+  if (!cookieNameRegExp.test(cookie.name))
+    throw new TypeError(`argument name is invalid: ${cookie.name}`);
   const value = cookie.value ? enc(cookie.value) : "";
-  if (!cookieValueRegExp.test(value)) throw new TypeError(`argument val is invalid: ${cookie.value}`);
+  if (!cookieValueRegExp.test(value))
+    throw new TypeError(`argument val is invalid: ${cookie.value}`);
   if (!cookie.secure) {
-    if (cookie.partitioned) throw new TypeError(`Partitioned cookies must have the Secure attribute`);
-    if (cookie.sameSite && String(cookie.sameSite).toLowerCase() === "none") throw new TypeError(`SameSite=None cookies must have the Secure attribute`);
-    if (cookie.name.length > 9 && cookie.name.charCodeAt(0) === 95 && cookie.name.charCodeAt(1) === 95) {
+    if (cookie.partitioned)
+      throw new TypeError(`Partitioned cookies must have the Secure attribute`);
+    if (cookie.sameSite && String(cookie.sameSite).toLowerCase() === "none")
+      throw new TypeError(`SameSite=None cookies must have the Secure attribute`);
+    if (
+      cookie.name.length > 9 &&
+      cookie.name.charCodeAt(0) === 95 &&
+      cookie.name.charCodeAt(1) === 95
+    ) {
       const nameLower = cookie.name.toLowerCase();
-      if (nameLower.startsWith("__secure-") || nameLower.startsWith("__host-")) throw new TypeError(`${cookie.name} cookies must have the Secure attribute`);
+      if (nameLower.startsWith("__secure-") || nameLower.startsWith("__host-"))
+        throw new TypeError(`${cookie.name} cookies must have the Secure attribute`);
     }
   }
-  if (cookie.name.length > 7 && cookie.name.charCodeAt(0) === 95 && cookie.name.charCodeAt(1) === 95 && cookie.name.toLowerCase().startsWith("__host-")) {
+  if (
+    cookie.name.length > 7 &&
+    cookie.name.charCodeAt(0) === 95 &&
+    cookie.name.charCodeAt(1) === 95 &&
+    cookie.name.toLowerCase().startsWith("__host-")
+  ) {
     if (cookie.path !== "/") throw new TypeError(`__Host- cookies must have Path=/`);
     if (cookie.domain) throw new TypeError(`__Host- cookies must not have a Domain attribute`);
   }
   let str = cookie.name + "=" + value;
   if (cookie.maxAge !== void 0) {
-    if (!Number.isInteger(cookie.maxAge)) throw new TypeError(`option maxAge is invalid: ${cookie.maxAge}`);
+    if (!Number.isInteger(cookie.maxAge))
+      throw new TypeError(`option maxAge is invalid: ${cookie.maxAge}`);
     str += "; Max-Age=" + Math.max(0, Math.min(cookie.maxAge, COOKIE_MAX_AGE_LIMIT));
   }
   if (cookie.domain) {
-    if (!domainValueRegExp.test(cookie.domain)) throw new TypeError(`option domain is invalid: ${cookie.domain}`);
+    if (!domainValueRegExp.test(cookie.domain))
+      throw new TypeError(`option domain is invalid: ${cookie.domain}`);
     str += "; Domain=" + cookie.domain;
   }
   if (cookie.path) {
-    if (!pathValueRegExp.test(cookie.path)) throw new TypeError(`option path is invalid: ${cookie.path}`);
+    if (!pathValueRegExp.test(cookie.path))
+      throw new TypeError(`option path is invalid: ${cookie.path}`);
     str += "; Path=" + cookie.path;
   }
   if (cookie.expires) {
-    if (!isDate(cookie.expires) || !Number.isFinite(cookie.expires.valueOf())) throw new TypeError(`option expires is invalid: ${cookie.expires}`);
+    if (!isDate(cookie.expires) || !Number.isFinite(cookie.expires.valueOf()))
+      throw new TypeError(`option expires is invalid: ${cookie.expires}`);
     str += "; Expires=" + cookie.expires.toUTCString();
   }
   if (cookie.httpOnly) str += "; HttpOnly";
   if (cookie.secure) str += "; Secure";
   if (cookie.partitioned) str += "; Partitioned";
-  if (cookie.priority) switch (typeof cookie.priority === "string" ? cookie.priority.toLowerCase() : void 0) {
-    case "low":
-      str += "; Priority=Low";
-      break;
-    case "medium":
-      str += "; Priority=Medium";
-      break;
-    case "high":
-      str += "; Priority=High";
-      break;
-    default:
-      throw new TypeError(`option priority is invalid: ${cookie.priority}`);
-  }
-  if (cookie.sameSite) switch (typeof cookie.sameSite === "string" ? cookie.sameSite.toLowerCase() : cookie.sameSite) {
-    case true:
-    case "strict":
-      str += "; SameSite=Strict";
-      break;
-    case "lax":
-      str += "; SameSite=Lax";
-      break;
-    case "none":
-      str += "; SameSite=None";
-      break;
-    default:
-      throw new TypeError(`option sameSite is invalid: ${cookie.sameSite}`);
-  }
+  if (cookie.priority)
+    switch (typeof cookie.priority === "string" ? cookie.priority.toLowerCase() : void 0) {
+      case "low":
+        str += "; Priority=Low";
+        break;
+      case "medium":
+        str += "; Priority=Medium";
+        break;
+      case "high":
+        str += "; Priority=High";
+        break;
+      default:
+        throw new TypeError(`option priority is invalid: ${cookie.priority}`);
+    }
+  if (cookie.sameSite)
+    switch (typeof cookie.sameSite === "string" ? cookie.sameSite.toLowerCase() : cookie.sameSite) {
+      case true:
+      case "strict":
+        str += "; SameSite=Strict";
+        break;
+      case "lax":
+        str += "; SameSite=Lax";
+        break;
+      case "none":
+        str += "; SameSite=None";
+        break;
+      default:
+        throw new TypeError(`option sameSite is invalid: ${cookie.sameSite}`);
+    }
   return str;
 }
 function isDate(val) {
@@ -542,7 +563,7 @@ function parseSetCookie(str, options) {
   value = _decode(value, options?.decode);
   const setCookie2 = {
     name,
-    value
+    value,
   };
   let index = _endIdx + 1;
   while (index < len) {
@@ -559,52 +580,57 @@ function parseSetCookie(str, options) {
     if (attrEqIdx >= endIdx) attrEqIdx = -1;
     const attr = attrEqIdx === -1 ? _trim(str, index, endIdx) : _trim(str, index, attrEqIdx);
     const val = attrEqIdx === -1 ? void 0 : _trim(str, attrEqIdx + 1, endIdx);
-    if (val === void 0 || val.length <= 1024) switch (attr.toLowerCase()) {
-      case "httponly":
-        setCookie2.httpOnly = true;
-        break;
-      case "secure":
-        setCookie2.secure = true;
-        break;
-      case "partitioned":
-        setCookie2.partitioned = true;
-        break;
-      case "domain":
-        if (val) setCookie2.domain = (val.charCodeAt(0) === 46 ? val.slice(1) : val).toLowerCase();
-        break;
-      case "path":
-        setCookie2.path = val;
-        break;
-      case "max-age":
-        if (val && maxAgeRegExp.test(val)) setCookie2.maxAge = Math.min(Number(val), COOKIE_MAX_AGE_LIMIT);
-        break;
-      case "expires": {
-        if (!val) break;
-        const date = new Date(val);
-        if (Number.isFinite(date.valueOf())) {
-          const maxDate = new Date(Date.now() + COOKIE_MAX_AGE_LIMIT * 1e3);
-          setCookie2.expires = date > maxDate ? maxDate : date;
+    if (val === void 0 || val.length <= 1024)
+      switch (attr.toLowerCase()) {
+        case "httponly":
+          setCookie2.httpOnly = true;
+          break;
+        case "secure":
+          setCookie2.secure = true;
+          break;
+        case "partitioned":
+          setCookie2.partitioned = true;
+          break;
+        case "domain":
+          if (val)
+            setCookie2.domain = (val.charCodeAt(0) === 46 ? val.slice(1) : val).toLowerCase();
+          break;
+        case "path":
+          setCookie2.path = val;
+          break;
+        case "max-age":
+          if (val && maxAgeRegExp.test(val))
+            setCookie2.maxAge = Math.min(Number(val), COOKIE_MAX_AGE_LIMIT);
+          break;
+        case "expires": {
+          if (!val) break;
+          const date = new Date(val);
+          if (Number.isFinite(date.valueOf())) {
+            const maxDate = new Date(Date.now() + COOKIE_MAX_AGE_LIMIT * 1e3);
+            setCookie2.expires = date > maxDate ? maxDate : date;
+          }
+          break;
         }
-        break;
+        case "priority": {
+          if (!val) break;
+          const priority = val.toLowerCase();
+          if (priority === "low" || priority === "medium" || priority === "high")
+            setCookie2.priority = priority;
+          break;
+        }
+        case "samesite": {
+          if (!val) break;
+          const sameSite = val.toLowerCase();
+          if (sameSite === "lax" || sameSite === "strict" || sameSite === "none")
+            setCookie2.sameSite = sameSite;
+          else setCookie2.sameSite = "lax";
+          break;
+        }
+        default: {
+          const attrLower = attr.toLowerCase();
+          if (attrLower && !(attrLower in _nullProto)) setCookie2[attrLower] = val;
+        }
       }
-      case "priority": {
-        if (!val) break;
-        const priority = val.toLowerCase();
-        if (priority === "low" || priority === "medium" || priority === "high") setCookie2.priority = priority;
-        break;
-      }
-      case "samesite": {
-        if (!val) break;
-        const sameSite = val.toLowerCase();
-        if (sameSite === "lax" || sameSite === "strict" || sameSite === "none") setCookie2.sameSite = sameSite;
-        else setCookie2.sameSite = "lax";
-        break;
-      }
-      default: {
-        const attrLower = attr.toLowerCase();
-        if (attrLower && !(attrLower in _nullProto)) setCookie2[attrLower] = val;
-      }
-    }
     index = endIdx + 1;
   }
   return setCookie2;
@@ -638,7 +664,7 @@ function setCookie(event, name, value, options) {
     name,
     value,
     path: "/",
-    ...options
+    ...options,
   });
   const currentCookies = event.res.headers.getSetCookie();
   if (currentCookies.length === 0) {
@@ -658,7 +684,7 @@ function setCookie(event, name, value, options) {
 function deleteCookie(event, name, serializeOptions) {
   setCookie(event, name, "", {
     ...serializeOptions,
-    maxAge: 0
+    maxAge: 0,
   });
 }
 function getChunkedCookie(event, name) {
@@ -680,7 +706,9 @@ function setChunkedCookie(event, name, value, options) {
   const previousCookie = getCookie(event, name);
   if (previousCookie?.startsWith(CHUNKED_COOKIE)) {
     const previousChunkCount = getChunkedCookieCount(previousCookie);
-    if (previousChunkCount > chunkCount) for (let i = chunkCount; i <= previousChunkCount; i++) deleteCookie(event, chunkCookieName(name, i), options);
+    if (previousChunkCount > chunkCount)
+      for (let i = chunkCount; i <= previousChunkCount; i++)
+        deleteCookie(event, chunkCookieName(name, i), options);
   }
   if (chunkCount <= 1) {
     setCookie(event, name, value, options);
@@ -698,14 +726,12 @@ function deleteChunkedCookie(event, name, serializeOptions) {
   const mainCookie = getCookie(event, name);
   deleteCookie(event, name, serializeOptions);
   const chunksCount = getChunkedCookieCount(mainCookie);
-  if (chunksCount >= 0) for (let i = 0; i < chunksCount; i++) deleteCookie(event, chunkCookieName(name, i + 1), serializeOptions);
+  if (chunksCount >= 0)
+    for (let i = 0; i < chunksCount; i++)
+      deleteCookie(event, chunkCookieName(name, i + 1), serializeOptions);
 }
 function _getDistinctCookieKey(name, options) {
-  return [
-    name,
-    options.domain || "",
-    options.path || "/"
-  ].join(";");
+  return [name, options.domain || "", options.path || "/"].join(";");
 }
 const MAX_CHUNKED_COOKIE_COUNT = 100;
 function getChunkedCookieCount(cookie) {
@@ -725,31 +751,31 @@ const defaults = /* @__PURE__ */ Object.freeze({
     saltBits: 256,
     algorithm: "aes-256-cbc",
     iterations: 1,
-    minPasswordlength: 32
+    minPasswordlength: 32,
   }),
   integrity: /* @__PURE__ */ Object.freeze({
     saltBits: 256,
     algorithm: "sha256",
     iterations: 1,
-    minPasswordlength: 32
-  })
+    minPasswordlength: 32,
+  }),
 });
 const algorithms = /* @__PURE__ */ Object.freeze({
   "aes-128-ctr": /* @__PURE__ */ Object.freeze({
     keyBits: 128,
     ivBits: 128,
-    name: "AES-CTR"
+    name: "AES-CTR",
   }),
   "aes-256-cbc": /* @__PURE__ */ Object.freeze({
     keyBits: 256,
     ivBits: 128,
-    name: "AES-CBC"
+    name: "AES-CBC",
   }),
   sha256: /* @__PURE__ */ Object.freeze({
     keyBits: 256,
     ivBits: 128,
-    name: "SHA-256"
-  })
+    name: "SHA-256",
+  }),
 });
 const macPrefix = "Fe26.2";
 async function seal(object, password, opts) {
@@ -770,12 +796,22 @@ async function unseal(sealed, password, opts) {
   if (!password) throw new Error("Empty password");
   const parts = sealed.split("*");
   if (parts.length !== 8) throw new Error("Incorrect number of sealed components");
-  const [prefix, passwordId, encryptionSalt, encryptionIv, encryptedB64, expiration, hmacSalt, hmac] = parts;
+  const [
+    prefix,
+    passwordId,
+    encryptionSalt,
+    encryptionIv,
+    encryptedB64,
+    expiration,
+    hmacSalt,
+    hmac,
+  ] = parts;
   const macBaseString = `${prefix}*${passwordId}*${encryptionSalt}*${encryptionIv}*${encryptedB64}*${expiration}`;
   if ("Fe26.2" !== prefix) throw new Error("Wrong mac prefix");
   if (expiration) {
     if (!/^\d+$/.test(expiration)) throw new Error("Invalid expiration");
-    if (Number.parseInt(expiration, 10) <= now - opts.timestampSkewSec * 1e3) throw new Error("Expired seal");
+    if (Number.parseInt(expiration, 10) <= now - opts.timestampSkewSec * 1e3)
+      throw new Error("Expired seal");
   }
   let pass = "";
   const _passwordId = passwordId || "default";
@@ -783,15 +819,27 @@ async function unseal(sealed, password, opts) {
   else if (_passwordId in password) pass = password[_passwordId];
   else throw new Error(`Cannot find password: ${_passwordId}`);
   pass = normalizePassword(pass);
-  if (!fixedTimeComparison((await hmacWithPassword(pass.integrity, {
-    ...opts.integrity,
-    salt: hmacSalt
-  }, macBaseString)).digest, hmac)) throw new Error("Bad hmac value");
+  if (
+    !fixedTimeComparison(
+      (
+        await hmacWithPassword(
+          pass.integrity,
+          {
+            ...opts.integrity,
+            salt: hmacSalt,
+          },
+          macBaseString,
+        )
+      ).digest,
+      hmac,
+    )
+  )
+    throw new Error("Bad hmac value");
   const encrypted = base64Decode(encryptedB64);
   const decryptOptions = {
     ...opts.encryption,
     salt: encryptionSalt,
-    iv: base64Decode(encryptionIv)
+    iv: base64Decode(encryptionIv),
   };
   const decrypted = await decrypt(pass.encryption, decryptOptions, encrypted);
   return decrypted ? JSON.parse(decrypted) : null;
@@ -799,31 +847,37 @@ async function unseal(sealed, password, opts) {
 async function hmacWithPassword(password, options, data) {
   const key = await generateKey(password, {
     ...options,
-    hmac: true
+    hmac: true,
   });
   const textBuffer = textEncoder.encode(data);
   const signed = await crypto.subtle.sign({ name: "HMAC" }, key.key, textBuffer);
   return {
     digest: base64Encode(new Uint8Array(signed)),
-    salt: key.salt
+    salt: key.salt,
   };
 }
 async function generateKey(password, options) {
   if (!password?.length) throw new Error("Empty password");
   if (options == null || typeof options !== "object") throw new Error("Bad options");
-  if (!(options.algorithm in algorithms)) throw new Error(`Unknown algorithm: ${options.algorithm}`);
+  if (!(options.algorithm in algorithms))
+    throw new Error(`Unknown algorithm: ${options.algorithm}`);
   const algorithm = algorithms[options.algorithm];
   let resultKey;
   let resultSalt;
   let resultIV;
   const hmac = options.hmac ?? false;
-  const id = hmac ? {
-    name: "HMAC",
-    hash: algorithm.name
-  } : { name: algorithm.name };
+  const id = hmac
+    ? {
+        name: "HMAC",
+        hash: algorithm.name,
+      }
+    : { name: algorithm.name };
   const usage = hmac ? ["sign", "verify"] : ["encrypt", "decrypt"];
   if (typeof password === "string") {
-    if (password.length < options.minPasswordlength) throw new Error(`Password string too short (min ${options.minPasswordlength} characters required)`);
+    if (password.length < options.minPasswordlength)
+      throw new Error(
+        `Password string too short (min ${options.minPasswordlength} characters required)`,
+      );
     let { salt = "" } = options;
     if (!salt) {
       const { saltBits = 0 } = options;
@@ -831,7 +885,13 @@ async function generateKey(password, options) {
       const randomSalt = randomBits(saltBits);
       salt = [...new Uint8Array(randomSalt)].map((x) => x.toString(16).padStart(2, "0")).join("");
     }
-    const derivedKey = await pbkdf2(password, salt, options.iterations, algorithm.keyBits / 8, "SHA-1");
+    const derivedKey = await pbkdf2(
+      password,
+      salt,
+      options.iterations,
+      algorithm.keyBits / 8,
+      "SHA-1",
+    );
     resultKey = await crypto.subtle.importKey("raw", derivedKey, id, false, usage);
     resultSalt = salt;
   } else {
@@ -845,17 +905,23 @@ async function generateKey(password, options) {
   return {
     key: resultKey,
     salt: resultSalt,
-    iv: resultIV
+    iv: resultIV,
   };
 }
 async function pbkdf2(password, salt, iterations, keyLength, hash) {
   const passwordBuffer = textEncoder.encode(password);
-  const importedKey = await crypto.subtle.importKey("raw", passwordBuffer, { name: "PBKDF2" }, false, ["deriveBits"]);
+  const importedKey = await crypto.subtle.importKey(
+    "raw",
+    passwordBuffer,
+    { name: "PBKDF2" },
+    false,
+    ["deriveBits"],
+  );
   const params = {
     name: "PBKDF2",
     hash,
     salt: textEncoder.encode(salt),
-    iterations
+    iterations,
   };
   return await crypto.subtle.deriveBits(params, importedKey, keyLength * 8);
 }
@@ -864,7 +930,7 @@ async function encrypt(password, options, data) {
   const encrypted = await crypto.subtle.encrypt(...getEncryptParams(options.algorithm, key, data));
   return {
     encrypted: new Uint8Array(encrypted),
-    key
+    key,
   };
 }
 async function decrypt(password, options, data) {
@@ -874,16 +940,18 @@ async function decrypt(password, options, data) {
 }
 function getEncryptParams(algorithm, key, data) {
   return [
-    algorithm === "aes-128-ctr" ? {
-      name: "AES-CTR",
-      counter: key.iv,
-      length: 128
-    } : {
-      name: "AES-CBC",
-      iv: key.iv
-    },
+    algorithm === "aes-128-ctr"
+      ? {
+          name: "AES-CTR",
+          counter: key.iv,
+          length: 128,
+        }
+      : {
+          name: "AES-CBC",
+          iv: key.iv,
+        },
     key.key,
-    typeof data === "string" ? textEncoder.encode(data) : data
+    typeof data === "string" ? textEncoder.encode(data) : data,
   ];
 }
 function fixedTimeComparison(a, b) {
@@ -893,19 +961,21 @@ function fixedTimeComparison(a, b) {
   return mismatch === 0;
 }
 function normalizePassword(password) {
-  if (typeof password === "string" || password instanceof Uint8Array) return {
-    encryption: password,
-    integrity: password
-  };
-  if ("secret" in password) return {
-    id: password.id,
-    encryption: password.secret,
-    integrity: password.secret
-  };
+  if (typeof password === "string" || password instanceof Uint8Array)
+    return {
+      encryption: password,
+      integrity: password,
+    };
+  if ("secret" in password)
+    return {
+      id: password.id,
+      encryption: password.secret,
+      integrity: password.secret,
+    };
   return {
     id: password.id,
     encryption: password.encryption,
-    integrity: password.integrity
+    integrity: password.integrity,
   };
 }
 function randomBits(bits) {
@@ -921,7 +991,7 @@ const kGetSession = /* @__PURE__ */ Symbol.for("h3.internal.session.promise");
 const DEFAULT_SESSION_COOKIE = {
   path: "/",
   secure: true,
-  httpOnly: true
+  httpOnly: true,
 };
 async function useSession(event, config) {
   const sessionName = config.name || "h3";
@@ -940,7 +1010,7 @@ async function useSession(event, config) {
     clear: () => {
       clearSession(event, config);
       return Promise.resolve(sessionManager);
-    }
+    },
   };
   return sessionManager;
 }
@@ -953,23 +1023,27 @@ async function getSession(event, config) {
   const session = {
     id: "",
     createdAt: 0,
-    data: new NullProtoObj()
+    data: new NullProtoObj(),
   };
   context.sessions[sessionName] = session;
   let sealedSession;
   if (config.sessionHeader !== false) {
-    const headerName = typeof config.sessionHeader === "string" ? config.sessionHeader.toLowerCase() : `x-${sessionName.toLowerCase()}-session`;
+    const headerName =
+      typeof config.sessionHeader === "string"
+        ? config.sessionHeader.toLowerCase()
+        : `x-${sessionName.toLowerCase()}-session`;
     const headerValue = event.req.headers.get(headerName);
     if (typeof headerValue === "string") sealedSession = headerValue;
   }
   if (!sealedSession) sealedSession = getChunkedCookie(event, sessionName);
   if (sealedSession) {
-    const promise = unsealSession(event, config, sealedSession).catch(() => {
-    }).then((unsealed) => {
-      Object.assign(session, unsealed);
-      delete context.sessions[sessionName][kGetSession];
-      return session;
-    });
+    const promise = unsealSession(event, config, sealedSession)
+      .catch(() => {})
+      .then((unsealed) => {
+        Object.assign(session, unsealed);
+        delete context.sessions[sessionName][kGetSession];
+        return session;
+      });
     context.sessions[sessionName][kGetSession] = promise;
     await promise;
   }
@@ -982,32 +1056,39 @@ async function getSession(event, config) {
 }
 async function updateSession(event, config, update) {
   const sessionName = config.name || "h3";
-  const session = getEventContext(event).sessions?.[sessionName] || await getSession(event, config);
+  const session =
+    getEventContext(event).sessions?.[sessionName] || (await getSession(event, config));
   if (typeof update === "function") update = update(session.data);
   if (update) Object.assign(session.data, update);
-  if (config.cookie !== false && event.res) setChunkedCookie(event, sessionName, await sealSession(event, config), {
-    ...DEFAULT_SESSION_COOKIE,
-    expires: config.maxAge ? new Date(session.createdAt + config.maxAge * 1e3) : void 0,
-    ...config.cookie
-  });
+  if (config.cookie !== false && event.res)
+    setChunkedCookie(event, sessionName, await sealSession(event, config), {
+      ...DEFAULT_SESSION_COOKIE,
+      expires: config.maxAge ? new Date(session.createdAt + config.maxAge * 1e3) : void 0,
+      ...config.cookie,
+    });
   return session;
 }
 async function sealSession(event, config) {
   const sessionName = config.name || "h3";
-  return await seal(getEventContext(event).sessions?.[sessionName] || await getSession(event, config), config.password, {
-    ...defaults,
-    ttl: config.maxAge ? config.maxAge * 1e3 : 0,
-    ...config.seal
-  });
+  return await seal(
+    getEventContext(event).sessions?.[sessionName] || (await getSession(event, config)),
+    config.password,
+    {
+      ...defaults,
+      ttl: config.maxAge ? config.maxAge * 1e3 : 0,
+      ...config.seal,
+    },
+  );
 }
 async function unsealSession(_event, config, sealed) {
   const unsealed = await unseal(sealed, config.password, {
     ...defaults,
     ttl: config.maxAge ? config.maxAge * 1e3 : 0,
-    ...config.seal
+    ...config.seal,
   });
   if (config.maxAge) {
-    if (Date.now() - (unsealed.createdAt || Number.NEGATIVE_INFINITY) > config.maxAge * 1e3) throw new Error("Session expired!");
+    if (Date.now() - (unsealed.createdAt || Number.NEGATIVE_INFINITY) > config.maxAge * 1e3)
+      throw new Error("Session expired!");
   }
   return unsealed;
 }
@@ -1015,14 +1096,11 @@ function clearSession(event, config) {
   const context = getEventContext(event);
   const sessionName = config.name || "h3";
   if (context.sessions?.[sessionName]) delete context.sessions[sessionName];
-  if (event.res && config.cookie !== false) deleteChunkedCookie(event, sessionName, {
-    ...DEFAULT_SESSION_COOKIE,
-    ...config.cookie
-  });
+  if (event.res && config.cookie !== false)
+    deleteChunkedCookie(event, sessionName, {
+      ...DEFAULT_SESSION_COOKIE,
+      ...config.cookie,
+    });
   return Promise.resolve();
 }
-export {
-  H3Event as H,
-  toResponse as t,
-  useSession as u
-};
+export { H3Event as H, toResponse as t, useSession as u };

@@ -2,21 +2,18 @@ import { randomUUID } from "node:crypto";
 import process from "node:process";
 import { blogDraftStatuses } from "./blog-drafts";
 
-import postgres from "postgres";
-
 import { assertAdminSession } from "./admin-auth.server";
+import { getDbClient, type SqlClient } from "./db.server";
 import type { BlogDraft, BlogDraftInput } from "./blog-drafts";
 
-type SqlClient = ReturnType<typeof postgres>;
-type GlobalWithSql = typeof globalThis & {
-  hegxcorpSql?: SqlClient;
+type GlobalWithBlogDraftReady = typeof globalThis & {
   hegxcorpBlogDraftReady?: Promise<void>;
 };
 
 // Public-safe: no admin session required. Only ever returns PUBLISHED
 // posts, so nothing sensitive (drafts) is exposed to site visitors.
 export async function listPublishedBlogDrafts() {
-  const sql = getSql();
+  const sql = getDbClient();
   await ensureBlogDraftTable(sql);
   const rows = await sql<BlogDraftRow[]>`
     SELECT
@@ -64,36 +61,13 @@ type BlogDraftRow = {
   updatedAt: Date | string;
 };
 
-function getSql() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not configured.");
-  }
-
-  const globalForSql = globalThis as GlobalWithSql;
-  if (!globalForSql.hegxcorpSql) {
-    globalForSql.hegxcorpSql = postgres(databaseUrl, {
-      max: 5,
-      idle_timeout: 20,
-      connect_timeout: 10,
-      // Any single query that runs longer than 20s is aborted with a clear
-      // error instead of hanging the HTTP request into a gateway timeout.
-      connection: {
-        statement_timeout: 20000,
-      },
-    });
-  }
-
-  return globalForSql.hegxcorpSql;
-}
-
 // Creates the "BlogDraft" table the first time it is needed, so saving a draft
 // (for example when the admin clicks Preview) works without any manual setup.
 // The promise is cached on globalThis so the DDL only runs once per process.
 async function ensureBlogDraftTable(sql: SqlClient) {
-  const globalForSql = globalThis as GlobalWithSql;
-  if (!globalForSql.hegxcorpBlogDraftReady) {
-    globalForSql.hegxcorpBlogDraftReady = (async () => {
+  const globalForBlogDraftReady = globalThis as GlobalWithBlogDraftReady;
+  if (!globalForBlogDraftReady.hegxcorpBlogDraftReady) {
+    globalForBlogDraftReady.hegxcorpBlogDraftReady = (async () => {
       // Run the DDL inside a transaction with short timeouts. If another DB
       // session is holding a lock on the table (e.g. an idle transaction left
       // open in a GUI, or a killed migration), this fails fast with a clear
@@ -135,12 +109,12 @@ async function ensureBlogDraftTable(sql: SqlClient) {
       });
     })().catch((error) => {
       // Reset so a later call can retry if this attempt failed.
-      globalForSql.hegxcorpBlogDraftReady = undefined;
+      globalForBlogDraftReady.hegxcorpBlogDraftReady = undefined;
       throw error;
     });
   }
 
-  await globalForSql.hegxcorpBlogDraftReady;
+  await globalForBlogDraftReady.hegxcorpBlogDraftReady;
 }
 
 function cleanList(values: string[]) {
@@ -170,7 +144,7 @@ function mapDraft(row: BlogDraftRow): BlogDraft {
 
 export async function saveBlogDraft(input: BlogDraftInput) {
   await assertAdminSession();
-  const sql = getSql();
+  const sql = getDbClient();
   await ensureBlogDraftTable(sql);
 
   const id = input.id?.trim() || randomUUID();
@@ -258,7 +232,7 @@ export async function saveBlogDraft(input: BlogDraftInput) {
 
 export async function listBlogDrafts() {
   await assertAdminSession();
-  const sql = getSql();
+  const sql = getDbClient();
   await ensureBlogDraftTable(sql);
   const rows = await sql<BlogDraftRow[]>`
     SELECT
@@ -288,7 +262,7 @@ export async function listBlogDrafts() {
 
 export async function getBlogDraftById(id: string) {
   await assertAdminSession();
-  const sql = getSql();
+  const sql = getDbClient();
   await ensureBlogDraftTable(sql);
   const rows = await sql<BlogDraftRow[]>`
     SELECT
@@ -318,7 +292,7 @@ export async function getBlogDraftById(id: string) {
 
 export async function deleteBlogDraft(id: string) {
   await assertAdminSession();
-  const sql = getSql();
+  const sql = getDbClient();
   await ensureBlogDraftTable(sql);
   await sql`DELETE FROM "BlogDraft" WHERE "id" = ${id}`;
   return { id };

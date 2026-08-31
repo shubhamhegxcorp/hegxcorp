@@ -1,4 +1,9 @@
-import { M as Mark, a as markPasteRule, h as markInputRule, m as mergeAttributes } from "./tiptap__core.mjs";
+import {
+  M as Mark,
+  a as markPasteRule,
+  h as markInputRule,
+  m as mergeAttributes,
+} from "./tiptap__core.mjs";
 var inputRegexMatch = (text) => {
   const match = /`([^`]+)`(?!`)$/.exec(text);
   if (!match) {
@@ -10,7 +15,7 @@ var inputRegexMatch = (text) => {
   return {
     index: match.index,
     text: match[0],
-    replaceWith: match[1]
+    replaceWith: match[1],
   };
 };
 var pasteRegexMatch = (text) => {
@@ -24,7 +29,7 @@ var pasteRegexMatch = (text) => {
     matches.push({
       index: match.index,
       text: match[0],
-      replaceWith: match[1]
+      replaceWith: match[1],
     });
   }
   return matches;
@@ -33,7 +38,7 @@ var Code = Mark.create({
   name: "code",
   addOptions() {
     return {
-      HTMLAttributes: {}
+      HTMLAttributes: {},
     };
   },
   excludes: "_",
@@ -57,39 +62,43 @@ var Code = Mark.create({
   },
   addCommands() {
     return {
-      setCode: () => ({ commands }) => {
-        return commands.setMark(this.name);
-      },
-      toggleCode: () => ({ commands }) => {
-        return commands.toggleMark(this.name);
-      },
-      unsetCode: () => ({ commands }) => {
-        return commands.unsetMark(this.name);
-      }
+      setCode:
+        () =>
+        ({ commands }) => {
+          return commands.setMark(this.name);
+        },
+      toggleCode:
+        () =>
+        ({ commands }) => {
+          return commands.toggleMark(this.name);
+        },
+      unsetCode:
+        () =>
+        ({ commands }) => {
+          return commands.unsetMark(this.name);
+        },
     };
   },
   addKeyboardShortcuts() {
     return {
-      "Mod-e": () => this.editor.commands.toggleCode()
+      "Mod-e": () => this.editor.commands.toggleCode(),
     };
   },
   addInputRules() {
     return [
       markInputRule({
         find: inputRegexMatch,
-        type: this.type
-      })
+        type: this.type,
+      }),
     ];
   },
   addPasteRules() {
     return [
       markPasteRule({
         find: pasteRegexMatch,
-        type: this.type
-      })
+        type: this.type,
+      }),
     ];
-  }
+  },
 });
-export {
-  Code as C
-};
+export { Code as C };

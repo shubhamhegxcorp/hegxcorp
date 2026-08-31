@@ -1,4 +1,10 @@
-import { M as Mark, a as markPasteRule, h as markInputRule, p as h, m as mergeAttributes } from "./tiptap__core.mjs";
+import {
+  M as Mark,
+  a as markPasteRule,
+  h as markInputRule,
+  p as h,
+  m as mergeAttributes,
+} from "./tiptap__core.mjs";
 var starInputRegex = /(?:^|\s)(\*\*(?!\s+\*\*)((?:[^*]+))\*\*(?!\s+\*\*))$/;
 var starPasteRegex = /(?:^|\s)(\*\*(?!\s+\*\*)((?:[^*]+))\*\*(?!\s+\*\*))/g;
 var underscoreInputRegex = /(?:^|\s)(__(?!\s+__)((?:[^_]+))__(?!\s+__))$/;
@@ -7,30 +13,33 @@ var Bold = Mark.create({
   name: "bold",
   addOptions() {
     return {
-      HTMLAttributes: {}
+      HTMLAttributes: {},
     };
   },
   parseHTML() {
     return [
       {
-        tag: "strong"
+        tag: "strong",
       },
       {
         tag: "b",
-        getAttrs: (node) => node.style.fontWeight !== "normal" && null
+        getAttrs: (node) => node.style.fontWeight !== "normal" && null,
       },
       {
         style: "font-weight=400",
-        clearMark: (mark) => mark.type.name === this.name
+        clearMark: (mark) => mark.type.name === this.name,
       },
       {
         style: "font-weight",
-        getAttrs: (value) => /^(bold(er)?|[5-9]\d{2,})$/.test(value) && null
-      }
+        getAttrs: (value) => /^(bold(er)?|[5-9]\d{2,})$/.test(value) && null,
+      },
     ];
   },
   renderHTML({ HTMLAttributes }) {
-    return /* @__PURE__ */ h("strong", { ...mergeAttributes(this.options.HTMLAttributes, HTMLAttributes), children: /* @__PURE__ */ h("slot", {}) });
+    return /* @__PURE__ */ h("strong", {
+      ...mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
+      children: /* @__PURE__ */ h("slot", {}),
+    });
   },
   markdownTokenName: "strong",
   parseMarkdown: (token, helpers) => {
@@ -39,56 +48,60 @@ var Bold = Mark.create({
   markdownOptions: {
     htmlReopen: {
       open: "<strong>",
-      close: "</strong>"
-    }
+      close: "</strong>",
+    },
   },
   renderMarkdown: (node, h2) => {
     return `**${h2.renderChildren(node)}**`;
   },
   addCommands() {
     return {
-      setBold: () => ({ commands }) => {
-        return commands.setMark(this.name);
-      },
-      toggleBold: () => ({ commands }) => {
-        return commands.toggleMark(this.name);
-      },
-      unsetBold: () => ({ commands }) => {
-        return commands.unsetMark(this.name);
-      }
+      setBold:
+        () =>
+        ({ commands }) => {
+          return commands.setMark(this.name);
+        },
+      toggleBold:
+        () =>
+        ({ commands }) => {
+          return commands.toggleMark(this.name);
+        },
+      unsetBold:
+        () =>
+        ({ commands }) => {
+          return commands.unsetMark(this.name);
+        },
     };
   },
   addKeyboardShortcuts() {
     return {
       "Mod-b": () => this.editor.commands.toggleBold(),
-      "Mod-B": () => this.editor.commands.toggleBold()
+      "Mod-B": () => this.editor.commands.toggleBold(),
     };
   },
   addInputRules() {
     return [
       markInputRule({
         find: starInputRegex,
-        type: this.type
+        type: this.type,
       }),
       markInputRule({
         find: underscoreInputRegex,
-        type: this.type
-      })
+        type: this.type,
+      }),
     ];
   },
   addPasteRules() {
     return [
       markPasteRule({
         find: starPasteRegex,
-        type: this.type
+        type: this.type,
       }),
       markPasteRule({
         find: underscorePasteRegex,
-        type: this.type
-      })
+        type: this.type,
+      }),
     ];
-  }
+  },
 });
-export {
-  Bold as B
-};
+export { Bold as B };

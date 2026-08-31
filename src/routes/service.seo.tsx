@@ -34,16 +34,40 @@ import {
 export const Route = createFileRoute("/service/seo")({
   head: () => ({
     meta: [
-      { title: "SEO Services | Hegxcorp" },
+      { title: "SEO Services — Technical, Enterprise & Ecommerce Search Growth | Hegxcorp" },
       {
         name: "description",
         content:
-          "Hegxcorp SEO services in India for technical SEO, local SEO, international SEO, ecommerce SEO, content strategy, link authority, analytics and long-term organic growth.",
+          "Data-driven SEO services: technical search architecture, content clusters, local & international SEO, link authority, and organic revenue scaling.",
       },
+      {
+        property: "og:title",
+        content: "SEO Services — Technical, Enterprise & Ecommerce Search Growth | Hegxcorp",
+      },
+      {
+        property: "og:description",
+        content:
+          "Data-driven SEO services: technical search architecture, content clusters, local & international SEO, link authority, and organic revenue scaling.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://hegxcorp.com/service/seo" },
+      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content: "SEO Services — Technical, Enterprise & Ecommerce Search Growth | Hegxcorp",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Data-driven SEO services: technical search architecture, content clusters, local & international SEO, link authority, and organic revenue scaling.",
+      },
+      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
     ],
+    links: [{ rel: "canonical", href: "https://hegxcorp.com/service/seo" }],
   }),
   component: SeoServicePage,
-} as never);
+});
 
 function SeoHero() {
   return (

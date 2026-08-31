@@ -8,8 +8,6 @@ var Document = Node3.create({
       return "";
     }
     return h.renderChildren(node.content, "\n\n");
-  }
+  },
 });
-export {
-  Document as D
-};
+export { Document as D };

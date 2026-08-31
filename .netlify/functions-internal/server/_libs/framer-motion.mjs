@@ -3024,11 +3024,11 @@ function useInView(ref, { root, margin, amount, once = false, initial = false } 
 }
 export {
   AnimatePresence as A,
-  useSpring as a,
-  useInView as b,
-  animate as c,
-  useMotionValue as d,
-  useTransform as e,
+  animate as a,
+  useMotionValue as b,
+  useTransform as c,
+  useSpring as d,
+  useScroll as e,
   motion as m,
-  useScroll as u
+  useInView as u
 };

@@ -50,7 +50,7 @@ var base = {
   219: "[",
   220: "\\",
   221: "]",
-  222: "'"
+  222: "'",
 };
 var shift = {
   48: ")",
@@ -76,10 +76,12 @@ var shift = {
   219: "{",
   220: "|",
   221: "}",
-  222: '"'
+  222: '"',
 };
 var mac = typeof navigator != "undefined" && /Mac/.test(navigator.platform);
-var ie = typeof navigator != "undefined" && /MSIE \d|Trident\/(?:[7-9]|\d{2,})\..*rv:(\d+)/.exec(navigator.userAgent);
+var ie =
+  typeof navigator != "undefined" &&
+  /MSIE \d|Trident\/(?:[7-9]|\d{2,})\..*rv:(\d+)/.exec(navigator.userAgent);
 for (var i = 0; i < 10; i++) base[48 + i] = base[96 + i] = String(i);
 for (var i = 1; i <= 24; i++) base[i + 111] = "F" + i;
 for (var i = 65; i <= 90; i++) {
@@ -88,8 +90,15 @@ for (var i = 65; i <= 90; i++) {
 }
 for (var code in base) if (!shift.hasOwnProperty(code)) shift[code] = base[code];
 function keyName(event) {
-  var ignoreKey = mac && event.metaKey && event.shiftKey && !event.ctrlKey && !event.altKey || ie && event.shiftKey && event.key && event.key.length == 1 || event.key == "Unidentified";
-  var name = !ignoreKey && event.key || (event.shiftKey ? shift : base)[event.keyCode] || event.key || "Unidentified";
+  var ignoreKey =
+    (mac && event.metaKey && event.shiftKey && !event.ctrlKey && !event.altKey) ||
+    (ie && event.shiftKey && event.key && event.key.length == 1) ||
+    event.key == "Unidentified";
+  var name =
+    (!ignoreKey && event.key) ||
+    (event.shiftKey ? shift : base)[event.keyCode] ||
+    event.key ||
+    "Unidentified";
   if (name == "Esc") name = "Escape";
   if (name == "Del") name = "Delete";
   if (name == "Left") name = "ArrowLeft";
@@ -98,7 +107,4 @@ function keyName(event) {
   if (name == "Down") name = "ArrowDown";
   return name;
 }
-export {
-  base as b,
-  keyName as k
-};
+export { base as b, keyName as k };

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { PostCategoryPicker } from "@/components/admin/Categorysidebar";
+import { PostCategoryPicker } from "@/components/admin/CategorySidebar";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
-import { TagInput } from "@/components/admin/TAginput";
+import { TagInput } from "@/components/admin/TagInput";
 import { getBlogDraft, saveBlogDraft } from "@/lib/blog-drafts";
 import { generateId } from "@/lib/id";
 
@@ -187,12 +187,12 @@ function CreateBlogPage() {
           content: draft.content,
           readTime: draft.readTime,
           seoDescription: draft.seoDescription,
-          status: draft.status,
+          status: draft.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT",
           featured: draft.featured,
           category: draft.category,
           tags: draft.tags.join(", "),
-          seotitle: draft.seotitle,
-          authorname: draft.authorname,
+          seotitle: draft.seotitle || "",
+          authorname: draft.authorname || "",
         });
         setSlugTouched(Boolean(draft.slug));
         if (draft.category.length) handleCategoriesRestored(draft.category);
@@ -204,7 +204,6 @@ function CreateBlogPage() {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search.draft]);
 
   // Builds the full payload the server expects, using the stable draft id.
@@ -494,7 +493,7 @@ function CreateBlogPage() {
           <PostCategoryPicker
             categories={categories}
             selected={form.category}
-            onSelect={(categories) => updateField("category", categories)}
+            onSelect={(cats: string[]) => updateField("category", cats)}
             onAddCategory={handleAddCategory}
             onDeleteCategory={handleDeleteCategory}
             onCategoriesRestored={handleCategoriesRestored}

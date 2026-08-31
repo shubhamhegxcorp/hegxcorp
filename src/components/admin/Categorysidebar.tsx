@@ -1,6 +1,5 @@
-import { ChevronDown, ChevronUp, Search } from "lucide-react";
+import { ChevronDown, ChevronUp, Search, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState, useRef } from "react";
-import { Trash2 } from "lucide-react";
 
 /**
  * Category tree shape.
@@ -31,7 +30,7 @@ type CategorySidebarProps = {
   storageKey?: string;
   onChange?: (selectedIds: string[]) => void;
   onAddCategory?: () => void;
-  onDeleteCategory?: (id: string) => void; // NEW
+  onDeleteCategory?: (id: string) => void;
 };
 
 function flattenIds(nodes: CategoryNode[]): string[] {
@@ -140,11 +139,6 @@ export function CategorySidebar({
             />
           </label>
 
-          {/* FIX: was "overflow-y:auto" (invalid Tailwind class, colon instead of
-                hyphen) — that typo meant no overflow rule was ever applied, so the
-                box never clipped or scrolled its content no matter how tall the
-                list got. Also capped the height to ~4 rows so scrolling only
-                kicks in once a 5th category is added. */}
           <div
             ref={(el) => {
               if (!el) return;
@@ -251,7 +245,7 @@ export type PostCategoryPickerProps = {
   selected: string[];
   onSelect: (categories: string[]) => void;
   onAddCategory?: (name: string) => void;
-  onDeleteCategory?: (name: string) => void; // <-- ADD THIS
+  onDeleteCategory?: (name: string) => void;
   onCategoriesRestored?: (names: string[]) => void;
   storageKey?: string;
 };
@@ -270,8 +264,6 @@ export function PostCategoryPicker({
   const [newCategoryName, setNewCategoryName] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Own persistence directly, so added categories survive a refresh no
-  // matter what the parent component does with the `categories` prop.
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem(storageKey);
@@ -287,7 +279,6 @@ export function PostCategoryPicker({
     } catch {
       // Ignore malformed/unavailable storage.
     }
-    // Runs once on mount only - intentionally not reacting to prop changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -303,7 +294,7 @@ export function PostCategoryPicker({
         window.localStorage.setItem(storageKey, JSON.stringify([...saved, name]));
       }
     } catch {
-      // Storage may be unavailable (private mode, quota, etc.) - fail silently.
+      // Storage may be unavailable - fail silently.
     }
   }
 
@@ -313,7 +304,9 @@ export function PostCategoryPicker({
       const saved: string[] = raw ? JSON.parse(raw) : [];
 
       window.localStorage.setItem(storageKey, JSON.stringify(saved.filter((c) => c !== name)));
-    } catch {}
+    } catch {
+      // Storage unavailable or error - fail silently.
+    }
   }
 
   const handleAdd = () => {
@@ -368,8 +361,6 @@ export function PostCategoryPicker({
         />
       </label>
 
-      {/* Same fix here: capped to ~4 rows (9.5rem) instead of max-h-48 (12rem,
-            which comfortably fit 5-6 rows and delayed the scrollbar). */}
       <div
         ref={scrollRef}
         tabIndex={0}

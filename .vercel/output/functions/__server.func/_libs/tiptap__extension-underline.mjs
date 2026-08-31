@@ -3,19 +3,19 @@ var Underline = Mark.create({
   name: "underline",
   addOptions() {
     return {
-      HTMLAttributes: {}
+      HTMLAttributes: {},
     };
   },
   parseHTML() {
     return [
       {
-        tag: "u"
+        tag: "u",
       },
       {
         style: "text-decoration",
         consuming: false,
-        getAttrs: (style) => style.includes("underline") ? {} : false
-      }
+        getAttrs: (style) => (style.includes("underline") ? {} : false),
+      },
     ];
   },
   renderHTML({ HTMLAttributes }) {
@@ -44,30 +44,34 @@ var Underline = Mark.create({
         type: "underline",
         raw: match[0],
         text: innerContent,
-        tokens: lexer.inlineTokens(innerContent)
+        tokens: lexer.inlineTokens(innerContent),
       };
-    }
+    },
   },
   addCommands() {
     return {
-      setUnderline: () => ({ commands }) => {
-        return commands.setMark(this.name);
-      },
-      toggleUnderline: () => ({ commands }) => {
-        return commands.toggleMark(this.name);
-      },
-      unsetUnderline: () => ({ commands }) => {
-        return commands.unsetMark(this.name);
-      }
+      setUnderline:
+        () =>
+        ({ commands }) => {
+          return commands.setMark(this.name);
+        },
+      toggleUnderline:
+        () =>
+        ({ commands }) => {
+          return commands.toggleMark(this.name);
+        },
+      unsetUnderline:
+        () =>
+        ({ commands }) => {
+          return commands.unsetMark(this.name);
+        },
     };
   },
   addKeyboardShortcuts() {
     return {
       "Mod-u": () => this.editor.commands.toggleUnderline(),
-      "Mod-U": () => this.editor.commands.toggleUnderline()
+      "Mod-U": () => this.editor.commands.toggleUnderline(),
     };
-  }
+  },
 });
-export {
-  Underline as U
-};
+export { Underline as U };

@@ -1,36 +1,11 @@
 import { randomUUID } from "node:crypto";
-import process from "node:process";
 
-import postgres from "postgres";
-
+import { getDbClient, type SqlClient } from "./db.server";
 import type { VisitorEventInput } from "./visitor-events";
-
-type SqlClient = ReturnType<typeof postgres>;
-type GlobalWithSql = typeof globalThis & {
-  hegxcorpSql?: SqlClient;
-};
 
 function cleanOptional(value: string | undefined) {
   const trimmed = value?.trim();
   return trimmed ? trimmed : null;
-}
-
-function getSql() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not configured.");
-  }
-
-  const globalForSql = globalThis as GlobalWithSql;
-  if (!globalForSql.hegxcorpSql) {
-    globalForSql.hegxcorpSql = postgres(databaseUrl, {
-      max: 5,
-      idle_timeout: 20,
-      connect_timeout: 10,
-    });
-  }
-
-  return globalForSql.hegxcorpSql;
 }
 
 async function upsertScrollDepthEvent(sql: SqlClient, input: VisitorEventInput) {
@@ -75,7 +50,7 @@ async function upsertScrollDepthEvent(sql: SqlClient, input: VisitorEventInput) 
 }
 
 export async function createVisitorEvent(input: VisitorEventInput) {
-  const sql = getSql();
+  const sql = getDbClient();
 
   if (input.eventName.trim() === "scroll_depth") {
     await upsertScrollDepthEvent(sql, input);

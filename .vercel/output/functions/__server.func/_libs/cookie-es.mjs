@@ -35,10 +35,9 @@ function splitSetCookieString(cookiesString) {
         } else pos = lastComma + 1;
       } else pos += 1;
     }
-    if (!cookiesSeparatorFound || pos >= cookiesString.length) cookiesStrings.push(cookiesString.slice(start));
+    if (!cookiesSeparatorFound || pos >= cookiesString.length)
+      cookiesStrings.push(cookiesString.slice(start));
   }
   return cookiesStrings;
 }
-export {
-  splitSetCookieString as s
-};
+export { splitSetCookieString as s };

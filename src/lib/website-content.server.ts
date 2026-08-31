@@ -1,39 +1,15 @@
-import process from "node:process";
-import postgres from "postgres";
 import { assertAdminSession } from "./admin-auth.server";
 import { DEFAULT_CMS_SECTIONS } from "./cms-config";
+import { getDbClient, type SqlClient } from "./db.server";
 
-type SqlClient = ReturnType<typeof postgres>;
-type GlobalWithSql = typeof globalThis & {
-  hegxcorpSql?: SqlClient;
+type GlobalWithWebsiteContentReady = typeof globalThis & {
   hegxcorpWebsiteContentReady?: Promise<void>;
 };
 
-function getSql() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not configured.");
-  }
-
-  const globalForSql = globalThis as GlobalWithSql;
-  if (!globalForSql.hegxcorpSql) {
-    globalForSql.hegxcorpSql = postgres(databaseUrl, {
-      max: 5,
-      idle_timeout: 20,
-      connect_timeout: 10,
-      connection: {
-        statement_timeout: 20000,
-      },
-    });
-  }
-
-  return globalForSql.hegxcorpSql;
-}
-
 async function ensureWebsiteContentTable(sql: SqlClient) {
-  const globalForSql = globalThis as GlobalWithSql;
-  if (!globalForSql.hegxcorpWebsiteContentReady) {
-    globalForSql.hegxcorpWebsiteContentReady = (async () => {
+  const globalForWebsiteContentReady = globalThis as GlobalWithWebsiteContentReady;
+  if (!globalForWebsiteContentReady.hegxcorpWebsiteContentReady) {
+    globalForWebsiteContentReady.hegxcorpWebsiteContentReady = (async () => {
       await sql.begin(async (tx) => {
         await tx`SET LOCAL lock_timeout = '5s'`;
         await tx`SET LOCAL statement_timeout = '15s'`;
@@ -47,16 +23,16 @@ async function ensureWebsiteContentTable(sql: SqlClient) {
         `;
       });
     })().catch((error) => {
-      globalForSql.hegxcorpWebsiteContentReady = undefined;
+      globalForWebsiteContentReady.hegxcorpWebsiteContentReady = undefined;
       throw error;
     });
   }
 
-  await globalForSql.hegxcorpWebsiteContentReady;
+  await globalForWebsiteContentReady.hegxcorpWebsiteContentReady;
 }
 
 export async function getWebsiteSection(key: string): Promise<any> {
-  const sql = getSql();
+  const sql = getDbClient();
   await ensureWebsiteContentTable(sql);
 
   const rows = await sql<{ key: string; value: any }[]>`
@@ -76,7 +52,7 @@ export async function getWebsiteSection(key: string): Promise<any> {
 export async function saveWebsiteSection(key: string, value: any): Promise<any> {
   await assertAdminSession();
 
-  const sql = getSql();
+  const sql = getDbClient();
   await ensureWebsiteContentTable(sql);
 
   await sql`
@@ -91,7 +67,7 @@ export async function saveWebsiteSection(key: string, value: any): Promise<any> 
 }
 
 export async function listWebsiteSections(): Promise<Record<string, any>> {
-  const sql = getSql();
+  const sql = getDbClient();
   await ensureWebsiteContentTable(sql);
 
   const rows = await sql<{ key: string; value: any }[]>`

@@ -16,16 +16,42 @@ import { ServiceDirectory } from "@/components/site/ServiceDirectory";
 import ShapeGrid from "@/components/ShapeGrid";
 import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
+import { BreadcrumbSchema, ServiceSchema } from "@/components/site/StructuredData";
+
 export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
-      { title: "Our Services | Hegxcorp" },
+      { title: "Our Services — Full-Stack Digital Growth & Engineering | Hegxcorp" },
       {
         name: "description",
         content:
-          "Explore Hegxcorp services including website development, web application development, ecommerce development, WordPress development, SEO, digital marketing, UI/UX design, branding, and maintenance.",
+          "Explore Hegxcorp services: SEO growth architectures, high-performance web development, PPC campaigns, conversion rate optimisation, UI/UX design, and brand identity systems.",
       },
+      {
+        property: "og:title",
+        content: "Our Services — Full-Stack Digital Growth & Engineering | Hegxcorp",
+      },
+      {
+        property: "og:description",
+        content:
+          "Explore Hegxcorp services: SEO growth architectures, high-performance web development, PPC campaigns, conversion rate optimisation, UI/UX design, and brand identity systems.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://hegxcorp.com/services" },
+      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content: "Our Services — Full-Stack Digital Growth & Engineering | Hegxcorp",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Explore Hegxcorp services: SEO growth architectures, high-performance web development, PPC campaigns, conversion rate optimisation, UI/UX design, and brand identity systems.",
+      },
+      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
     ],
+    links: [{ rel: "canonical", href: "https://hegxcorp.com/services" }],
   }),
   component: OurServicesPage,
 });
@@ -253,7 +279,7 @@ function OurServicesPage() {
                       >
                         <div className="min-h-0 pl-[70px]">
                           <ul className="space-y-3">
-                            {item.points.map((point) => (
+                            {item.points.map((point: string) => (
                               <li
                                 key={point}
                                 className="flex items-start gap-3 text-sm leading-6 text-slate-500"

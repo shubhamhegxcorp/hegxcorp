@@ -1,29 +1,34 @@
-import { M as Mark, a as markPasteRule, h as markInputRule, m as mergeAttributes } from "./tiptap__core.mjs";
+import {
+  M as Mark,
+  a as markPasteRule,
+  h as markInputRule,
+  m as mergeAttributes,
+} from "./tiptap__core.mjs";
 var inputRegex = /(?:^|\s)(~~(?!\s+~~)((?:[^~]+))~~(?!\s+~~))$/;
 var pasteRegex = /(?:^|\s)(~~(?!\s+~~)((?:[^~]+))~~(?!\s+~~))/g;
 var Strike = Mark.create({
   name: "strike",
   addOptions() {
     return {
-      HTMLAttributes: {}
+      HTMLAttributes: {},
     };
   },
   parseHTML() {
     return [
       {
-        tag: "s"
+        tag: "s",
       },
       {
-        tag: "del"
+        tag: "del",
       },
       {
-        tag: "strike"
+        tag: "strike",
       },
       {
         style: "text-decoration",
         consuming: false,
-        getAttrs: (style) => style.includes("line-through") ? {} : false
-      }
+        getAttrs: (style) => (style.includes("line-through") ? {} : false),
+      },
     ];
   },
   renderHTML({ HTMLAttributes }) {
@@ -38,39 +43,43 @@ var Strike = Mark.create({
   },
   addCommands() {
     return {
-      setStrike: () => ({ commands }) => {
-        return commands.setMark(this.name);
-      },
-      toggleStrike: () => ({ commands }) => {
-        return commands.toggleMark(this.name);
-      },
-      unsetStrike: () => ({ commands }) => {
-        return commands.unsetMark(this.name);
-      }
+      setStrike:
+        () =>
+        ({ commands }) => {
+          return commands.setMark(this.name);
+        },
+      toggleStrike:
+        () =>
+        ({ commands }) => {
+          return commands.toggleMark(this.name);
+        },
+      unsetStrike:
+        () =>
+        ({ commands }) => {
+          return commands.unsetMark(this.name);
+        },
     };
   },
   addKeyboardShortcuts() {
     return {
-      "Mod-Shift-s": () => this.editor.commands.toggleStrike()
+      "Mod-Shift-s": () => this.editor.commands.toggleStrike(),
     };
   },
   addInputRules() {
     return [
       markInputRule({
         find: inputRegex,
-        type: this.type
-      })
+        type: this.type,
+      }),
     ];
   },
   addPasteRules() {
     return [
       markPasteRule({
         find: pasteRegex,
-        type: this.type
-      })
+        type: this.type,
+      }),
     ];
-  }
+  },
 });
-export {
-  Strike as S
-};
+export { Strike as S };

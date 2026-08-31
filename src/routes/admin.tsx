@@ -20,7 +20,7 @@ import {
 import { useEffect, useState, type FormEvent } from "react";
 import { Toaster, toast } from "sonner";
 
-import { AdminContext } from "@/lib/admin-context.tsx";
+import { AdminContext } from "@/lib/admin-context";
 import { getAdminSession, loginAdmin, logoutAdmin } from "@/lib/admin-auth";
 import { getBlogs } from "@/lib/content/blogs";
 import {

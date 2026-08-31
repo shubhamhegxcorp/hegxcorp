@@ -30,15 +30,27 @@ export const Route = createFileRoute("/")({
         content:
           "Generate more leads, sales and revenue through data-driven growth marketing. SEO, Paid Ads, Web Development and CRO.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://hegxcorp.com" },
+      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Hegxcorp — Data-Driven Growth Marketing Agency" },
+      {
+        name: "twitter:description",
+        content:
+          "Generate more leads, sales and revenue through data-driven growth marketing. SEO, Paid Ads, Web Development and CRO.",
+      },
+      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
       {
         name: "keywords",
         content:
           "digital marketing agency, SEO agency India, PPC agency, web development, growth marketing, Hegxcorp",
       },
     ],
+    links: [{ rel: "canonical", href: "https://hegxcorp.com" }],
   }),
   component: Index,
-} as never);
+});
 
 function Index() {
   return (

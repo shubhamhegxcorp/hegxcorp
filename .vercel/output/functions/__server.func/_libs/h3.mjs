@@ -23,7 +23,7 @@ var H3Event = class {
     this.url = url;
   }
   get res() {
-    return this[kEventRes] ||= new H3EventResponse();
+    return (this[kEventRes] ||= new H3EventResponse());
   }
   get runtime() {
     return this.req.runtime;
@@ -54,10 +54,10 @@ var H3EventResponse = class {
   status;
   statusText;
   get headers() {
-    return this[kEventResHeaders] ||= new Headers();
+    return (this[kEventResHeaders] ||= new Headers());
   }
   get errHeaders() {
-    return this[kEventResErrHeaders] ||= new Headers();
+    return (this[kEventResErrHeaders] ||= new Headers());
   }
 };
 const DISALLOWED_STATUS_CHARS = /[^\u0009\u0020-\u007E]/g;
@@ -88,7 +88,7 @@ var HTTPError = class HTTPError2 extends Error {
     return new HTTPError2({
       ...details,
       statusText,
-      status
+      status,
     });
   }
   constructor(arg1, arg2) {
@@ -98,13 +98,26 @@ var HTTPError = class HTTPError2 extends Error {
       messageInput = arg1;
       details = arg2;
     } else details = arg1;
-    const status = sanitizeStatusCode(details?.status || details?.statusCode || details?.cause?.status || details?.cause?.statusCode, 500);
-    const statusText = sanitizeStatusMessage(details?.statusText || details?.statusMessage || details?.cause?.statusText || details?.cause?.statusMessage);
-    const message = messageInput || details?.message || details?.cause?.message || details?.statusText || details?.statusMessage || [
-      "HTTPError",
-      status,
-      statusText
-    ].filter(Boolean).join(" ");
+    const status = sanitizeStatusCode(
+      details?.status ||
+        details?.statusCode ||
+        details?.cause?.status ||
+        details?.cause?.statusCode,
+      500,
+    );
+    const statusText = sanitizeStatusMessage(
+      details?.statusText ||
+        details?.statusMessage ||
+        details?.cause?.statusText ||
+        details?.cause?.statusMessage,
+    );
+    const message =
+      messageInput ||
+      details?.message ||
+      details?.cause?.message ||
+      details?.statusText ||
+      details?.statusMessage ||
+      ["HTTPError", status, statusText].filter(Boolean).join(" ");
     super(message, { cause: details });
     this.cause = details;
     this.status = status;
@@ -129,7 +142,7 @@ var HTTPError = class HTTPError2 extends Error {
       unhandled,
       message: unhandled ? "HTTPError" : this.message,
       data: unhandled ? void 0 : this.data,
-      ...unhandled ? void 0 : this.body
+      ...(unhandled ? void 0 : this.body),
     };
   }
 };
@@ -146,7 +159,11 @@ function isJSONSerializable(value, _type) {
 const kNotFound = /* @__PURE__ */ Symbol.for("h3.notFound");
 const kHandled = /* @__PURE__ */ Symbol.for("h3.handled");
 function toResponse(val, event, config = {}) {
-  if (typeof val?.then === "function") return val.then((resolvedVal) => toResponse(resolvedVal, event, config), (r) => toResponse(typeof r === "number" ? new HTTPError({ status: r }) : r, event, config));
+  if (typeof val?.then === "function")
+    return val.then(
+      (resolvedVal) => toResponse(resolvedVal, event, config),
+      (r) => toResponse(typeof r === "number" ? new HTTPError({ status: r }) : r, event, config),
+    );
   const response = prepareResponse(val, event, config);
   if (typeof response?.then === "function") return toResponse(response, event, config);
   const { onResponse } = config;
@@ -167,15 +184,16 @@ var HTTPResponse = class {
     return this.#init?.statusText || "OK";
   }
   get headers() {
-    return this.#headers ||= new Headers(this.#init?.headers);
+    return (this.#headers ||= new Headers(this.#init?.headers));
   }
 };
 function prepareResponse(val, event, config, nested) {
   if (val === kHandled) return new NodeResponse(null);
-  if (val === kNotFound) val = new HTTPError({
-    status: 404,
-    message: `Cannot find any route matching [${event.req.method}] ${event.url}`
-  });
+  if (val === kNotFound)
+    val = new HTTPError({
+      status: 404,
+      message: `Cannot find any route matching [${event.req.method}] ${event.url}`,
+    });
   if (val && val instanceof Error) {
     const isHTTPError = HTTPError.isError(val);
     const error = isHTTPError ? val : new HTTPError(val);
@@ -186,7 +204,11 @@ function prepareResponse(val, event, config, nested) {
     if (error.unhandled && !config.silent) console.error(error);
     const { onError } = config;
     const errHeaders = event[kEventRes]?.[kEventResErrHeaders];
-    return onError && !nested ? Promise.resolve(onError(error, event)).catch((error2) => error2).then((newVal) => prepareResponse(newVal ?? val, event, config, true)) : errorResponse(error, config.debug, errHeaders);
+    return onError && !nested
+      ? Promise.resolve(onError(error, event))
+          .catch((error2) => error2)
+          .then((newVal) => prepareResponse(newVal ?? val, event, config, true))
+      : errorResponse(error, config.debug, errHeaders);
   }
   const preparedRes = event[kEventRes];
   const preparedHeaders = preparedRes?.[kEventResHeaders];
@@ -197,7 +219,10 @@ function prepareResponse(val, event, config, nested) {
     return new NodeResponse(nullBody(event.req.method, status) ? null : res.body, {
       status,
       statusText: res.statusText || preparedRes?.statusText,
-      headers: res.headers && preparedHeaders ? mergeHeaders$1(res.headers, preparedHeaders) : res.headers || preparedHeaders
+      headers:
+        res.headers && preparedHeaders
+          ? mergeHeaders$1(res.headers, preparedHeaders)
+          : res.headers || preparedHeaders,
     });
   }
   if (!preparedHeaders || nested || !val.ok) return val;
@@ -208,30 +233,36 @@ function prepareResponse(val, event, config, nested) {
     return new NodeResponse(nullBody(event.req.method, val.status) ? null : val.body, {
       status: val.status,
       statusText: val.statusText,
-      headers: mergeHeaders$1(val.headers, preparedHeaders)
+      headers: mergeHeaders$1(val.headers, preparedHeaders),
     });
   }
 }
 function mergeHeaders$1(base, overrides, target = new Headers(base)) {
-  for (const [name, value] of overrides) if (name === "set-cookie") target.append(name, value);
-  else target.set(name, value);
+  for (const [name, value] of overrides)
+    if (name === "set-cookie") target.append(name, value);
+    else target.set(name, value);
   return target;
 }
-const frozen = (name) => (...args) => {
-  throw new Error(`Headers are frozen (${name} ${args.join(", ")})`);
-};
+const frozen =
+  (name) =>
+  (...args) => {
+    throw new Error(`Headers are frozen (${name} ${args.join(", ")})`);
+  };
 var FrozenHeaders = class extends Headers {
   set = frozen("set");
   append = frozen("append");
   delete = frozen("delete");
 };
 const emptyHeaders = /* @__PURE__ */ new FrozenHeaders({ "content-length": "0" });
-const jsonHeaders = /* @__PURE__ */ new FrozenHeaders({ "content-type": "application/json;charset=UTF-8" });
+const jsonHeaders = /* @__PURE__ */ new FrozenHeaders({
+  "content-type": "application/json;charset=UTF-8",
+});
 function prepareResponseBody(val, event, config) {
-  if (val === null || val === void 0) return {
-    body: "",
-    headers: emptyHeaders
-  };
+  if (val === null || val === void 0)
+    return {
+      body: "",
+      headers: emptyHeaders,
+    };
   const valType = typeof val;
   if (valType === "string") return { body: val };
   if (val instanceof Uint8Array) {
@@ -239,18 +270,20 @@ function prepareResponseBody(val, event, config) {
     return { body: val };
   }
   if (val instanceof HTTPResponse || val?.constructor?.name === "HTTPResponse") return val;
-  if (isJSONSerializable(val, valType)) return {
-    body: JSON.stringify(val, void 0, config.debug ? 2 : void 0),
-    headers: jsonHeaders
-  };
-  if (valType === "bigint") return {
-    body: val.toString(),
-    headers: jsonHeaders
-  };
+  if (isJSONSerializable(val, valType))
+    return {
+      body: JSON.stringify(val, void 0, config.debug ? 2 : void 0),
+      headers: jsonHeaders,
+    };
+  if (valType === "bigint")
+    return {
+      body: val.toString(),
+      headers: jsonHeaders,
+    };
   if (val instanceof Blob) {
     const headers = new Headers({
       "content-type": val.type,
-      "content-length": val.size.toString()
+      "content-length": val.size.toString(),
     });
     let filename = val.name;
     if (filename) {
@@ -259,7 +292,7 @@ function prepareResponseBody(val, event, config) {
     }
     return {
       body: val.stream(),
-      headers
+      headers,
     };
   }
   if (valType === "symbol") return { body: val.toString() };
@@ -267,19 +300,36 @@ function prepareResponseBody(val, event, config) {
   return { body: val };
 }
 function nullBody(method, status) {
-  return method === "HEAD" || status === 100 || status === 101 || status === 102 || status === 204 || status === 205 || status === 304;
+  return (
+    method === "HEAD" ||
+    status === 100 ||
+    status === 101 ||
+    status === 102 ||
+    status === 204 ||
+    status === 205 ||
+    status === 304
+  );
 }
 function errorResponse(error, debug, errHeaders) {
-  let headers = error.headers ? mergeHeaders$1(jsonHeaders, error.headers) : new Headers(jsonHeaders);
+  let headers = error.headers
+    ? mergeHeaders$1(jsonHeaders, error.headers)
+    : new Headers(jsonHeaders);
   if (errHeaders) headers = mergeHeaders$1(headers, errHeaders);
-  return new NodeResponse(JSON.stringify({
-    ...error.toJSON(),
-    stack: debug && error.stack ? error.stack.split("\n").map((l) => l.trim()) : void 0
-  }, void 0, debug ? 2 : void 0), {
-    status: error.status,
-    statusText: error.statusText,
-    headers
-  });
+  return new NodeResponse(
+    JSON.stringify(
+      {
+        ...error.toJSON(),
+        stack: debug && error.stack ? error.stack.split("\n").map((l) => l.trim()) : void 0,
+      },
+      void 0,
+      debug ? 2 : void 0,
+    ),
+    {
+      status: error.status,
+      statusText: error.statusText,
+      headers,
+    },
+  );
 }
 function callMiddleware(event, middleware, handler, index = 0) {
   if (index === middleware.length) return handler(event);
@@ -293,7 +343,11 @@ function callMiddleware(event, middleware, handler, index = 0) {
     return nextResult;
   };
   const ret = fn(event, next);
-  return isUnhandledResponse(ret) ? next() : typeof ret?.then === "function" ? ret.then((resolved) => isUnhandledResponse(resolved) ? next() : resolved) : ret;
+  return isUnhandledResponse(ret)
+    ? next()
+    : typeof ret?.then === "function"
+      ? ret.then((resolved) => (isUnhandledResponse(resolved) ? next() : resolved))
+      : ret;
 }
 function isUnhandledResponse(val) {
   return val === void 0 || val === kNotFound;
@@ -311,43 +365,61 @@ function toRequest(input, options) {
 }
 function defineHandler(input) {
   if (typeof input === "function") return handlerWithFetch(input);
-  const handler = input.handler || (input.fetch ? function _fetchHandler(event) {
-    return input.fetch(event.req);
-  } : NoHandler);
-  return Object.assign(handlerWithFetch(input.middleware?.length ? function _handlerMiddleware(event) {
-    return callMiddleware(event, input.middleware, handler);
-  } : handler), input);
+  const handler =
+    input.handler ||
+    (input.fetch
+      ? function _fetchHandler(event) {
+          return input.fetch(event.req);
+        }
+      : NoHandler);
+  return Object.assign(
+    handlerWithFetch(
+      input.middleware?.length
+        ? function _handlerMiddleware(event) {
+            return callMiddleware(event, input.middleware, handler);
+          }
+        : handler,
+    ),
+    input,
+  );
 }
 function handlerWithFetch(handler) {
   if ("fetch" in handler) return handler;
-  return Object.assign(handler, { fetch: (req) => {
-    if (typeof req === "string") req = new URL(req, "http://_");
-    if (req instanceof URL) req = new Request(req);
-    const event = new H3Event(req);
-    try {
-      return Promise.resolve(toResponse(handler(event), event));
-    } catch (error) {
-      return Promise.resolve(toResponse(error, event));
-    }
-  } });
+  return Object.assign(handler, {
+    fetch: (req) => {
+      if (typeof req === "string") req = new URL(req, "http://_");
+      if (req instanceof URL) req = new Request(req);
+      const event = new H3Event(req);
+      try {
+        return Promise.resolve(toResponse(handler(event), event));
+      } catch (error) {
+        return Promise.resolve(toResponse(error, event));
+      }
+    },
+  });
 }
 function defineLazyEventHandler(loader) {
   let handler;
   let promise;
   return defineHandler(function lazyHandler(event) {
-    return handler ? handler(event) : (promise ??= Promise.resolve(loader()).then(function resolveLazyHandler(r) {
-      handler = toEventHandler(r) || toEventHandler(r.default);
-      if (typeof handler !== "function") throw new TypeError("Invalid lazy handler", { cause: { resolved: r } });
-      return handler;
-    })).then((r) => r(event));
+    return handler
+      ? handler(event)
+      : (promise ??= Promise.resolve(loader()).then(function resolveLazyHandler(r) {
+          handler = toEventHandler(r) || toEventHandler(r.default);
+          if (typeof handler !== "function")
+            throw new TypeError("Invalid lazy handler", { cause: { resolved: r } });
+          return handler;
+        })).then((r) => r(event));
   });
 }
 function toEventHandler(handler) {
   if (typeof handler === "function") return handler;
-  if (typeof handler?.handler === "function" && handler.constructor?.["~h3"]) return handler.handler;
-  if (typeof handler?.fetch === "function") return function _fetchHandler(event) {
-    return handler.fetch(event.req);
-  };
+  if (typeof handler?.handler === "function" && handler.constructor?.["~h3"])
+    return handler.handler;
+  if (typeof handler?.fetch === "function")
+    return function _fetchHandler(event) {
+      return handler.fetch(event.req);
+    };
 }
 const NoHandler = () => kNotFound;
 var H3Core = class {
@@ -372,7 +444,9 @@ var H3Core = class {
     }
     const routeHandler = route?.data.handler || NoHandler;
     const middleware = this["~getMiddleware"](event, route);
-    return middleware.length > 0 ? callMiddleware(event, middleware, routeHandler) : routeHandler(event);
+    return middleware.length > 0
+      ? callMiddleware(event, middleware, routeHandler)
+      : routeHandler(event);
   }
   "~request"(request, context) {
     const event = new H3Event(request, context, this);
@@ -380,15 +454,17 @@ var H3Core = class {
     try {
       if (this.config.onRequest) {
         const hookRes = this.config.onRequest(event);
-        handlerRes = typeof hookRes?.then === "function" ? hookRes.then(() => this.handler(event)) : this.handler(event);
+        handlerRes =
+          typeof hookRes?.then === "function"
+            ? hookRes.then(() => this.handler(event))
+            : this.handler(event);
       } else handlerRes = this.handler(event);
     } catch (error) {
       handlerRes = Promise.reject(error);
     }
     return toResponse(handlerRes, event, this.config);
   }
-  "~findRoute"(_event) {
-  }
+  "~findRoute"(_event) {}
   "~addRoute"(_route) {
     this["~routes"].push(_route);
   }
@@ -398,9 +474,4 @@ var H3Core = class {
     return routeMiddleware ? [...globalMiddleware, ...routeMiddleware] : globalMiddleware;
   }
 };
-export {
-  HTTPError as H,
-  H3Core as a,
-  defineLazyEventHandler as d,
-  toRequest as t
-};
+export { HTTPError as H, H3Core as a, defineLazyEventHandler as d, toRequest as t };

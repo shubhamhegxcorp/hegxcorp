@@ -16,10 +16,28 @@ export const Route = createFileRoute("/case-studies/")({
         content:
           "Discover how Hegxcorp helps leading B2B and E-commerce brands scale organic revenue, optimize PPC campaigns, and achieve measurable growth.",
       },
+      { property: "og:title", content: "Client Success & Growth Case Studies | Hegxcorp" },
+      {
+        property: "og:description",
+        content:
+          "Discover how Hegxcorp helps leading B2B and E-commerce brands scale organic revenue, optimize PPC campaigns, and achieve measurable growth.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://hegxcorp.com/case-studies" },
+      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Client Success & Growth Case Studies | Hegxcorp" },
+      {
+        name: "twitter:description",
+        content:
+          "Discover how Hegxcorp helps leading B2B and E-commerce brands scale organic revenue, optimize PPC campaigns, and achieve measurable growth.",
+      },
+      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
     ],
+    links: [{ rel: "canonical", href: "https://hegxcorp.com/case-studies" }],
   }),
   component: CaseStudiesPage,
-} as never);
+});
 
 function EditorialDivider() {
   return (

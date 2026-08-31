@@ -18,9 +18,11 @@ var Portals = ({ contentComponent }) => {
   const renderers = shimExports.useSyncExternalStore(
     contentComponent.subscribe,
     contentComponent.getSnapshot,
-    contentComponent.getServerSnapshot
+    contentComponent.getServerSnapshot,
   );
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, { children: Object.values(renderers) });
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(jsxRuntimeExports.Fragment, {
+    children: Object.values(renderers),
+  });
 };
 function createContentComponent() {
   const subscribers = /* @__PURE__ */ new Set();
@@ -58,7 +60,7 @@ function createContentComponent() {
     setRenderer(id, renderer) {
       renderers = {
         ...renderers,
-        [id]: ReactDOM.createPortal(renderer.reactElement, renderer.element, id)
+        [id]: ReactDOM.createPortal(renderer.reactElement, renderer.element, id),
       };
       notifySubscribers();
     },
@@ -70,7 +72,7 @@ function createContentComponent() {
       delete nextRenderers[id];
       renderers = nextRenderers;
       notifySubscribers();
-    }
+    },
   };
 }
 var PureEditorContent = class extends React4.Component {
@@ -87,14 +89,18 @@ var PureEditorContent = class extends React4.Component {
   init() {
     var _a;
     const editor = this.props.editor;
-    if (editor && !editor.isDestroyed && ((_a = editor.view.dom) == null ? void 0 : _a.parentNode)) {
+    if (
+      editor &&
+      !editor.isDestroyed &&
+      ((_a = editor.view.dom) == null ? void 0 : _a.parentNode)
+    ) {
       if (editor.contentComponent) {
         return;
       }
       const element = this.editorContentRef.current;
       element.append(...editor.view.dom.parentNode.childNodes);
       editor.setOptions({
-        element
+        element,
       });
       editor.contentComponent = createContentComponent();
       editor.createNodeViews();
@@ -111,7 +117,7 @@ var PureEditorContent = class extends React4.Component {
     editor.isEditorContentInitialized = false;
     if (!editor.isDestroyed) {
       editor.view.setProps({
-        nodeViews: {}
+        nodeViews: {},
       });
     }
     editor.contentComponent = null;
@@ -122,33 +128,39 @@ var PureEditorContent = class extends React4.Component {
       const newElement = document.createElement("div");
       newElement.append(...editor.view.dom.parentNode.childNodes);
       editor.setOptions({
-        element: newElement
+        element: newElement,
       });
-    } catch {
-    }
+    } catch {}
   }
   render() {
     const { editor, innerRef, ...rest } = this.props;
-    return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, { children: [
-      /* @__PURE__ */ jsxRuntimeExports.jsx("div", { ref: mergeRefs(innerRef, this.editorContentRef), ...rest }),
-      (editor == null ? void 0 : editor.contentComponent) && /* @__PURE__ */ jsxRuntimeExports.jsx(Portals, { contentComponent: editor.contentComponent })
-    ] });
-  }
-};
-var EditorContentWithKey = reactExports.forwardRef(
-  (props, ref) => {
-    const key = React4.useMemo(() => {
-      return Math.floor(Math.random() * 4294967295).toString();
-    }, [props.editor]);
-    return React4.createElement(PureEditorContent, {
-      key,
-      innerRef: ref,
-      ...props
+    return /* @__PURE__ */ jsxRuntimeExports.jsxs(jsxRuntimeExports.Fragment, {
+      children: [
+        /* @__PURE__ */ jsxRuntimeExports.jsx("div", {
+          ref: mergeRefs(innerRef, this.editorContentRef),
+          ...rest,
+        }),
+        (editor == null ? void 0 : editor.contentComponent) &&
+          /* @__PURE__ */ jsxRuntimeExports.jsx(Portals, {
+            contentComponent: editor.contentComponent,
+          }),
+      ],
     });
   }
-);
+};
+var EditorContentWithKey = reactExports.forwardRef((props, ref) => {
+  const key = React4.useMemo(() => {
+    return Math.floor(Math.random() * 4294967295).toString();
+  }, [props.editor]);
+  return React4.createElement(PureEditorContent, {
+    key,
+    innerRef: ref,
+    ...props,
+  });
+});
 var EditorContent = React4.memo(EditorContentWithKey);
-var useIsomorphicLayoutEffect = typeof window !== "undefined" ? reactExports.useLayoutEffect : reactExports.useEffect;
+var useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? reactExports.useLayoutEffect : reactExports.useEffect;
 var EditorStateManager = class {
   constructor(initialEditor) {
     this.transactionNumber = 0;
@@ -195,7 +207,10 @@ var EditorStateManager = class {
     if (this.editor) {
       let lastTransaction;
       const fn = (props) => {
-        if ((props == null ? void 0 : props.transaction) !== void 0 && props.transaction === lastTransaction) {
+        if (
+          (props == null ? void 0 : props.transaction) !== void 0 &&
+          props.transaction === lastTransaction
+        ) {
           return;
         }
         lastTransaction = props == null ? void 0 : props.transaction;
@@ -221,7 +236,7 @@ function useEditorState(options) {
     editorStateManager.getSnapshot,
     editorStateManager.getServerSnapshot,
     options.selector,
-    (_a = options.equalityFn) != null ? _a : deepEqual
+    (_a = options.equalityFn) != null ? _a : deepEqual,
   );
   useIsomorphicLayoutEffect(() => {
     return editorStateManager.watch(options.editor);
@@ -262,7 +277,7 @@ var EditorInstanceManager = class _EditorInstanceManager {
     if (isSSR) {
       if (immediatelyRender && isDev) {
         console.warn(
-          "SSR detected. `immediatelyRender` has been set to false to avoid hydration mismatches"
+          "SSR detected. `immediatelyRender` has been set to false to avoid hydration mismatches",
         );
       }
       immediatelyRender = false;
@@ -280,7 +295,9 @@ var EditorInstanceManager = class _EditorInstanceManager {
       // Always call the most recent version of the callback function by default
       onBeforeCreate: (...args) => {
         var _a, _b;
-        return (_b = (_a = this.options.current).onBeforeCreate) == null ? void 0 : _b.call(_a, ...args);
+        return (_b = (_a = this.options.current).onBeforeCreate) == null
+          ? void 0
+          : _b.call(_a, ...args);
       },
       onBlur: (...args) => {
         var _a, _b;
@@ -300,11 +317,15 @@ var EditorInstanceManager = class _EditorInstanceManager {
       },
       onSelectionUpdate: (...args) => {
         var _a, _b;
-        return (_b = (_a = this.options.current).onSelectionUpdate) == null ? void 0 : _b.call(_a, ...args);
+        return (_b = (_a = this.options.current).onSelectionUpdate) == null
+          ? void 0
+          : _b.call(_a, ...args);
       },
       onTransaction: (...args) => {
         var _a, _b;
-        return (_b = (_a = this.options.current).onTransaction) == null ? void 0 : _b.call(_a, ...args);
+        return (_b = (_a = this.options.current).onTransaction) == null
+          ? void 0
+          : _b.call(_a, ...args);
       },
       onUpdate: (...args) => {
         var _a, _b;
@@ -312,7 +333,9 @@ var EditorInstanceManager = class _EditorInstanceManager {
       },
       onContentError: (...args) => {
         var _a, _b;
-        return (_b = (_a = this.options.current).onContentError) == null ? void 0 : _b.call(_a, ...args);
+        return (_b = (_a = this.options.current).onContentError) == null
+          ? void 0
+          : _b.call(_a, ...args);
       },
       onDrop: (...args) => {
         var _a, _b;
@@ -333,7 +356,7 @@ var EditorInstanceManager = class _EditorInstanceManager {
       onUnmount: (...args) => {
         var _a, _b;
         return (_b = (_a = this.options.current).onUnmount) == null ? void 0 : _b.call(_a, ...args);
-      }
+      },
     };
     const editor = new Editor(optionsToApply);
     return editor;
@@ -361,19 +384,21 @@ var EditorInstanceManager = class _EditorInstanceManager {
   }
   static compareOptions(a, b) {
     return Object.keys(a).every((key) => {
-      if ([
-        "onCreate",
-        "onBeforeCreate",
-        "onDestroy",
-        "onUpdate",
-        "onTransaction",
-        "onFocus",
-        "onBlur",
-        "onSelectionUpdate",
-        "onContentError",
-        "onDrop",
-        "onPaste"
-      ].includes(key)) {
+      if (
+        [
+          "onCreate",
+          "onBeforeCreate",
+          "onDestroy",
+          "onUpdate",
+          "onTransaction",
+          "onFocus",
+          "onBlur",
+          "onSelectionUpdate",
+          "onContentError",
+          "onDrop",
+          "onPaste",
+        ].includes(key)
+      ) {
         return true;
       }
       if (key === "extensions" && a.extensions && b.extensions) {
@@ -407,7 +432,7 @@ var EditorInstanceManager = class _EditorInstanceManager {
         if (!_EditorInstanceManager.compareOptions(this.options.current, this.editor.options)) {
           this.editor.setOptions({
             ...this.options.current,
-            editable: this.editor.isEditable
+            editable: this.editor.isEditable,
           });
         }
       } else {
@@ -428,7 +453,9 @@ var EditorInstanceManager = class _EditorInstanceManager {
         this.previousDeps = deps;
         return;
       }
-      const depsAreEqual = this.previousDeps.length === deps.length && this.previousDeps.every((dep, index) => dep === deps[index]);
+      const depsAreEqual =
+        this.previousDeps.length === deps.length &&
+        this.previousDeps.every((dep, index) => dep === deps[index]);
       if (depsAreEqual) {
         return;
       }
@@ -466,38 +493,41 @@ var EditorInstanceManager = class _EditorInstanceManager {
 function useEditor(options = {}, deps = []) {
   const mostRecentOptions = reactExports.useRef(options);
   mostRecentOptions.current = options;
-  const [instanceManager] = reactExports.useState(() => new EditorInstanceManager(mostRecentOptions));
+  const [instanceManager] = reactExports.useState(
+    () => new EditorInstanceManager(mostRecentOptions),
+  );
   const editor = shimExports.useSyncExternalStore(
     instanceManager.subscribe,
     instanceManager.getEditor,
-    instanceManager.getServerSnapshot
+    instanceManager.getServerSnapshot,
   );
   reactExports.useDebugValue(editor);
   reactExports.useEffect(instanceManager.onRender(deps));
   useEditorState({
     editor,
     selector: ({ transactionNumber }) => {
-      if (options.shouldRerenderOnTransaction === false || options.shouldRerenderOnTransaction === void 0) {
+      if (
+        options.shouldRerenderOnTransaction === false ||
+        options.shouldRerenderOnTransaction === void 0
+      ) {
         return null;
       }
       if (options.immediatelyRender && transactionNumber === 0) {
         return 0;
       }
       return transactionNumber + 1;
-    }
+    },
   });
   return editor;
 }
 var EditorContext = reactExports.createContext({
-  editor: null
+  editor: null,
 });
 EditorContext.Consumer;
 var ReactNodeViewContext = reactExports.createContext({
-  onDragStart: () => {
-  },
+  onDragStart: () => {},
   nodeViewContentChildren: void 0,
-  nodeViewContentRef: () => {
-  }
+  nodeViewContentRef: () => {},
 });
 var useReactNodeView = () => reactExports.useContext(ReactNodeViewContext);
 React4.forwardRef((props, ref) => {
@@ -505,29 +535,25 @@ React4.forwardRef((props, ref) => {
   const Tag = props.as || "div";
   return (
     // @ts-ignore
-    /* @__PURE__ */ jsxRuntimeExports.jsx(
-      Tag,
-      {
-        ...props,
-        ref,
-        "data-node-view-wrapper": "",
-        onDragStart,
-        style: {
-          whiteSpace: "normal",
-          ...props.style
-        }
-      }
-    )
+    /* @__PURE__ */ jsxRuntimeExports.jsx(Tag, {
+      ...props,
+      ref,
+      "data-node-view-wrapper": "",
+      onDragStart,
+      style: {
+        whiteSpace: "normal",
+        ...props.style,
+      },
+    })
   );
 });
 React4.createContext({
-  markViewContentRef: () => {
-  }
+  markViewContentRef: () => {},
 });
 var TiptapContext = reactExports.createContext({
   get editor() {
     throw new Error("useTiptap must be used within a <Tiptap> provider");
-  }
+  },
 });
 TiptapContext.displayName = "TiptapContext";
 var useTiptap = () => reactExports.useContext(TiptapContext);
@@ -538,10 +564,19 @@ function TiptapWrapper({ children, ...props }) {
   }
   const tiptapContextValue = reactExports.useMemo(
     () => ({ editor: resolvedEditor }),
-    [resolvedEditor]
+    [resolvedEditor],
   );
-  const legacyContextValue = reactExports.useMemo(() => ({ editor: resolvedEditor }), [resolvedEditor]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(EditorContext.Provider, { value: legacyContextValue, children: /* @__PURE__ */ jsxRuntimeExports.jsx(TiptapContext.Provider, { value: tiptapContextValue, children }) });
+  const legacyContextValue = reactExports.useMemo(
+    () => ({ editor: resolvedEditor }),
+    [resolvedEditor],
+  );
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(EditorContext.Provider, {
+    value: legacyContextValue,
+    children: /* @__PURE__ */ jsxRuntimeExports.jsx(TiptapContext.Provider, {
+      value: tiptapContextValue,
+      children,
+    }),
+  });
 }
 TiptapWrapper.displayName = "Tiptap";
 function TiptapContent({ ...rest }) {
@@ -554,9 +589,6 @@ Object.assign(TiptapWrapper, {
    * The Tiptap Content component that renders the EditorContent with the editor instance from the context.
    * @see TiptapContent
    */
-  Content: TiptapContent
+  Content: TiptapContent,
 });
-export {
-  EditorContent as E,
-  useEditor as u
-};
+export { EditorContent as E, useEditor as u };

@@ -35,18 +35,30 @@ export const Route = createFileRoute("/contact")({
       {
         name: "description",
         content:
-          "Get in touch with Hegxcorp's digital transformation consultants. Let's discuss your growth targets, SEO opportunities, and ad performance audit.",
+          "Get in touch with Hegxcorp's digital transformation consultants. Schedule a strategic consultation to discuss SEO opportunities, paid advertising, and web architecture.",
       },
-      { property: "og:title", content: "Contact Hegxcorp | Enterprise Growth Partners" },
+      { property: "og:title", content: "Contact Our Growth Consulting Team | Hegxcorp" },
       {
         property: "og:description",
         content:
-          "Connect with us to schedule a strategy call or request a detailed SEO and marketing audit.",
+          "Get in touch with Hegxcorp's digital transformation consultants. Schedule a strategic consultation to discuss SEO opportunities, paid advertising, and web architecture.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://hegxcorp.com/contact" },
+      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Contact Our Growth Consulting Team | Hegxcorp" },
+      {
+        name: "twitter:description",
+        content:
+          "Get in touch with Hegxcorp's digital transformation consultants. Schedule a strategic consultation to discuss SEO opportunities, paid advertising, and web architecture.",
+      },
+      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
     ],
+    links: [{ rel: "canonical", href: "https://hegxcorp.com/contact" }],
   }),
   component: ContactPage,
-} as never);
+});
 
 const serviceGroups = [
   {
@@ -517,7 +529,7 @@ function ContactPage() {
                             type="tel"
                             id="phone"
                             inputMode="numeric"
-                            placeholder="9876543210"
+                            placeholder="8369207836"
                             {...register("phone", { onChange: () => clearErrors("phone") })}
                             onKeyDown={(event) =>
                               blockInvalidPhoneKey(event, () =>

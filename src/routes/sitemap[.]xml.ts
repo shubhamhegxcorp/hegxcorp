@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { getBlogs } from "@/lib/content/blogs";
+import { getPublishedBlogs } from "@/lib/content/blogs";
 import { getCaseStudies } from "@/lib/content/caseStudies";
 
 const siteUrl = "https://hegxcorp.com";
@@ -49,12 +49,19 @@ function renderUrl({
 }
 
 export const Route = createFileRoute("/sitemap.xml")({
-  loader: () => {
-    const blogPages = getBlogs().map((blog) => ({
+  loader: async () => {
+    let allBlogs: Awaited<ReturnType<typeof getPublishedBlogs>> = [];
+    try {
+      allBlogs = await getPublishedBlogs();
+    } catch (error) {
+      console.error("Failed to load published blogs for sitemap:", error);
+    }
+
+    const blogPages = allBlogs.map((blog) => ({
       path: `/blog/${blog.slug}`,
       changefreq: "monthly",
       priority: "0.6",
-      lastmod: blog.publishedAt.slice(0, 10),
+      lastmod: blog.publishedAt ? blog.publishedAt.slice(0, 10) : undefined,
     }));
 
     const caseStudyPages = getCaseStudies().map((study) => ({
@@ -72,7 +79,7 @@ ${urls}
 
     return new Response(xml, {
       headers: {
-        "Content-Type": "application/xml",
+        "Content-Type": "application/xml; charset=utf-8",
         "Cache-Control": "public, max-age=3600",
       },
     });

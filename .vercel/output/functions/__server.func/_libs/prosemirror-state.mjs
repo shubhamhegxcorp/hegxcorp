@@ -1,5 +1,9 @@
 import { S as Slice, F as Fragment, N as Node, M as Mark } from "./prosemirror-model.mjs";
-import { R as ReplaceStep, a as ReplaceAroundStep, T as Transform } from "./prosemirror-transform.mjs";
+import {
+  R as ReplaceStep,
+  a as ReplaceAroundStep,
+  T as Transform,
+} from "./prosemirror-transform.mjs";
 const classesById = /* @__PURE__ */ Object.create(null);
 class Selection {
   /**
@@ -54,8 +58,7 @@ class Selection {
   get empty() {
     let ranges = this.ranges;
     for (let i = 0; i < ranges.length; i++)
-      if (ranges[i].$from.pos != ranges[i].$to.pos)
-        return false;
+      if (ranges[i].$from.pos != ranges[i].$to.pos) return false;
     return true;
   }
   /**
@@ -69,17 +72,24 @@ class Selection {
   delete the selection. Will append to the given transaction.
   */
   replace(tr, content = Slice.empty) {
-    let lastNode = content.content.lastChild, lastParent = null;
+    let lastNode = content.content.lastChild,
+      lastParent = null;
     for (let i = 0; i < content.openEnd; i++) {
       lastParent = lastNode;
       lastNode = lastNode.lastChild;
     }
-    let mapFrom = tr.steps.length, ranges = this.ranges;
+    let mapFrom = tr.steps.length,
+      ranges = this.ranges;
     for (let i = 0; i < ranges.length; i++) {
-      let { $from, $to } = ranges[i], mapping = tr.mapping.slice(mapFrom);
+      let { $from, $to } = ranges[i],
+        mapping = tr.mapping.slice(mapFrom);
       tr.replaceRange(mapping.map($from.pos), mapping.map($to.pos), i ? Slice.empty : content);
       if (i == 0)
-        selectionToInsertionEnd(tr, mapFrom, (lastNode ? lastNode.isInline : lastParent && lastParent.isTextblock) ? -1 : 1);
+        selectionToInsertionEnd(
+          tr,
+          mapFrom,
+          (lastNode ? lastNode.isInline : lastParent && lastParent.isTextblock) ? -1 : 1,
+        );
     }
   }
   /**
@@ -87,10 +97,13 @@ class Selection {
   to the given transaction.
   */
   replaceWith(tr, node) {
-    let mapFrom = tr.steps.length, ranges = this.ranges;
+    let mapFrom = tr.steps.length,
+      ranges = this.ranges;
     for (let i = 0; i < ranges.length; i++) {
-      let { $from, $to } = ranges[i], mapping = tr.mapping.slice(mapFrom);
-      let from = mapping.map($from.pos), to = mapping.map($to.pos);
+      let { $from, $to } = ranges[i],
+        mapping = tr.mapping.slice(mapFrom);
+      let from = mapping.map($from.pos),
+        to = mapping.map($to.pos);
       if (i) {
         tr.deleteRange(from, to);
       } else {
@@ -107,13 +120,30 @@ class Selection {
   found.
   */
   static findFrom($pos, dir, textOnly = false) {
-    let inner = $pos.parent.inlineContent ? new TextSelection($pos) : findSelectionIn($pos.node(0), $pos.parent, $pos.pos, $pos.index(), dir, textOnly);
-    if (inner)
-      return inner;
+    let inner = $pos.parent.inlineContent
+      ? new TextSelection($pos)
+      : findSelectionIn($pos.node(0), $pos.parent, $pos.pos, $pos.index(), dir, textOnly);
+    if (inner) return inner;
     for (let depth = $pos.depth - 1; depth >= 0; depth--) {
-      let found = dir < 0 ? findSelectionIn($pos.node(0), $pos.node(depth), $pos.before(depth + 1), $pos.index(depth), dir, textOnly) : findSelectionIn($pos.node(0), $pos.node(depth), $pos.after(depth + 1), $pos.index(depth) + 1, dir, textOnly);
-      if (found)
-        return found;
+      let found =
+        dir < 0
+          ? findSelectionIn(
+              $pos.node(0),
+              $pos.node(depth),
+              $pos.before(depth + 1),
+              $pos.index(depth),
+              dir,
+              textOnly,
+            )
+          : findSelectionIn(
+              $pos.node(0),
+              $pos.node(depth),
+              $pos.after(depth + 1),
+              $pos.index(depth) + 1,
+              dir,
+              textOnly,
+            );
+      if (found) return found;
     }
     return null;
   }
@@ -123,7 +153,9 @@ class Selection {
   negative, it will search backwards first.
   */
   static near($pos, bias = 1) {
-    return this.findFrom($pos, bias) || this.findFrom($pos, -bias) || new AllSelection($pos.node(0));
+    return (
+      this.findFrom($pos, bias) || this.findFrom($pos, -bias) || new AllSelection($pos.node(0))
+    );
   }
   /**
   Find the cursor or leaf node selection closest to the start of
@@ -146,11 +178,9 @@ class Selection {
   implemented for custom classes (as a static class method).
   */
   static fromJSON(doc, json) {
-    if (!json || !json.type)
-      throw new RangeError("Invalid input for Selection.fromJSON");
+    if (!json || !json.type) throw new RangeError("Invalid input for Selection.fromJSON");
     let cls = classesById[json.type];
-    if (!cls)
-      throw new RangeError(`No selection type ${json.type} defined`);
+    if (!cls) throw new RangeError(`No selection type ${json.type} defined`);
     return cls.fromJSON(doc, json);
   }
   /**
@@ -160,8 +190,7 @@ class Selection {
   clash with classes from other modules.
   */
   static jsonID(id, selectionClass) {
-    if (id in classesById)
-      throw new RangeError("Duplicate use of selection JSON ID " + id);
+    if (id in classesById) throw new RangeError("Duplicate use of selection JSON ID " + id);
     classesById[id] = selectionClass;
     selectionClass.prototype.jsonID = id;
     return selectionClass;
@@ -193,7 +222,11 @@ let warnedAboutTextSelection = false;
 function checkTextSelection($pos) {
   if (!warnedAboutTextSelection && !$pos.parent.inlineContent) {
     warnedAboutTextSelection = true;
-    console["warn"]("TextSelection endpoint not pointing into a node with inline content (" + $pos.parent.type.name + ")");
+    console["warn"](
+      "TextSelection endpoint not pointing into a node with inline content (" +
+        $pos.parent.type.name +
+        ")",
+    );
   }
 }
 class TextSelection extends Selection {
@@ -214,8 +247,7 @@ class TextSelection extends Selection {
   }
   map(doc, mapping) {
     let $head = doc.resolve(mapping.map(this.head));
-    if (!$head.parent.inlineContent)
-      return Selection.near($head);
+    if (!$head.parent.inlineContent) return Selection.near($head);
     let $anchor = doc.resolve(mapping.map(this.anchor));
     return new TextSelection($anchor.parent.inlineContent ? $anchor : $head, $head);
   }
@@ -223,8 +255,7 @@ class TextSelection extends Selection {
     super.replace(tr, content);
     if (content == Slice.empty) {
       let marks = this.$from.marksAcross(this.$to);
-      if (marks)
-        tr.ensureMarks(marks);
+      if (marks) tr.ensureMarks(marks);
     }
   }
   eq(other) {
@@ -261,22 +292,20 @@ class TextSelection extends Selection {
   */
   static between($anchor, $head, bias) {
     let dPos = $anchor.pos - $head.pos;
-    if (!bias || dPos)
-      bias = dPos >= 0 ? 1 : -1;
+    if (!bias || dPos) bias = dPos >= 0 ? 1 : -1;
     if (!$head.parent.inlineContent) {
       let found = Selection.findFrom($head, bias, true) || Selection.findFrom($head, -bias, true);
-      if (found)
-        $head = found.$head;
-      else
-        return Selection.near($head, bias);
+      if (found) $head = found.$head;
+      else return Selection.near($head, bias);
     }
     if (!$anchor.parent.inlineContent) {
       if (dPos == 0) {
         $anchor = $head;
       } else {
-        $anchor = (Selection.findFrom($anchor, -bias, true) || Selection.findFrom($anchor, bias, true)).$anchor;
-        if ($anchor.pos < $head.pos != dPos < 0)
-          $anchor = $head;
+        $anchor = (
+          Selection.findFrom($anchor, -bias, true) || Selection.findFrom($anchor, bias, true)
+        ).$anchor;
+        if ($anchor.pos < $head.pos != dPos < 0) $anchor = $head;
       }
     }
     return new TextSelection($anchor, $head);
@@ -309,8 +338,7 @@ class NodeSelection extends Selection {
   map(doc, mapping) {
     let { deleted, pos } = mapping.mapResult(this.anchor);
     let $pos = doc.resolve(pos);
-    if (deleted)
-      return Selection.near($pos);
+    if (deleted) return Selection.near($pos);
     return new NodeSelection($pos);
   }
   content() {
@@ -358,9 +386,9 @@ class NodeBookmark {
     return deleted ? new TextBookmark(pos, pos) : new NodeBookmark(pos);
   }
   resolve(doc) {
-    let $pos = doc.resolve(this.anchor), node = $pos.nodeAfter;
-    if (node && NodeSelection.isSelectable(node))
-      return new NodeSelection($pos);
+    let $pos = doc.resolve(this.anchor),
+      node = $pos.nodeAfter;
+    if (node && NodeSelection.isSelectable(node)) return new NodeSelection($pos);
     return Selection.near($pos);
   }
 }
@@ -375,8 +403,7 @@ class AllSelection extends Selection {
     if (content == Slice.empty) {
       tr.delete(0, tr.doc.content.size);
       let sel = Selection.atStart(tr.doc);
-      if (!sel.eq(tr.selection))
-        tr.setSelection(sel);
+      if (!sel.eq(tr.selection)) tr.setSelection(sel);
     } else {
       super.replace(tr, content);
     }
@@ -407,17 +434,15 @@ const AllBookmark = {
   },
   resolve(doc) {
     return new AllSelection(doc);
-  }
+  },
 };
 function findSelectionIn(doc, node, pos, index, dir, text = false) {
-  if (node.inlineContent)
-    return TextSelection.create(doc, pos);
+  if (node.inlineContent) return TextSelection.create(doc, pos);
   for (let i = index - (dir > 0 ? 0 : 1); dir > 0 ? i < node.childCount : i >= 0; i += dir) {
     let child = node.child(i);
     if (!child.isAtom) {
       let inner = findSelectionIn(doc, child, pos + dir, dir < 0 ? child.childCount : 0, dir, text);
-      if (inner)
-        return inner;
+      if (inner) return inner;
     } else if (!text && NodeSelection.isSelectable(child)) {
       return NodeSelection.create(doc, pos - (dir < 0 ? child.nodeSize : 0));
     }
@@ -427,19 +452,19 @@ function findSelectionIn(doc, node, pos, index, dir, text = false) {
 }
 function selectionToInsertionEnd(tr, startLen, bias) {
   let last = tr.steps.length - 1;
-  if (last < startLen)
-    return;
+  if (last < startLen) return;
   let step = tr.steps[last];
-  if (!(step instanceof ReplaceStep || step instanceof ReplaceAroundStep))
-    return;
-  let map = tr.mapping.maps[last], end;
+  if (!(step instanceof ReplaceStep || step instanceof ReplaceAroundStep)) return;
+  let map = tr.mapping.maps[last],
+    end;
   map.forEach((_from, _to, _newFrom, newTo) => {
-    if (end == null)
-      end = newTo;
+    if (end == null) end = newTo;
   });
   tr.setSelection(Selection.near(tr.doc.resolve(end), bias));
 }
-const UPDATED_SEL = 1, UPDATED_MARKS = 2, UPDATED_SCROLL = 4;
+const UPDATED_SEL = 1,
+  UPDATED_MARKS = 2,
+  UPDATED_SCROLL = 4;
 class Transaction extends Transform {
   /**
   @internal
@@ -551,7 +576,12 @@ class Transaction extends Transform {
   replaceSelectionWith(node, inheritMarks = true) {
     let selection = this.selection;
     if (inheritMarks)
-      node = node.mark(this.storedMarks || (selection.empty ? selection.$from.marks() : selection.$from.marksAcross(selection.$to) || Mark.none));
+      node = node.mark(
+        this.storedMarks ||
+          (selection.empty
+            ? selection.$from.marks()
+            : selection.$from.marksAcross(selection.$to) || Mark.none),
+      );
     selection.replaceWith(this, node);
     return this;
   }
@@ -569,14 +599,11 @@ class Transaction extends Transform {
   insertText(text, from, to) {
     let schema = this.doc.type.schema;
     if (from == null) {
-      if (!text)
-        return this.deleteSelection();
+      if (!text) return this.deleteSelection();
       return this.replaceSelectionWith(schema.text(text), true);
     } else {
-      if (to == null)
-        to = from;
-      if (!text)
-        return this.deleteRange(from, to);
+      if (to == null) to = from;
+      if (!text) return this.deleteRange(from, to);
       let marks = this.storedMarks;
       if (!marks) {
         let $from = this.doc.resolve(from);
@@ -607,8 +634,7 @@ class Transaction extends Transform {
   and can thus safely be extended.
   */
   get isGeneric() {
-    for (let _ in this.meta)
-      return false;
+    for (let _ in this.meta) return false;
     return true;
   }
   /**
@@ -643,7 +669,7 @@ const baseFields = [
     },
     apply(tr) {
       return tr.doc;
-    }
+    },
   }),
   new FieldDesc("selection", {
     init(config, instance) {
@@ -651,7 +677,7 @@ const baseFields = [
     },
     apply(tr) {
       return tr.selection;
-    }
+    },
   }),
   new FieldDesc("storedMarks", {
     init(config) {
@@ -659,7 +685,7 @@ const baseFields = [
     },
     apply(tr, _marks, _old, state) {
       return state.selection.$cursor ? tr.storedMarks : null;
-    }
+    },
   }),
   new FieldDesc("scrollToSelection", {
     init() {
@@ -667,8 +693,8 @@ const baseFields = [
     },
     apply(tr, prev) {
       return tr.scrolledIntoView ? prev + 1 : prev;
-    }
-  })
+    },
+  }),
 ];
 class Configuration {
   constructor(schema, plugins) {
@@ -732,16 +758,20 @@ class EditorState {
   plugins) along with the new state.
   */
   applyTransaction(rootTr) {
-    if (!this.filterTransaction(rootTr))
-      return { state: this, transactions: [] };
-    let trs = [rootTr], newState = this.applyInner(rootTr), seen = null;
-    for (; ; ) {
+    if (!this.filterTransaction(rootTr)) return { state: this, transactions: [] };
+    let trs = [rootTr],
+      newState = this.applyInner(rootTr),
+      seen = null;
+    for (;;) {
       let haveNew = false;
       for (let i = 0; i < this.config.plugins.length; i++) {
         let plugin = this.config.plugins[i];
         if (plugin.spec.appendTransaction) {
-          let n = seen ? seen[i].n : 0, oldState = seen ? seen[i].state : this;
-          let tr = n < trs.length && plugin.spec.appendTransaction.call(plugin, n ? trs.slice(n) : trs, oldState, newState);
+          let n = seen ? seen[i].n : 0,
+            oldState = seen ? seen[i].state : this;
+          let tr =
+            n < trs.length &&
+            plugin.spec.appendTransaction.call(plugin, n ? trs.slice(n) : trs, oldState, newState);
           if (tr && newState.filterTransaction(tr, i)) {
             tr.setMeta("appendedTransaction", rootTr);
             if (!seen) {
@@ -753,21 +783,19 @@ class EditorState {
             newState = newState.applyInner(tr);
             haveNew = true;
           }
-          if (seen)
-            seen[i] = { state: newState, n: trs.length };
+          if (seen) seen[i] = { state: newState, n: trs.length };
         }
       }
-      if (!haveNew)
-        return { state: newState, transactions: trs };
+      if (!haveNew) return { state: newState, transactions: trs };
     }
   }
   /**
   @internal
   */
   applyInner(tr) {
-    if (!tr.before.eq(this.doc))
-      throw new RangeError("Applying a mismatched transaction");
-    let newInstance = new EditorState(this.config), fields = this.config.fields;
+    if (!tr.before.eq(this.doc)) throw new RangeError("Applying a mismatched transaction");
+    let newInstance = new EditorState(this.config),
+      fields = this.config.fields;
     for (let i = 0; i < fields.length; i++) {
       let field = fields[i];
       newInstance[field.name] = field.apply(tr, this[field.name], this, newInstance);
@@ -784,7 +812,10 @@ class EditorState {
   Create a new state.
   */
   static create(config) {
-    let $config = new Configuration(config.doc ? config.doc.type.schema : config.schema, config.plugins);
+    let $config = new Configuration(
+      config.doc ? config.doc.type.schema : config.schema,
+      config.plugins,
+    );
     let instance = new EditorState($config);
     for (let i = 0; i < $config.fields.length; i++)
       instance[$config.fields[i].name] = $config.fields[i].init(config, instance);
@@ -800,7 +831,8 @@ class EditorState {
   */
   reconfigure(config) {
     let $config = new Configuration(this.schema, config.plugins);
-    let fields = $config.fields, instance = new EditorState($config);
+    let fields = $config.fields,
+      instance = new EditorState($config);
     for (let i = 0; i < fields.length; i++) {
       let name = fields[i].name;
       instance[name] = this.hasOwnProperty(name) ? this[name] : fields[i].init(config, instance);
@@ -816,15 +848,14 @@ class EditorState {
   */
   toJSON(pluginFields) {
     let result = { doc: this.doc.toJSON(), selection: this.selection.toJSON() };
-    if (this.storedMarks)
-      result.storedMarks = this.storedMarks.map((m) => m.toJSON());
+    if (this.storedMarks) result.storedMarks = this.storedMarks.map((m) => m.toJSON());
     if (pluginFields && typeof pluginFields == "object")
       for (let prop in pluginFields) {
         if (prop == "doc" || prop == "selection")
           throw new RangeError("The JSON fields `doc` and `selection` are reserved");
-        let plugin = pluginFields[prop], state = plugin.spec.state;
-        if (state && state.toJSON)
-          result[prop] = state.toJSON.call(plugin, this[plugin.key]);
+        let plugin = pluginFields[prop],
+          state = plugin.spec.state;
+        if (state && state.toJSON) result[prop] = state.toJSON.call(plugin, this[plugin.key]);
       }
     return result;
   }
@@ -836,10 +867,8 @@ class EditorState {
   instances with the property names they use in the JSON object.
   */
   static fromJSON(config, json, pluginFields) {
-    if (!json)
-      throw new RangeError("Invalid input for EditorState.fromJSON");
-    if (!config.schema)
-      throw new RangeError("Required config field 'schema' missing");
+    if (!json) throw new RangeError("Invalid input for EditorState.fromJSON");
+    if (!config.schema) throw new RangeError("Required config field 'schema' missing");
     let $config = new Configuration(config.schema, config.plugins);
     let instance = new EditorState($config);
     $config.fields.forEach((field) => {
@@ -853,8 +882,14 @@ class EditorState {
       } else {
         if (pluginFields)
           for (let prop in pluginFields) {
-            let plugin = pluginFields[prop], state = plugin.spec.state;
-            if (plugin.key == field.name && state && state.fromJSON && Object.prototype.hasOwnProperty.call(json, prop)) {
+            let plugin = pluginFields[prop],
+              state = plugin.spec.state;
+            if (
+              plugin.key == field.name &&
+              state &&
+              state.fromJSON &&
+              Object.prototype.hasOwnProperty.call(json, prop)
+            ) {
               instance[field.name] = state.fromJSON.call(plugin, config, json[prop], instance);
               return;
             }
@@ -868,10 +903,8 @@ class EditorState {
 function bindProps(obj, self, target) {
   for (let prop in obj) {
     let val = obj[prop];
-    if (val instanceof Function)
-      val = val.bind(self);
-    else if (prop == "handleDOMEvents")
-      val = bindProps(val, self, {});
+    if (val instanceof Function) val = val.bind(self);
+    else if (prop == "handleDOMEvents") val = bindProps(val, self, {});
     target[prop] = val;
   }
   return target;
@@ -883,8 +916,7 @@ class Plugin {
   constructor(spec) {
     this.spec = spec;
     this.props = {};
-    if (spec.props)
-      bindProps(spec.props, this, this.props);
+    if (spec.props) bindProps(spec.props, this, this.props);
     this.key = spec.key ? spec.key.key : createKey("plugin");
   }
   /**
@@ -896,8 +928,7 @@ class Plugin {
 }
 const keys = /* @__PURE__ */ Object.create(null);
 function createKey(name) {
-  if (name in keys)
-    return name + "$" + ++keys[name];
+  if (name in keys) return name + "$" + ++keys[name];
   keys[name] = 0;
   return name + "$";
 }
@@ -929,5 +960,5 @@ export {
   Plugin as P,
   Selection as S,
   TextSelection as T,
-  PluginKey as a
+  PluginKey as a,
 };

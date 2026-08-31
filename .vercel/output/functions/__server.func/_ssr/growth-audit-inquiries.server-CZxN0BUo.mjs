@@ -38,7 +38,7 @@ function getSql() {
     globalForSql.hegxcorpSql = Postgres(databaseUrl, {
       max: 5,
       idle_timeout: 20,
-      connect_timeout: 10
+      connect_timeout: 10,
     });
   }
   return globalForSql.hegxcorpSql;
@@ -47,7 +47,7 @@ function mapGrowthAudit(row) {
   return {
     ...row,
     createdAt: new Date(row.createdAt).toISOString(),
-    updatedAt: new Date(row.updatedAt).toISOString()
+    updatedAt: new Date(row.updatedAt).toISOString(),
   };
 }
 async function createGrowthAuditInquiry(input) {
@@ -173,5 +173,5 @@ async function updateSavedGrowthAuditInquiryStatus(id, status) {
 export {
   createGrowthAuditInquiry,
   listSavedGrowthAuditInquiries,
-  updateSavedGrowthAuditInquiryStatus
+  updateSavedGrowthAuditInquiryStatus,
 };

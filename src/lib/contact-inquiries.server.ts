@@ -1,16 +1,8 @@
 import { randomUUID } from "node:crypto";
-import process from "node:process";
-
-import postgres from "postgres";
-
 import { assertAdminSession } from "./admin-auth.server";
+import { getDbClient } from "./db.server";
 import { cleanLeadSourceData } from "./lead-source";
 import type { ContactInquiry, ContactInquiryInput, InquiryStatus } from "./contact-inquiries";
-
-type SqlClient = ReturnType<typeof postgres>;
-type GlobalWithSql = typeof globalThis & {
-  hegxcorpSql?: SqlClient;
-};
 
 type InquiryRow = {
   id: string;
@@ -45,24 +37,6 @@ function cleanServices(services: string[]) {
   return [...new Set(services.map((service) => service.trim()).filter(Boolean))];
 }
 
-function getSql() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not configured.");
-  }
-
-  const globalForSql = globalThis as GlobalWithSql;
-  if (!globalForSql.hegxcorpSql) {
-    globalForSql.hegxcorpSql = postgres(databaseUrl, {
-      max: 5,
-      idle_timeout: 20,
-      connect_timeout: 10,
-    });
-  }
-
-  return globalForSql.hegxcorpSql;
-}
-
 function mapInquiry(row: InquiryRow): ContactInquiry {
   return {
     ...row,
@@ -72,7 +46,7 @@ function mapInquiry(row: InquiryRow): ContactInquiry {
 }
 
 export async function createContactInquiry(input: ContactInquiryInput) {
-  const sql = getSql();
+  const sql = getDbClient();
   const services = cleanServices(input.services);
   const leadSourceData = cleanLeadSourceData(input.leadSourceData);
   const rows = await sql<InquiryRow[]>`
@@ -147,7 +121,7 @@ export async function createContactInquiry(input: ContactInquiryInput) {
 
 export async function listSavedContactInquiries() {
   await assertAdminSession();
-  const sql = getSql();
+  const sql = getDbClient();
   const rows = await sql<InquiryRow[]>`
     SELECT
       "id",
@@ -181,7 +155,7 @@ export async function listSavedContactInquiries() {
 
 export async function updateSavedContactInquiryStatus(id: string, status: InquiryStatus) {
   await assertAdminSession();
-  const sql = getSql();
+  const sql = getDbClient();
   const rows = await sql<InquiryRow[]>`
     UPDATE "ContactInquiry"
     SET

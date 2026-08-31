@@ -42,8 +42,8 @@ function getSessionConfig() {
       sameSite: "strict",
       secure: process.env.NODE_ENV === "production",
       path: "/",
-      maxAge: sessionMaxAge
-    }
+      maxAge: sessionMaxAge,
+    },
   };
 }
 function constantTimeEqual(left, right) {
@@ -66,7 +66,10 @@ function verifyPassword(password, storedHash) {
 function hasValidSession(data) {
   const configuredEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
   return Boolean(
-    configuredEmail && data.isAdmin === true && data.email && constantTimeEqual(data.email, configuredEmail)
+    configuredEmail &&
+    data.isAdmin === true &&
+    data.email &&
+    constantTimeEqual(data.email, configuredEmail),
   );
 }
 async function createAdminSession(email, password) {
@@ -91,7 +94,7 @@ async function readAdminSession() {
   const isAuthenticated = hasValidSession(session.data);
   return {
     isAuthenticated,
-    email: isAuthenticated ? session.data.email : void 0
+    email: isAuthenticated ? session.data.email : void 0,
   };
 }
 async function assertAdminSession() {
@@ -105,9 +108,4 @@ async function destroyAdminSession() {
   await session.clear();
   return { isAuthenticated: false };
 }
-export {
-  assertAdminSession,
-  createAdminSession,
-  destroyAdminSession,
-  readAdminSession
-};
+export { assertAdminSession, createAdminSession, destroyAdminSession, readAdminSession };

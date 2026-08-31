@@ -10,8 +10,7 @@ class Branch {
   // Pop the latest event off the branch's history and apply it
   // to a document transform.
   popEvent(state, preserveItems) {
-    if (this.eventCount == 0)
-      return null;
+    if (this.eventCount == 0) return null;
     let end = this.items.length;
     for (; ; end--) {
       let next = this.items.get(end - 1);
@@ -27,59 +26,67 @@ class Branch {
     }
     let transform = state.tr;
     let selection, remaining;
-    let addAfter = [], addBefore = [];
-    this.items.forEach((item, i) => {
-      if (!item.step) {
-        if (!remap) {
-          remap = this.remapping(end, i + 1);
-          mapFrom = remap.maps.length;
+    let addAfter = [],
+      addBefore = [];
+    this.items.forEach(
+      (item, i) => {
+        if (!item.step) {
+          if (!remap) {
+            remap = this.remapping(end, i + 1);
+            mapFrom = remap.maps.length;
+          }
+          mapFrom--;
+          addBefore.push(item);
+          return;
         }
-        mapFrom--;
-        addBefore.push(item);
-        return;
-      }
-      if (remap) {
-        addBefore.push(new Item(item.map));
-        let step = item.step.map(remap.slice(mapFrom)), map;
-        if (step && transform.maybeStep(step).doc) {
-          map = transform.mapping.maps[transform.mapping.maps.length - 1];
-          addAfter.push(new Item(map, void 0, void 0, addAfter.length + addBefore.length));
+        if (remap) {
+          addBefore.push(new Item(item.map));
+          let step = item.step.map(remap.slice(mapFrom)),
+            map;
+          if (step && transform.maybeStep(step).doc) {
+            map = transform.mapping.maps[transform.mapping.maps.length - 1];
+            addAfter.push(new Item(map, void 0, void 0, addAfter.length + addBefore.length));
+          }
+          mapFrom--;
+          if (map) remap.appendMap(map, mapFrom);
+        } else {
+          transform.maybeStep(item.step);
         }
-        mapFrom--;
-        if (map)
-          remap.appendMap(map, mapFrom);
-      } else {
-        transform.maybeStep(item.step);
-      }
-      if (item.selection) {
-        selection = remap ? item.selection.map(remap.slice(mapFrom)) : item.selection;
-        remaining = new Branch(this.items.slice(0, end).append(addBefore.reverse().concat(addAfter)), this.eventCount - 1);
-        return false;
-      }
-    }, this.items.length, 0);
+        if (item.selection) {
+          selection = remap ? item.selection.map(remap.slice(mapFrom)) : item.selection;
+          remaining = new Branch(
+            this.items.slice(0, end).append(addBefore.reverse().concat(addAfter)),
+            this.eventCount - 1,
+          );
+          return false;
+        }
+      },
+      this.items.length,
+      0,
+    );
     return { remaining, transform, selection };
   }
   // Create a new branch with the given transform added.
   addTransform(transform, selection, histOptions, preserveItems) {
-    let newItems = [], eventCount = this.eventCount;
-    let oldItems = this.items, lastItem = !preserveItems && oldItems.length ? oldItems.get(oldItems.length - 1) : null;
+    let newItems = [],
+      eventCount = this.eventCount;
+    let oldItems = this.items,
+      lastItem = !preserveItems && oldItems.length ? oldItems.get(oldItems.length - 1) : null;
     for (let i = 0; i < transform.steps.length; i++) {
       let step = transform.steps[i].invert(transform.docs[i]);
-      let item = new Item(transform.mapping.maps[i], step, selection), merged;
-      if (merged = lastItem && lastItem.merge(item)) {
+      let item = new Item(transform.mapping.maps[i], step, selection),
+        merged;
+      if ((merged = lastItem && lastItem.merge(item))) {
         item = merged;
-        if (i)
-          newItems.pop();
-        else
-          oldItems = oldItems.slice(0, oldItems.length - 1);
+        if (i) newItems.pop();
+        else oldItems = oldItems.slice(0, oldItems.length - 1);
       }
       newItems.push(item);
       if (selection) {
         eventCount++;
         selection = void 0;
       }
-      if (!preserveItems)
-        lastItem = item;
+      if (!preserveItems) lastItem = item;
     }
     let overflow = eventCount - histOptions.depth;
     if (overflow > DEPTH_OVERFLOW) {
@@ -90,15 +97,21 @@ class Branch {
   }
   remapping(from, to) {
     let maps = new Mapping();
-    this.items.forEach((item, i) => {
-      let mirrorPos = item.mirrorOffset != null && i - item.mirrorOffset >= from ? maps.maps.length - item.mirrorOffset : void 0;
-      maps.appendMap(item.map, mirrorPos);
-    }, from, to);
+    this.items.forEach(
+      (item, i) => {
+        let mirrorPos =
+          item.mirrorOffset != null && i - item.mirrorOffset >= from
+            ? maps.maps.length - item.mirrorOffset
+            : void 0;
+        maps.appendMap(item.map, mirrorPos);
+      },
+      from,
+      to,
+    );
     return maps;
   }
   addMaps(array) {
-    if (this.eventCount == 0)
-      return this;
+    if (this.eventCount == 0) return this;
     return new Branch(this.items.append(array.map((map) => new Item(map))), this.eventCount);
   }
   // When the collab module receives remote changes, the history has
@@ -106,36 +119,32 @@ class Branch {
   // rebased on top of the remote changes, and include the position
   // maps for the remote changes in its array of items.
   rebased(rebasedTransform, rebasedCount) {
-    if (!this.eventCount)
-      return this;
-    let rebasedItems = [], start = Math.max(0, this.items.length - rebasedCount);
+    if (!this.eventCount) return this;
+    let rebasedItems = [],
+      start = Math.max(0, this.items.length - rebasedCount);
     let mapping = rebasedTransform.mapping;
     let newUntil = rebasedTransform.steps.length;
     let eventCount = this.eventCount;
     this.items.forEach((item) => {
-      if (item.selection)
-        eventCount--;
+      if (item.selection) eventCount--;
     }, start);
     let iRebased = rebasedCount;
     this.items.forEach((item) => {
       let pos = mapping.getMirror(--iRebased);
-      if (pos == null)
-        return;
+      if (pos == null) return;
       newUntil = Math.min(newUntil, pos);
       let map = mapping.maps[pos];
       if (item.step) {
         let step = rebasedTransform.steps[pos].invert(rebasedTransform.docs[pos]);
         let selection = item.selection && item.selection.map(mapping.slice(iRebased + 1, pos));
-        if (selection)
-          eventCount++;
+        if (selection) eventCount++;
         rebasedItems.push(new Item(map, step, selection));
       } else {
         rebasedItems.push(new Item(map));
       }
     }, start);
     let newMaps = [];
-    for (let i = rebasedCount; i < newUntil; i++)
-      newMaps.push(new Item(mapping.maps[i]));
+    for (let i = rebasedCount; i < newUntil; i++) newMaps.push(new Item(mapping.maps[i]));
     let items = this.items.slice(0, start).append(newMaps).append(rebasedItems);
     let branch = new Branch(items, eventCount);
     if (branch.emptyItemCount() > max_empty_items)
@@ -145,8 +154,7 @@ class Branch {
   emptyItemCount() {
     let count = 0;
     this.items.forEach((item) => {
-      if (!item.step)
-        count++;
+      if (!item.step) count++;
     });
     return count;
   }
@@ -157,32 +165,36 @@ class Branch {
   // because `rebased` relies on a clean, untouched set of items in
   // order to associate old items with rebased steps.
   compress(upto = this.items.length) {
-    let remap = this.remapping(0, upto), mapFrom = remap.maps.length;
-    let items = [], events = 0;
-    this.items.forEach((item, i) => {
-      if (i >= upto) {
-        items.push(item);
-        if (item.selection)
-          events++;
-      } else if (item.step) {
-        let step = item.step.map(remap.slice(mapFrom)), map = step && step.getMap();
-        mapFrom--;
-        if (map)
-          remap.appendMap(map, mapFrom);
-        if (step) {
-          let selection = item.selection && item.selection.map(remap.slice(mapFrom));
-          if (selection)
-            events++;
-          let newItem = new Item(map.invert(), step, selection), merged, last = items.length - 1;
-          if (merged = items.length && items[last].merge(newItem))
-            items[last] = merged;
-          else
-            items.push(newItem);
+    let remap = this.remapping(0, upto),
+      mapFrom = remap.maps.length;
+    let items = [],
+      events = 0;
+    this.items.forEach(
+      (item, i) => {
+        if (i >= upto) {
+          items.push(item);
+          if (item.selection) events++;
+        } else if (item.step) {
+          let step = item.step.map(remap.slice(mapFrom)),
+            map = step && step.getMap();
+          mapFrom--;
+          if (map) remap.appendMap(map, mapFrom);
+          if (step) {
+            let selection = item.selection && item.selection.map(remap.slice(mapFrom));
+            if (selection) events++;
+            let newItem = new Item(map.invert(), step, selection),
+              merged,
+              last = items.length - 1;
+            if ((merged = items.length && items[last].merge(newItem))) items[last] = merged;
+            else items.push(newItem);
+          }
+        } else if (item.map) {
+          mapFrom--;
         }
-      } else if (item.map) {
-        mapFrom--;
-      }
-    }, this.items.length, 0);
+      },
+      this.items.length,
+      0,
+    );
     return new Branch(RopeSequence.from(items.reverse()), events);
   }
 }
@@ -207,8 +219,7 @@ class Item {
   merge(other) {
     if (this.step && other.step && !other.selection) {
       let step = other.step.merge(this.step);
-      if (step)
-        return new Item(step.getMap().invert(), step, this.selection);
+      if (step) return new Item(step.getMap().invert(), step, this.selection);
     }
   }
 }
@@ -223,9 +234,9 @@ class HistoryState {
 }
 const DEPTH_OVERFLOW = 20;
 function applyTransaction(history2, state, tr, options) {
-  let historyTr = tr.getMeta(historyKey), rebased;
-  if (historyTr)
-    return historyTr.historyState;
+  let historyTr = tr.getMeta(historyKey),
+    rebased;
+  if (historyTr) return historyTr.historyState;
   if (tr.getMeta(closeHistoryKey))
     history2 = new HistoryState(history2.done, history2.undone, null, 0, -1);
   let appended = tr.getMeta("appendedTransaction");
@@ -233,30 +244,72 @@ function applyTransaction(history2, state, tr, options) {
     return history2;
   } else if (appended && appended.getMeta(historyKey)) {
     if (appended.getMeta(historyKey).redo)
-      return new HistoryState(history2.done.addTransform(tr, void 0, options, mustPreserveItems(state)), history2.undone, rangesFor(tr.mapping.maps), history2.prevTime, history2.prevComposition);
+      return new HistoryState(
+        history2.done.addTransform(tr, void 0, options, mustPreserveItems(state)),
+        history2.undone,
+        rangesFor(tr.mapping.maps),
+        history2.prevTime,
+        history2.prevComposition,
+      );
     else
-      return new HistoryState(history2.done, history2.undone.addTransform(tr, void 0, options, mustPreserveItems(state)), null, history2.prevTime, history2.prevComposition);
-  } else if (tr.getMeta("addToHistory") !== false && !(appended && appended.getMeta("addToHistory") === false)) {
+      return new HistoryState(
+        history2.done,
+        history2.undone.addTransform(tr, void 0, options, mustPreserveItems(state)),
+        null,
+        history2.prevTime,
+        history2.prevComposition,
+      );
+  } else if (
+    tr.getMeta("addToHistory") !== false &&
+    !(appended && appended.getMeta("addToHistory") === false)
+  ) {
     let composition = tr.getMeta("composition");
-    let newGroup = history2.prevTime == 0 || !appended && history2.prevComposition != composition && (history2.prevTime < (tr.time || 0) - options.newGroupDelay || !isAdjacentTo(tr, history2.prevRanges));
-    let prevRanges = appended ? mapRanges(history2.prevRanges, tr.mapping) : rangesFor(tr.mapping.maps);
-    return new HistoryState(history2.done.addTransform(tr, newGroup ? state.selection.getBookmark() : void 0, options, mustPreserveItems(state)), Branch.empty, prevRanges, tr.time, composition == null ? history2.prevComposition : composition);
-  } else if (rebased = tr.getMeta("rebased")) {
-    return new HistoryState(history2.done.rebased(tr, rebased), history2.undone.rebased(tr, rebased), mapRanges(history2.prevRanges, tr.mapping), history2.prevTime, history2.prevComposition);
+    let newGroup =
+      history2.prevTime == 0 ||
+      (!appended &&
+        history2.prevComposition != composition &&
+        (history2.prevTime < (tr.time || 0) - options.newGroupDelay ||
+          !isAdjacentTo(tr, history2.prevRanges)));
+    let prevRanges = appended
+      ? mapRanges(history2.prevRanges, tr.mapping)
+      : rangesFor(tr.mapping.maps);
+    return new HistoryState(
+      history2.done.addTransform(
+        tr,
+        newGroup ? state.selection.getBookmark() : void 0,
+        options,
+        mustPreserveItems(state),
+      ),
+      Branch.empty,
+      prevRanges,
+      tr.time,
+      composition == null ? history2.prevComposition : composition,
+    );
+  } else if ((rebased = tr.getMeta("rebased"))) {
+    return new HistoryState(
+      history2.done.rebased(tr, rebased),
+      history2.undone.rebased(tr, rebased),
+      mapRanges(history2.prevRanges, tr.mapping),
+      history2.prevTime,
+      history2.prevComposition,
+    );
   } else {
-    return new HistoryState(history2.done.addMaps(tr.mapping.maps), history2.undone.addMaps(tr.mapping.maps), mapRanges(history2.prevRanges, tr.mapping), history2.prevTime, history2.prevComposition);
+    return new HistoryState(
+      history2.done.addMaps(tr.mapping.maps),
+      history2.undone.addMaps(tr.mapping.maps),
+      mapRanges(history2.prevRanges, tr.mapping),
+      history2.prevTime,
+      history2.prevComposition,
+    );
   }
 }
 function isAdjacentTo(transform, prevRanges) {
-  if (!prevRanges)
-    return false;
-  if (!transform.docChanged)
-    return true;
+  if (!prevRanges) return false;
+  if (!transform.docChanged) return true;
   let adjacent = false;
   transform.mapping.maps[0].forEach((start, end) => {
     for (let i = 0; i < prevRanges.length; i += 2)
-      if (start <= prevRanges[i + 1] && end >= prevRanges[i])
-        adjacent = true;
+      if (start <= prevRanges[i + 1] && end >= prevRanges[i]) adjacent = true;
   });
   return adjacent;
 }
@@ -267,13 +320,12 @@ function rangesFor(maps) {
   return result;
 }
 function mapRanges(ranges, mapping) {
-  if (!ranges)
-    return null;
+  if (!ranges) return null;
   let result = [];
   for (let i = 0; i < ranges.length; i += 2) {
-    let from = mapping.map(ranges[i], 1), to = mapping.map(ranges[i + 1], -1);
-    if (from <= to)
-      result.push(from, to);
+    let from = mapping.map(ranges[i], 1),
+      to = mapping.map(ranges[i + 1], -1);
+    if (from <= to) result.push(from, to);
   }
   return result;
 }
@@ -281,14 +333,27 @@ function histTransaction(history2, state, redo2) {
   let preserveItems = mustPreserveItems(state);
   let histOptions = historyKey.get(state).spec.config;
   let pop = (redo2 ? history2.undone : history2.done).popEvent(state, preserveItems);
-  if (!pop)
-    return null;
+  if (!pop) return null;
   let selection = pop.selection.resolve(pop.transform.doc);
-  let added = (redo2 ? history2.done : history2.undone).addTransform(pop.transform, state.selection.getBookmark(), histOptions, preserveItems);
-  let newHist = new HistoryState(redo2 ? added : pop.remaining, redo2 ? pop.remaining : added, null, 0, -1);
-  return pop.transform.setSelection(selection).setMeta(historyKey, { redo: redo2, historyState: newHist });
+  let added = (redo2 ? history2.done : history2.undone).addTransform(
+    pop.transform,
+    state.selection.getBookmark(),
+    histOptions,
+    preserveItems,
+  );
+  let newHist = new HistoryState(
+    redo2 ? added : pop.remaining,
+    redo2 ? pop.remaining : added,
+    null,
+    0,
+    -1,
+  );
+  return pop.transform
+    .setSelection(selection)
+    .setMeta(historyKey, { redo: redo2, historyState: newHist });
 }
-let cachedPreserveItems = false, cachedPreserveItemsPlugins = null;
+let cachedPreserveItems = false,
+  cachedPreserveItemsPlugins = null;
 function mustPreserveItems(state) {
   let plugins = state.plugins;
   if (cachedPreserveItemsPlugins != plugins) {
@@ -307,7 +372,7 @@ const closeHistoryKey = new PluginKey("closeHistory");
 function history(config = {}) {
   config = {
     depth: config.depth || 100,
-    newGroupDelay: config.newGroupDelay || 500
+    newGroupDelay: config.newGroupDelay || 500,
   };
   return new Plugin({
     key: historyKey,
@@ -317,40 +382,34 @@ function history(config = {}) {
       },
       apply(tr, hist, state) {
         return applyTransaction(hist, state, tr, config);
-      }
+      },
     },
     config,
     props: {
       handleDOMEvents: {
         beforeinput(view, e) {
           let inputType = e.inputType;
-          let command = inputType == "historyUndo" ? undo : inputType == "historyRedo" ? redo : null;
-          if (!command || !view.editable)
-            return false;
+          let command =
+            inputType == "historyUndo" ? undo : inputType == "historyRedo" ? redo : null;
+          if (!command || !view.editable) return false;
           e.preventDefault();
           return command(view.state, view.dispatch);
-        }
-      }
-    }
+        },
+      },
+    },
   });
 }
 function buildCommand(redo2, scroll) {
   return (state, dispatch) => {
     let hist = historyKey.getState(state);
-    if (!hist || (redo2 ? hist.undone : hist.done).eventCount == 0)
-      return false;
+    if (!hist || (redo2 ? hist.undone : hist.done).eventCount == 0) return false;
     if (dispatch) {
       let tr = histTransaction(hist, state, redo2);
-      if (tr)
-        dispatch(scroll ? tr.scrollIntoView() : tr);
+      if (tr) dispatch(scroll ? tr.scrollIntoView() : tr);
     }
     return true;
   };
 }
 const undo = buildCommand(false, true);
 const redo = buildCommand(true, true);
-export {
-  history as h,
-  redo as r,
-  undo as u
-};
+export { history as h, redo as r, undo as u };
