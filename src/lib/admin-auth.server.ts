@@ -62,13 +62,17 @@ function verifyPassword(password: string): boolean {
     return constantTimeEqual(password, directPassword);
   }
 
-  // 2. Cryptographic scrypt hash check if configured
+  // 2. Password Hash check (supports scrypt$salt$hash OR plain text fallback)
   if (passwordHash) {
-    const [algorithm, salt, expectedHash] = passwordHash.split("$");
-    if (algorithm === "scrypt" && salt && expectedHash) {
-      const calculatedHash = scryptSync(password, salt, 64).toString("hex");
-      return constantTimeEqual(calculatedHash, expectedHash);
+    if (passwordHash.startsWith("scrypt$")) {
+      const parts = passwordHash.split("$");
+      if (parts.length === 3 && parts[1] && parts[2]) {
+        const calculatedHash = scryptSync(password, parts[1], 64).toString("hex");
+        return constantTimeEqual(calculatedHash, parts[2]);
+      }
     }
+    // If the user entered a direct plain password inside ADMIN_PASSWORD_HASH
+    return constantTimeEqual(password, passwordHash);
   }
 
   throw new Error(
