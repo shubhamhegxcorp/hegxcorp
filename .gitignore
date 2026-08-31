@@ -1,1 +1,11 @@
 node_modules
+dist
+.output
+.vinxi
+.vercel
+.netlify
+.tanstack
+*.log
+.env.local
+.DS_Store
+

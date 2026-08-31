@@ -38,7 +38,11 @@ const footerLinks = {
 const socialLinks = [
   { icon: Linkedin, href: "https://linkedin.com/company/hegxcorp", label: "LinkedIn" },
   { icon: Twitter, href: "https://x.com/thehegxcorp", label: "X (Twitter)" },
-  { icon: Instagram, href: "https://www.instagram.com/hegxcorp?igsi=MWx3aXlsOWp5bWV5dg==", label: "Instagram" },
+  {
+    icon: Instagram,
+    href: "https://www.instagram.com/hegxcorp?igsi=MWx3aXlsOWp5bWV5dg==",
+    label: "Instagram",
+  },
   { icon: Facebook, href: "https://www.facebook.com/hegxcorp", label: "Facebook" },
   // { icon: Youtube, href: "https://youtube.com/@hegxcorp", label: "YouTube" },
 ];
@@ -136,13 +140,13 @@ export function Footer() {
                   style={{ objectFit: "contain", objectPosition: "left" }}
                 />
               </Link>
-              <p
+              {/* <p
                 className="text-white/50 text-[13px] leading-[1.7] max-w-[250px]"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 A data-driven growth consultancy helping businesses generate more leads, sales, and
                 revenue through SEO, paid advertising, and conversion optimisation.
-              </p>
+              </p> */}
 
               {/* Dynamic contact details in footer */}
               {footerData && (

@@ -88,8 +88,8 @@ function Index() {
       {/* ── Section 9: Insights / Blog ──────── */}
       <BlogPreview />
 
-      {/* ── Section 9.5: Dynamic FAQ ────────── */}
-      <HomeFAQ />
+      {/* ── Section 9.5: Dynamic FAQ (Commented out) ────────── */}
+      {/* <HomeFAQ /> */}
 
       {/* ── Section 10: Final CTA ───────────── */}
       <FinalCTA />
