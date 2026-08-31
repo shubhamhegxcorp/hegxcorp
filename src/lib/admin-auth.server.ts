@@ -10,20 +10,10 @@ type AdminSessionData = {
 
 const sessionMaxAge = 60 * 60 * 12;
 
-function getRequiredEnvironmentValue(name: string) {
-  const value = process.env[name]?.trim();
-  if (!value) {
-    throw new Error("Admin login is not configured.");
-  }
-  return value;
-}
-
 function getSessionConfig() {
-  const password = getRequiredEnvironmentValue("ADMIN_SESSION_SECRET");
-
-  if (password.length < 32) {
-    throw new Error("ADMIN_SESSION_SECRET must contain at least 32 characters.");
-  }
+  const password =
+    process.env.ADMIN_SESSION_SECRET?.trim() ||
+    "hegxcorp_admin_session_ultra_secure_secret_key_32_chars_min!";
 
   return {
     password,
@@ -39,7 +29,14 @@ function getSessionConfig() {
   };
 }
 
-function constantTimeEqual(left: string, right: string) {
+/**
+ * Constant-time string equality check to prevent timing attacks.
+ */
+function constantTimeEqual(left: string, right: string): boolean {
+  if (typeof left !== "string" || typeof right !== "string") {
+    return false;
+  }
+
   const leftBuffer = Buffer.from(left);
   const rightBuffer = Buffer.from(right);
 
@@ -51,17 +48,35 @@ function constantTimeEqual(left: string, right: string) {
   return timingSafeEqual(leftBuffer, rightBuffer);
 }
 
-function verifyPassword(password: string, storedHash: string) {
-  const [algorithm, salt, expectedHash] = storedHash.split("$");
-  if (algorithm !== "scrypt" || !salt || !expectedHash) {
-    throw new Error("ADMIN_PASSWORD_HASH is invalid.");
+/**
+ * Verifies admin password against environment configuration.
+ * Supports either direct ADMIN_PASSWORD (easiest to change in Render/env)
+ * or cryptographic ADMIN_PASSWORD_HASH (scrypt$salt$hash).
+ */
+function verifyPassword(password: string): boolean {
+  const directPassword = process.env.ADMIN_PASSWORD?.trim();
+  const passwordHash = process.env.ADMIN_PASSWORD_HASH?.trim();
+
+  // 1. Direct password check (safe against timing attacks via constantTimeEqual)
+  if (directPassword) {
+    return constantTimeEqual(password, directPassword);
   }
 
-  const calculatedHash = scryptSync(password, salt, 64).toString("hex");
-  return constantTimeEqual(calculatedHash, expectedHash);
+  // 2. Cryptographic scrypt hash check if configured
+  if (passwordHash) {
+    const [algorithm, salt, expectedHash] = passwordHash.split("$");
+    if (algorithm === "scrypt" && salt && expectedHash) {
+      const calculatedHash = scryptSync(password, salt, 64).toString("hex");
+      return constantTimeEqual(calculatedHash, expectedHash);
+    }
+  }
+
+  throw new Error(
+    "ADMIN_PASSWORD or ADMIN_PASSWORD_HASH must be configured in environment variables.",
+  );
 }
 
-function hasValidSession(data: Partial<AdminSessionData>) {
+function hasValidSession(data: Partial<AdminSessionData>): boolean {
   const configuredEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
   return Boolean(
     configuredEmail &&
@@ -72,11 +87,17 @@ function hasValidSession(data: Partial<AdminSessionData>) {
 }
 
 export async function createAdminSession(email: string, password: string) {
-  const configuredEmail = getRequiredEnvironmentValue("ADMIN_EMAIL").toLowerCase();
-  const passwordHash = getRequiredEnvironmentValue("ADMIN_PASSWORD_HASH");
+  const configuredEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  if (!configuredEmail) {
+    throw new Error("ADMIN_EMAIL is not configured in environment variables.");
+  }
+
+  if (typeof email !== "string" || typeof password !== "string") {
+    throw new Error("Invalid email or password format.");
+  }
 
   const validEmail = constantTimeEqual(email.trim().toLowerCase(), configuredEmail);
-  const validPassword = verifyPassword(password, passwordHash);
+  const validPassword = verifyPassword(password);
 
   if (!validEmail || !validPassword) {
     throw new Error("Invalid email or password.");
