@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "start": "node .output/server/index.mjs",
     "postinstall": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
     "db:visitor-tracking": "prisma db execute --file prisma/sql/add_visitor_tracking.sql",
     "db:blog-drafts": "node scripts/setup-blog-draft-table.mjs",
     "lint": "eslint .",
