@@ -16,12 +16,14 @@ import {
   PlusCircle,
   ChevronDown,
   Globe,
+  KeyRound,
+  X,
 } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { Toaster, toast } from "sonner";
 
 import { AdminContext } from "@/lib/admin-context";
-import { getAdminSession, loginAdmin, logoutAdmin } from "@/lib/admin-auth";
+import { changeAdminPasswordFn, getAdminSession, loginAdmin, logoutAdmin } from "@/lib/admin-auth";
 import { getBlogs } from "@/lib/content/blogs";
 import {
   type ContactInquiry,
@@ -81,6 +83,48 @@ function AdminLayout() {
   const isAboutContentRoute = location.pathname === "/admin/website-content/about";
   const isServicesContentRoute = location.pathname === "/admin/website-content/services";
   const isContactContentRoute = location.pathname === "/admin/website-content/contact";
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [currentPassInput, setCurrentPassInput] = useState("");
+  const [newPassInput, setNewPassInput] = useState("");
+  const [confirmPassInput, setConfirmPassInput] = useState("");
+  const [showCurrentPass, setShowCurrentPass] = useState(false);
+  const [showNewPass, setShowNewPass] = useState(false);
+  const [isChangingPass, setIsChangingPass] = useState(false);
+
+  async function handleChangePassword(e: FormEvent) {
+    e.preventDefault();
+    if (!currentPassInput || !newPassInput) {
+      toast.error("Please enter your current and new password.");
+      return;
+    }
+    if (newPassInput !== confirmPassInput) {
+      toast.error("New passwords do not match.");
+      return;
+    }
+    if (newPassInput.length < 6) {
+      toast.error("New password must be at least 6 characters.");
+      return;
+    }
+
+    setIsChangingPass(true);
+    try {
+      const res = await changeAdminPasswordFn({
+        data: {
+          currentPassword: currentPassInput,
+          newPassword: newPassInput,
+        },
+      });
+      toast.success(res.message || "Password updated successfully in database!");
+      setIsPasswordModalOpen(false);
+      setCurrentPassInput("");
+      setNewPassInput("");
+      setConfirmPassInput("");
+    } catch (err: any) {
+      toast.error(err?.message || "Failed to update password.");
+    } finally {
+      setIsChangingPass(false);
+    }
+  }
 
   const pageTitle = isContactLeadsRoute
     ? "Contact Form submissions"
@@ -635,6 +679,14 @@ function AdminLayout() {
                 </Link>
                 <button
                   type="button"
+                  onClick={() => setIsPasswordModalOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-lg border border-[#D0D5DD] bg-white px-4 py-2 text-sm font-bold text-[#344054] transition hover:border-[#FC9C44] hover:text-[#FC9C44]"
+                >
+                  <KeyRound className="h-4 w-4 text-[#FC9C44]" />
+                  Change Password
+                </button>
+                <button
+                  type="button"
                   onClick={() => void handleLogout()}
                   className="inline-flex items-center gap-2 rounded-lg border border-[#D0D5DD] bg-white px-4 py-2 text-sm font-bold text-[#344054] transition hover:border-red-300 hover:text-red-600"
                 >
@@ -659,6 +711,120 @@ function AdminLayout() {
           <Outlet />
         </div>
       </main>
+
+      {/* Change Password Modal */}
+      {isPasswordModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="relative w-full max-w-md rounded-2xl border border-[#E4E7EC] bg-white p-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-[#EAECF0] pb-4">
+              <div className="flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#FFF4E8] text-[#FC9C44]">
+                  <KeyRound className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-[#06133D]">Change Password</h3>
+                  <p className="text-xs text-[#667085]">Saved directly to the database</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsPasswordModalOpen(false)}
+                className="rounded-lg p-1.5 text-[#98A2B3] hover:bg-[#F2F4F7] hover:text-[#344054]"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleChangePassword} className="mt-5 space-y-4">
+              <div>
+                <label className="mb-1.5 block text-xs font-bold text-[#344054]">
+                  Current Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showCurrentPass ? "text" : "password"}
+                    required
+                    value={currentPassInput}
+                    onChange={(e) => setCurrentPassInput(e.target.value)}
+                    placeholder="Enter current password"
+                    className="w-full rounded-lg border border-[#D0D5DD] bg-white px-3.5 py-2.5 pr-10 text-sm text-[#101828] outline-none transition focus:border-[#FC9C44] focus:ring-2 focus:ring-[#FC9C44]/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPass((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#98A2B3] hover:text-[#344054]"
+                  >
+                    {showCurrentPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-xs font-bold text-[#344054]">
+                  New Password (min 6 characters)
+                </label>
+                <div className="relative">
+                  <input
+                    type={showNewPass ? "text" : "password"}
+                    required
+                    minLength={6}
+                    value={newPassInput}
+                    onChange={(e) => setNewPassInput(e.target.value)}
+                    placeholder="Enter new strong password"
+                    className="w-full rounded-lg border border-[#D0D5DD] bg-white px-3.5 py-2.5 pr-10 text-sm text-[#101828] outline-none transition focus:border-[#FC9C44] focus:ring-2 focus:ring-[#FC9C44]/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPass((prev) => !prev)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#98A2B3] hover:text-[#344054]"
+                  >
+                    {showNewPass ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-xs font-bold text-[#344054]">
+                  Confirm New Password
+                </label>
+                <input
+                  type={showNewPass ? "text" : "password"}
+                  required
+                  minLength={6}
+                  value={confirmPassInput}
+                  onChange={(e) => setConfirmPassInput(e.target.value)}
+                  placeholder="Confirm new password"
+                  className="w-full rounded-lg border border-[#D0D5DD] bg-white px-3.5 py-2.5 text-sm text-[#101828] outline-none transition focus:border-[#FC9C44] focus:ring-2 focus:ring-[#FC9C44]/20"
+                />
+              </div>
+
+              <div className="mt-6 flex items-center justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsPasswordModalOpen(false)}
+                  className="rounded-lg border border-[#D0D5DD] bg-white px-4 py-2.5 text-sm font-bold text-[#344054] transition hover:bg-[#F9FAFB]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isChangingPass}
+                  className="inline-flex items-center gap-2 rounded-lg bg-[#FC9C44] px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-[#e08630] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isChangingPass ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Update Password"
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </AdminContext.Provider>
   );
 }
