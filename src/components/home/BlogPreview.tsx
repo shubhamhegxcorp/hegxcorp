@@ -7,9 +7,21 @@ import aisearch from "@/assets/Blog/How AI Search Changes Rankings.png";
 import { useState, useEffect, useMemo } from "react";
 import { getPublishedBlogs } from "@/lib/content/blogs";
 import type { Blog } from "@/data/blogs";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
+import type { BlogPreviewSection } from "@/lib/cms-config";
 
 export function BlogPreview() {
+  const { data } = useWebsiteSection<BlogPreviewSection>("home.blogPreview");
   const [allBlogs, setAllBlogs] = useState<Blog[]>([]);
+
+  const tagline = data?.tagline || "INSIGHTS";
+  const heading = data?.heading || "Ideas, Experiments & Growth Systems";
+  const description =
+    data?.description ||
+    "Practical breakdowns of SEO, paid media, conversion optimisation, and digital growth systems used to help businesses scale.";
+  const allArticlesText = data?.allArticlesText || "Read all articles";
+  const allArticlesUrl = data?.allArticlesUrl || "/blog";
+  const buttonText = data?.buttonText || "View Blog";
 
   useEffect(() => {
     let active = true;
@@ -37,13 +49,23 @@ export function BlogPreview() {
     return allBlogs.find((a) => a.slug === "how-ai-search-reshapes-organic-traffic") || allBlogs[0];
   }, [allBlogs]);
 
-  // Fallbacks if blogs aren't loaded yet
-  const title = featuredArticle?.title ?? "How AI Search Changes Rankings";
+  // Use custom CMS override if filled, otherwise fall back to featured blog
+  const title =
+    data?.customTitle?.trim() ||
+    featuredArticle?.title ||
+    "How AI Search Changes Rankings";
   const excerpt =
-    featuredArticle?.excerpt ??
+    data?.customExcerpt?.trim() ||
+    featuredArticle?.excerpt ||
     "A technical breakdown of semantic search index shifts and how search algorithms evaluate topical authority inside generative answers.";
-  const slug = featuredArticle?.slug ?? "how-ai-search-reshapes-organic-traffic";
-  const imageSrc = featuredArticle?.featuredImage || aisearch;
+  const slug =
+    data?.customSlug?.trim() ||
+    featuredArticle?.slug ||
+    "how-ai-search-reshapes-organic-traffic";
+  const imageSrc =
+    data?.customImage?.trim() ||
+    featuredArticle?.featuredImage ||
+    aisearch;
 
   return (
     <section
@@ -65,9 +87,9 @@ export function BlogPreview() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <SectionHeading
-              tagline="INSIGHTS"
-              heading="Ideas, Experiments & Growth Systems"
-              description="Practical breakdowns of SEO, paid media, conversion optimisation, and digital growth systems used to help businesses scale."
+              tagline={tagline}
+              heading={heading}
+              description={description}
             />
             <motion.div
               whileHover={{ scale: 1.03 }}
@@ -75,11 +97,11 @@ export function BlogPreview() {
               className="shrink-0 mb-1"
             >
               <Link
-                to="/blog"
+                to={allArticlesUrl}
                 className="inline-flex items-center gap-2 text-sm font-semibold text-[#FC9C44] hover:gap-3 transition-all duration-200"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
-                Read all articles <ArrowRight className="h-4 w-4" />
+                {allArticlesText} <ArrowRight className="h-4 w-4" />
               </Link>
             </motion.div>
           </div>
@@ -109,7 +131,7 @@ export function BlogPreview() {
                     params={{ slug: slug }}
                     className="inline-flex items-center gap-2.5 rounded-full px-8 py-3.5 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#E88C35] transition-colors"
                   >
-                    View Blog
+                    {buttonText}
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>

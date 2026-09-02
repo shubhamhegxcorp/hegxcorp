@@ -1,3 +1,11 @@
+export interface HeroDashboardMetric {
+  label: string;
+  value: number;
+  prefix: string;
+  suffix: string;
+  decimals?: number;
+}
+
 export interface HeroSection {
   badge: string;
   title: string;
@@ -6,6 +14,16 @@ export interface HeroSection {
   buttonUrl: string;
   secondaryButtonText: string;
   secondaryButtonUrl: string;
+  trustText?: string;
+  // Right side dashboard fields
+  dashboardUrl?: string;
+  dashboardTitle?: string;
+  dashboardSubtitle?: string;
+  dashboardBadge?: string;
+  dashboardMetrics?: HeroDashboardMetric[];
+  chartTitle?: string;
+  chartMetric?: string;
+  chartMetricLabel?: string;
   imageUrl?: string;
 }
 
@@ -75,6 +93,79 @@ export interface CTASection {
   buttonUrl: string;
 }
 
+export interface SupportingMetricItem {
+  id: string;
+  prefix: string;
+  value: number;
+  suffix: string;
+  label: string;
+  sub: string;
+  decimals: number;
+  href: string;
+}
+
+export interface ResultsMetricsSection {
+  tagline: string;
+  heading: string;
+  heroMetric: {
+    ghostNumber: string;
+    prefix: string;
+    value: number;
+    suffix: string;
+    decimals: number;
+    title: string;
+    description: string;
+    linkText: string;
+    linkUrl: string;
+  };
+  supporting: SupportingMetricItem[];
+}
+
+export interface FeaturedWorkItem {
+  id: string;
+  isFeatured?: boolean;
+  title: string;
+  category: string;
+  industry: string;
+  url: string;
+  metric: string;
+  browserColor: string;
+  screenshotType: "ecommerce" | "saas" | "healthcare" | "fintech" | string;
+  linkUrl?: string;
+}
+
+export interface FeaturedWorkSection {
+  tagline: string;
+  heading: string;
+  projects: FeaturedWorkItem[];
+}
+
+export interface ProcessStepItem {
+  num: string;
+  title: string;
+  desc: string;
+  deliverables: string[];
+}
+
+export interface ProcessSection {
+  tagline: string;
+  heading: string;
+  steps: ProcessStepItem[];
+}
+
+export interface BlogPreviewSection {
+  tagline: string;
+  heading: string;
+  description: string;
+  allArticlesText: string;
+  allArticlesUrl: string;
+  buttonText: string;
+  customTitle?: string;
+  customExcerpt?: string;
+  customSlug?: string;
+  customImage?: string;
+}
+
 export interface FooterSection {
   logoUrl?: string;
   copyright: string;
@@ -97,13 +188,32 @@ export interface AboutTextSection {
   tagline: string;
   title: string;
   description: string;
+  imageUrl?: string;
 }
 
 export interface AboutValuesSection {
   tagline: string;
   title: string;
   description: string;
+  imageUrl?: string;
   values: { title: string; description: string }[];
+}
+
+export interface AboutStorySection {
+  tagline: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+}
+
+export interface AboutCTASection {
+  tagline: string;
+  title: string;
+  description: string;
+  buttonText: string;
+  buttonUrl: string;
+  secondaryButtonText: string;
+  secondaryButtonUrl: string;
 }
 
 export interface ServicesHeroSection {
@@ -178,7 +288,93 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
     buttonUrl: "/blog",
     secondaryButtonText: "Contact Team",
     secondaryButtonUrl: "/contact",
+    trustText: "Trusted by enterprise companies across India, USA, UK & UAE",
+    dashboardUrl: "hegxcorp.com/growth-analytics",
+    dashboardTitle: "Hegxcorp Growth Engine",
+    dashboardSubtitle: "Real-time Client Portfolio Metrics",
+    dashboardBadge: "System Active",
+    dashboardMetrics: [
+      {
+        label: "Organic Traffic Growth",
+        value: 310,
+        prefix: "+",
+        suffix: "%",
+        decimals: 0,
+      },
+      {
+        label: "Qualified Leads",
+        value: 184,
+        prefix: "+",
+        suffix: "%",
+        decimals: 0,
+      },
+      {
+        label: "ROAS Achieved",
+        value: 4.8,
+        prefix: "",
+        suffix: "x",
+        decimals: 1,
+      },
+      {
+        label: "Client Satisfaction",
+        value: 98,
+        prefix: "+",
+        suffix: "%",
+        decimals: 0,
+      },
+    ],
+    chartTitle: "Performance Trajectory",
+    chartMetric: "+248%",
+    chartMetricLabel: "Revenue Velocity",
   } as HeroSection,
+
+  "home.metrics": {
+    tagline: "Proven Results",
+    heading: "Numbers that prove we deliver.",
+    heroMetric: {
+      ghostNumber: "310",
+      prefix: "+",
+      value: 310,
+      suffix: "%",
+      decimals: 0,
+      title: "Organic Traffic Growth",
+      description: "Average increase across all SEO clients within 12 months of engagement.",
+      linkText: "See the case study",
+      linkUrl: "/case-studies",
+    },
+    supporting: [
+      {
+        id: "leads",
+        prefix: "+",
+        value: 184,
+        suffix: "%",
+        label: "Qualified Leads",
+        sub: "More pipeline through conversion-optimised funnels",
+        decimals: 0,
+        href: "/case-studies",
+      },
+      {
+        id: "roas",
+        prefix: "",
+        value: 4.8,
+        suffix: "×",
+        label: "Average ROAS",
+        sub: "Return on ad spend across Google, Meta & programmatic",
+        decimals: 1,
+        href: "/case-studies",
+      },
+      {
+        id: "satisfaction",
+        prefix: "",
+        value: 98,
+        suffix: "%",
+        label: "Client Satisfaction",
+        sub: "Senior-led accounts — no handoff to juniors after onboarding",
+        decimals: 0,
+        href: "/about",
+      },
+    ],
+  } as ResultsMetricsSection,
 
   "home.services": {
     tagline: "One Growth Engine · Six Capabilities",
@@ -231,6 +427,61 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
     ],
   } as ServicesSection,
 
+  "home.featuredWork": {
+    tagline: "Client Success Stories",
+    heading: "Visual proof of our engineering and growth capabilities",
+    projects: [
+      {
+        id: "Spirit Boosting Digital",
+        isFeatured: true,
+        title: "Spirit Boosting Digital",
+        category: "SEO + Conversion Engineering",
+        industry: "E-Commerce",
+        url: "spiritboostingdigital.in",
+        metric: "+280% Organic Revenue",
+        browserColor: "#FFF4E8",
+        screenshotType: "ecommerce",
+        linkUrl: "/case-studies",
+      },
+      {
+        id: "launchscale",
+        isFeatured: false,
+        title: "Cultural Web Creation",
+        category: "Full Funnel Performance Ads",
+        industry: "B2B SaaS",
+        url: "launchscale.com/analytics",
+        metric: "5.2x Google & Meta ROAS",
+        browserColor: "#E8F0FE",
+        screenshotType: "saas",
+        linkUrl: "/case-studies",
+      },
+      {
+        id: "healthfirst",
+        isFeatured: false,
+        title: "Environmental Brand Creation",
+        category: "Local SEO & Platform Engineering",
+        industry: "Healthcare",
+        url: "healthfirst.in/booking",
+        metric: "2x Qualified Leads",
+        browserColor: "#F0FDF4",
+        screenshotType: "healthcare",
+        linkUrl: "/case-studies",
+      },
+      {
+        id: "fintechone",
+        isFeatured: false,
+        title: "FintechOne Portal",
+        category: "Custom Web Application Development",
+        industry: "FinTech",
+        url: "fintechone.io/dashboard",
+        metric: "Sub-second Load Times",
+        browserColor: "#EAEAEA",
+        screenshotType: "fintech",
+        linkUrl: "/case-studies",
+      },
+    ],
+  } as FeaturedWorkSection,
+
   "home.features": {
     tagline: "WHY CLIENTS SWITCH TO HEGXCORP",
     heading: "Most agencies run campaigns. We build growth systems.",
@@ -264,6 +515,48 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
       },
     ],
   } as FeaturesSection,
+
+  "home.process": {
+    tagline: "How We Work",
+    heading: "From audit to scale in 5 steps",
+    steps: [
+      {
+        num: "01",
+        title: "Audit",
+        desc: "We analyse your current digital footprint SEO health, ad performance, website UX, and competitive landscape to identify the highest-impact opportunities.",
+        deliverables: [
+          "Competitor Analysis",
+          "Funnel Review",
+          "Analytics Audit",
+          "Opportunity Mapping",
+        ],
+      },
+      {
+        num: "02",
+        title: "Strategy",
+        desc: "We build a 90-day growth roadmap with clear KPIs, channel allocation, and milestones. No generic playbooks every strategy is bespoke to your business.",
+        deliverables: ["Channel Plan", "Growth Roadmap", "KPI Design", "90-Day Blueprint"],
+      },
+      {
+        num: "03",
+        title: "Execution",
+        desc: "Our specialist team activates across SEO, paid media, content, and development simultaneously moving fast without sacrificing quality.",
+        deliverables: ["SEO Setup", "Paid Campaigns", "Content Activation", "Web Deployment"],
+      },
+      {
+        num: "04",
+        title: "Optimisation",
+        desc: "We continuously test, analyse and refine every campaign and touchpoint. Data informs every decision, week over week.",
+        deliverables: ["A/B Tests", "Weekly Reports", "CRO Experiments", "Bid Strategy"],
+      },
+      {
+        num: "05",
+        title: "Scale",
+        desc: "Once we've found what works, we double down. Proven channels get more budget, winning creative gets expanded, and growth compounds.",
+        deliverables: ["Budget Expansion", "New Channels", "Market Entry", "Creative Scaling"],
+      },
+    ],
+  } as ProcessSection,
 
   "home.testimonials": {
     tagline: "Client Stories",
@@ -309,6 +602,20 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
       },
     ],
   } as TestimonialsSection,
+
+  "home.blogPreview": {
+    tagline: "INSIGHTS",
+    heading: "Ideas, Experiments & Growth Systems",
+    description:
+      "Practical breakdowns of SEO, paid media, conversion optimisation, and digital growth systems used to help businesses scale.",
+    allArticlesText: "Read all articles",
+    allArticlesUrl: "/blog",
+    buttonText: "View Blog",
+    customTitle: "",
+    customExcerpt: "",
+    customSlug: "",
+    customImage: "",
+  } as BlogPreviewSection,
 
   "home.faq": {
     tagline: "FAQ",
@@ -405,6 +712,25 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
       },
     ],
   } as AboutValuesSection,
+
+  "about.ourStory": {
+    tagline: "Our Story",
+    title: "Where creativity meets strategy.",
+    description:
+      "Founder Akshay Jadia started Hegxcorp in Mumbai in 2016 with a focused mission: help small and medium-sized businesses navigate the fast-changing world of digital marketing and design.\n\nFrom the beginning, the goal has been to make high-quality digital services more accessible and affordable—without losing the strategic thinking and care that create meaningful results.",
+    imageUrl: "",
+  } as AboutStorySection,
+
+  "about.cta": {
+    tagline: "LET'S GROW TOGETHER",
+    title: "Ready to turn your next idea into measurable growth?",
+    description:
+      "Tell us where you want to go. We'll help you find the clearest digital path to get there.",
+    buttonText: "Get a Free Growth Audit",
+    buttonUrl: "/free-growth-audit",
+    secondaryButtonText: "Contact Us",
+    secondaryButtonUrl: "/contact",
+  } as AboutCTASection,
 
   // --- SERVICES PAGE ---
   "services.hero": {

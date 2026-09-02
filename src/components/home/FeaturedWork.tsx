@@ -11,8 +11,11 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// Sample projects data representing high-quality digital products / growth cases
-const projects = [
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
+import type { FeaturedWorkSection, FeaturedWorkItem } from "@/lib/cms-config";
+
+// Default fallback projects data
+const defaultProjects: FeaturedWorkItem[] = [
   {
     id: "Spirit Boosting Digital",
     isFeatured: true,
@@ -23,6 +26,7 @@ const projects = [
     metric: "+280% Organic Revenue",
     browserColor: "#FFF4E8",
     screenshotType: "ecommerce",
+    linkUrl: "/case-studies",
   },
   {
     id: "launchscale",
@@ -34,6 +38,7 @@ const projects = [
     metric: "5.2x Google & Meta ROAS",
     browserColor: "#E8F0FE",
     screenshotType: "saas",
+    linkUrl: "/case-studies",
   },
   {
     id: "healthfirst",
@@ -45,6 +50,7 @@ const projects = [
     metric: "2x Qualified Leads",
     browserColor: "#F0FDF4",
     screenshotType: "healthcare",
+    linkUrl: "/case-studies",
   },
   {
     id: "fintechone",
@@ -56,10 +62,16 @@ const projects = [
     metric: "Sub-second Load Times",
     browserColor: "#EAEAEA",
     screenshotType: "fintech",
+    linkUrl: "/case-studies",
   },
 ];
 
 export function FeaturedWork() {
+  const { data } = useWebsiteSection<FeaturedWorkSection>("home.featuredWork");
+  const tagline = data?.tagline || "Client Success Stories";
+  const heading = data?.heading || "Visual proof of our engineering and growth capabilities";
+  const projects = data?.projects && data.projects.length > 0 ? data.projects : defaultProjects;
+
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -67,7 +79,7 @@ export function FeaturedWork() {
   useEffect(() => {
     // Only run horizontal pinning scroll on desktop viewports (md and above)
     const mediaQuery = window.matchMedia("(min-width: 768px)");
-    if (!mediaQuery.matches) return;
+    if (!mediaQuery.matches || projects.length === 0) return;
 
     const ctx = gsap.context(() => {
       // Step width is: 44vw card width + 6vw gap = 50vw step
@@ -147,7 +159,7 @@ export function FeaturedWork() {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [projects]);
 
   return (
     <>
@@ -159,8 +171,8 @@ export function FeaturedWork() {
         {/* Heading */}
         <div className="mx-auto max-w-[1280px] w-full px-6 lg:px-10 shrink-0">
           <SectionHeading
-            tagline="Client Success Stories"
-            heading="Visual proof of our engineering and growth capabilities"
+            tagline={tagline}
+            heading={heading}
           />
         </div>
 
@@ -176,7 +188,7 @@ export function FeaturedWork() {
           >
             {projects.map((project, index) => (
               <div
-                key={project.id}
+                key={project.id || index}
                 className={`project-card-${index} shrink-0 w-[44vw] origin-center`}
               >
                 <CaseStudyCursor>
@@ -195,8 +207,8 @@ export function FeaturedWork() {
       <div className="block md:hidden bg-white pt-14 pb-16">
         <div className="mx-auto max-w-[1280px] px-6 mb-8">
           <SectionHeading
-            tagline="Client Success Stories"
-            heading="Visual proof of our capabilities"
+            tagline={tagline}
+            heading={heading}
           />
         </div>
 
@@ -213,9 +225,9 @@ export function FeaturedWork() {
               display: none;
             }
           `}</style>
-          {projects.map((project) => (
-            <div key={project.id} className="snap-center shrink-0 w-[85vw] max-w-[320px]">
-              <ProjectCard project={project} index={0} isMobile isActive />
+          {projects.map((project, idx) => (
+            <div key={project.id || idx} className="snap-center shrink-0 w-[85vw] max-w-[320px]">
+              <ProjectCard project={project} index={idx} isMobile isActive />
             </div>
           ))}
         </div>
@@ -454,7 +466,7 @@ function ProjectCard({
   isMobile = false,
   isActive = false,
 }: {
-  project: (typeof projects)[0];
+  project: FeaturedWorkItem;
   index: number;
   isMobile?: boolean;
   isActive?: boolean;

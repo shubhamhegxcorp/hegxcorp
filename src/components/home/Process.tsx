@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { Check } from "lucide-react";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
+import type { ProcessSection, ProcessStepItem } from "@/lib/cms-config";
 
-const steps = [
+const defaultSteps: ProcessStepItem[] = [
   {
     num: "01",
     title: "Audit",
@@ -42,6 +44,11 @@ const steps = [
 ];
 
 export function Process() {
+  const { data } = useWebsiteSection<ProcessSection>("home.process");
+  const tagline = data?.tagline || "How We Work";
+  const heading = data?.heading || "From audit to scale in 5 steps";
+  const steps = data?.steps && data.steps.length > 0 ? data.steps : defaultSteps;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [activeStep, setActiveStep] = useState(0);
@@ -70,17 +77,19 @@ export function Process() {
       setScrollProgress(progress);
 
       // Determine active step based on progress thresholds
-      // 5 steps -> divide progress by 0.2 intervals
-      const stepIndex = Math.min(Math.floor(progress * 5), 4);
+      const stepCount = steps.length || 1;
+      const stepIndex = Math.min(Math.floor(progress * stepCount), stepCount - 1);
       setActiveStep(stepIndex);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
-    // Run once initially to set starting progress
     handleScroll();
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [steps]);
+
+  const currentStep = steps[activeStep] || steps[0];
+  const currentMobileStep = steps[mobileActive] || steps[0];
 
   return (
     <>
@@ -88,13 +97,13 @@ export function Process() {
       <div
         ref={containerRef}
         className="hidden md:block relative bg-[#FAFAF8]"
-        style={{ height: "260vh" }} // Tall container to provide scroll space
+        style={{ height: `${Math.max(steps.length * 50, 200)}vh` }} // Dynamic container height based on step count
       >
         <div className="sticky top-0 h-screen w-full flex flex-col justify-center overflow-hidden">
           <div className="mx-auto max-w-[1280px] w-full px-6 lg:px-10">
             {/* Header */}
             <div className="mb-14">
-              <SectionHeading tagline="How We Work" heading="From audit to scale in 5 steps" />
+              <SectionHeading tagline={tagline} heading={heading} />
             </div>
 
             {/* Grid Layout */}
@@ -182,44 +191,45 @@ export function Process() {
                       className="text-8xl font-black text-[#fcb044] leading-none select-none tracking-tight"
                       style={{
                         fontFamily: "'Space Grotesk', sans-serif",
-                        // WebkitTextStroke: "1px #EAEAEA",
                       }}
                     >
-                      {steps[activeStep].num}
+                      {currentStep?.num || "01"}
                     </div>
                     <h3
                       className="text-3xl font-bold text-[#1D2742]"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
-                      {steps[activeStep].title}
+                      {currentStep?.title}
                     </h3>
                     <p
                       className="text-[#6B7280] leading-relaxed max-w-[500px]"
                       style={{ fontFamily: "'Inter', sans-serif", fontSize: "16px" }}
                     >
-                      {steps[activeStep].desc}
+                      {currentStep?.desc}
                     </p>
 
                     {/* Deliverable chips */}
-                    <div className="mt-6">
-                      <div
-                        className="text-[9px] font-bold tracking-[0.14em] text-[#9CA3AF] uppercase mb-3"
-                        style={{ fontFamily: "'Inter', sans-serif" }}
-                      >
-                        Deliverables
+                    {currentStep?.deliverables && currentStep.deliverables.length > 0 && (
+                      <div className="mt-6">
+                        <div
+                          className="text-[9px] font-bold tracking-[0.14em] text-[#9CA3AF] uppercase mb-3"
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
+                          Deliverables
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {currentStep.deliverables.map((d) => (
+                            <span
+                              key={d}
+                              className="inline-block rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-3 py-1 text-[11px] font-medium text-[#6B7280]"
+                              style={{ fontFamily: "'Inter', sans-serif" }}
+                            >
+                              {d}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-2">
-                        {steps[activeStep].deliverables.map((d) => (
-                          <span
-                            key={d}
-                            className="inline-block rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-3 py-1 text-[11px] font-medium text-[#6B7280]"
-                            style={{ fontFamily: "'Inter', sans-serif" }}
-                          >
-                            {d}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                    )}
                   </motion.div>
                 </AnimatePresence>
               </div>
@@ -239,14 +249,14 @@ export function Process() {
         <div className="mx-auto max-w-[1280px] px-6">
           {/* Header */}
           <div className="mb-10">
-            <SectionHeading tagline="How We Work" heading="From audit to scale in 5 steps" />
+            <SectionHeading tagline={tagline} heading={heading} />
           </div>
 
           {/* Timeline Tab Bar */}
           <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-none">
             {steps.map((s, i) => (
               <button
-                key={s.num}
+                key={s.num || i}
                 onClick={() => setMobileActive(i)}
                 className={`flex items-center gap-2.5 rounded-xl px-4 py-3 shrink-0 transition-all duration-300 ${
                   mobileActive === i
@@ -290,41 +300,43 @@ export function Process() {
                     WebkitTextStroke: "1px #EAEAEA",
                   }}
                 >
-                  {steps[mobileActive].num}
+                  {currentMobileStep?.num || "01"}
                 </div>
                 <h3
                   className="text-xl font-bold text-[#1D2742]"
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                 >
-                  {steps[mobileActive].title}
+                  {currentMobileStep?.title}
                 </h3>
                 <p
                   className="text-sm text-[#6B7280] leading-relaxed"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
-                  {steps[mobileActive].desc}
+                  {currentMobileStep?.desc}
                 </p>
 
                 {/* Mobile deliverable chips */}
-                <div className="mt-5">
-                  <div
-                    className="text-[9px] font-bold tracking-[0.14em] text-[#9CA3AF] uppercase mb-2.5"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    Deliverables
+                {currentMobileStep?.deliverables && currentMobileStep.deliverables.length > 0 && (
+                  <div className="mt-5">
+                    <div
+                      className="text-[9px] font-bold tracking-[0.14em] text-[#9CA3AF] uppercase mb-2.5"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      Deliverables
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {currentMobileStep.deliverables.map((d) => (
+                        <span
+                          key={d}
+                          className="inline-block rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-2.5 py-1 text-[10px] font-medium text-[#6B7280]"
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
+                          {d}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {steps[mobileActive].deliverables.map((d) => (
-                      <span
-                        key={d}
-                        className="inline-block rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-2.5 py-1 text-[10px] font-medium text-[#6B7280]"
-                        style={{ fontFamily: "'Inter', sans-serif" }}
-                      >
-                        {d}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                )}
               </motion.div>
             </AnimatePresence>
           </div>

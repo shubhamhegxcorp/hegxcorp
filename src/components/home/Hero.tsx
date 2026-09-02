@@ -75,6 +75,48 @@ const iconVariants: Variants = {
   },
 };
 
+function renderHeroHeadline(title: string) {
+  if (!title) return "Generate More Leads, Sales & Revenue";
+
+  // If user used [highlight]words[/highlight] in CMS
+  if (title.includes("[highlight]") && title.includes("[/highlight]")) {
+    const parts = title.split(/\[highlight\](.*?)\[\/highlight\]/g);
+    return parts.map((part, i) =>
+      i % 2 === 1 ? (
+        <span key={i} className="relative inline-block">
+          {part}
+          <span
+            className="absolute bottom-0 left-0 right-0 h-[3px] rounded-full"
+            style={{ background: "#FC9C44", bottom: "-4px" }}
+          />
+        </span>
+      ) : (
+        part
+      ),
+    );
+  }
+
+  // If default title, give it the signature orange underline on "Leads, Sales"
+  if (title === "Generate More Leads, Sales & Revenue") {
+    return (
+      <>
+        Generate More{" "}
+        <span className="relative inline-block">
+          Leads, Sales
+          <span
+            className="absolute bottom-0 left-0 right-0 h-[3px] rounded-full"
+            style={{ background: "#FC9C44", bottom: "-4px" }}
+          />
+        </span>{" "}
+        &amp; Revenue
+      </>
+    );
+  }
+
+  // Otherwise, render whatever custom title the user saved in the CMS directly
+  return title;
+}
+
 export function Hero() {
   const { data: heroData } = useWebsiteSection("home.hero");
   const [isMounted, setIsMounted] = useState(false);
@@ -82,6 +124,30 @@ export function Hero() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const badge = heroData?.badge || "Growth Consultancy & Digital Transformation Partner";
+  const title = heroData?.title || "Generate More Leads, Sales & Revenue";
+  const description =
+    heroData?.description ||
+    "We design and execute data-driven growth marketing systems, custom engineering, and search optimization built to position enterprise firms for compounding scale.";
+  const buttonText = heroData?.buttonText || "Browse Articles";
+  const buttonUrl = heroData?.buttonUrl || "/blog";
+  const secondaryButtonText = heroData?.secondaryButtonText || "Contact Team";
+  const secondaryButtonUrl = heroData?.secondaryButtonUrl || "/contact";
+  const trustText =
+    heroData?.trustText || "Trusted by enterprise companies across India, USA, UK & UAE";
+
+  const dashboardUrl = heroData?.dashboardUrl || "hegxcorp.com/growth-analytics";
+  const dashboardTitle = heroData?.dashboardTitle || "Hegxcorp Growth Engine";
+  const dashboardSubtitle =
+    heroData?.dashboardSubtitle || "Real-time Client Portfolio Metrics";
+  const dashboardBadge = heroData?.dashboardBadge || "System Active";
+  const metrics =
+    heroData?.dashboardMetrics && heroData.dashboardMetrics.length > 0
+      ? heroData.dashboardMetrics
+      : dashboardMetrics;
+  const chartTitle = heroData?.chartTitle || "Revenue Pipeline Growth (Average YoY)";
+  const chartMetric = heroData?.chartMetric || "+247%";
 
   return (
     <section
@@ -119,7 +185,7 @@ export function Hero() {
             {/* Category badge */}
             <div className="inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-[#FC9C44] shadow-sm">
               <span className="h-1.5 w-1.5 rounded-full bg-[#FC9C44] animate-pulse" />
-              {heroData.badge}
+              {badge}
             </div>
 
             {/* Headline */}
@@ -130,21 +196,7 @@ export function Hero() {
                 fontSize: "clamp(40px, 4.8vw, 68px)",
               }}
             >
-              {heroData.title.includes("Leads, Sales") ? (
-                <>
-                  Generate More{" "}
-                  <span className="relative">
-                    Leads, Sales
-                    <span
-                      className="absolute bottom-0 left-0 right-0 h-[3px] rounded-full"
-                      style={{ background: "#FC9C44", bottom: "-4px" }}
-                    />
-                  </span>{" "}
-                  &amp; Revenue
-                </>
-              ) : (
-                heroData.title
-              )}
+              {renderHeroHeadline(title)}
             </h1>
 
             {/* Subheadline */}
@@ -152,25 +204,25 @@ export function Hero() {
               className="max-w-[540px] text-[#6B7280] leading-relaxed"
               style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(16px, 1.2vw, 19px)" }}
             >
-              {heroData.description}
+              {description}
             </p>
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-3 pt-2">
               <Link
-                to={heroData.buttonUrl}
+                to={buttonUrl}
                 className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-semibold text-white transition-[background-color,transform,box-shadow] duration-200 ease-out bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(252,156,68,0.5)]"
                 id="hero-cta-audit"
               >
-                {heroData.buttonText}
+                {buttonText}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                to={heroData.secondaryButtonUrl}
+                to={secondaryButtonUrl}
                 className="inline-flex items-center gap-2.5 rounded-full border border-[#EAEAEA] bg-white px-7 py-3.5 text-sm font-semibold text-[#232323] transition-[background-color,border-color] duration-200 ease-out hover:bg-[#FFF4E8] hover:border-[#FC9C44]"
                 id="hero-cta-case-studies"
               >
-                {heroData.secondaryButtonText}
+                {secondaryButtonText}
               </Link>
             </div>
 
@@ -180,7 +232,7 @@ export function Hero() {
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               <Globe className="h-3.5 w-3.5 text-[#FC9C44]" />
-              <span>Trusted by enterprise companies across India, USA, UK &amp; UAE</span>
+              <span>{trustText}</span>
             </div>
           </motion.div>
 
@@ -213,7 +265,7 @@ export function Hero() {
                 {/* Address bar */}
                 <div className="flex-1 max-w-[340px] mx-auto bg-[#FAFAF8] border border-[#EAEAEA] rounded-md py-1 px-3 text-[10px] text-[#6B7280] font-mono text-center flex items-center justify-center gap-1">
                   <span className="text-emerald-500 font-bold">https://</span>
-                  <span>hegxcorp.com/growth-analytics</span>
+                  <span>{dashboardUrl}</span>
                 </div>
               </div>
 
@@ -226,55 +278,59 @@ export function Hero() {
                       className="text-sm font-bold text-[#232323] tracking-tight"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
-                      Hegxcorp Growth Engine
+                      {dashboardTitle}
                     </h3>
-                    <p className="text-[11px] text-[#6B7280]">Real-time Client Portfolio Metrics</p>
+                    <p className="text-[11px] text-[#6B7280]">{dashboardSubtitle}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-600">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      System Active
+                      {dashboardBadge}
                     </span>
                   </div>
                 </div>
 
                 {/* Metrics Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                  {dashboardMetrics.map((m, idx) => (
-                    <motion.div
-                      key={m.label}
-                      custom={idx}
-                      variants={cardVariants}
-                      initial="initial"
-                      animate={isMounted ? "animate" : "initial"}
-                      whileHover="hover"
-                      className="group rounded-xl border border-[#EAEAEA] bg-[#FAFAF8] p-4 cursor-default"
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[10px] font-medium text-[#6B7280] uppercase tracking-wide">
-                          {m.label}
-                        </span>
-                        <motion.div variants={iconVariants}>
-                          <m.icon className="h-4 w-4 text-[#FC9C44]" />
-                        </motion.div>
-                      </div>
-                      <div
-                        className="text-2xl font-bold text-[#232323]"
-                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  {metrics.map((m: any, idx: number) => {
+                    const iconMap = [TrendingUp, Users, BarChart3, Zap];
+                    const IconComp = iconMap[idx % iconMap.length];
+                    return (
+                      <motion.div
+                        key={m.label || idx}
+                        custom={idx}
+                        variants={cardVariants}
+                        initial="initial"
+                        animate={isMounted ? "animate" : "initial"}
+                        whileHover="hover"
+                        className="group rounded-xl border border-[#EAEAEA] bg-[#FAFAF8] p-4 cursor-default"
                       >
-                        <HeroMetric
-                          value={m.value}
-                          prefix={m.prefix}
-                          suffix={m.suffix}
-                          decimals={m.decimals}
-                        />
-                      </div>
-                    </motion.div>
-                  ))}
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[10px] font-medium text-[#6B7280] uppercase tracking-wide">
+                            {m.label}
+                          </span>
+                          <motion.div variants={iconVariants}>
+                            <IconComp className="h-4 w-4 text-[#FC9C44]" />
+                          </motion.div>
+                        </div>
+                        <div
+                          className="text-2xl font-bold text-[#232323]"
+                          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                        >
+                          <HeroMetric
+                            value={Number(m.value) || 0}
+                            prefix={m.prefix || ""}
+                            suffix={m.suffix || ""}
+                            decimals={m.decimals || 0}
+                          />
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
 
                 {/* Interactive Chart Area */}
-                <ChartArea />
+                <ChartArea title={chartTitle} metric={chartMetric} />
               </div>
             </motion.div>
           </motion.div>
@@ -322,7 +378,13 @@ function HeroMetric({ value, prefix = "", suffix = "", decimals = 0 }: HeroMetri
 }
 
 // ChartArea helper with viewport entry reveal and snappy hover reactivity
-function ChartArea() {
+function ChartArea({
+  title = "Revenue Pipeline Growth (Average YoY)",
+  metric = "+247%",
+}: {
+  title?: string;
+  metric?: string;
+}) {
   const [isHovered, setIsHovered] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-100px" });
@@ -341,10 +403,10 @@ function ChartArea() {
         <div className="flex items-center gap-1.5">
           <Sparkles className="h-3.5 w-3.5 text-[#FC9C44]" />
           <span className="text-xs font-semibold text-[#232323]">
-            Revenue Pipeline Growth (Average YoY)
+            {title}
           </span>
         </div>
-        <span className="text-[11px] font-bold text-emerald-500">+247%</span>
+        <span className="text-[11px] font-bold text-emerald-500">{metric}</span>
       </div>
 
       {/* Animated Line Graph (SVG) */}
