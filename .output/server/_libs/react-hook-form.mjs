@@ -1,4 +1,4 @@
-import { R as React4 } from "./react.mjs";
+import { R as React } from "./react.mjs";
 var isCheckBoxInput = (element) => element.type === "checkbox";
 var isDateObject = (value) => value instanceof Date;
 var isNullOrUndefined = (value) => value == null;
@@ -94,7 +94,7 @@ var set = (object, path, value) => {
     object = object[key];
   }
 };
-const HookFormControlContext = React4.createContext(null);
+const HookFormControlContext = React.createContext(null);
 HookFormControlContext.displayName = "HookFormControlContext";
 var getProxyFormState = (formState, control, localProxyFormState, isRoot = true) => {
   const result = {};
@@ -111,7 +111,7 @@ var getProxyFormState = (formState, control, localProxyFormState, isRoot = true)
   }
   return result;
 };
-const useIsomorphicLayoutEffect = isWeb ? React4.useLayoutEffect : React4.useEffect;
+const useIsomorphicLayoutEffect = isWeb ? React.useLayoutEffect : React.useEffect;
 var isString = (value) => typeof value === "string";
 var generateWatchOutput = (names, _names, formValues, isGlobal, defaultValue) => {
   if (isString(names)) {
@@ -163,7 +163,7 @@ function deepEqual(object1, object2, visited = /* @__PURE__ */ new WeakSet()) {
   }
   return true;
 }
-const HookFormContext = React4.createContext(null);
+const HookFormContext = React.createContext(null);
 HookFormContext.displayName = "HookFormContext";
 var appendErrors = (name, validateAllFieldCriteria, errors, type, message) => validateAllFieldCriteria ? {
   ...errors[name],
@@ -1745,9 +1745,9 @@ function createFormControl(props = {}) {
   };
 }
 function useForm(props = {}) {
-  const _formControl = React4.useRef(void 0);
-  const _values = React4.useRef(void 0);
-  const [formState, updateFormState] = React4.useState(() => ({
+  const _formControl = React.useRef(void 0);
+  const _values = React.useRef(void 0);
+  const [formState, updateFormState] = React.useState(() => ({
     ...cloneObject(DEFAULT_FORM_STATE),
     isLoading: isFunction(props.defaultValues),
     errors: props.errors || {},
@@ -1789,8 +1789,8 @@ function useForm(props = {}) {
     control._formState.isReady = true;
     return sub;
   }, [control]);
-  React4.useEffect(() => control._disableForm(props.disabled), [control, props.disabled]);
-  React4.useEffect(() => {
+  React.useEffect(() => control._disableForm(props.disabled), [control, props.disabled]);
+  React.useEffect(() => {
     if (props.mode) {
       control._options.mode = props.mode;
     }
@@ -1798,18 +1798,18 @@ function useForm(props = {}) {
       control._options.reValidateMode = props.reValidateMode;
     }
   }, [control, props.mode, props.reValidateMode]);
-  React4.useEffect(() => {
+  React.useEffect(() => {
     if (props.errors) {
       control._setErrors(props.errors);
       control._focusError();
     }
   }, [control, props.errors]);
-  React4.useEffect(() => {
+  React.useEffect(() => {
     props.shouldUnregister && control._subjects.state.next({
       values: control._getWatch()
     });
   }, [control, props.shouldUnregister]);
-  React4.useEffect(() => {
+  React.useEffect(() => {
     if (control._proxyFormState.isDirty) {
       const isDirty = control._getDirty();
       if (isDirty !== formState.isDirty) {
@@ -1819,7 +1819,7 @@ function useForm(props = {}) {
       }
     }
   }, [control, formState.isDirty]);
-  React4.useEffect(() => {
+  React.useEffect(() => {
     var _a;
     if (props.values && !deepEqual(props.values, _values.current)) {
       control._reset(props.values, {
@@ -1835,7 +1835,7 @@ function useForm(props = {}) {
       control._resetDefaultValues();
     }
   }, [control, props.values]);
-  React4.useEffect(() => {
+  React.useEffect(() => {
     if (!control._state.mount) {
       control._setValid();
       control._state.mount = true;
@@ -1846,7 +1846,7 @@ function useForm(props = {}) {
     }
     control._removeUnmounted();
   });
-  _formControl.current.formState = React4.useMemo(() => getProxyFormState(formState, control), [control, formState]);
+  _formControl.current.formState = React.useMemo(() => getProxyFormState(formState, control), [control, formState]);
   return _formControl.current;
 }
 export {

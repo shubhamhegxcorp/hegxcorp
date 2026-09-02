@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { getPublishedBlogs } from "@/lib/content/blogs";
-import type { Blog } from "@/data/blogs";
+import { blogs as defaultBlogs, type Blog } from "@/data/blogs";
 import {
   Search as SearchIcon,
   ArrowRight,
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/blog/")({
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://hegxcorp.com/blog" },
-      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { property: "og:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Growth Lab Insights — SEO, Paid Media & CRO | Hegxcorp" },
       {
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/blog/")({
         content:
           "Strategic breakdowns of organic search systems, campaign performance optimization, and high-converting website engineering.",
       },
-      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
     ],
     links: [{ rel: "canonical", href: "https://hegxcorp.com/blog" }],
   }),
@@ -55,22 +55,22 @@ function BlogPage() {
   const [subscribed, setSubscribed] = useState(false);
   const [emailInput, setEmailInput] = useState("");
 
-  // Combined list: real published posts from the database + the hardcoded
-  // demo posts. Starts empty and fills in once the database responds.
-  const [allBlogs, setAllBlogs] = useState<Blog[]>([]);
-  const [blogsLoaded, setBlogsLoaded] = useState(false);
+  // Combined list: initialized with demo posts so the page renders instantly,
+  // then supplements with any database published posts in background.
+  const [allBlogs, setAllBlogs] = useState<Blog[]>(defaultBlogs);
+  const [blogsLoaded, setBlogsLoaded] = useState(true);
 
   useEffect(() => {
     let active = true;
     getPublishedBlogs()
       .then((result) => {
         if (!active) return;
-        setAllBlogs(result);
-        setBlogsLoaded(true);
+        if (result && result.length > 0) {
+          setAllBlogs(result);
+        }
       })
       .catch((loadError) => {
         console.error("Failed to load published blogs:", loadError);
-        if (active) setBlogsLoaded(true);
       });
     return () => {
       active = false;
@@ -253,21 +253,21 @@ function BlogPage() {
                 </p>
               </div>
 
-              <div className="flex flex-wrap justify-center gap-4 pt-4 lg:justify-start">
+              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 pt-4 lg:justify-start">
                 <button
                   onClick={() => {
                     document
                       .getElementById("latest-articles")
                       ?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className="inline-flex items-center gap-2.5 rounded-full px-8 py-3.5 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#2D3A5D] transition-all cursor-pointer"
+                  className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 rounded-full px-8 py-3.5 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#2D3A5D] active:scale-98 transition-all cursor-pointer"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   Browse Articles
                 </button>
                 <Link
                   to="/contact"
-                  className="inline-flex items-center gap-2.5 rounded-full border border-[#EAEAEA] px-8 py-3.5 text-sm font-semibold text-[#1D2742] bg-[#FAFAF8] hover:bg-[#EAEAEA] transition-all"
+                  className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 rounded-full border border-[#EAEAEA] px-8 py-3.5 text-sm font-semibold text-[#1D2742] bg-[#FAFAF8] hover:bg-[#EAEAEA] active:scale-98 transition-all"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   Contact Team

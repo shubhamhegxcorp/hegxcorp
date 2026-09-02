@@ -24,7 +24,7 @@ export const Route = createFileRoute("/case-studies/")({
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://hegxcorp.com/case-studies" },
-      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { property: "og:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Client Success & Growth Case Studies | Hegxcorp" },
       {
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/case-studies/")({
         content:
           "Discover how Hegxcorp helps leading B2B and E-commerce brands scale organic revenue, optimize PPC campaigns, and achieve measurable growth.",
       },
-      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
     ],
     links: [{ rel: "canonical", href: "https://hegxcorp.com/case-studies" }],
   }),
@@ -118,13 +118,13 @@ function CaseStudiesPage() {
                 measurable growth.
               </p>
 
-              <div className="pt-4 flex justify-center">
+              <div className="pt-4 flex justify-center w-full">
                 <Link
                   to="/free-growth-audit"
-                  className="inline-flex items-center gap-2.5 rounded-full px-8 py-4 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(252,156,68,0.5)] transition-[background-color,transform,box-shadow] duration-200 ease-out"
+                  className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 rounded-full px-8 py-4 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(252,156,68,0.5)] active:scale-98 transition-[background-color,transform,box-shadow] duration-200 ease-out"
                 >
-                  Get Free Growth Audit
-                  <ArrowRight className="h-4 w-4" />
+                  <span>Get Free Growth Audit</span>
+                  <ArrowRight className="h-4 w-4 shrink-0" />
                 </Link>
               </div>
             </div>
@@ -325,10 +325,10 @@ function CaseStudiesPage() {
                   <Link
                     to="/case-studies/$slug"
                     params={{ slug: featuredStudy.slug }}
-                    className="inline-flex items-center gap-2.5 rounded-full px-7 py-4 text-sm font-semibold text-white bg-[#1D2742] hover:bg-[#2C3B60] transition-colors duration-200"
+                    className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 rounded-full px-7 py-4 text-sm font-semibold text-white bg-[#1D2742] hover:bg-[#2C3B60] active:scale-98 transition-all duration-200"
                   >
-                    View Full Case Study
-                    <ArrowRight className="h-4 w-4" />
+                    <span>View Full Case Study</span>
+                    <ArrowRight className="h-4 w-4 shrink-0" />
                   </Link>
                 </div>
               </div>
@@ -383,9 +383,9 @@ function CaseStudiesPage() {
             </div>
 
             {/* EDITORIAL RHYTHM LAYOUT GRID */}
-            <div className="space-y-24">
+            <div className="space-y-14 md:space-y-24">
               {/* ROW 1: Two standard studies side-by-side (GPen & Rollink) */}
-              <div className="grid md:grid-cols-2 gap-16 lg:gap-24">
+              <div className="grid md:grid-cols-2 gap-10 md:gap-16 lg:gap-24">
                 {/* G Pen */}
                 <Link
                   to="/case-studies/$slug"
@@ -525,7 +525,7 @@ function CaseStudiesPage() {
               <div className="h-[1px] w-full bg-[#EAEAEA]" />
 
               {/* ROW 2: Two standard studies side-by-side (Learning Tree & Orra) */}
-              <div className="grid md:grid-cols-2 gap-16 lg:gap-24">
+              <div className="grid md:grid-cols-2 gap-10 md:gap-16 lg:gap-24">
                 <Link
                   to="/case-studies/$slug"
                   params={{ slug: learningTree.slug }}

@@ -90,7 +90,7 @@ export function ResultsMetrics() {
                 className="font-black leading-none tracking-tight text-[#1D2742]"
                 style={{
                   fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "clamp(72px, 10vw, 130px)",
+                  fontSize: "clamp(52px, 13vw, 130px)",
                 }}
               >
                 <AnimatedCounter

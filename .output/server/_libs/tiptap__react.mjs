@@ -1,4 +1,4 @@
-import { r as reactExports, R as React4, j as jsxRuntimeExports } from "./react.mjs";
+import { r as reactExports, R as React, j as jsxRuntimeExports } from "./react.mjs";
 import { a as ReactDOM } from "./react-dom.mjs";
 import { s as shimExports, w as withSelectorExports } from "./use-sync-external-store.mjs";
 import { o as Editor } from "./tiptap__core.mjs";
@@ -73,10 +73,10 @@ function createContentComponent() {
     }
   };
 }
-var PureEditorContent = class extends React4.Component {
+var PureEditorContent = class extends React.Component {
   constructor(props) {
     super(props);
-    this.editorContentRef = React4.createRef();
+    this.editorContentRef = React.createRef();
   }
   componentDidMount() {
     this.init();
@@ -137,17 +137,17 @@ var PureEditorContent = class extends React4.Component {
 };
 var EditorContentWithKey = reactExports.forwardRef(
   (props, ref) => {
-    const key = React4.useMemo(() => {
+    const key = React.useMemo(() => {
       return Math.floor(Math.random() * 4294967295).toString();
     }, [props.editor]);
-    return React4.createElement(PureEditorContent, {
+    return React.createElement(PureEditorContent, {
       key,
       innerRef: ref,
       ...props
     });
   }
 );
-var EditorContent = React4.memo(EditorContentWithKey);
+var EditorContent = React.memo(EditorContentWithKey);
 var useIsomorphicLayoutEffect = typeof window !== "undefined" ? reactExports.useLayoutEffect : reactExports.useEffect;
 var EditorStateManager = class {
   constructor(initialEditor) {
@@ -500,7 +500,7 @@ var ReactNodeViewContext = reactExports.createContext({
   }
 });
 var useReactNodeView = () => reactExports.useContext(ReactNodeViewContext);
-React4.forwardRef((props, ref) => {
+React.forwardRef((props, ref) => {
   const { onDragStart } = useReactNodeView();
   const Tag = props.as || "div";
   return (
@@ -520,7 +520,7 @@ React4.forwardRef((props, ref) => {
     )
   );
 });
-React4.createContext({
+React.createContext({
   markViewContentRef: () => {
   }
 });

@@ -450,9 +450,9 @@ function ServiceCard({
         {/* Visual panel — taller for featured, compact for standard */}
         <div
           className={`border-b border-[#F3F4F6] bg-white ${
-            isFeatured ? "px-6 pt-6 pb-5" : "px-4 pt-4 pb-3"
+            isFeatured ? "px-4 sm:px-6 pt-5 sm:pt-6 pb-4 sm:pb-5" : "px-3 sm:px-4 pt-3 sm:pt-4 pb-2 sm:pb-3"
           }`}
-          style={{ minHeight: isFeatured ? "200px" : "140px" }}
+          style={{ minHeight: isFeatured ? "clamp(150px, 20vw, 200px)" : "clamp(120px, 15vw, 140px)" }}
         >
           <s.Visual />
         </div>

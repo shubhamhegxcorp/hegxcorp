@@ -152,7 +152,7 @@ export function Hero() {
   return (
     <section
       className="relative overflow-hidden bg-white"
-      style={{ paddingTop: "clamp(64px, 8vw, 120px)", paddingBottom: "clamp(64px, 8vw, 120px)" }}
+      style={{ paddingTop: "clamp(48px, 6vw, 110px)", paddingBottom: "clamp(48px, 6vw, 110px)" }}
     >
       <div
         aria-hidden="true"
@@ -173,27 +173,27 @@ export function Hero() {
         />
       </div>
 
-      <div className="relative mx-auto max-w-[1280px] px-6 lg:px-10">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
+      <div className="relative mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-10">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-12 items-center">
           {/* Left — copy */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="space-y-8"
+            className="space-y-6 sm:space-y-8"
           >
             {/* Category badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-[#FC9C44] shadow-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#FC9C44] animate-pulse" />
-              {badge}
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-3.5 sm:px-4 py-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.1em] text-[#FC9C44] shadow-sm max-w-full">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#FC9C44] animate-pulse shrink-0" />
+              <span className="truncate">{badge}</span>
             </div>
 
             {/* Headline */}
             <h1
-              className="font-bold text-[#232323] leading-[1.08] tracking-tight"
+              className="font-bold text-[#232323] leading-[1.15] sm:leading-[1.08] tracking-tight break-words [overflow-wrap:anywhere]"
               style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: "clamp(40px, 4.8vw, 68px)",
+                fontSize: "clamp(26px, 6vw, 68px)",
               }}
             >
               {renderHeroHeadline(title)}
@@ -201,25 +201,25 @@ export function Hero() {
 
             {/* Subheadline */}
             <p
-              className="max-w-[540px] text-[#6B7280] leading-relaxed"
-              style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(16px, 1.2vw, 19px)" }}
+              className="max-w-[540px] text-[#6B7280] leading-relaxed text-sm sm:text-base lg:text-lg"
+              style={{ fontFamily: "'Inter', sans-serif" }}
             >
               {description}
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-wrap gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Link
                 to={buttonUrl}
-                className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-semibold text-white transition-[background-color,transform,box-shadow] duration-200 ease-out bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(252,156,68,0.5)]"
+                className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-semibold text-white transition-[background-color,transform,box-shadow] duration-200 ease-out bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(252,156,68,0.5)] active:scale-98"
                 id="hero-cta-audit"
               >
-                {buttonText}
-                <ArrowRight className="h-4 w-4" />
+                <span>{buttonText}</span>
+                <ArrowRight className="h-4 w-4 shrink-0" />
               </Link>
               <Link
                 to={secondaryButtonUrl}
-                className="inline-flex items-center gap-2.5 rounded-full border border-[#EAEAEA] bg-white px-7 py-3.5 text-sm font-semibold text-[#232323] transition-[background-color,border-color] duration-200 ease-out hover:bg-[#FFF4E8] hover:border-[#FC9C44]"
+                className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 rounded-full border border-[#EAEAEA] bg-white px-7 py-3.5 text-sm font-semibold text-[#232323] transition-[background-color,border-color] duration-200 ease-out hover:bg-[#FFF4E8] hover:border-[#FC9C44] active:scale-98"
                 id="hero-cta-case-studies"
               >
                 {secondaryButtonText}
@@ -231,7 +231,7 @@ export function Hero() {
               className="flex items-center gap-2 text-xs text-[#6B7280]"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              <Globe className="h-3.5 w-3.5 text-[#FC9C44]" />
+              <Globe className="h-3.5 w-3.5 text-[#FC9C44] shrink-0" />
               <span>{trustText}</span>
             </div>
           </motion.div>
@@ -241,49 +241,49 @@ export function Hero() {
             initial={{ opacity: 0, scale: 0.95, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="w-full"
+            className="w-full max-w-full overflow-hidden"
           >
-            {/* Subtle floating motion using Framer Motion (subtle, enterprise feel) */}
+            {/* Subtle floating motion using Framer Motion */}
             <motion.div
               animate={{ y: [0, -6, 0] }}
               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
               whileHover={{
-                y: -10, // subtle lift on hover
+                y: -10,
                 boxShadow: "0 32px 80px -20px rgba(29,39,66,0.16)",
                 transition: { duration: 0.25, ease: "easeOut" },
               }}
               className="relative rounded-2xl border border-[#EAEAEA] bg-[#FAFAF8] p-0.5 shadow-[0_24px_64px_-16px_rgba(29,39,66,0.12)] overflow-hidden"
             >
               {/* Browser bar */}
-              <div className="flex items-center gap-2 px-4 py-3 bg-white border-b border-[#EAEAEA] rounded-t-2xl">
+              <div className="flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 bg-white border-b border-[#EAEAEA] rounded-t-2xl">
                 {/* Dots */}
                 <div className="flex gap-1.5 shrink-0">
-                  <div className="h-3 w-3 rounded-full bg-[#FF5F56]" />
-                  <div className="h-3 w-3 rounded-full bg-[#FFBD2E]" />
-                  <div className="h-3 w-3 rounded-full bg-[#27C93F]" />
+                  <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-[#FF5F56]" />
+                  <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-[#FFBD2E]" />
+                  <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-[#27C93F]" />
                 </div>
                 {/* Address bar */}
-                <div className="flex-1 max-w-[340px] mx-auto bg-[#FAFAF8] border border-[#EAEAEA] rounded-md py-1 px-3 text-[10px] text-[#6B7280] font-mono text-center flex items-center justify-center gap-1">
-                  <span className="text-emerald-500 font-bold">https://</span>
-                  <span>{dashboardUrl}</span>
+                <div className="flex-1 min-w-0 max-w-[340px] mx-auto bg-[#FAFAF8] border border-[#EAEAEA] rounded-md py-1 px-2.5 text-[10px] text-[#6B7280] font-mono text-center flex items-center justify-center gap-1 truncate">
+                  <span className="text-emerald-500 font-bold shrink-0">https://</span>
+                  <span className="truncate">{dashboardUrl}</span>
                 </div>
               </div>
 
               {/* Dashboard Content */}
-              <div className="bg-white p-6 rounded-b-2xl">
+              <div className="bg-white p-4 sm:p-6 rounded-b-2xl">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <div>
+                <div className="flex items-center justify-between gap-2 mb-5 sm:mb-6">
+                  <div className="min-w-0">
                     <h3
-                      className="text-sm font-bold text-[#232323] tracking-tight"
+                      className="text-xs sm:text-sm font-bold text-[#232323] tracking-tight truncate"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
                       {dashboardTitle}
                     </h3>
-                    <p className="text-[11px] text-[#6B7280]">{dashboardSubtitle}</p>
+                    <p className="text-[10px] sm:text-[11px] text-[#6B7280] truncate">{dashboardSubtitle}</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-600">
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[10px] sm:text-[11px] font-semibold text-emerald-600">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                       {dashboardBadge}
                     </span>
@@ -291,7 +291,7 @@ export function Hero() {
                 </div>
 
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-4 mb-5 sm:mb-6">
                   {metrics.map((m: any, idx: number) => {
                     const iconMap = [TrendingUp, Users, BarChart3, Zap];
                     const IconComp = iconMap[idx % iconMap.length];
@@ -303,18 +303,18 @@ export function Hero() {
                         initial="initial"
                         animate={isMounted ? "animate" : "initial"}
                         whileHover="hover"
-                        className="group rounded-xl border border-[#EAEAEA] bg-[#FAFAF8] p-4 cursor-default"
+                        className="group rounded-xl border border-[#EAEAEA] bg-[#FAFAF8] p-2.5 sm:p-4 cursor-default"
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] font-medium text-[#6B7280] uppercase tracking-wide">
+                          <span className="text-[9px] sm:text-[10px] font-medium text-[#6B7280] uppercase tracking-wide truncate pr-1">
                             {m.label}
                           </span>
                           <motion.div variants={iconVariants}>
-                            <IconComp className="h-4 w-4 text-[#FC9C44]" />
+                            <IconComp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#FC9C44] shrink-0" />
                           </motion.div>
                         </div>
                         <div
-                          className="text-2xl font-bold text-[#232323]"
+                          className="text-lg sm:text-2xl font-bold text-[#232323]"
                           style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                         >
                           <HeroMetric

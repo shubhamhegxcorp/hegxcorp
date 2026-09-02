@@ -214,7 +214,7 @@ export function FeaturedWork() {
 
         {/* Scroll snap container */}
         <div
-          className="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar px-6 py-4"
+          className="flex gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 sm:px-6 py-4"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -226,7 +226,7 @@ export function FeaturedWork() {
             }
           `}</style>
           {projects.map((project, idx) => (
-            <div key={project.id || idx} className="snap-center shrink-0 w-[85vw] max-w-[320px]">
+            <div key={project.id || idx} className="snap-center shrink-0 w-[88vw] max-w-[340px]">
               <ProjectCard project={project} index={idx} isMobile isActive />
             </div>
           ))}

@@ -4707,6 +4707,7 @@ export {
   parseRedirect as Q,
   RouterCore as R,
   notFound as S,
+  redirect as T,
   isDangerousProtocol as a,
   BaseRoute as b,
   isModuleNotFoundError as c,

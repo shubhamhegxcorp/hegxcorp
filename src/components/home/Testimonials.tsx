@@ -59,7 +59,7 @@ export function Testimonials() {
     <section
       className="bg-white overflow-hidden"
       style={{
-        paddingTop: "clamp(64px, 8vw, 120px)",
+        paddingTop: "clamp(24px, 3vw, 48px)",
         paddingBottom: "clamp(64px, 8vw, 120px)",
       }}
     >

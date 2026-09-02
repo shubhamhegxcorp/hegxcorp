@@ -1,14 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
-  <rect width="1200" height="800" fill="#1A202C"/>
+  <rect width="1200" height="800" fill="#0F172A"/>
   <defs>
     <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1"/>
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.04)" stroke-width="1"/>
     </pattern>
+    <linearGradient id="brand-grad-rollink" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FC9C44" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0"/>
+    </linearGradient>
   </defs>
   <rect width="1200" height="800" fill="url(#grid)" />
+  <circle cx="600" cy="340" r="280" fill="url(#brand-grad-rollink)" />
   
-  <text x="600" y="340" font-family="'Space Grotesk', sans-serif" font-size="24" fill="#FC9C44" font-weight="bold" letter-spacing="4" text-anchor="middle">ROLLINK</text>
-  <text x="600" y="440" font-family="'Space Grotesk', sans-serif" font-size="80" fill="#FFFFFF" font-weight="bold" text-anchor="middle">730K VISITORS</text>
-  <text x="600" y="500" font-family="'Inter', sans-serif" font-size="24" fill="#A0AEC0" text-anchor="middle">E-commerce Store Placeholder</text>
-  <text x="600" y="550" font-family="'Inter', sans-serif" font-size="16" fill="#718096" text-anchor="middle">(Replace with real screenshot at /public/placeholders/rollink-preview.jpg)</text>
+  <text x="600" y="250" font-family="'Space Grotesk', sans-serif" font-size="22" fill="#FC9C44" font-weight="bold" letter-spacing="6" text-anchor="middle">ORGANIC SEARCH ARCHITECTURE</text>
+  <text x="600" y="340" font-family="'Space Grotesk', sans-serif" font-size="76" fill="#FFFFFF" font-weight="bold" text-anchor="middle">ROLLINK</text>
+  <text x="600" y="410" font-family="'Inter', sans-serif" font-size="22" fill="#94A3B8" font-weight="500" text-anchor="middle">Global Organic Demand &amp; Category Scaling</text>
 </svg>

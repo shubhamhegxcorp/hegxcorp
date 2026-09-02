@@ -45,7 +45,7 @@ export const Route = createFileRoute("/contact")({
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://hegxcorp.com/contact" },
-      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { property: "og:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Contact Our Growth Consulting Team | Hegxcorp" },
       {
@@ -53,7 +53,7 @@ export const Route = createFileRoute("/contact")({
         content:
           "Get in touch with Hegxcorp's digital transformation consultants. Schedule a strategic consultation to discuss SEO opportunities, paid advertising, and web architecture.",
       },
-      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
     ],
     links: [{ rel: "canonical", href: "https://hegxcorp.com/contact" }],
   }),
@@ -293,7 +293,7 @@ function ContactPage() {
         <Header />
         <Toaster position="top-right" richColors />
 
-        <section className="py-20 bg-white relative overflow-hidden">
+        <section className="py-12 sm:py-20 bg-white relative overflow-hidden">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-0 select-none"
@@ -311,13 +311,13 @@ function ContactPage() {
             />
           </div>
 
-          <div className="relative mx-auto max-w-[1280px] px-6 lg:px-10">
-            <div className="grid lg:grid-cols-[1fr_1.2fr] gap-16 items-start">
+          <div className="relative mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-10">
+            <div className="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-16 items-start">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="space-y-10"
+                className="space-y-8 sm:space-y-10"
               >
                 <div className="space-y-6">
                   <SectionHeading
@@ -330,19 +330,19 @@ function ContactPage() {
                     className="flex flex-wrap gap-x-6 gap-y-3 pt-2 text-[#4A5568] border-b border-[#EAEAEA]/80 pb-6"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
-                    <div className="flex items-center gap-10">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       <Check className="h-4 w-4 text-[#FC9C44] shrink-0" />
                       <span className="text-xs font-semibold tracking-wide uppercase">
                         Response within 24 hours
                       </span>
                     </div>
-                    <div className="flex items-center gap-10">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       <Check className="h-4 w-4 text-[#FC9C44] shrink-0" />
                       <span className="text-xs font-semibold tracking-wide uppercase">
                         Free strategy consultation
                       </span>
                     </div>
-                    <div className="flex items-center gap-10">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       <Check className="h-4 w-4 text-[#FC9C44] shrink-0" />
                       <span className="text-xs font-semibold tracking-wide uppercase">
                         No-obligation growth assessment
@@ -426,7 +426,7 @@ function ContactPage() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-                className="rounded-2xl border border-[#EAEAEA] bg-[#FAFAF8] p-8 shadow-[0_16px_36px_rgba(29,39,66,0.06)] transition-shadow duration-300 hover:shadow-[0_24px_48px_rgba(29,39,66,0.1)] lg:p-10"
+                className="rounded-2xl border border-[#EAEAEA] bg-[#FAFAF8] p-5 sm:p-8 shadow-[0_16px_36px_rgba(29,39,66,0.06)] transition-shadow duration-300 hover:shadow-[0_24px_48px_rgba(29,39,66,0.1)] lg:p-10"
               >
                 <div className="mb-6 flex items-start justify-between gap-4">
                   <h3

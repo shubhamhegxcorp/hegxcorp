@@ -93,10 +93,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Generate more leads, sales and revenue through data-driven growth marketing.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { property: "og:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@hegxcorp" },
-      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

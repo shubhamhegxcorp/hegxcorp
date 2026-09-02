@@ -129,7 +129,7 @@ export function Footer() {
             paddingBottom: "clamp(32px, 3.5vw, 48px)",
           }}
         >
-          <div className="grid lg:grid-cols-[1.5fr_1fr_1fr_1fr] gap-x-10 gap-y-10 items-start">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr] gap-x-10 gap-y-10 items-start">
             {/* ── Brand column ── */}
             <div className="flex flex-col gap-5">
               <Link to="/" className="self-start" aria-label="Hegxcorp home">

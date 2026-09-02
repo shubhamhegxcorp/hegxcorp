@@ -40,7 +40,7 @@ export const Route = createFileRoute("/free-growth-audit")({
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://hegxcorp.com/free-growth-audit" },
-      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { property: "og:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Free Digital Growth & SEO Audit | Hegxcorp" },
       {
@@ -48,7 +48,7 @@ export const Route = createFileRoute("/free-growth-audit")({
         content:
           "Request a comprehensive growth and conversion audit from Hegxcorp. We analyze your SEO ranking potential, paid advertising efficiency, and website conversion funnels.",
       },
-      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
     ],
     links: [{ rel: "canonical", href: "https://hegxcorp.com/free-growth-audit" }],
   }),
@@ -167,9 +167,9 @@ function FreeGrowthAuditPage() {
       <Header />
       <Toaster position="top-right" richColors />
 
-      <section className="py-20 bg-white">
-        <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-          <div className="grid lg:grid-cols-[1fr_1.3fr] gap-16 items-center">
+      <section className="py-12 sm:py-20 bg-white">
+        <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-10">
+          <div className="grid lg:grid-cols-[1fr_1.3fr] gap-10 lg:gap-16 items-center">
             {/* Left Column — Value Props */}
             <div className="space-y-8">
               <SectionHeading

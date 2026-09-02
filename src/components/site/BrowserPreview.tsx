@@ -73,28 +73,28 @@ export function BrowserPreview({
 
         {/* Credibility proof overlay card */}
         {(proofLabel || proofDuration || proofMetric) && (
-          <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm border border-[#EAEAEA] rounded-lg p-3.5 shadow-lg flex items-center gap-4 max-w-[280px] z-10 transition-all duration-[350ms] ease-out group-hover:translate-y-[-3px] group-hover:shadow-2xl">
+          <div className="absolute bottom-2.5 right-2.5 sm:bottom-4 sm:right-4 bg-white/95 backdrop-blur-sm border border-[#EAEAEA] rounded-lg p-2.5 sm:p-3.5 shadow-lg flex items-center gap-2.5 sm:gap-4 max-w-[200px] sm:max-w-[280px] z-10 transition-all duration-[350ms] ease-out group-hover:translate-y-[-3px] group-hover:shadow-2xl">
             <div className="flex-1 min-w-0">
               {proofMetric && (
                 <div
-                  className="text-sm font-bold text-[#1D2742] tracking-tight truncate leading-tight"
+                  className="text-xs sm:text-sm font-bold text-[#1D2742] tracking-tight truncate leading-tight"
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                 >
                   {proofMetric}
                 </div>
               )}
-              <div className="text-[10px] font-bold text-[#FC9C44] uppercase tracking-wider mt-0.5 leading-none">
+              <div className="text-[9px] sm:text-[10px] font-bold text-[#FC9C44] uppercase tracking-wider mt-0.5 leading-none truncate">
                 {proofLabel}
               </div>
               {proofDuration && (
-                <div className="text-[9px] text-[#6B7280] font-medium uppercase tracking-wider mt-1 leading-none">
+                <div className="text-[8px] sm:text-[9px] text-[#6B7280] font-medium uppercase tracking-wider mt-0.5 sm:mt-1 leading-none truncate">
                   Timeline: {proofDuration}
                 </div>
               )}
             </div>
 
             {/* Sparkline Graphic */}
-            <div className="w-16 h-8 shrink-0">
+            <div className="w-10 sm:w-16 h-6 sm:h-8 shrink-0">
               <svg className="w-full h-full" viewBox="0 0 100 40">
                 <defs>
                   <linearGradient id="sparkline-grad" x1="0" y1="0" x2="0" y2="1">

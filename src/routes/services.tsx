@@ -38,7 +38,7 @@ export const Route = createFileRoute("/services")({
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://hegxcorp.com/services" },
-      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { property: "og:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
@@ -49,7 +49,7 @@ export const Route = createFileRoute("/services")({
         content:
           "Explore Hegxcorp services: SEO growth architectures, high-performance web development, PPC campaigns, conversion rate optimisation, UI/UX design, and brand identity systems.",
       },
-      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
     ],
     links: [{ rel: "canonical", href: "https://hegxcorp.com/services" }],
   }),
@@ -145,22 +145,22 @@ function OurServicesPage() {
             />
           </div>
 
-          <div className="relative mx-auto flex min-h-[560px] max-w-[1280px] items-center px-6 py-20 lg:min-h-[760px] lg:px-10">
+          <div className="relative mx-auto flex min-h-[460px] max-w-[1280px] items-center px-4 sm:px-6 py-14 sm:py-20 lg:min-h-[760px] lg:px-10">
             <div className="max-w-4xl">
-              <p className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#FC9C44] shadow-sm">
-                <Wrench className="h-4 w-4" />
+              <p className="mb-5 sm:mb-6 inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-3.5 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold uppercase tracking-[0.18em] text-[#FC9C44] shadow-sm">
+                <Wrench className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 {heroData.tagline}
               </p>
 
-              <h1 className="max-w-5xl text-4xl font-bold leading-[1.08] tracking-[-0.035em] text-[#06133D] sm:text-5xl lg:text-7xl">
+              <h1 className="max-w-5xl text-3xl font-bold leading-[1.1] tracking-[-0.03em] text-[#06133D] sm:text-5xl lg:text-7xl">
                 {heroData.title}
               </h1>
 
-              <p className="mt-7 max-w-3xl text-base leading-8 text-[#52607A] sm:text-lg">
+              <p className="mt-5 sm:mt-7 max-w-3xl text-sm sm:text-base leading-7 sm:leading-8 text-[#52607A] lg:text-lg">
                 {heroData.description}
               </p>
 
-              <div className="mt-10 grid gap-4 border-y border-slate-200 py-6 sm:grid-cols-2 lg:grid-cols-5">
+              <div className="mt-8 sm:mt-10 grid grid-cols-2 gap-3 sm:gap-4 border-y border-slate-200 py-6 sm:grid-cols-3 lg:grid-cols-5">
                 {[
                   ["Websites", "Development"],
                   ["Apps", "Dashboards"],
@@ -168,11 +168,11 @@ function OurServicesPage() {
                   ["Growth", "SEO & Marketing"],
                   ["Automation", "Ai Agents & Solutions"],
                 ].map(([top, bottom]) => (
-                  <div key={top} className="flex items-center gap-4">
-                    <span className="h-3 w-3 rounded-full bg-[#FC9C44]" />
-                    <div>
-                      <p className="text-lg font-black text-[#06133D]">{top}</p>
-                      <p className="text-sm font-semibold text-slate-500">{bottom}</p>
+                  <div key={top} className="flex items-center gap-3">
+                    <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-[#FC9C44] shrink-0" />
+                    <div className="min-w-0">
+                      <p className="text-base sm:text-lg font-black text-[#06133D] truncate">{top}</p>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-500 truncate">{bottom}</p>
                     </div>
                   </div>
                 ))}

@@ -45,7 +45,7 @@ export const Route = createFileRoute("/about")({
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://hegxcorp.com/about" },
-      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { property: "og:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
@@ -56,7 +56,7 @@ export const Route = createFileRoute("/about")({
         content:
           "Meet Hegxcorp, a digital growth consultancy helping ambitious companies scale through data-driven SEO, paid media, high-performance web systems, and brand strategy.",
       },
-      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
     ],
     links: [{ rel: "canonical", href: "https://hegxcorp.com/about" }],
   }),
@@ -135,28 +135,29 @@ function AboutPage() {
               className="h-full w-full"
             />
           </div>
-          <div className="relative mx-auto flex min-h-[560px] max-w-[1280px] items-center px-6 py-20 lg:min-h-[800px] lg:px-10">
+          <div className="relative mx-auto flex min-h-[480px] max-w-[1280px] items-center px-4 sm:px-6 py-16 sm:py-20 lg:min-h-[800px] lg:px-10">
             <div className="max-w-3xl">
-              <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#FC9C44] shadow-sm">
-                <Sparkles className="h-4 w-4" />
+              <span className="mb-5 sm:mb-6 inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-3.5 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold uppercase tracking-[0.18em] text-[#FC9C44] shadow-sm">
+                <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 {heroData.tagline}
               </span>
-              <h1 className="text-4xl font-bold leading-[1.08] tracking-[-0.035em] text-[#06133D] sm:text-5xl lg:text-7xl">
+              <h1 className="text-3xl font-bold leading-[1.1] tracking-[-0.03em] text-[#06133D] sm:text-5xl lg:text-7xl">
                 {heroData.title}
               </h1>
-              <p className="mt-7 max-w-2xl text-base leading-8 text-[#52607A] sm:text-lg">
+              <p className="mt-5 sm:mt-7 max-w-2xl text-sm sm:text-base leading-7 sm:leading-8 text-[#52607A] lg:text-lg">
                 {heroData.description}
               </p>
-              <div className="mt-9 flex flex-wrap gap-4">
+              <div className="mt-8 sm:mt-9 flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Link
                   to={heroData.buttonUrl}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#FC9C44] px-6 py-3.5 text-sm font-semibold text-[#06133D] transition hover:-translate-y-0.5 hover:bg-[#ffad63]"
+                  className="w-full sm:w-auto justify-center inline-flex items-center gap-2 rounded-full bg-[#FC9C44] px-6 py-3.5 text-sm font-semibold text-[#06133D] transition hover:-translate-y-0.5 hover:bg-[#ffad63] active:scale-98"
                 >
-                  {heroData.buttonText} <ArrowRight className="h-4 w-4" />
+                  <span>{heroData.buttonText}</span>
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
                   to={heroData.secondaryButtonUrl}
-                  className="inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-white px-6 py-3.5 text-sm font-semibold text-[#06133D] shadow-sm transition hover:bg-[#FAFAF8]"
+                  className="w-full sm:w-auto justify-center inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-white px-6 py-3.5 text-sm font-semibold text-[#06133D] shadow-sm transition hover:bg-[#FAFAF8] active:scale-98"
                 >
                   {heroData.secondaryButtonText}
                 </Link>

@@ -51,7 +51,7 @@ export const Route = createFileRoute("/service/seo")({
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://hegxcorp.com/service/seo" },
-      { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { property: "og:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "twitter:title",
@@ -62,7 +62,7 @@ export const Route = createFileRoute("/service/seo")({
         content:
           "Data-driven SEO services: technical search architecture, content clusters, local & international SEO, link authority, and organic revenue scaling.",
       },
-      { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+      { name: "twitter:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
     ],
     links: [{ rel: "canonical", href: "https://hegxcorp.com/service/seo" }],
   }),
@@ -126,17 +126,17 @@ function SeoHero() {
             conversion paths so organic traffic turns into qualified enquiries and revenue.
           </p>
 
-          <div className="mt-9 flex flex-wrap gap-3">
+          <div className="mt-9 flex flex-col sm:flex-row gap-3">
             <a
               href="/free-growth-audit"
-              className="inline-flex items-center rounded-full bg-[#FC9C44] px-7 py-3.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#E88C35] hover:shadow-[0_18px_36px_-18px_rgba(252,156,68,0.9)]"
+              className="w-full sm:w-auto justify-center inline-flex items-center rounded-full bg-[#FC9C44] px-7 py-3.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#E88C35] hover:shadow-[0_18px_36px_-18px_rgba(252,156,68,0.9)] active:scale-98"
             >
               Get Free SEO Audit
             </a>
 
             <a
               href="/case-studies"
-              className="inline-flex items-center rounded-full border border-white/14 bg-white/8 px-7 py-3.5 text-sm font-bold text-white transition hover:border-[#FC9C44] hover:bg-white/12"
+              className="w-full sm:w-auto justify-center inline-flex items-center rounded-full border border-white/14 bg-white/8 px-7 py-3.5 text-sm font-bold text-white transition hover:border-[#FC9C44] hover:bg-white/12 active:scale-98"
             >
               Explore Case Studies
             </a>
@@ -1437,7 +1437,7 @@ function SeoServicePage() {
                 </p>
               </div>
 
-              <div className="border-l border-white/15 pl-8">
+              <div className="border-t lg:border-t-0 lg:border-l border-white/15 pt-6 lg:pt-0 lg:pl-8">
                 <Layers3 className="mb-5 h-8 w-8 text-[#FC9C44]" />
                 <h3 className="text-2xl font-black">Ready to build?</h3>
                 <p className="mt-3 text-sm leading-7 text-white/65">

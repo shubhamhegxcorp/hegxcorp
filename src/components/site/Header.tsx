@@ -285,8 +285,8 @@ export function Header() {
       >
         <div
           className={cn(
-            "mx-auto flex max-w-[1400px] items-center justify-between px-6 transition-all duration-300",
-            scrolled ? "h-[65px]" : "h-[90px]",
+            "mx-auto flex max-w-[1400px] items-center justify-between px-4 sm:px-6 transition-all duration-300",
+            scrolled ? "h-[60px] sm:h-[65px]" : "h-[72px] sm:h-[90px]",
           )}
         >
           {/* Logo */}
@@ -294,7 +294,12 @@ export function Header() {
             <img
               src={logoAsset}
               alt="HEXGCORP"
-              className={cn("w-auto transition-all duration-300", scrolled ? "h-11" : "h-[80px]")}
+              className={cn(
+                "w-auto transition-all duration-300 object-contain",
+                scrolled
+                  ? "h-9 sm:h-11"
+                  : "h-11 sm:h-[70px] lg:h-[80px]",
+              )}
             />
           </Link>
 
@@ -544,10 +549,10 @@ export function Header() {
             mobileOpen ? "translate-x-0" : "translate-x-full",
           )}
         >
-          <div className="flex h-60 items-center justify-between border-b border-border px-5">
-            <img src={logoAsset} alt="HEXGCORP" className="h-20 w-auto" />
+          <div className="flex h-16 items-center justify-between border-b border-[#EAEAEA] px-5">
+            <img src={logoAsset} alt="HEXGCORP" className="h-9 w-auto object-contain" />
             <button
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-muted"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg hover:bg-[#FAFAF8] text-foreground/80"
               onClick={() => setMobileOpen(false)}
               aria-label="Close menu"
             >
@@ -555,22 +560,22 @@ export function Header() {
             </button>
           </div>
 
-          <nav className="flex-1 overflow-y-auto px-3 py-4">
+          <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
             {/* Services accordion */}
             <button
-              className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-base font-medium hover:bg-[#FFF4E8]"
+              className="flex w-full items-center justify-between rounded-xl px-3.5 py-3 text-base font-semibold text-[#232323] hover:bg-[#FFF4E8] transition-colors"
               onClick={() => setMobileServicesOpen((v) => !v)}
             >
-              Services
+              <span>Services</span>
               <ChevronDown
-                className={cn("h-4 w-4 transition-transform", mobileServicesOpen && "rotate-180")}
+                className={cn("h-4 w-4 text-[#6B7280] transition-transform duration-200", mobileServicesOpen && "rotate-180")}
               />
             </button>
             {mobileServicesOpen && (
-              <div className="mb-2 ml-2 mt-1 space-y-3 border-l border-[#EAEAEA] pl-3">
+              <div className="mb-2 ml-2 mt-1 space-y-3 border-l-2 border-[#FC9C44]/30 pl-3 py-1">
                 {serviceColumns.map((col) => (
-                  <div key={col.heading}>
-                    <div className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#FC9C44]">
+                  <div key={col.heading} className="space-y-1">
+                    <div className="px-2 pb-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[#FC9C44]">
                       {col.heading}
                     </div>
                     {col.items.map((item) => (
@@ -578,10 +583,10 @@ export function Header() {
                         key={item.title}
                         to={item.href}
                         onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-[#FFF4E8]"
+                        className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm text-[#374151] hover:bg-[#FFF4E8] hover:text-[#FC9C44] transition-colors"
                       >
-                        <item.icon className="h-4 w-4 text-muted-foreground" />
-                        {item.title}
+                        <item.icon className="h-4 w-4 text-[#FC9C44] shrink-0" />
+                        <span className="font-medium">{item.title}</span>
                       </Link>
                     ))}
                   </div>
@@ -594,7 +599,7 @@ export function Header() {
                 key={l.to}
                 to={l.to}
                 onClick={() => setMobileOpen(false)}
-                className="block rounded-lg px-3 py-3 text-base font-medium hover:bg-[#FFF4E8]"
+                className="block rounded-xl px-3.5 py-3 text-base font-semibold text-[#232323] hover:bg-[#FFF4E8] hover:text-[#FC9C44] transition-colors"
               >
                 {l.label}
               </Link>
@@ -602,19 +607,19 @@ export function Header() {
 
             {/* Countries accordion */}
             <button
-              className="mt-2 flex w-full items-center justify-between rounded-lg px-3 py-3 text-base font-medium hover:bg-[#FFF4E8]"
+              className="mt-2 flex w-full items-center justify-between rounded-xl px-3.5 py-3 text-base font-semibold text-[#232323] hover:bg-[#FFF4E8] transition-colors"
               onClick={() => setMobileCountriesOpen((v) => !v)}
             >
               <span className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                Countries
+                <Globe className="h-4 w-4 text-[#FC9C44]" />
+                Countries ({active.flag})
               </span>
               <ChevronDown
-                className={cn("h-4 w-4 transition-transform", mobileCountriesOpen && "rotate-180")}
+                className={cn("h-4 w-4 text-[#6B7280] transition-transform duration-200", mobileCountriesOpen && "rotate-180")}
               />
             </button>
             {mobileCountriesOpen && (
-              <div className="ml-2 mt-1 space-y-1 border-l border-[#EAEAEA] pl-3">
+              <div className="ml-2 mt-1 space-y-1 border-l-2 border-[#FC9C44]/30 pl-3 py-1">
                 {countries.map((c) => (
                   <a
                     key={c.code}
@@ -624,12 +629,14 @@ export function Header() {
                       setMobileOpen(false);
                     }}
                     className={cn(
-                      "flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-[#FFF4E8]",
-                      activeCountry === c.code && "bg-[#FFF4E8] font-medium",
+                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                      activeCountry === c.code
+                        ? "bg-[#FFF4E8] font-semibold text-[#FC9C44]"
+                        : "text-[#374151] hover:bg-[#FAFAF8]",
                     )}
                   >
-                    <span className="text-lg">{c.flag}</span>
-                    {c.name}
+                    <span className="text-base font-bold text-[#FC9C44]">{c.flag}</span>
+                    <span>{c.name}</span>
                     {activeCountry === c.code && (
                       <Check className="ml-auto h-4 w-4 text-[#FC9C44]" />
                     )}
@@ -639,11 +646,11 @@ export function Header() {
             )}
           </nav>
 
-          <div className="border-t border-[#EAEAEA] p-4 space-y-3">
+          <div className="border-t border-[#EAEAEA] p-4 pb-6 space-y-3 bg-[#FAFAF8]">
             <Link
               to="/free-growth-audit"
               onClick={() => setMobileOpen(false)}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#FC9C44] px-5 py-3 hover:bg-[#E88C35] text-sm font-semibold text-white"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#FC9C44] px-5 py-3.5 hover:bg-[#E88C35] text-sm font-bold text-white shadow-md active:scale-98 transition-all"
             >
               Get Free Growth Audit
               <ArrowRight className="h-4 w-4" />
@@ -651,9 +658,9 @@ export function Header() {
             <a
               href={`tel:${(contactDetails?.phone || "+918369207836").replace(/\s+/g, "")}`}
               onClick={() => trackContactClick("phone", "mobile_menu_support_phone")}
-              className="flex items-center justify-center gap-2 text-sm text-muted-foreground"
+              className="flex items-center justify-center gap-2 text-xs font-medium text-[#6B7280] hover:text-[#232323] transition-colors py-1"
             >
-              <Phone className="h-4 w-4" /> Support: {contactDetails?.phone || "+91 836 920 7836"}
+              <Phone className="h-3.5 w-3.5 text-[#FC9C44]" /> Support: {contactDetails?.phone || "+91 836 920 7836"}
             </a>
           </div>
         </aside>
