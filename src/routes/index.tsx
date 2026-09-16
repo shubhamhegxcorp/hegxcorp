@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
+import { PageSEO } from "@/components/site/PageSEO";
 import { Hero } from "@/components/home/Hero";
 import { ClientLogos } from "@/components/home/ClientLogos";
 import { ResultsMetrics } from "@/components/home/ResultsMetrics";
@@ -55,6 +56,11 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <div className="min-h-screen bg-white">
+      <PageSEO
+        sectionKey="home.seo"
+        fallbackTitle="Hegxcorp — Data-Driven Growth Marketing Agency"
+        fallbackDescription="Hegxcorp helps businesses generate more leads, sales and revenue through data-driven SEO, paid advertising, web development and conversion optimisation. Serving India, USA, UK and Dubai."
+      />
       {/* ── Navigation ──────────────────────── */}
       <Header />
 

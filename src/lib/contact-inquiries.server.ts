@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { assertAdminSession } from "./admin-auth.server";
 import { getDbClient } from "./db.server";
 import { cleanLeadSourceData } from "./lead-source";
+import { cleanOptional, uniqueTrimmed } from "./text-cleanup";
 import type { ContactInquiry, ContactInquiryInput, InquiryStatus } from "./contact-inquiries";
 
 type InquiryRow = {
@@ -28,15 +29,6 @@ type InquiryRow = {
   updatedAt: Date | string;
 };
 
-function cleanOptional(value: string | undefined) {
-  const trimmed = value?.trim();
-  return trimmed ? trimmed : null;
-}
-
-function cleanServices(services: string[]) {
-  return [...new Set(services.map((service) => service.trim()).filter(Boolean))];
-}
-
 function mapInquiry(row: InquiryRow): ContactInquiry {
   return {
     ...row,
@@ -47,7 +39,7 @@ function mapInquiry(row: InquiryRow): ContactInquiry {
 
 export async function createContactInquiry(input: ContactInquiryInput) {
   const sql = getDbClient();
-  const services = cleanServices(input.services);
+  const services = uniqueTrimmed(input.services);
   const leadSourceData = cleanLeadSourceData(input.leadSourceData);
   const rows = await sql<InquiryRow[]>`
     INSERT INTO "ContactInquiry" (

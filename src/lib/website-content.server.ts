@@ -1,4 +1,4 @@
-import { assertAdminSession } from "./admin-auth.server";
+import { assertAdminSession, assertFullAdminSession } from "./admin-auth.server";
 import { DEFAULT_CMS_SECTIONS } from "./cms-config";
 import { getDbClient, type SqlClient } from "./db.server";
 
@@ -50,7 +50,7 @@ export async function getWebsiteSection(key: string): Promise<any> {
 }
 
 export async function saveWebsiteSection(key: string, value: any): Promise<any> {
-  await assertAdminSession();
+  await assertFullAdminSession();
 
   const sql = getDbClient();
   await ensureWebsiteContentTable(sql);

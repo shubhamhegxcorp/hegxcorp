@@ -1,15 +1,47 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
-  <rect width="1200" height="800" fill="#1D2742"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="100%" height="100%">
   <defs>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1"/>
+    <pattern id="tarka-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.05)" stroke-width="1"/>
     </pattern>
+    <linearGradient id="tarka-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FC9C44" stop-opacity="0.25"/>
+      <stop offset="60%" stop-color="#FC9C44" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#0F172A" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="tarka-card-bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1E2942"/>
+      <stop offset="100%" stop-color="#0B1120"/>
+    </linearGradient>
   </defs>
-  <rect width="1200" height="800" fill="url(#grid)" />
-  <circle cx="600" cy="400" r="300" fill="none" stroke="rgba(252, 156, 68, 0.1)" stroke-width="2"/>
+
+  <!-- Background -->
+  <rect width="1200" height="675" fill="url(#tarka-card-bg)"/>
+  <rect width="1200" height="675" fill="url(#tarka-grid)"/>
+
+  <!-- Ambient Glow & Orbital rings -->
+  <circle cx="600" cy="290" r="320" fill="url(#tarka-glow)"/>
+  <circle cx="600" cy="290" r="250" fill="none" stroke="rgba(252, 156, 68, 0.15)" stroke-width="1.5" stroke-dasharray="6 6"/>
+  <circle cx="600" cy="290" r="360" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1"/>
+
+  <!-- Subtle Mock UI Graph Silhouette in Background (Lower Half) -->
+  <path d="M 120 540 Q 350 490, 520 460 T 850 380 T 1080 300" fill="none" stroke="rgba(252, 156, 68, 0.22)" stroke-width="3.5"/>
+  <path d="M 120 540 Q 350 490, 520 460 T 850 380 T 1080 300 L 1080 675 L 120 675 Z" fill="url(#tarka-glow)" opacity="0.2"/>
+
+  <!-- Typography: Centered, Scaled & High Contrast for Mobile Legibility -->
+  <text x="600" y="175" font-family="'Space Grotesk', -apple-system, sans-serif" font-size="24" fill="#FC9C44" font-weight="700" letter-spacing="5" text-anchor="middle">FEATURED CASE STUDY • EDTECH</text>
   
-  <text x="600" y="340" font-family="'Space Grotesk', sans-serif" font-size="24" fill="#FC9C44" font-weight="bold" letter-spacing="4" text-anchor="middle">FEATURED CASE STUDY</text>
-  <text x="600" y="440" font-family="'Space Grotesk', sans-serif" font-size="80" fill="#FFFFFF" font-weight="bold" text-anchor="middle">TARKASHASTRA</text>
-  <text x="600" y="500" font-family="'Inter', sans-serif" font-size="24" fill="#A0AEC0" text-anchor="middle">Website Screenshot Placeholder</text>
-  <text x="600" y="550" font-family="'Inter', sans-serif" font-size="16" fill="#718096" text-anchor="middle">(Replace with real screenshot at /public/placeholders/tarkashastra-preview.jpg)</text>
+  <text x="600" y="270" font-family="'Space Grotesk', -apple-system, sans-serif" font-size="82" fill="#FFFFFF" font-weight="800" letter-spacing="2.5" text-anchor="middle">TARKASHASTRA</text>
+  
+  <text x="600" y="340" font-family="'Inter', -apple-system, sans-serif" font-size="28" fill="#F1F5F9" font-weight="600" text-anchor="middle">Intent-Driven Keyword Architecture &amp; Scaled PPC Funnels</text>
+
+  <!-- Large High-Contrast Outcome Badges (Centered, clear of bottom-right proof card) -->
+  <g transform="translate(340, 395)">
+    <!-- Pill 1 -->
+    <rect x="0" y="0" width="240" height="48" rx="24" fill="#162035" stroke="rgba(252, 156, 68, 0.45)" stroke-width="1.5"/>
+    <text x="120" y="30" font-family="'Space Grotesk', sans-serif" font-size="18" fill="#FC9C44" font-weight="700" text-anchor="middle">2× LEAD VOLUME</text>
+
+    <!-- Pill 2 -->
+    <rect x="280" y="0" width="240" height="48" rx="24" fill="#162035" stroke="rgba(255, 255, 255, 0.18)" stroke-width="1.5"/>
+    <text x="400" y="30" font-family="'Space Grotesk', sans-serif" font-size="18" fill="#FFFFFF" font-weight="700" text-anchor="middle">-48% LOWER CPL</text>
+  </g>
 </svg>

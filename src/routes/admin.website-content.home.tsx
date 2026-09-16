@@ -1,9 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowUp, ArrowDown, Plus, Trash2, Edit2, Check, X } from "lucide-react";
+import { ArrowUp, ArrowDown, Plus, Trash2, Edit2, Check, X, Eye } from "lucide-react";
 import { getWebsiteSection, saveWebsiteSection } from "@/lib/website-content";
 import { DEFAULT_CMS_SECTIONS } from "@/lib/cms-config";
+import { SeoEditorCard } from "@/components/admin/SeoEditorCard";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { CaseStudyFileManager } from "@/components/admin/CaseStudyFileManager";
+import { CmsLivePreviewModal } from "@/components/admin/CmsLivePreviewModal";
+import { broadcastCmsDraft, registerCmsSyncResponder } from "@/lib/cms-preview-bridge";
 
 export const Route = createFileRoute("/admin/website-content/home")({
   component: AdminHomeCMS,
@@ -26,6 +31,7 @@ function AdminHomeCMS() {
   const [footer, setFooter] = useState<any>(null);
 
   const [loading, setLoading] = useState(true);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   // Load all sections on mount
   useEffect(() => {
@@ -89,6 +95,74 @@ function AdminHomeCMS() {
     }
   };
 
+  // Register responder for newly opened preview frames
+  useEffect(() => {
+    const unregister = registerCmsSyncResponder(() => ({
+      "home.hero": hero,
+      "home.metrics": metrics,
+      "home.services": services,
+      "home.featuredWork": featuredWork,
+      "home.features": features,
+      "home.process": process,
+      "home.testimonials": testimonials,
+      "home.blogPreview": blogPreview,
+      "home.faq": faq,
+      "home.cta": cta,
+      "home.footer": footer,
+    }));
+    return unregister;
+  }, [
+    hero,
+    metrics,
+    services,
+    featuredWork,
+    features,
+    process,
+    testimonials,
+    blogPreview,
+    faq,
+    cta,
+    footer,
+  ]);
+
+  // Real-time broadcast on active section edits
+  useEffect(() => {
+    if (activeSection === "hero" && hero) broadcastCmsDraft("home.hero", hero);
+  }, [hero, activeSection]);
+  useEffect(() => {
+    if (activeSection === "metrics" && metrics) broadcastCmsDraft("home.metrics", metrics);
+  }, [metrics, activeSection]);
+  useEffect(() => {
+    if (activeSection === "services" && services) broadcastCmsDraft("home.services", services);
+  }, [services, activeSection]);
+  useEffect(() => {
+    if (activeSection === "featuredWork" && featuredWork)
+      broadcastCmsDraft("home.featuredWork", featuredWork);
+  }, [featuredWork, activeSection]);
+  useEffect(() => {
+    if (activeSection === "features" && features) broadcastCmsDraft("home.features", features);
+  }, [features, activeSection]);
+  useEffect(() => {
+    if (activeSection === "process" && process) broadcastCmsDraft("home.process", process);
+  }, [process, activeSection]);
+  useEffect(() => {
+    if (activeSection === "testimonials" && testimonials)
+      broadcastCmsDraft("home.testimonials", testimonials);
+  }, [testimonials, activeSection]);
+  useEffect(() => {
+    if (activeSection === "blogPreview" && blogPreview)
+      broadcastCmsDraft("home.blogPreview", blogPreview);
+  }, [blogPreview, activeSection]);
+  useEffect(() => {
+    if (activeSection === "faq" && faq) broadcastCmsDraft("home.faq", faq);
+  }, [faq, activeSection]);
+  useEffect(() => {
+    if (activeSection === "cta" && cta) broadcastCmsDraft("home.cta", cta);
+  }, [cta, activeSection]);
+  useEffect(() => {
+    if (activeSection === "footer" && footer) broadcastCmsDraft("home.footer", footer);
+  }, [footer, activeSection]);
+
   if (loading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
@@ -99,12 +173,35 @@ function AdminHomeCMS() {
 
   return (
     <div className="space-y-8 p-6 lg:p-8">
-      <div className="border-b border-[#E4E7EC] pb-4">
-        <p className="text-sm text-slate-500">
-          Manage and edit all frontend homepage sections. Your changes take effect immediately on
-          the live website.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E4E7EC] pb-4">
+        <div>
+          <h2 className="text-xl font-black text-[#06133D]">Homepage Content</h2>
+          <p className="text-xs text-slate-500 mt-1">
+            Manage and edit all frontend homepage sections. Your changes take effect immediately on
+            the live website.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsPreviewOpen(true)}
+          className="inline-flex items-center gap-2 rounded-lg bg-[#06133D] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#0A1D54] transition shrink-0"
+        >
+          <Eye className="h-4 w-4 text-[#FC9C44]" />
+          Live Preview
+          <span className="flex h-2 w-2 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          </span>
+        </button>
       </div>
+
+      {/* --- SEO & META TAGS CARD --- */}
+      <SeoEditorCard
+        sectionKey="home.seo"
+        pageName="Home Page"
+        canonicalUrl="https://hegxcorp.com"
+      />
 
       {/* --- HERO SECTION CARD --- */}
       <div className="rounded-xl border border-[#E4E7EC] bg-white p-6 shadow-sm">
@@ -174,7 +271,11 @@ function AdminHomeCMS() {
                     className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
                   />
                   <span className="text-[11px] text-slate-400">
-                    Tip: Wrap words in <code className="bg-slate-100 px-1 py-0.5 rounded text-[#FC9C44] font-mono">[highlight]words[/highlight]</code> to add the orange underline.
+                    Tip: Wrap words in{" "}
+                    <code className="bg-slate-100 px-1 py-0.5 rounded text-[#FC9C44] font-mono">
+                      [highlight]words[/highlight]
+                    </code>{" "}
+                    to add the orange underline.
                   </span>
                 </label>
               </div>
@@ -315,10 +416,28 @@ function AdminHomeCMS() {
                 <div className="grid gap-3 sm:grid-cols-2">
                   {(
                     hero.dashboardMetrics || [
-                      { label: "Organic Traffic Growth", value: 310, prefix: "+", suffix: "%", decimals: 0 },
-                      { label: "Qualified Leads", value: 184, prefix: "+", suffix: "%", decimals: 0 },
+                      {
+                        label: "Organic Traffic Growth",
+                        value: 310,
+                        prefix: "+",
+                        suffix: "%",
+                        decimals: 0,
+                      },
+                      {
+                        label: "Qualified Leads",
+                        value: 184,
+                        prefix: "+",
+                        suffix: "%",
+                        decimals: 0,
+                      },
                       { label: "ROAS Achieved", value: 4.8, prefix: "", suffix: "x", decimals: 1 },
-                      { label: "Client Satisfaction", value: 98, prefix: "+", suffix: "%", decimals: 0 },
+                      {
+                        label: "Client Satisfaction",
+                        value: 98,
+                        prefix: "+",
+                        suffix: "%",
+                        decimals: 0,
+                      },
                     ]
                   ).map((dm: any, idx: number) => (
                     <div
@@ -336,10 +455,34 @@ function AdminHomeCMS() {
                           onChange={(e) => {
                             const updated = [
                               ...(hero.dashboardMetrics || [
-                                { label: "Organic Traffic Growth", value: 310, prefix: "+", suffix: "%", decimals: 0 },
-                                { label: "Qualified Leads", value: 184, prefix: "+", suffix: "%", decimals: 0 },
-                                { label: "ROAS Achieved", value: 4.8, prefix: "", suffix: "x", decimals: 1 },
-                                { label: "Client Satisfaction", value: 98, prefix: "+", suffix: "%", decimals: 0 },
+                                {
+                                  label: "Organic Traffic Growth",
+                                  value: 310,
+                                  prefix: "+",
+                                  suffix: "%",
+                                  decimals: 0,
+                                },
+                                {
+                                  label: "Qualified Leads",
+                                  value: 184,
+                                  prefix: "+",
+                                  suffix: "%",
+                                  decimals: 0,
+                                },
+                                {
+                                  label: "ROAS Achieved",
+                                  value: 4.8,
+                                  prefix: "",
+                                  suffix: "x",
+                                  decimals: 1,
+                                },
+                                {
+                                  label: "Client Satisfaction",
+                                  value: 98,
+                                  prefix: "+",
+                                  suffix: "%",
+                                  decimals: 0,
+                                },
                               ]),
                             ];
                             updated[idx] = { ...updated[idx], label: e.target.value };
@@ -357,10 +500,34 @@ function AdminHomeCMS() {
                             onChange={(e) => {
                               const updated = [
                                 ...(hero.dashboardMetrics || [
-                                  { label: "Organic Traffic Growth", value: 310, prefix: "+", suffix: "%", decimals: 0 },
-                                  { label: "Qualified Leads", value: 184, prefix: "+", suffix: "%", decimals: 0 },
-                                  { label: "ROAS Achieved", value: 4.8, prefix: "", suffix: "x", decimals: 1 },
-                                  { label: "Client Satisfaction", value: 98, prefix: "+", suffix: "%", decimals: 0 },
+                                  {
+                                    label: "Organic Traffic Growth",
+                                    value: 310,
+                                    prefix: "+",
+                                    suffix: "%",
+                                    decimals: 0,
+                                  },
+                                  {
+                                    label: "Qualified Leads",
+                                    value: 184,
+                                    prefix: "+",
+                                    suffix: "%",
+                                    decimals: 0,
+                                  },
+                                  {
+                                    label: "ROAS Achieved",
+                                    value: 4.8,
+                                    prefix: "",
+                                    suffix: "x",
+                                    decimals: 1,
+                                  },
+                                  {
+                                    label: "Client Satisfaction",
+                                    value: 98,
+                                    prefix: "+",
+                                    suffix: "%",
+                                    decimals: 0,
+                                  },
                                 ]),
                               ];
                               updated[idx] = { ...updated[idx], prefix: e.target.value };
@@ -379,10 +546,34 @@ function AdminHomeCMS() {
                             onChange={(e) => {
                               const updated = [
                                 ...(hero.dashboardMetrics || [
-                                  { label: "Organic Traffic Growth", value: 310, prefix: "+", suffix: "%", decimals: 0 },
-                                  { label: "Qualified Leads", value: 184, prefix: "+", suffix: "%", decimals: 0 },
-                                  { label: "ROAS Achieved", value: 4.8, prefix: "", suffix: "x", decimals: 1 },
-                                  { label: "Client Satisfaction", value: 98, prefix: "+", suffix: "%", decimals: 0 },
+                                  {
+                                    label: "Organic Traffic Growth",
+                                    value: 310,
+                                    prefix: "+",
+                                    suffix: "%",
+                                    decimals: 0,
+                                  },
+                                  {
+                                    label: "Qualified Leads",
+                                    value: 184,
+                                    prefix: "+",
+                                    suffix: "%",
+                                    decimals: 0,
+                                  },
+                                  {
+                                    label: "ROAS Achieved",
+                                    value: 4.8,
+                                    prefix: "",
+                                    suffix: "x",
+                                    decimals: 1,
+                                  },
+                                  {
+                                    label: "Client Satisfaction",
+                                    value: 98,
+                                    prefix: "+",
+                                    suffix: "%",
+                                    decimals: 0,
+                                  },
                                 ]),
                               ];
                               updated[idx] = { ...updated[idx], value: Number(e.target.value) };
@@ -399,10 +590,34 @@ function AdminHomeCMS() {
                             onChange={(e) => {
                               const updated = [
                                 ...(hero.dashboardMetrics || [
-                                  { label: "Organic Traffic Growth", value: 310, prefix: "+", suffix: "%", decimals: 0 },
-                                  { label: "Qualified Leads", value: 184, prefix: "+", suffix: "%", decimals: 0 },
-                                  { label: "ROAS Achieved", value: 4.8, prefix: "", suffix: "x", decimals: 1 },
-                                  { label: "Client Satisfaction", value: 98, prefix: "+", suffix: "%", decimals: 0 },
+                                  {
+                                    label: "Organic Traffic Growth",
+                                    value: 310,
+                                    prefix: "+",
+                                    suffix: "%",
+                                    decimals: 0,
+                                  },
+                                  {
+                                    label: "Qualified Leads",
+                                    value: 184,
+                                    prefix: "+",
+                                    suffix: "%",
+                                    decimals: 0,
+                                  },
+                                  {
+                                    label: "ROAS Achieved",
+                                    value: 4.8,
+                                    prefix: "",
+                                    suffix: "x",
+                                    decimals: 1,
+                                  },
+                                  {
+                                    label: "Client Satisfaction",
+                                    value: 98,
+                                    prefix: "+",
+                                    suffix: "%",
+                                    decimals: 0,
+                                  },
                                 ]),
                               ];
                               updated[idx] = { ...updated[idx], suffix: e.target.value };
@@ -456,18 +671,22 @@ function AdminHomeCMS() {
             </div>
             <div className="flex flex-wrap gap-4">
               <div>
-                <span className="font-bold text-[#06133D]">Primary CTA:</span> {hero.buttonText} ({hero.buttonUrl})
+                <span className="font-bold text-[#06133D]">Primary CTA:</span> {hero.buttonText} (
+                {hero.buttonUrl})
               </div>
               <div>
-                <span className="font-bold text-[#06133D]">Secondary CTA:</span> {hero.secondaryButtonText} ({hero.secondaryButtonUrl})
+                <span className="font-bold text-[#06133D]">Secondary CTA:</span>{" "}
+                {hero.secondaryButtonText} ({hero.secondaryButtonUrl})
               </div>
             </div>
             <div className="rounded-lg bg-slate-50 p-3">
               <div className="font-bold text-[#06133D] mb-1">
-                Right Side Dashboard: {hero.dashboardTitle || "Hegxcorp Growth Engine"} ({hero.dashboardBadge || "System Active"})
+                Right Side Dashboard: {hero.dashboardTitle || "Hegxcorp Growth Engine"} (
+                {hero.dashboardBadge || "System Active"})
               </div>
               <div className="text-slate-500 text-[11px]">
-                URL: https://{hero.dashboardUrl || "hegxcorp.com/growth-analytics"} · Chart: {hero.chartMetric || "+247%"} {hero.chartTitle || "Revenue Pipeline Growth"}
+                URL: https://{hero.dashboardUrl || "hegxcorp.com/growth-analytics"} · Chart:{" "}
+                {hero.chartMetric || "+247%"} {hero.chartTitle || "Revenue Pipeline Growth"}
               </div>
             </div>
           </div>
@@ -845,7 +1064,9 @@ function AdminHomeCMS() {
                         />
                       </label>
                       <label className="grid gap-1 sm:col-span-2">
-                        <span className="text-[11px] font-bold text-slate-500">Description Subtitle</span>
+                        <span className="text-[11px] font-bold text-slate-500">
+                          Description Subtitle
+                        </span>
                         <input
                           type="text"
                           value={m.sub || ""}
@@ -883,13 +1104,15 @@ function AdminHomeCMS() {
                 </span>{" "}
                 — {metrics?.heroMetric?.title}
               </div>
-              <div className="text-slate-500 text-[11px]">
-                {metrics?.heroMetric?.description}
-              </div>
+              <div className="text-slate-500 text-[11px]">{metrics?.heroMetric?.description}</div>
             </div>
             <div>
-              <span className="font-bold text-[#06133D]">Supporting Metrics ({metrics?.supporting?.length || 0}):</span>{" "}
-              {metrics?.supporting?.map((s: any) => `${s.prefix || ""}${s.value}${s.suffix || ""} ${s.label}`).join(" · ")}
+              <span className="font-bold text-[#06133D]">
+                Supporting Metrics ({metrics?.supporting?.length || 0}):
+              </span>{" "}
+              {metrics?.supporting
+                ?.map((s: any) => `${s.prefix || ""}${s.value}${s.suffix || ""} ${s.label}`)
+                .join(" · ")}
             </div>
           </div>
         )}
@@ -1195,9 +1418,7 @@ function AdminHomeCMS() {
                 <input
                   type="text"
                   value={featuredWork.tagline || ""}
-                  onChange={(e) =>
-                    setFeaturedWork({ ...featuredWork, tagline: e.target.value })
-                  }
+                  onChange={(e) => setFeaturedWork({ ...featuredWork, tagline: e.target.value })}
                   className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
                 />
               </label>
@@ -1208,9 +1429,7 @@ function AdminHomeCMS() {
                 <input
                   type="text"
                   value={featuredWork.heading || ""}
-                  onChange={(e) =>
-                    setFeaturedWork({ ...featuredWork, heading: e.target.value })
-                  }
+                  onChange={(e) => setFeaturedWork({ ...featuredWork, heading: e.target.value })}
                   className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
                 />
               </label>
@@ -1235,6 +1454,7 @@ function AdminHomeCMS() {
                       metric: "+150% Revenue Growth",
                       browserColor: "#FFF4E8",
                       screenshotType: "ecommerce",
+                      image: "",
                       linkUrl: "/case-studies",
                     };
                     setFeaturedWork({
@@ -1352,9 +1572,11 @@ function AdminHomeCMS() {
                       </label>
                     </div>
 
-                    <div className="grid gap-3 sm:grid-cols-4">
+                    <div className="grid gap-3 sm:grid-cols-3">
                       <label className="grid gap-1">
-                        <span className="text-[11px] font-bold text-slate-500">Website URL Label</span>
+                        <span className="text-[11px] font-bold text-slate-500">
+                          Website URL Label
+                        </span>
                         <input
                           type="text"
                           value={proj.url || ""}
@@ -1368,7 +1590,9 @@ function AdminHomeCMS() {
                         />
                       </label>
                       <label className="grid gap-1">
-                        <span className="text-[11px] font-bold text-slate-500">Result Metric Pill</span>
+                        <span className="text-[11px] font-bold text-slate-500">
+                          Result Metric Pill
+                        </span>
                         <input
                           type="text"
                           value={proj.metric || ""}
@@ -1382,49 +1606,46 @@ function AdminHomeCMS() {
                         />
                       </label>
                       <label className="grid gap-1">
-                        <span className="text-[11px] font-bold text-slate-500">Browser Mockup Theme</span>
-                        <select
-                          value={proj.screenshotType || "ecommerce"}
+                        <span className="text-[11px] font-bold text-slate-500">
+                          Case Study Link URL
+                        </span>
+                        <input
+                          type="text"
+                          value={proj.linkUrl || ""}
                           onChange={(e) => {
                             const updated = [...featuredWork.projects];
-                            updated[index].screenshotType = e.target.value;
+                            updated[index].linkUrl = e.target.value;
                             setFeaturedWork({ ...featuredWork, projects: updated });
                           }}
+                          placeholder="/case-studies/client"
                           className="rounded border border-[#D0D5DD] bg-white px-2.5 py-1.5 text-xs outline-none focus:border-[#FC9C44]"
-                        >
-                          <option value="ecommerce">E-Commerce Shop Grid</option>
-                          <option value="saas">B2B SaaS Dashboard Chart</option>
-                          <option value="healthcare">Healthcare Booking UI</option>
-                          <option value="fintech">Fintech Portal Metrics</option>
-                        </select>
-                      </label>
-                      <label className="grid gap-1">
-                        <span className="text-[11px] font-bold text-slate-500">Background Color</span>
-                        <div className="flex items-center gap-1.5">
-                          <input
-                            type="color"
-                            value={proj.browserColor?.startsWith("#") ? proj.browserColor : "#FFF4E8"}
-                            onChange={(e) => {
-                              const updated = [...featuredWork.projects];
-                              updated[index].browserColor = e.target.value;
-                              setFeaturedWork({ ...featuredWork, projects: updated });
-                            }}
-                            className="h-8 w-8 cursor-pointer rounded border border-[#D0D5DD] p-0.5 bg-white"
-                          />
-                          <input
-                            type="text"
-                            value={proj.browserColor || ""}
-                            onChange={(e) => {
-                              const updated = [...featuredWork.projects];
-                              updated[index].browserColor = e.target.value;
-                              setFeaturedWork({ ...featuredWork, projects: updated });
-                            }}
-                            placeholder="#FFF4E8"
-                            className="w-full rounded border border-[#D0D5DD] bg-white px-2 py-1.5 text-xs outline-none focus:border-[#FC9C44]"
-                          />
-                        </div>
+                        />
                       </label>
                     </div>
+
+                    {/* Integrated File Manager for Case Study Screenshot / Image */}
+                    <CaseStudyFileManager
+                      value={proj.image || ""}
+                      onChange={(newImage) => {
+                        const updated = [...featuredWork.projects];
+                        updated[index].image = newImage;
+                        setFeaturedWork({ ...featuredWork, projects: updated });
+                      }}
+                      screenshotType={proj.screenshotType || "ecommerce"}
+                      onScreenshotTypeChange={(newType) => {
+                        const updated = [...featuredWork.projects];
+                        updated[index].screenshotType = newType;
+                        setFeaturedWork({ ...featuredWork, projects: updated });
+                      }}
+                      browserColor={proj.browserColor || "#FFF4E8"}
+                      onBrowserColorChange={(newColor) => {
+                        const updated = [...featuredWork.projects];
+                        updated[index].browserColor = newColor;
+                        setFeaturedWork({ ...featuredWork, projects: updated });
+                      }}
+                      projectTitle={proj.title || "Project"}
+                      projectUrl={proj.url || "client.com"}
+                    />
                   </div>
                 ))}
               </div>
@@ -1434,21 +1655,17 @@ function AdminHomeCMS() {
           <div className="mt-4 space-y-3 text-xs text-slate-600">
             <div className="flex flex-wrap gap-4">
               <div>
-                <span className="font-bold text-[#06133D]">Tagline:</span>{" "}
-                {featuredWork?.tagline}
+                <span className="font-bold text-[#06133D]">Tagline:</span> {featuredWork?.tagline}
               </div>
               <div>
-                <span className="font-bold text-[#06133D]">Heading:</span>{" "}
-                {featuredWork?.heading}
+                <span className="font-bold text-[#06133D]">Heading:</span> {featuredWork?.heading}
               </div>
             </div>
             <div>
               <span className="font-bold text-[#06133D]">
                 Projects ({featuredWork?.projects?.length || 0}):
               </span>{" "}
-              {featuredWork?.projects
-                ?.map((p: any) => `${p.title} (${p.metric})`)
-                .join(" · ")}
+              {featuredWork?.projects?.map((p: any) => `${p.title} (${p.metric})`).join(" · ")}
             </div>
           </div>
         )}
@@ -1795,7 +2012,9 @@ function AdminHomeCMS() {
                         <button
                           type="button"
                           onClick={() => {
-                            const updated = process.steps.filter((_: any, i: number) => i !== index);
+                            const updated = process.steps.filter(
+                              (_: any, i: number) => i !== index,
+                            );
                             setProcess({ ...process, steps: updated });
                           }}
                           className="rounded p-1 text-red-500 hover:bg-red-50"
@@ -2208,9 +2427,7 @@ function AdminHomeCMS() {
                 <input
                   type="text"
                   value={blogPreview.tagline || ""}
-                  onChange={(e) =>
-                    setBlogPreview({ ...blogPreview, tagline: e.target.value })
-                  }
+                  onChange={(e) => setBlogPreview({ ...blogPreview, tagline: e.target.value })}
                   placeholder="INSIGHTS"
                   className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
                 />
@@ -2222,9 +2439,7 @@ function AdminHomeCMS() {
                 <input
                   type="text"
                   value={blogPreview.heading || ""}
-                  onChange={(e) =>
-                    setBlogPreview({ ...blogPreview, heading: e.target.value })
-                  }
+                  onChange={(e) => setBlogPreview({ ...blogPreview, heading: e.target.value })}
                   placeholder="Ideas, Experiments & Growth Systems"
                   className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
                 />
@@ -2238,9 +2453,7 @@ function AdminHomeCMS() {
               <textarea
                 rows={2}
                 value={blogPreview.description || ""}
-                onChange={(e) =>
-                  setBlogPreview({ ...blogPreview, description: e.target.value })
-                }
+                onChange={(e) => setBlogPreview({ ...blogPreview, description: e.target.value })}
                 placeholder="Practical breakdowns of SEO, paid media, conversion optimisation..."
                 className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
               />
@@ -2282,9 +2495,7 @@ function AdminHomeCMS() {
                 <input
                   type="text"
                   value={blogPreview.buttonText || ""}
-                  onChange={(e) =>
-                    setBlogPreview({ ...blogPreview, buttonText: e.target.value })
-                  }
+                  onChange={(e) => setBlogPreview({ ...blogPreview, buttonText: e.target.value })}
                   placeholder="View Blog"
                   className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
                 />
@@ -2322,9 +2533,7 @@ function AdminHomeCMS() {
                   <input
                     type="text"
                     value={blogPreview.customSlug || ""}
-                    onChange={(e) =>
-                      setBlogPreview({ ...blogPreview, customSlug: e.target.value })
-                    }
+                    onChange={(e) => setBlogPreview({ ...blogPreview, customSlug: e.target.value })}
                     placeholder="e.g. how-ai-search-reshapes-organic-traffic"
                     className="w-full rounded-lg border border-[#D0D5DD] bg-white px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
                   />
@@ -2344,30 +2553,22 @@ function AdminHomeCMS() {
                 />
               </label>
 
-              <label className="grid gap-1.5">
-                <span className="text-xs font-bold text-slate-500">Custom Image URL</span>
-                <input
-                  type="text"
-                  value={blogPreview.customImage || ""}
-                  onChange={(e) =>
-                    setBlogPreview({ ...blogPreview, customImage: e.target.value })
-                  }
-                  placeholder="https://... or leave blank to use blog image"
-                  className="w-full rounded-lg border border-[#D0D5DD] bg-white px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
-                />
-              </label>
+              <ImageUploadField
+                label="Custom Featured Image Override"
+                value={blogPreview.customImage || ""}
+                onChange={(val) => setBlogPreview({ ...blogPreview, customImage: val })}
+                helpText="Directly upload an image or enter an image URL to override the featured blog post's cover thumbnail on the homepage."
+              />
             </div>
           </div>
         ) : (
           <div className="mt-4 space-y-3 text-xs text-slate-600">
             <div className="flex flex-wrap gap-4">
               <div>
-                <span className="font-bold text-[#06133D]">Tagline:</span>{" "}
-                {blogPreview?.tagline}
+                <span className="font-bold text-[#06133D]">Tagline:</span> {blogPreview?.tagline}
               </div>
               <div>
-                <span className="font-bold text-[#06133D]">Heading:</span>{" "}
-                {blogPreview?.heading}
+                <span className="font-bold text-[#06133D]">Heading:</span> {blogPreview?.heading}
               </div>
             </div>
             <div>
@@ -2380,8 +2581,7 @@ function AdminHomeCMS() {
                 {blogPreview?.allArticlesText} ({blogPreview?.allArticlesUrl})
               </div>
               <div>
-                <span className="font-bold text-[#06133D]">Button:</span>{" "}
-                {blogPreview?.buttonText}
+                <span className="font-bold text-[#06133D]">Button:</span> {blogPreview?.buttonText}
               </div>
             </div>
             {blogPreview?.customTitle && (
@@ -2802,6 +3002,27 @@ function AdminHomeCMS() {
           </div>
         )}
       </div>
+
+      {/* Live Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        previewPath="/"
+        pageName="Homepage"
+        onSyncAllDrafts={() => {
+          if (hero) broadcastCmsDraft("home.hero", hero);
+          if (metrics) broadcastCmsDraft("home.metrics", metrics);
+          if (services) broadcastCmsDraft("home.services", services);
+          if (featuredWork) broadcastCmsDraft("home.featuredWork", featuredWork);
+          if (features) broadcastCmsDraft("home.features", features);
+          if (process) broadcastCmsDraft("home.process", process);
+          if (testimonials) broadcastCmsDraft("home.testimonials", testimonials);
+          if (blogPreview) broadcastCmsDraft("home.blogPreview", blogPreview);
+          if (faq) broadcastCmsDraft("home.faq", faq);
+          if (cta) broadcastCmsDraft("home.cta", cta);
+          if (footer) broadcastCmsDraft("home.footer", footer);
+        }}
+      />
     </div>
   );
 }

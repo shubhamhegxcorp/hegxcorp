@@ -1,12 +1,8 @@
 import { randomUUID } from "node:crypto";
 
 import { getDbClient, type SqlClient } from "./db.server";
+import { cleanOptional } from "./text-cleanup";
 import type { VisitorEventInput } from "./visitor-events";
-
-function cleanOptional(value: string | undefined) {
-  const trimmed = value?.trim();
-  return trimmed ? trimmed : null;
-}
 
 async function upsertScrollDepthEvent(sql: SqlClient, input: VisitorEventInput) {
   const rows = await sql<{ id: string }[]>`

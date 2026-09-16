@@ -3,9 +3,10 @@ import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 
 const results = [
-  { label: "Organic Traffic", value: "+310%", period: "12 months" },
-  { label: "Lead Volume", value: "+184%", period: "Q1–Q3" },
-  { label: "Revenue Growth", value: "+$1.2M", period: "Year 1" },
+  { label: "Organic Search Traffic", value: "+200%", period: "In 40 Days" },
+  { label: "Inbound Phone Inquiries", value: "1,151", period: "+260% Growth" },
+  { label: "Verified Form Submissions", value: "153", period: "30x Increase" },
+  { label: "Avg. Google Ads CPC", value: "₹54.08", period: "908+ Call Leads" },
 ];
 
 export function FeaturedCaseStudy() {
@@ -18,7 +19,7 @@ export function FeaturedCaseStudy() {
       }}
     >
       <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-        {/* Scroll Reveal Container (0.6s, y: 30 -> 0) */}
+        {/* Scroll Reveal Container */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -30,7 +31,7 @@ export function FeaturedCaseStudy() {
               className="text-xs font-semibold uppercase tracking-[0.14em] text-[#EBB771]"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              Featured Case Study
+              Featured Client Case Study
             </span>
           </div>
 
@@ -44,81 +45,51 @@ export function FeaturedCaseStudy() {
                   fontSize: "clamp(28px, 3.5vw, 44px)",
                 }}
               >
-                How we grew an e-commerce brand by 340% in organic traffic
+                How we generated 1,151+ calls and scaled organic traffic to 200% in 40 days for Tarkashastra Academy
               </h2>
 
-              {/* Challenge / Solution */}
-              <div className="space-y-5">
-                <div className="border-l-2 border-[#EBB771] pl-5">
-                  <div
-                    className="text-xs font-semibold uppercase tracking-[0.12em] text-[#EBB771] mb-1"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    The Challenge
-                  </div>
-                  <p
-                    className="text-white/70 text-sm leading-relaxed"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    A fast-growing e-commerce brand was struggling with stagnant organic traffic and
-                    heavy reliance on paid ads. Their ROAS was declining and CAC was climbing
-                    quarter over quarter.
-                  </p>
-                </div>
 
-                <div className="border-l-2 border-[#FC9C44] pl-5">
-                  <div
-                    className="text-xs font-semibold uppercase tracking-[0.12em] text-[#FC9C44] mb-1"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    Our Solution
-                  </div>
-                  <p
-                    className="text-white/70 text-sm leading-relaxed"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    We deployed a full-funnel strategy combining technical SEO, content
-                    architecture, and conversion-rate optimisation — reducing paid dependency while
-                    compounding organic results.
-                  </p>
-                </div>
-              </div>
-
-              {/* Testimonial */}
-              {/* <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              {/* Testimonial Quote */}
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
                 <Quote className="h-5 w-5 text-[#EBB771] mb-3" />
                 <p
                   className="text-white/85 text-sm leading-relaxed italic mb-4"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
-                  "They operate like an extension of our team. The work is sharp, the reporting is
-                  honest, and the numbers speak for themselves."
+                  "Hegxcorp completely transformed our digital funnel. They didn't just give us traffic;
+                  they engineered high-quality student inquiries that translated into actual classroom
+                  admissions within weeks."
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-full bg-[#EBB771] flex items-center justify-center text-[#1D2742] text-xs font-bold font-sans">
-                    AK
-                  </div>
+                  <img
+                    src="/case-studies/tarkashastra/aditya-thakare-founder.png"
+                    alt="Aditya Thakare"
+                    className="h-10 w-10 rounded-full object-cover border border-[#EBB771]/30"
+                  />
                   <div>
                     <div
                       className="text-sm font-semibold text-white"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
-                      Arjun K.
+                      Aditya Thakare
                     </div>
-                    <div className="text-xs text-white/50">Founder, E-Commerce Brand</div>
+                    <div className="text-xs text-white/50">
+                      Founder & Lead Mentor, Tarkashastra Academy (Ex-J.P. Morgan Chase | 99.9%ile CAT QA & DILR)
+                    </div>
                   </div>
                 </div>
-              </div> */}
+              </div>
 
-              {/* Button Scale on Hover: 1 -> 1.03 */}
+              {/* Button Scale on Hover */}
               <motion.div
                 whileHover={{ scale: 1.03 }}
                 transition={{ duration: 0.2 }}
                 className="inline-block"
               >
                 <Link
-                  to="/case-studies"
-                  className="inline-flex items-center gap-2.5 rounded-full px-6 py-3 text-sm font-semibold text-[#1D2742] bg-[#FC9C44] hover:bg-[#E88C35]"
+                  to="/case-studies/$slug"
+                  params={{ slug: "tarkashastra" }}
+                  className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-semibold text-[#1D2742] bg-[#FC9C44] hover:bg-[#E88C35] transition-colors"
                 >
                   View Full Case Study <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -144,7 +115,7 @@ export function FeaturedCaseStudy() {
                       {r.label}
                     </div>
                     <div
-                      className="text-[42px] font-black text-white leading-none"
+                      className="text-[38px] md:text-[42px] font-black text-white leading-none"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
                       {r.value}
@@ -169,7 +140,14 @@ export function FeaturedCaseStudy() {
 
               {/* Industry tags */}
               <div className="mt-4 flex flex-wrap gap-2">
-                {["E-Commerce", "SEO", "Content", "CRO", "India"].map((tag) => (
+                {[
+                  "CAT & MBA CET",
+                  "IPMAT & CLAT",
+                  "SEO Architecture",
+                  "Local SEO (GBP)",
+                  "Google Ads (₹54 CPC)",
+                  "Pune",
+                ].map((tag) => (
                   <span
                     key={tag}
                     className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs text-white/60"

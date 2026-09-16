@@ -21,6 +21,8 @@ import {
 
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
+import { PageSEO } from "@/components/site/PageSEO";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 import { ServiceContactCTA } from "@/components/site/ServiceContactCTA";
 import { ServiceLeadForm } from "@/components/site/ServiceLeadForm";
 import { ZigZagGrowthStack } from "@/components/site/ZigZagGrowthStack";
@@ -422,6 +424,7 @@ function GraphicValueSection() {
 }
 
 function GraphicDesignPage() {
+  const { data: heroData } = useWebsiteSection<any>("service.graphic-design.hero");
   const [activeCapability, setActiveCapability] = useState(0);
   const [openService, setOpenService] = useState<number | null>(null);
   const [openProcess, setOpenProcess] = useState<number | null>(null);
@@ -431,6 +434,11 @@ function GraphicDesignPage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <PageSEO
+        sectionKey="service.graphic-design.seo"
+        fallbackTitle="Graphic Design Services | Hegxcorp"
+        fallbackDescription="Graphic design services by Hegxcorp including social media creatives, ad creatives, brochures, pitch decks, brand collateral, campaign visuals, packaging direction, and marketing design systems."
+      />
       <Header />
 
       <main>
@@ -461,7 +469,7 @@ function GraphicDesignPage() {
               transition={{ duration: 0.65, ease: "easeOut" }}
             >
               <p className="mb-5 inline-flex rounded-full border border-white/12 bg-white/8 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#FC9C44]">
-                Graphic Design Services
+                {heroData?.badge || "Graphic Design Services"}
               </p>
 
               <h1
@@ -471,8 +479,14 @@ function GraphicDesignPage() {
                   fontSize: "clamp(46px, 6vw, 86px)",
                 }}
               >
-                Visual Design
-                <span className="block text-[#FC9C44]">That Sells the Story</span>
+                {heroData?.title ? (
+                  heroData.title
+                ) : (
+                  <>
+                    Visual Design
+                    <span className="block text-[#FC9C44]">That Sells the Story</span>
+                  </>
+                )}
               </h1>
 
               <p
@@ -483,23 +497,23 @@ function GraphicDesignPage() {
                   lineHeight: 1.75,
                 }}
               >
-                Create premium marketing graphics, social creatives, ad visuals, brochures, decks,
-                and campaign assets that make your brand easier to notice, understand, and trust.
+                {heroData?.description ||
+                  "Create premium marketing graphics, social creatives, ad visuals, brochures, decks, and campaign assets that make your brand easier to notice, understand, and trust."}
               </p>
 
               <div className="mt-9 flex flex-wrap gap-3">
                 <a
-                  href="/free-growth-audit"
+                  href={heroData?.primaryButtonUrl || "/free-growth-audit"}
                   className="inline-flex items-center rounded-full bg-[#FC9C44] px-7 py-3.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#E88C35] hover:shadow-[0_18px_36px_-18px_rgba(252,156,68,0.9)]"
                 >
-                  Plan My Creative Assets
+                  {heroData?.primaryButtonText || "Plan My Creative Assets"}
                 </a>
 
                 <a
-                  href="/case-studies"
+                  href={heroData?.secondaryButtonUrl || "/case-studies"}
                   className="inline-flex items-center rounded-full border border-white/14 bg-white/8 px-7 py-3.5 text-sm font-bold text-white transition hover:border-[#FC9C44] hover:bg-white/12"
                 >
-                  View Results
+                  {heroData?.secondaryButtonText || "View Results"}
                 </a>
               </div>
             </motion.div>

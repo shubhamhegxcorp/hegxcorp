@@ -1,3 +1,4 @@
+import { Readable } from "node:stream";
 let lastCapturedError;
 const TTL_MS = 5e3;
 function record(error) {
@@ -50,10 +51,24 @@ function renderErrorPage() {
   </body>
 </html>`;
 }
+try {
+  void process.stdin;
+} catch {
+  try {
+    Object.defineProperty(process, "stdin", {
+      value: new Readable({ read() {
+      } }),
+      configurable: true,
+      enumerable: true,
+      writable: true
+    });
+  } catch {
+  }
+}
 let serverEntryPromise;
 async function getServerEntry() {
   if (!serverEntryPromise) {
-    serverEntryPromise = import("./server-DqPd_8GB.mjs").then((n) => n.s).then(
+    serverEntryPromise = import("./server-CUnzXY6r.mjs").then((n) => n.s).then(
       (m) => m.default ?? m
     );
   }

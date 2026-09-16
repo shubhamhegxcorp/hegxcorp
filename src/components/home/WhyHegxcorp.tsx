@@ -107,8 +107,8 @@ export function WhyHegxcorp() {
               <span>Scroll horizontally to compare</span>
               <span className="text-xs">→</span>
             </div>
-            <div className="w-full overflow-x-auto rounded-2xl border border-[#EAEAEA] shadow-[0_2px_24px_-4px_rgba(0,0,0,0.06)] -mx-1 sm:mx-0">
-              <table className="w-full min-w-[500px] border-collapse text-sm">
+            <div className="w-full overflow-x-auto rounded-2xl border border-[#EAEAEA] shadow-[0_2px_24px_-4px_rgba(0,0,0,0.06)]">
+              <table className="w-full min-w-[480px] sm:min-w-[500px] border-collapse text-xs sm:text-sm">
                 {/* Column headers */}
                 <thead>
                   <tr>
@@ -207,8 +207,8 @@ export function WhyHegxcorp() {
           </div>
         </motion.div>
 
-        {/* ── Five outcome pillars ──────────────────────────── */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-px bg-[#EAEAEA] border border-[#EAEAEA] rounded-2xl overflow-hidden">
+        {/* ── Five outcome pillars (desktop only) ───────────── */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-5 gap-px bg-[#EAEAEA] border border-[#EAEAEA] rounded-2xl overflow-hidden">
           {mappedPillars.map((p: any, i: number) => (
             <motion.div
               key={p.title}

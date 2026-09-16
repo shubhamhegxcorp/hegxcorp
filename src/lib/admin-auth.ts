@@ -6,6 +6,15 @@ export const adminLoginSchema = z.object({
   password: z.string().min(1, "Enter your password").max(200),
 });
 
+export const testDebugFn = createServerFn({ method: "GET" }).handler(async () => {
+  return {
+    status: "ok",
+    nodeVersion: process.version,
+    platform: process.platform,
+    hasDbUrl: Boolean(process.env.DATABASE_URL),
+  };
+});
+
 export const getAdminSession = createServerFn({ method: "GET" }).handler(async () => {
   const { readAdminSession } = await import("./admin-auth.server");
   return readAdminSession();

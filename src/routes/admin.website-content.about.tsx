@@ -1,9 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowUp, ArrowDown, Plus, Trash2, Edit2, Check, X } from "lucide-react";
+import { ArrowUp, ArrowDown, Plus, Trash2, Edit2, Check, X, Eye } from "lucide-react";
 import { getWebsiteSection, saveWebsiteSection } from "@/lib/website-content";
 import { DEFAULT_CMS_SECTIONS } from "@/lib/cms-config";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { SeoEditorCard } from "@/components/admin/SeoEditorCard";
+import { CmsLivePreviewModal } from "@/components/admin/CmsLivePreviewModal";
+import { broadcastCmsDraft, registerCmsSyncResponder } from "@/lib/cms-preview-bridge";
 
 export const Route = createFileRoute("/admin/website-content/about")({
   component: AdminAboutCMS,
@@ -20,25 +24,20 @@ function AdminAboutCMS() {
   const [cta, setCta] = useState<any>(null);
 
   const [loading, setLoading] = useState(true);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [
-          heroData,
-          whoWeAreData,
-          ourStoryData,
-          ourMissionData,
-          ourValuesData,
-          ctaData,
-        ] = await Promise.all([
-          getWebsiteSection({ data: { key: "about.hero" } }),
-          getWebsiteSection({ data: { key: "about.whoWeAre" } }),
-          getWebsiteSection({ data: { key: "about.ourStory" } }),
-          getWebsiteSection({ data: { key: "about.ourMission" } }),
-          getWebsiteSection({ data: { key: "about.ourValues" } }),
-          getWebsiteSection({ data: { key: "about.cta" } }),
-        ]);
+        const [heroData, whoWeAreData, ourStoryData, ourMissionData, ourValuesData, ctaData] =
+          await Promise.all([
+            getWebsiteSection({ data: { key: "about.hero" } }),
+            getWebsiteSection({ data: { key: "about.whoWeAre" } }),
+            getWebsiteSection({ data: { key: "about.ourStory" } }),
+            getWebsiteSection({ data: { key: "about.ourMission" } }),
+            getWebsiteSection({ data: { key: "about.ourValues" } }),
+            getWebsiteSection({ data: { key: "about.cta" } }),
+          ]);
 
         setHero(heroData || DEFAULT_CMS_SECTIONS["about.hero"]);
         setWhoWeAre(whoWeAreData || DEFAULT_CMS_SECTIONS["about.whoWeAre"]);
@@ -67,6 +66,39 @@ function AdminAboutCMS() {
     }
   };
 
+  // Register responder for newly opened preview frames
+  useEffect(() => {
+    const unregister = registerCmsSyncResponder(() => ({
+      "about.hero": hero,
+      "about.whoWeAre": whoWeAre,
+      "about.ourStory": ourStory,
+      "about.ourMission": ourMission,
+      "about.ourValues": ourValues,
+      "about.cta": cta,
+    }));
+    return unregister;
+  }, [hero, whoWeAre, ourStory, ourMission, ourValues, cta]);
+
+  // Real-time broadcast on active section edits
+  useEffect(() => {
+    if (activeSection === "hero" && hero) broadcastCmsDraft("about.hero", hero);
+  }, [hero, activeSection]);
+  useEffect(() => {
+    if (activeSection === "whoWeAre" && whoWeAre) broadcastCmsDraft("about.whoWeAre", whoWeAre);
+  }, [whoWeAre, activeSection]);
+  useEffect(() => {
+    if (activeSection === "ourStory" && ourStory) broadcastCmsDraft("about.ourStory", ourStory);
+  }, [ourStory, activeSection]);
+  useEffect(() => {
+    if (activeSection === "ourMission" && ourMission) broadcastCmsDraft("about.ourMission", ourMission);
+  }, [ourMission, activeSection]);
+  useEffect(() => {
+    if (activeSection === "ourValues" && ourValues) broadcastCmsDraft("about.ourValues", ourValues);
+  }, [ourValues, activeSection]);
+  useEffect(() => {
+    if (activeSection === "cta" && cta) broadcastCmsDraft("about.cta", cta);
+  }, [cta, activeSection]);
+
   if (loading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
@@ -77,9 +109,32 @@ function AdminAboutCMS() {
 
   return (
     <div className="space-y-8 p-6 lg:p-8">
-      <div className="border-b border-[#E4E7EC] pb-4">
-        <p className="text-sm text-slate-500">Manage and edit all frontend About page sections.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E4E7EC] pb-4">
+        <div>
+          <h2 className="text-xl font-black text-[#06133D]">About Page Content</h2>
+          <p className="text-xs text-slate-500 mt-1">Manage and edit all frontend About page sections.</p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsPreviewOpen(true)}
+          className="inline-flex items-center gap-2 rounded-lg bg-[#06133D] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#0A1D54] transition shrink-0"
+        >
+          <Eye className="h-4 w-4 text-[#FC9C44]" />
+          Live Preview
+          <span className="flex h-2 w-2 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          </span>
+        </button>
       </div>
+
+      {/* --- SEO & META TAGS CARD --- */}
+      <SeoEditorCard
+        sectionKey="about.seo"
+        pageName="About Page"
+        canonicalUrl="https://hegxcorp.com/about"
+      />
 
       {/* --- HERO SECTION CARD --- */}
       <div className="rounded-xl border border-[#E4E7EC] bg-white p-6 shadow-sm">
@@ -288,34 +343,12 @@ function AdminAboutCMS() {
                 className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
               />
             </label>
-            <label className="grid gap-1.5">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                Section Image URL
-              </span>
-              <input
-                type="text"
-                value={whoWeAre.imageUrl || ""}
-                onChange={(e) => setWhoWeAre({ ...whoWeAre, imageUrl: e.target.value })}
-                placeholder="https://... (Leave blank to use default built-in team photo)"
-                className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
-              />
-              <span className="text-[11px] text-slate-400">
-                Direct image link (e.g. Unsplash, Cloudinary, AWS S3, or local asset path).
-              </span>
-            </label>
-            {whoWeAre.imageUrl && (
-              <div className="mt-2">
-                <span className="text-[11px] font-bold text-slate-500 block mb-1">Image Preview:</span>
-                <img
-                  src={whoWeAre.imageUrl}
-                  alt="Who We Are Preview"
-                  className="h-28 w-40 object-cover rounded-lg border border-slate-200 shadow-sm"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = "none";
-                  }}
-                />
-              </div>
-            )}
+            <ImageUploadField
+              label="Who We Are Section Image"
+              value={whoWeAre.imageUrl || ""}
+              onChange={(val) => setWhoWeAre({ ...whoWeAre, imageUrl: val })}
+              helperText="Upload a photo from your computer or paste a direct image URL. Leave blank for default team photo."
+            />
           </div>
         ) : (
           <div className="mt-4 space-y-2 text-sm">
@@ -415,34 +448,12 @@ function AdminAboutCMS() {
               />
             </label>
 
-            <label className="grid gap-1.5">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                Story Image URL
-              </span>
-              <input
-                type="text"
-                value={ourStory.imageUrl || ""}
-                onChange={(e) => setOurStory({ ...ourStory, imageUrl: e.target.value })}
-                placeholder="https://... (Leave blank to use default built-in team meeting image)"
-                className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
-              />
-              <span className="text-[11px] text-slate-400">
-                Paste any web image URL (e.g. https://images.unsplash.com/... or your CDN URL)
-              </span>
-            </label>
-            {ourStory.imageUrl && (
-              <div className="mt-2">
-                <span className="text-[11px] font-bold text-slate-500 block mb-1">Image Preview:</span>
-                <img
-                  src={ourStory.imageUrl}
-                  alt="Our Story Preview"
-                  className="h-28 w-40 object-cover rounded-lg border border-slate-200 shadow-sm"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = "none";
-                  }}
-                />
-              </div>
-            )}
+            <ImageUploadField
+              label="Our Story Section Image"
+              value={ourStory.imageUrl || ""}
+              onChange={(val) => setOurStory({ ...ourStory, imageUrl: val })}
+              helperText="Upload a photo from your computer or paste a direct image URL. Leave blank for default meeting photo."
+            />
           </div>
         ) : (
           <div className="mt-4 space-y-2 text-sm">
@@ -539,34 +550,12 @@ function AdminAboutCMS() {
                 className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
               />
             </label>
-            <label className="grid gap-1.5">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                Mission Image URL
-              </span>
-              <input
-                type="text"
-                value={ourMission.imageUrl || ""}
-                onChange={(e) => setOurMission({ ...ourMission, imageUrl: e.target.value })}
-                placeholder="https://... (Leave blank to use default built-in global workshop image)"
-                className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
-              />
-              <span className="text-[11px] text-slate-400">
-                Direct image link (e.g. Unsplash, Cloudinary, AWS S3, or local asset path).
-              </span>
-            </label>
-            {ourMission.imageUrl && (
-              <div className="mt-2">
-                <span className="text-[11px] font-bold text-slate-500 block mb-1">Image Preview:</span>
-                <img
-                  src={ourMission.imageUrl}
-                  alt="Our Mission Preview"
-                  className="h-28 w-40 object-cover rounded-lg border border-slate-200 shadow-sm"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = "none";
-                  }}
-                />
-              </div>
-            )}
+            <ImageUploadField
+              label="Our Mission Section Image"
+              value={ourMission.imageUrl || ""}
+              onChange={(val) => setOurMission({ ...ourMission, imageUrl: val })}
+              helperText="Upload a photo from your computer or paste a direct image URL. Leave blank for default global workshop image."
+            />
           </div>
         ) : (
           <div className="mt-4 space-y-2 text-sm">
@@ -579,7 +568,8 @@ function AdminAboutCMS() {
             </div>
             {ourMission.imageUrl && (
               <div>
-                <span className="font-bold text-[#06133D]">Custom Image:</span> {ourMission.imageUrl}
+                <span className="font-bold text-[#06133D]">Custom Image:</span>{" "}
+                {ourMission.imageUrl}
               </div>
             )}
           </div>
@@ -662,34 +652,12 @@ function AdminAboutCMS() {
               />
             </label>
 
-            <label className="grid gap-1.5">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                Values Workspace Image URL
-              </span>
-              <input
-                type="text"
-                value={ourValues.imageUrl || ""}
-                onChange={(e) => setOurValues({ ...ourValues, imageUrl: e.target.value })}
-                placeholder="https://... (Leave blank to use default workspace photo)"
-                className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
-              />
-              <span className="text-[11px] text-slate-400">
-                Direct image link (e.g. Unsplash, Cloudinary, AWS S3, or local asset path).
-              </span>
-            </label>
-            {ourValues.imageUrl && (
-              <div className="mt-2">
-                <span className="text-[11px] font-bold text-slate-500 block mb-1">Image Preview:</span>
-                <img
-                  src={ourValues.imageUrl}
-                  alt="Values Workspace Preview"
-                  className="h-28 w-40 object-cover rounded-lg border border-slate-200 shadow-sm"
-                  onError={(e) => {
-                    (e.target as HTMLElement).style.display = "none";
-                  }}
-                />
-              </div>
-            )}
+            <ImageUploadField
+              label="Values Workspace Section Image"
+              value={ourValues.imageUrl || ""}
+              onChange={(val) => setOurValues({ ...ourValues, imageUrl: val })}
+              helperText="Upload a workspace photo from your computer or paste a direct image URL."
+            />
 
             <div className="space-y-4 border-t border-slate-100 pt-4">
               <div className="flex items-center justify-between">
@@ -967,6 +935,22 @@ function AdminAboutCMS() {
           </div>
         )}
       </div>
+
+      {/* Live Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        previewPath="/about"
+        pageName="About Page"
+        onSyncAllDrafts={() => {
+          if (hero) broadcastCmsDraft("about.hero", hero);
+          if (whoWeAre) broadcastCmsDraft("about.whoWeAre", whoWeAre);
+          if (ourStory) broadcastCmsDraft("about.ourStory", ourStory);
+          if (ourMission) broadcastCmsDraft("about.ourMission", ourMission);
+          if (ourValues) broadcastCmsDraft("about.ourValues", ourValues);
+          if (cta) broadcastCmsDraft("about.cta", cta);
+        }}
+      />
     </div>
   );
 }

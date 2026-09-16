@@ -15,6 +15,7 @@ import { Footer } from "@/components/site/Footer";
 import { ServiceDirectory } from "@/components/site/ServiceDirectory";
 import ShapeGrid from "@/components/ShapeGrid";
 import { useWebsiteSection } from "@/hooks/useWebsiteContent";
+import { PageSEO } from "@/components/site/PageSEO";
 
 import { BreadcrumbSchema, ServiceSchema } from "@/components/site/StructuredData";
 
@@ -124,6 +125,18 @@ function OurServicesPage() {
 
   return (
     <div className="min-h-screen bg-[#F7F8FB] text-[#06133D]">
+      <PageSEO
+        sectionKey="services.seo"
+        fallbackTitle="Our Services — Full-Stack Digital Growth & Engineering | Hegxcorp"
+        fallbackDescription="Explore Hegxcorp services: SEO growth architectures, high-performance web development, PPC campaigns, conversion rate optimisation, UI/UX design, and brand identity systems."
+      />
+      <BreadcrumbSchema items={[{ name: "Services", item: "https://hegxcorp.com/services" }]} />
+      <ServiceSchema
+        serviceName="Growth Marketing & Digital Transformation Services"
+        serviceType="DigitalMarketingService"
+        description="Full-stack growth marketing services: SEO, PPC advertising, custom web development, conversion rate optimization, and brand identity."
+        url="https://hegxcorp.com/services"
+      />
       <Header />
 
       <main>
@@ -171,8 +184,12 @@ function OurServicesPage() {
                   <div key={top} className="flex items-center gap-3">
                     <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-[#FC9C44] shrink-0" />
                     <div className="min-w-0">
-                      <p className="text-base sm:text-lg font-black text-[#06133D] truncate">{top}</p>
-                      <p className="text-xs sm:text-sm font-semibold text-slate-500 truncate">{bottom}</p>
+                      <p className="text-base sm:text-lg font-black text-[#06133D] truncate">
+                        {top}
+                      </p>
+                      <p className="text-xs sm:text-sm font-semibold text-slate-500 truncate">
+                        {bottom}
+                      </p>
                     </div>
                   </div>
                 ))}

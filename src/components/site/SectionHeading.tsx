@@ -6,6 +6,7 @@ interface SectionHeadingProps {
   description?: string;
   align?: "left" | "center";
   className?: string;
+  as?: "h1" | "h2";
 }
 
 export function SectionHeading({
@@ -14,7 +15,9 @@ export function SectionHeading({
   description,
   align = "left",
   className,
+  as = "h2",
 }: SectionHeadingProps) {
+  const HeadingTag = as;
   return (
     <div
       className={cn(
@@ -29,7 +32,7 @@ export function SectionHeading({
       >
         {tagline}
       </span>
-      <h2
+      <HeadingTag
         className="font-bold text-[#232323] leading-tight"
         style={{
           fontFamily: "'Space Grotesk', sans-serif",
@@ -37,7 +40,7 @@ export function SectionHeading({
         }}
       >
         {heading}
-      </h2>
+      </HeadingTag>
       {description && (
         <p
           className="text-[#6B7280] leading-relaxed mt-1"

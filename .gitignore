@@ -6,6 +6,9 @@ dist
 .netlify
 .tanstack
 *.log
-.env.local
-.DS_Store
 
+.env
+.env.*
+!.env.example
+
+.DS_Store

@@ -130,8 +130,9 @@ export interface FeaturedWorkItem {
   url: string;
   metric: string;
   browserColor: string;
-  screenshotType: "ecommerce" | "saas" | "healthcare" | "fintech" | string;
+  screenshotType: "ecommerce" | "saas" | "healthcare" | "fintech" | "custom" | string;
   linkUrl?: string;
+  image?: string;
 }
 
 export interface FeaturedWorkSection {
@@ -236,6 +237,28 @@ export interface ServicesProcessSection {
   steps: { title: string; points: string[] }[];
 }
 
+export interface ServiceDirectoryItem {
+  id: string;
+  number: string;
+  title: string;
+  text: string;
+  href: string;
+  iconName?: string;
+}
+
+export interface ServiceDirectoryCategory {
+  id: string;
+  label: string;
+  iconName?: string;
+  services: ServiceDirectoryItem[];
+}
+
+export interface ServiceDirectorySection {
+  tagline: string;
+  heading: string;
+  categories: ServiceDirectoryCategory[];
+}
+
 export interface ProductsHeroSection {
   tagline: string;
   title: string;
@@ -277,17 +300,160 @@ export interface ContactServiceGroupsSection {
   groups: ContactServiceGroupItem[];
 }
 
+export interface ContactCustomField {
+  id: string;
+  label: string;
+  placeholder: string;
+  type: "text" | "email" | "tel" | "select" | "textarea";
+  options?: string[];
+  required?: boolean;
+  enabled?: boolean;
+}
+
+export interface ContactFormConfig {
+  badge: string;
+  title: string;
+  description?: string;
+  nameLabel: string;
+  namePlaceholder: string;
+  phoneLabel: string;
+  phoneCountryCode: string;
+  phonePlaceholder: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  servicesLabel: string;
+  servicesPlaceholder: string;
+  budgetLabel: string;
+  budgetPlaceholder: string;
+  budgetOptions: string[];
+  timelineLabel: string;
+  timelinePlaceholder: string;
+  timelineOptions: string[];
+  messageLabel: string;
+  messagePlaceholder: string;
+  submitButtonText: string;
+  successTitle: string;
+  successMessage: string;
+  customFields: ContactCustomField[];
+}
+
+export interface HeaderNavConfig {
+  servicesLabel: string;
+  caseStudiesLabel: string;
+  aboutLabel: string;
+  blogLabel: string;
+  contactLabel: string;
+  supportText: string;
+  phone: string;
+  globalPresenceText: string;
+  ctaText: string;
+  ctaUrl: string;
+}
+
+export interface FooterLinkItem {
+  label: string;
+  href?: string;
+  to?: string;
+}
+
+export interface FooterConfig {
+  brandName: string;
+  brandTagline: string;
+  brandDescription: string;
+  watermarkText: string;
+  phone: string;
+  email: string;
+  address: string;
+  ctaText: string;
+  ctaUrl: string;
+  linkedinUrl: string;
+  twitterUrl: string;
+  instagramUrl: string;
+  facebookUrl: string;
+  youtubeUrl: string;
+  servicesLinks: FooterLinkItem[];
+  companyLinks: FooterLinkItem[];
+  regionsLinks: FooterLinkItem[];
+  copyrightText: string;
+  privacyPolicyText: string;
+  privacyPolicyUrl: string;
+  termsText: string;
+  termsUrl: string;
+  cookiePolicyText: string;
+  cookiePolicyUrl: string;
+}
+
 export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
+  // --- SITE HEADER & NAVIGATION ---
+  "site.header": {
+    servicesLabel: "Services",
+    caseStudiesLabel: "Case Studies",
+    aboutLabel: "About Us",
+    blogLabel: "Blog",
+    contactLabel: "Contact",
+    supportText: "24/7 Support",
+    phone: "+91 836 920 7836",
+    globalPresenceText: "India • USA • Australia • Dubai",
+    ctaText: "Connect With Us",
+    ctaUrl: "/contact",
+  } as HeaderNavConfig,
+
+  // --- SITE FOOTER (GLOBAL) ---
+  "site.footer": {
+    brandName: "Hegxcorp",
+    brandTagline: "Data-Driven Growth Marketing Agency",
+    brandDescription:
+      "A data-driven growth consultancy helping businesses generate more leads, sales, and revenue through SEO, paid advertising, web development, and conversion optimisation.",
+    watermarkText: "HEGXCORP",
+    phone: "+91 836 920 7836",
+    email: "contact@hegxcorp.com",
+    address: "India • USA • UK • Dubai",
+    ctaText: "Get Free Growth Audit",
+    ctaUrl: "/free-growth-audit",
+    linkedinUrl: "https://linkedin.com/company/hegxcorp",
+    twitterUrl: "https://x.com/thehegxcorp",
+    instagramUrl: "https://www.instagram.com/hegxcorp?igsi=MWx3aXlsOWp5bWV5dg==",
+    facebookUrl: "https://www.facebook.com/hegxcorp",
+    youtubeUrl: "https://youtube.com/@hegxcorp",
+    servicesLinks: [
+      { label: "Search Engine Optimisation", to: "/service/seo" },
+      { label: "Paid Advertising (PPC)", to: "/service/ppc" },
+      { label: "Web Development", to: "/service/web-dev" },
+      { label: "Conversion Optimisation", to: "/service/ui-ux-design" },
+      { label: "Branding & Design", to: "/service/branding" },
+      { label: "Social Media Marketing", to: "/service/social-med" },
+    ],
+    companyLinks: [
+      { label: "About Us", to: "/about" },
+      { label: "Case Studies", to: "/case-studies" },
+      { label: "Blog & Insights", to: "/blog" },
+      { label: "Contact", to: "/contact" },
+    ],
+    regionsLinks: [
+      { label: "India (hegxcorp.com)", href: "https://hegxcorp.com" },
+      { label: "United States", href: "https://hegxcorp.us" },
+      { label: "United Kingdom", href: "https://hegxcorp.uk" },
+      { label: "Dubai & UAE", href: "https://hegxcorp.ae" },
+    ],
+    copyrightText: "© 2026 Hegxcorp. All rights reserved.",
+    privacyPolicyText: "Privacy Policy",
+    privacyPolicyUrl: "/privacy-policy",
+    termsText: "Terms of Service",
+    termsUrl: "/terms-of-service",
+    cookiePolicyText: "Cookie Policy",
+    cookiePolicyUrl: "/cookie-policy",
+  } as FooterConfig,
+
   // --- HOME PAGE ---
   "home.hero": {
     badge: "Growth Consultancy & Digital Transformation Partner",
     title: "Generate More Leads, Sales & Revenue",
     description:
       "We design and execute data-driven growth marketing systems, custom engineering, and search optimization built to position enterprise firms for compounding scale.",
-    buttonText: "Browse Articles",
-    buttonUrl: "/blog",
-    secondaryButtonText: "Contact Team",
-    secondaryButtonUrl: "/contact",
+    buttonText: "Get Free Growth Audit",
+    buttonUrl: "/free-growth-audit",
+    secondaryButtonText: "Explore Case Studies",
+    secondaryButtonUrl: "/case-studies",
     trustText: "Trusted by enterprise companies across India, USA, UK & UAE",
     dashboardUrl: "hegxcorp.com/growth-analytics",
     dashboardTitle: "Hegxcorp Growth Engine",
@@ -296,27 +462,27 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
     dashboardMetrics: [
       {
         label: "Organic Traffic Growth",
-        value: 310,
+        value: 700,
         prefix: "+",
         suffix: "%",
         decimals: 0,
       },
       {
-        label: "Qualified Leads",
-        value: 184,
-        prefix: "+",
-        suffix: "%",
-        decimals: 0,
-      },
-      {
-        label: "ROAS Achieved",
-        value: 4.8,
+        label: "Unique Mobile Reach",
+        value: 1,
         prefix: "",
-        suffix: "x",
-        decimals: 1,
+        suffix: "M+",
+        decimals: 0,
       },
       {
-        label: "Client Satisfaction",
+        label: "Phone & Form Inquiries",
+        value: 1151,
+        prefix: "+",
+        suffix: "",
+        decimals: 0,
+      },
+      {
+        label: "Client Retention",
         value: 98,
         prefix: "+",
         suffix: "%",
@@ -324,7 +490,7 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
       },
     ],
     chartTitle: "Performance Trajectory",
-    chartMetric: "+248%",
+    chartMetric: "+280%",
     chartMetricLabel: "Revenue Velocity",
   } as HeroSection,
 
@@ -332,26 +498,36 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
     tagline: "Proven Results",
     heading: "Numbers that prove we deliver.",
     heroMetric: {
-      ghostNumber: "310",
+      ghostNumber: "700",
       prefix: "+",
-      value: 310,
+      value: 700,
       suffix: "%",
       decimals: 0,
-      title: "Organic Traffic Growth",
-      description: "Average increase across all SEO clients within 12 months of engagement.",
-      linkText: "See the case study",
-      linkUrl: "/case-studies",
+      title: "Peak Organic Traffic Growth",
+      description: "Achieved in 6 months through technical SEO taxonomy restructuring, content clusters, and indexing automation.",
+      linkText: "See the Nivesh case study",
+      linkUrl: "/case-studies/nivesh",
     },
     supporting: [
       {
+        id: "mobile-reach",
+        prefix: "",
+        value: 1,
+        suffix: "M+",
+        label: "Unique Mobile Reach",
+        sub: "Orra Fine Jewellery · TV-to-Mobile retargeting & programmatic ads",
+        decimals: 0,
+        href: "/case-studies/orra",
+      },
+      {
         id: "leads",
         prefix: "+",
-        value: 184,
-        suffix: "%",
-        label: "Qualified Leads",
-        sub: "More pipeline through conversion-optimised funnels",
+        value: 1151,
+        suffix: "",
+        label: "Inbound Phone Inquiries",
+        sub: "Tarkashastra Academy · Local GBP dominance & transactional MBA PPC",
         decimals: 0,
-        href: "/case-studies",
+        href: "/case-studies/tarkashastra",
       },
       {
         id: "roas",
@@ -359,7 +535,7 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
         value: 4.8,
         suffix: "×",
         label: "Average ROAS",
-        sub: "Return on ad spend across Google, Meta & programmatic",
+        sub: "Return on ad spend across Google, Meta & programmatic DSP",
         decimals: 1,
         href: "/case-studies",
       },
@@ -369,7 +545,7 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
         value: 98,
         suffix: "%",
         label: "Client Satisfaction",
-        sub: "Senior-led accounts — no handoff to juniors after onboarding",
+        sub: "Senior partner-led execution — no handoff to juniors after onboarding",
         decimals: 0,
         href: "/about",
       },
@@ -432,52 +608,43 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
     heading: "Visual proof of our engineering and growth capabilities",
     projects: [
       {
-        id: "Spirit Boosting Digital",
+        id: "orra",
         isFeatured: true,
-        title: "Spirit Boosting Digital",
-        category: "SEO + Conversion Engineering",
-        industry: "E-Commerce",
-        url: "spiritboostingdigital.in",
-        metric: "+280% Organic Revenue",
-        browserColor: "#FFF4E8",
-        screenshotType: "ecommerce",
-        linkUrl: "/case-studies",
+        title: "Orra Fine Jewellery",
+        category: "TV-to-Mobile Retargeting + Programmatic Ads",
+        industry: "Luxury Jewellery & Retail",
+        url: "orra.co.in",
+        metric: "1M+ Unique Mobile Reach",
+        browserColor: "#FAF7F2",
+        screenshotType: "custom",
+        image: "/case-studies/orra/orra-hero-preview.png",
+        linkUrl: "/case-studies/orra",
       },
       {
-        id: "launchscale",
-        isFeatured: false,
-        title: "Cultural Web Creation",
-        category: "Full Funnel Performance Ads",
-        industry: "B2B SaaS",
-        url: "launchscale.com/analytics",
-        metric: "5.2x Google & Meta ROAS",
-        browserColor: "#E8F0FE",
-        screenshotType: "saas",
-        linkUrl: "/case-studies",
-      },
-      {
-        id: "healthfirst",
-        isFeatured: false,
-        title: "Environmental Brand Creation",
-        category: "Local SEO & Platform Engineering",
-        industry: "Healthcare",
-        url: "healthfirst.in/booking",
-        metric: "2x Qualified Leads",
-        browserColor: "#F0FDF4",
-        screenshotType: "healthcare",
-        linkUrl: "/case-studies",
-      },
-      {
-        id: "fintechone",
-        isFeatured: false,
-        title: "FintechOne Portal",
-        category: "Custom Web Application Development",
+        id: "nivesh",
+        isFeatured: true,
+        title: "Nivesh",
+        category: "SEO Architecture + Content Clusters",
         industry: "FinTech",
-        url: "fintechone.io/dashboard",
-        metric: "Sub-second Load Times",
-        browserColor: "#EAEAEA",
-        screenshotType: "fintech",
-        linkUrl: "/case-studies",
+        url: "nivesh.com",
+        metric: "+700% Organic Traffic",
+        browserColor: "#F8FAFC",
+        screenshotType: "custom",
+        image: "/case-studies/nivesh/nivesh-hero-preview.png",
+        linkUrl: "/case-studies/nivesh",
+      },
+      {
+        id: "tarkashastra",
+        isFeatured: true,
+        title: "Tarkashastra Academy",
+        category: "SEO Architecture + Local GBP + Paid Ads",
+        industry: "Education & EdTech",
+        url: "tarkashastra.co.in",
+        metric: "+200% Organic Traffic",
+        browserColor: "#FFF7ED",
+        screenshotType: "custom",
+        image: "/case-studies/tarkashastra/tarkashastra-hero-preview.png",
+        linkUrl: "/case-studies/tarkashastra",
       },
     ],
   } as FeaturedWorkSection,
@@ -806,6 +973,122 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
     ],
   } as ServicesProcessSection,
 
+  "services.directory": {
+    tagline: "Service Directory",
+    heading: "Choose the right digital solution for your next stage.",
+    categories: [
+      {
+        id: "development",
+        label: "Development",
+        iconName: "Code2",
+        services: [
+          {
+            id: "s-dev-1",
+            number: "01",
+            iconName: "Code2",
+            title: "Website Development",
+            text: "Fast, responsive, conversion-focused websites built to represent your brand and generate business enquiries.",
+            href: "/service/web-dev",
+          },
+          {
+            id: "s-dev-2",
+            number: "02",
+            iconName: "LayoutDashboard",
+            title: "Custom Web Application",
+            text: "Custom dashboards, portals, SaaS products, admin panels, and business web applications.",
+            href: "/service/web-app",
+          },
+          {
+            id: "s-dev-3",
+            number: "03",
+            iconName: "Globe2",
+            title: "WordPress Development",
+            text: "Editable WordPress websites, custom themes, WooCommerce stores, plugin setup, speed, and security support.",
+            href: "/service/wordpress",
+          },
+          {
+            id: "s-dev-4",
+            number: "04",
+            iconName: "ShoppingCart",
+            title: "E-Commerce Development",
+            text: "Online stores with product pages, cart, checkout, payments, order handling, and conversion-focused shopping flows.",
+            href: "/service/e-comm",
+          },
+        ],
+      },
+      {
+        id: "growth",
+        label: "Marketing",
+        iconName: "Megaphone",
+        services: [
+          {
+            id: "s-mkt-1",
+            number: "05",
+            iconName: "Search",
+            title: "SEO Services",
+            text: "SEO structure, keyword optimisation, technical fixes, content improvements, and search visibility growth.",
+            href: "/service/seo",
+          },
+          {
+            id: "s-mkt-2",
+            number: "06",
+            iconName: "BarChart3",
+            title: "PPC",
+            text: "Performance-driven ad campaigns that maximize ROI, generate quality leads, and grow your business faster.",
+            href: "/service/ppc",
+          },
+          {
+            id: "s-mkt-3",
+            number: "07",
+            iconName: "Share2",
+            title: "Social Media Marketing",
+            text: "Build your brand, engage your audience, and grow your online community across every major platform.",
+            href: "/service/social-med",
+          },
+          {
+            id: "s-mkt-4",
+            number: "08",
+            iconName: "PenTool",
+            title: "Content Marketing",
+            text: "Create compelling content and brand stories that attract, educate, and convert your ideal customers.",
+            href: "/service/content-marketing",
+          },
+        ],
+      },
+      {
+        id: "design",
+        label: "Design",
+        iconName: "Palette",
+        services: [
+          {
+            id: "s-des-1",
+            number: "09",
+            iconName: "Palette",
+            title: "UI/UX Design",
+            text: "Clean interfaces, user journeys, wireframes, landing pages, dashboards, and digital product design.",
+            href: "/service/ui-ux-design",
+          },
+          {
+            id: "s-des-2",
+            number: "10",
+            iconName: "Brush",
+            title: "Branding",
+            text: "Craft memorable brand identities with purpose, consistency, and a lasting impression across every touchpoint.",
+            href: "/service/branding",
+          },
+          {
+            id: "s-des-3",
+            number: "12",
+            iconName: "Image",
+            title: "Graphic Design",
+            text: "Creative visuals, marketing assets, and brand graphics that communicate your message with impact.",
+            href: "/service/graphic-design",
+          },
+        ],
+      },
+    ],
+  } as ServiceDirectorySection,
+
   // --- PRODUCTS PAGE ---
   "products.hero": {
     tagline: "Products & Solutions",
@@ -892,4 +1175,101 @@ export const DEFAULT_CMS_SECTIONS: Record<string, any> = {
       },
     ],
   } as ContactServiceGroupsSection,
+
+  "contact.form": {
+    badge: "Fast reply",
+    title: "Send a secure message",
+    description: "",
+    nameLabel: "Full Name",
+    namePlaceholder: "e.g. Priya Sharma",
+    phoneLabel: "Phone Number",
+    phoneCountryCode: "+91",
+    phonePlaceholder: "8369207836",
+    emailLabel: "Business Email",
+    emailPlaceholder: "e.g. priya@retailbrand.in",
+    servicesLabel: "Services Required",
+    servicesPlaceholder: "Choose one or more services",
+    budgetLabel: "Budget",
+    budgetPlaceholder: "Select budget",
+    budgetOptions: [
+      "Under Rs. 25,000",
+      "Rs. 25,000 - Rs. 50,000",
+      "Rs. 50,000 - Rs. 1,00,000",
+      "Above Rs. 1,00,000",
+    ],
+    timelineLabel: "Timeline",
+    timelinePlaceholder: "Select timeline",
+    timelineOptions: ["Urgent", "1-2 weeks", "1 month", "Flexible"],
+    messageLabel: "How can we help?",
+    messagePlaceholder:
+      "Tell us about your digital platforms, your timeline, and your specific growth targets...",
+    submitButtonText: "Submit Message",
+    successTitle: "Thank you! Message Received",
+    successMessage:
+      "We've logged your request. One of our growth advisors will reach out to you via email within the next business day.",
+    customFields: [],
+  } as ContactFormConfig,
+
+  // --- SEO & META SETTINGS ---
+  "home.seo": {
+    title: "Hegxcorp — Data-Driven Growth Marketing Agency",
+    description:
+      "Hegxcorp helps businesses generate more leads, sales and revenue through data-driven SEO, paid advertising, web development and conversion optimisation. Serving India, USA, UK and Dubai.",
+    keywords:
+      "digital marketing agency, SEO agency India, PPC agency, web development, growth marketing, Hegxcorp",
+    ogTitle: "Hegxcorp — Data-Driven Growth Marketing Agency",
+    ogDescription:
+      "Generate more leads, sales and revenue through data-driven growth marketing. SEO, Paid Ads, Web Development and CRO.",
+    ogImage: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp",
+    canonicalUrl: "https://hegxcorp.com",
+  } as PageSeoConfig,
+
+  "about.seo": {
+    title: "About Hegxcorp — Digital Transformation & Growth Engineering",
+    description:
+      "Meet Hegxcorp, a digital growth consultancy helping ambitious companies scale through data-driven SEO, paid media, high-performance web systems, and brand strategy.",
+    keywords: "about hegxcorp, growth consultancy, digital agency founders, engineering team",
+    ogTitle: "About Hegxcorp — Digital Transformation & Growth Engineering",
+    ogDescription:
+      "Meet Hegxcorp, a digital growth consultancy helping ambitious companies scale through data-driven SEO, paid media, high-performance web systems, and brand strategy.",
+    ogImage: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp",
+    canonicalUrl: "https://hegxcorp.com/about",
+  } as PageSeoConfig,
+
+  "services.seo": {
+    title: "Growth Engineering & Marketing Services — Hegxcorp",
+    description:
+      "End-to-end digital capabilities designed to compound enterprise value across SEO, paid media, full-stack web development, CRO, and brand engineering.",
+    keywords: "growth services, SEO services, PPC agency, custom web development, CRO agency",
+    ogTitle: "Growth Engineering & Marketing Services — Hegxcorp",
+    ogDescription:
+      "End-to-end digital capabilities designed to compound enterprise value across SEO, paid media, full-stack web development, CRO, and brand engineering.",
+    ogImage: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp",
+    canonicalUrl: "https://hegxcorp.com/services",
+  } as PageSeoConfig,
+
+  "contact.seo": {
+    title: "Contact Hegxcorp — Schedule a Growth Consultation",
+    description:
+      "Get in touch with Hegxcorp's digital transformation consultants. Let's discuss your growth targets, SEO opportunities, and ad performance audit.",
+    keywords:
+      "contact hegxcorp, hire marketing agency, schedule growth audit, consulting consultation",
+    ogTitle: "Contact Hegxcorp — Schedule a Growth Consultation",
+    ogDescription:
+      "Get in touch with Hegxcorp's digital transformation consultants. Let's discuss your growth targets, SEO opportunities, and ad performance audit.",
+    ogImage: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp",
+    canonicalUrl: "https://hegxcorp.com/contact",
+  } as PageSeoConfig,
 };
+
+export interface PageSeoConfig {
+  title: string;
+  description: string;
+  keywords?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  canonicalUrl?: string;
+}
+
+export * from "./sub-services-config";

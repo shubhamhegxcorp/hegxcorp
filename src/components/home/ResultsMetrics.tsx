@@ -11,15 +11,15 @@ export function ResultsMetrics() {
   const tagline = data?.tagline || "Proven Results";
   const heading = data?.heading || "Numbers that prove we deliver.";
   const heroMetric = data?.heroMetric || {
-    ghostNumber: "310",
+    ghostNumber: "700",
     prefix: "+",
-    value: 310,
+    value: 700,
     suffix: "%",
     decimals: 0,
-    title: "Organic Traffic Growth",
-    description: "Average increase across all SEO clients within 12 months of engagement.",
-    linkText: "See the case study",
-    linkUrl: "/case-studies",
+    title: "Peak Organic Traffic Growth",
+    description: "Achieved in 6 months through technical SEO taxonomy restructuring, content clusters, and indexing automation.",
+    linkText: "See the Nivesh case study",
+    linkUrl: "/case-studies/nivesh",
   };
   const supporting = data?.supporting || [];
 

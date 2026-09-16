@@ -3,6 +3,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { getPublishedBlogs } from "@/lib/content/blogs";
 import { blogs as defaultBlogs, type Blog } from "@/data/blogs";
+import { subscribeToNewsletter } from "@/lib/newsletter";
 import {
   Search as SearchIcon,
   ArrowRight,
@@ -10,6 +11,9 @@ import {
   Sparkles,
   Mail,
   TrendingUp,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
 import ShapeGrid from "@/components/ShapeGrid";
 import { motion, AnimatePresence } from "framer-motion";
@@ -54,6 +58,9 @@ function BlogPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [subscribed, setSubscribed] = useState(false);
   const [emailInput, setEmailInput] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [subscribeMessage, setSubscribeMessage] = useState("");
+  const [subscribeError, setSubscribeError] = useState("");
 
   // Combined list: initialized with demo posts so the page renders instantly,
   // then supplements with any database published posts in background.
@@ -144,12 +151,30 @@ function BlogPage() {
 
   const totalPages = Math.ceil(feedArticles.length / articlesPerPage) || 1;
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (emailInput.trim()) {
+    const clean = emailInput.trim();
+    if (!clean || isSubscribing) return;
+
+    setIsSubscribing(true);
+    setSubscribeError("");
+    setSubscribeMessage("");
+
+    try {
+      const res = await subscribeToNewsletter({
+        data: {
+          email: clean,
+          source: "blog_index_sidebar",
+        },
+      });
       setSubscribed(true);
+      setSubscribeMessage(res.message);
       setEmailInput("");
-      setTimeout(() => setSubscribed(false), 5000);
+      setTimeout(() => setSubscribed(false), 8000);
+    } catch (err: any) {
+      setSubscribeError(err?.message || "Could not subscribe. Please try again.");
+    } finally {
+      setIsSubscribing(false);
     }
   };
 
@@ -627,16 +652,19 @@ function BlogPage() {
                         <input
                           type="email"
                           required
+                          disabled={isSubscribing}
                           placeholder="business@email.com"
                           value={emailInput}
                           onChange={(e) => setEmailInput(e.target.value)}
-                          className="w-full rounded-lg border border-[#EAEAEA] bg-white px-3 py-2.5 text-xs text-[#232323] outline-none focus:border-[#FC9C44] transition-all placeholder:text-[#9CA3AF]"
+                          className="w-full rounded-lg border border-[#EAEAEA] bg-white px-3 py-2.5 text-xs text-[#232323] outline-none focus:border-[#FC9C44] transition-all placeholder:text-[#9CA3AF] disabled:opacity-60"
                         />
                         <button
                           type="submit"
-                          className="w-full rounded-lg bg-[#FC9C44] py-2.5 text-xs font-semibold text-white hover:bg-[#E88C35] transition-all cursor-pointer"
+                          disabled={isSubscribing}
+                          className="w-full rounded-lg bg-[#FC9C44] py-2.5 text-xs font-semibold text-white hover:bg-[#E88C35] transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
-                          Subscribe
+                          {isSubscribing && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                          {isSubscribing ? "Subscribing..." : "Subscribe"}
                         </button>
                       </form>
 
@@ -646,9 +674,21 @@ function BlogPage() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0 }}
-                            className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-lg p-2.5 text-center mt-2"
+                            className="text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-left mt-2 flex items-start gap-2"
                           >
-                            ✓ Subscribed! Check your inbox soon.
+                            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                            <span>{subscribeMessage || "Subscribed! Check your inbox soon."}</span>
+                          </motion.div>
+                        )}
+                        {subscribeError && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0 }}
+                            className="text-[11px] font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg p-3 text-left mt-2 flex items-start gap-2"
+                          >
+                            <AlertCircle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />
+                            <span>{subscribeError}</span>
                           </motion.div>
                         )}
                       </AnimatePresence>

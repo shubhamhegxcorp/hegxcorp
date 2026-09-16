@@ -1,7 +1,6 @@
-import { motion } from "framer-motion";
-import { SectionHeading } from "@/components/site/SectionHeading";
 import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 import type { ProcessSection, ProcessStepItem } from "@/lib/cms-config";
+import { ScrollStack } from "@/components/ui/scroll-stack";
 
 const defaultSteps: ProcessStepItem[] = [
   {
@@ -41,19 +40,6 @@ const defaultSteps: ProcessStepItem[] = [
   },
 ];
 
-const rowVariant = {
-  hidden: { opacity: 0, y: 20 },
-  show: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.55,
-      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
-      delay: i * 0.1,
-    },
-  }),
-};
-
 export function Process() {
   const { data } = useWebsiteSection<ProcessSection>("home.process");
   const tagline = data?.tagline || "How We Work";
@@ -62,100 +48,128 @@ export function Process() {
 
   return (
     <section
-      className="bg-[#FAFAF8] overflow-hidden border-b border-[#EAEAEA]"
-      style={{
-        paddingTop: "clamp(64px, 8vw, 110px)",
-        paddingBottom: "clamp(64px, 8vw, 110px)",
-      }}
+      id="how-we-work"
+      className="relative bg-[#FAFAF8] border-b border-[#EAEAEA] scroll-mt-20"
     >
-      <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
-        {/* ── Section Header with Smooth In-View Animation ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{
-            duration: 0.55,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          className="mb-12 lg:mb-16"
-        >
-          <SectionHeading tagline={tagline} heading={heading} />
-        </motion.div>
+      {/* Anchor for alternate url fragments */}
+      <div id="process" className="absolute -top-20" />
 
-        {/* ── Editorial Staggered Process List (Exact Client Success Stories Pattern) ── */}
-        <div className="divide-y divide-[#EAEAEA] border-t border-b border-[#EAEAEA]">
-          {steps.map((step, idx) => (
-            <motion.div
-              key={step.num || idx}
-              custom={idx}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true, margin: "-60px" }}
-              variants={rowVariant}
-              className="group grid grid-cols-1 md:grid-cols-[140px_1fr_260px] lg:grid-cols-[180px_1fr_320px] gap-6 lg:gap-12 py-10 items-start transition-colors duration-200 hover:bg-white/60 -mx-4 px-4 rounded-xl"
-            >
-              {/* ── Left Column: Step Milestone Number & Badge ── */}
-              <div className="shrink-0 flex items-center md:block gap-4">
-                <div
-                  className="text-[clamp(36px,5vw,56px)] font-black text-[#1D2742] group-hover:text-[#FC9C44] leading-none tracking-tight transition-colors duration-200"
+      <ScrollStack
+        variant="stack"
+        scrollLength={0.85}
+        peek={26}
+        scaleStep={0.065}
+        blur={3}
+        dim={0.2}
+        smooth={0.16}
+        depth={3}
+        cardWidth={920}
+        cardHeight={0.62}
+        borderRadius={24}
+        perspective={1400}
+        showProgress={true}
+        showCounter={true}
+        className="w-full"
+        header={
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-2 border-b border-[#EAEAEA]/80">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FC9C44]/10 border border-[#FC9C44]/20 text-[#FC9C44] text-xs font-bold uppercase tracking-[0.14em]">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FC9C44] animate-pulse" />
+                {tagline}
+              </div>
+              <h2
+                className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-black text-[#1D2742] tracking-tight"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              >
+                {heading}
+              </h2>
+            </div>
+            {/* <p className="text-xs sm:text-sm font-medium text-[#6B7280] hidden md:block">
+              Scroll down to explore each phase ↓
+            </p> */}
+          </div>
+        }
+      >
+        {steps.map((step, idx) => (
+          <div
+            key={step.num || idx}
+            className="relative flex h-full w-full flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl border border-[#E5E7EB] bg-white p-6 sm:p-8 lg:p-10 shadow-[0_24px_50px_-15px_rgba(29,39,66,0.12)] transition-all duration-300"
+          >
+            {/* Subtle brand glow accent */}
+            <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 rounded-full bg-radial from-[#FC9C44]/12 via-transparent to-transparent blur-2xl" />
+
+            {/* Top row: Numeral & Phase Badge */}
+            <div className="relative flex items-center justify-between border-b border-[#F3F4F6] pb-4 sm:pb-5">
+              <div className="flex items-center gap-4">
+                <span
+                  className="text-4xl sm:text-5xl lg:text-6xl font-black text-[#1D2742] leading-none tracking-tight"
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                 >
                   {step.num}
-                </div>
-                <div
-                  className="md:mt-2 text-[11px] font-bold tracking-[0.12em] text-[#FC9C44] uppercase"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                  Phase 0{idx + 1}
-                </div>
-              </div>
-
-              {/* ── Middle Column: Title & Description ── */}
-              <div className="space-y-3">
-                <h3
-                  className="text-xl sm:text-2xl font-bold text-[#1D2742] tracking-tight group-hover:text-[#FC9C44] transition-colors duration-200"
-                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                >
-                  {step.title}
-                </h3>
-                <p
-                  className="text-[15px] sm:text-[16px] text-[#4B5563] leading-relaxed max-w-[620px]"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                  {step.desc}
-                </p>
-              </div>
-
-              {/* ── Right Column: Deliverables Chips ── */}
-              {step.deliverables && step.deliverables.length > 0 && (
-                <div className="space-y-2.5">
-                  <div
-                    className="text-[10px] font-bold tracking-[0.14em] text-[#9CA3AF] uppercase"
+                </span>
+                <div className="flex flex-col">
+                  <span
+                    className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#FC9C44]"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
-                    Key Deliverables
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {step.deliverables.map((item) => (
-                      <span
-                        key={item}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-[#EAEAEA] bg-white px-3 py-1.5 text-xs font-semibold text-[#1D2742] shadow-xs group-hover:border-[#FC9C44]/40 transition-colors"
-                        style={{ fontFamily: "'Inter', sans-serif" }}
-                      >
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#FC9C44]" />
-                        {item}
-                      </span>
-                    ))}
-                  </div>
+                    Phase 0{idx + 1}
+                  </span>
+                  <span className="text-xs text-[#9CA3AF]">
+                    Step {idx + 1} of {steps.length}
+                  </span>
                 </div>
-              )}
-            </motion.div>
-          ))}
-        </div>
-      </div>
+              </div>
+
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-1 text-xs font-semibold text-[#1D2742]">
+                <span className="h-2 w-2 rounded-full bg-[#FC9C44]" />
+                Methodology
+              </span>
+            </div>
+
+            {/* Middle row: Phase Title & Description */}
+            <div className="relative my-auto py-4 sm:py-6 space-y-3">
+              <h3
+                className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1D2742] tracking-tight"
+                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+              >
+                {step.title}
+              </h3>
+              <p
+                className="text-[15px] sm:text-[17px] text-[#4B5563] leading-relaxed max-w-[680px]"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                {step.desc}
+              </p>
+            </div>
+
+            {/* Bottom row: Deliverables Chips */}
+            {step.deliverables && step.deliverables.length > 0 && (
+              <div className="relative border-t border-[#F3F4F6] pt-4 sm:pt-5 space-y-2.5">
+                <div
+                  className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#9CA3AF]"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  Key Deliverables
+                </div>
+                <div className="flex flex-wrap gap-2 sm:gap-2.5">
+                  {step.deliverables.map((item) => (
+                    <span
+                      key={item}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-[#FAFAF8] px-3 py-1.5 text-xs sm:text-[13px] font-semibold text-[#1D2742] transition-colors hover:border-[#FC9C44]/40"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#FC9C44]" />
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </ScrollStack>
     </section>
   );
 }
 
-
+export default Process;

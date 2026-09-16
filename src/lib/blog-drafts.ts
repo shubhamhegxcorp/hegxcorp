@@ -71,3 +71,10 @@ export const listPublishedBlogDrafts = createServerFn({ method: "POST" }).handle
   const { listPublishedBlogDrafts: list } = await import("./blog-drafts.server");
   return list();
 });
+
+export const getPublishedBlogDraftBySlug = createServerFn({ method: "POST" })
+  .validator(z.object({ slug: z.string().min(1) }))
+  .handler(async ({ data }) => {
+    const { getPublishedBlogDraftBySlug: getBySlug } = await import("./blog-drafts.server");
+    return getBySlug(data.slug);
+  });

@@ -23,6 +23,8 @@ import similarwebLogo from "@/assets/about/similarweb-logo.webp";
 import ShapeGrid from "@/components/ShapeGrid";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
+import { PageSEO } from "@/components/site/PageSEO";
+import { BreadcrumbSchema } from "@/components/site/StructuredData";
 import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
 export const Route = createFileRoute("/about")({
@@ -115,6 +117,12 @@ function AboutPage() {
   const { data: ctaData } = useWebsiteSection("about.cta");
   return (
     <div className="min-h-screen  bg-white text-[#06133D]">
+      <PageSEO
+        sectionKey="about.seo"
+        fallbackTitle="About Hegxcorp — Digital Transformation & Growth Engineering"
+        fallbackDescription="Meet Hegxcorp, a digital growth consultancy helping ambitious companies scale through data-driven SEO, paid media, high-performance web systems, and brand strategy."
+      />
+      <BreadcrumbSchema items={[{ name: "About Us", item: "https://hegxcorp.com/about" }]} />
       <Header />
 
       <main>
@@ -172,7 +180,9 @@ function AboutPage() {
               <div className="absolute -inset-4 -z-10 rounded-[2rem] bg-[#FFF4E8]" />
               <img
                 src={whoWeAreData.imageUrl || hegxcorpStory}
-                alt={whoWeAreData.title || "Hegxcorp team collaborating on a global digital strategy"}
+                alt={
+                  whoWeAreData.title || "Hegxcorp team collaborating on a global digital strategy"
+                }
                 className="aspect-[4/3] w-full rounded-[1.75rem] object-cover shadow-[0_24px_70px_rgba(6,19,61,0.16)]"
               />
             </div>
@@ -236,7 +246,9 @@ function AboutPage() {
             <div>
               <img
                 src={ourMissionData.imageUrl || ourMission}
-                alt={ourMissionData.title || "A connected world illustrating Hegxcorp's global mission"}
+                alt={
+                  ourMissionData.title || "A connected world illustrating Hegxcorp's global mission"
+                }
                 className="aspect-[4/3] w-full rounded-[1.75rem] object-cover shadow-2xl ring-1 ring-white/10"
               />
             </div>

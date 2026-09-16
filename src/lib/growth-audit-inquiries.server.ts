@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { assertAdminSession } from "./admin-auth.server";
 import { getDbClient } from "./db.server";
 import { cleanLeadSourceData } from "./lead-source";
+import { cleanOptional } from "./text-cleanup";
 import type { GrowthAuditInquiry, GrowthAuditInquiryInput } from "./growth-audit-inquiries";
 import type { InquiryStatus } from "./contact-inquiries";
 
@@ -60,14 +61,14 @@ export async function createGrowthAuditInquiry(input: GrowthAuditInquiryInput) {
       ${input.name.trim()},
       ${input.email.trim().toLowerCase()},
       ${input.website.trim()},
-      ${input.visitorId?.trim() || null},
-      ${leadSourceData.leadSource?.trim() || null},
-      ${leadSourceData.leadMedium?.trim() || null},
-      ${leadSourceData.leadCampaign?.trim() || null},
-      ${leadSourceData.leadAdSet?.trim() || null},
-      ${leadSourceData.leadAd?.trim() || null},
-      ${leadSourceData.leadLandingPage?.trim() || null},
-      ${leadSourceData.leadReferrer?.trim() || null},
+      ${cleanOptional(input.visitorId)},
+      ${cleanOptional(leadSourceData.leadSource)},
+      ${cleanOptional(leadSourceData.leadMedium)},
+      ${cleanOptional(leadSourceData.leadCampaign)},
+      ${cleanOptional(leadSourceData.leadAdSet)},
+      ${cleanOptional(leadSourceData.leadAd)},
+      ${cleanOptional(leadSourceData.leadLandingPage)},
+      ${cleanOptional(leadSourceData.leadReferrer)},
       ${input.revenueRange.trim()},
       ${input.goal.trim()},
       now()

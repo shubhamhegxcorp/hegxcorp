@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { PageSEO } from "@/components/site/PageSEO";
+import { BreadcrumbSchema } from "@/components/site/StructuredData";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { Check, ChevronDown, Mail, MapPin, Phone, Send, Sparkles } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -8,6 +10,7 @@ import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Toaster, toast } from "sonner";
+import { DEFAULT_CMS_SECTIONS, type ContactFormConfig } from "@/lib/cms-config";
 import {
   type ClipboardEvent,
   type KeyboardEvent,
@@ -190,7 +193,18 @@ function ContactPage() {
   const { data: heroData } = useWebsiteSection("contact.hero");
   const { data: detailsData } = useWebsiteSection("contact.details");
   const { data: serviceGroupsData } = useWebsiteSection("contact.serviceGroups");
+  const { data: rawFormData } = useWebsiteSection<ContactFormConfig>("contact.form");
 
+  const defaultFormData = DEFAULT_CMS_SECTIONS["contact.form"] as ContactFormConfig;
+  const formData: ContactFormConfig = {
+    ...defaultFormData,
+    ...(rawFormData || {}),
+    budgetOptions: rawFormData?.budgetOptions ?? defaultFormData.budgetOptions,
+    timelineOptions: rawFormData?.timelineOptions ?? defaultFormData.timelineOptions,
+    customFields: rawFormData?.customFields ?? defaultFormData.customFields,
+  };
+
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const serviceDropdownRef = useRef<HTMLDivElement>(null);
@@ -246,10 +260,27 @@ function ContactPage() {
 
   const onSubmit = async (data: ContactFormValues) => {
     try {
+      const activePhoneCountryCode = formData.phoneCountryCode || defaultPhoneCountryCode;
+      let finalMessage = data.message;
+      const customEntries = Object.entries(customFieldValues).filter(([_, v]) =>
+        Boolean(v && v.trim()),
+      );
+      if (customEntries.length > 0) {
+        finalMessage +=
+          "\n\n--- Additional Information ---\n" +
+          customEntries
+            .map(([fId, val]) => {
+              const def = (formData.customFields || []).find((f) => f.id === fId);
+              return `${def?.label || fId}: ${val}`;
+            })
+            .join("\n");
+      }
+
       await submitContactInquiry({
         data: {
           ...data,
-          phone: `${defaultPhoneCountryCode} ${data.phone}`,
+          message: finalMessage,
+          phone: `${activePhoneCountryCode} ${data.phone}`,
           visitorId: getVisitorId(),
           leadSourceData: getLeadSourceData(),
           source: "Contact page",
@@ -265,13 +296,16 @@ function ContactPage() {
         },
         {
           email: data.email,
-          phone: `${defaultPhoneCountryCode} ${data.phone}`,
+          phone: `${activePhoneCountryCode} ${data.phone}`,
         },
       );
-      toast.success("Message saved successfully! Our growth strategists will contact you shortly.");
+      toast.success(
+        "Message saved successfully! Our growth strategists will contact you shortly.",
+      );
       setIsSubmitted(true);
       setIsServiceOpen(false);
       reset();
+      setCustomFieldValues({});
     } catch (error) {
       console.error("Contact form failed:", error);
       toast.error("We could not save your message. Please try again.");
@@ -289,6 +323,12 @@ function ContactPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-between">
+      <PageSEO
+        sectionKey="contact.seo"
+        fallbackTitle="Contact Our Growth Consulting Team | Hegxcorp"
+        fallbackDescription="Get in touch with Hegxcorp's digital transformation consultants. Schedule a strategic consultation to discuss SEO opportunities, paid advertising, and web architecture."
+      />
+      <BreadcrumbSchema items={[{ name: "Contact", item: "https://hegxcorp.com/contact" }]} />
       <div>
         <Header />
         <Toaster position="top-right" richColors />
@@ -321,6 +361,7 @@ function ContactPage() {
               >
                 <div className="space-y-6">
                   <SectionHeading
+                    as="h1"
                     tagline={heroData.tagline}
                     heading={heroData.title}
                     description={heroData.description}
@@ -433,10 +474,10 @@ function ContactPage() {
                     className="text-lg font-bold text-[#232323]"
                     style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                   >
-                    Send a secure message
+                    {formData.title || "Send a secure message"}
                   </h3>
                   <span className="rounded-full border border-[#F5D5B6] bg-white px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-[#FC9C44]">
-                    Fast reply
+                    {formData.badge || "Fast reply"}
                   </span>
                 </div>
 
@@ -449,14 +490,14 @@ function ContactPage() {
                       className="text-base font-bold text-[#232323]"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
-                      Thank you! Message Received
+                      {formData.successTitle || "Thank you! Message Received"}
                     </h4>
                     <p
                       className="text-sm text-[#6B7280] leading-relaxed max-w-[340px] mx-auto"
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     >
-                      We've logged your request. One of our growth advisors will reach out to you
-                      via email within the next business day.
+                      {formData.successMessage ||
+                        "We've logged your request. One of our growth advisors will reach out to you via email within the next business day."}
                     </p>
                     <button
                       onClick={() => setIsSubmitted(false)}
@@ -478,12 +519,12 @@ function ContactPage() {
                           className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]"
                           style={{ fontFamily: "'Inter', sans-serif" }}
                         >
-                          Full Name
+                          {formData.nameLabel || "Full Name"}
                         </label>
                         <input
                           type="text"
                           id="name"
-                          placeholder="e.g. Priya Sharma"
+                          placeholder={formData.namePlaceholder || "e.g. Priya Sharma"}
                           {...register("name", { onChange: () => clearErrors("name") })}
                           onKeyDown={(event) =>
                             blockInvalidNameKey(event, () =>
@@ -519,17 +560,17 @@ function ContactPage() {
                           className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]"
                           style={{ fontFamily: "'Inter', sans-serif" }}
                         >
-                          Phone Number
+                          {formData.phoneLabel || "Phone Number"}
                         </label>
                         <div className={getPhoneFieldClass(Boolean(errors.phone))}>
                           <span className="inline-flex items-center border-r border-[#EAEAEA] bg-[#F9FAFB] px-4 text-sm font-bold text-[#06133D]">
-                            {defaultPhoneCountryCode}
+                            {formData.phoneCountryCode || defaultPhoneCountryCode}
                           </span>
                           <input
                             type="tel"
                             id="phone"
                             inputMode="numeric"
-                            placeholder="8369207836"
+                            placeholder={formData.phonePlaceholder || "8369207836"}
                             {...register("phone", { onChange: () => clearErrors("phone") })}
                             onKeyDown={(event) =>
                               blockInvalidPhoneKey(event, () =>
@@ -567,12 +608,12 @@ function ContactPage() {
                         className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]"
                         style={{ fontFamily: "'Inter', sans-serif" }}
                       >
-                        Business Email
+                        {formData.emailLabel || "Business Email"}
                       </label>
                       <input
                         type="email"
                         id="email"
-                        placeholder="e.g. priya@retailbrand.in"
+                        placeholder={formData.emailPlaceholder || "e.g. priya@retailbrand.in"}
                         {...register("email")}
                         className={getFieldClass(Boolean(errors.email))}
                       />
@@ -591,7 +632,7 @@ function ContactPage() {
                         className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]"
                         style={{ fontFamily: "'Inter', sans-serif" }}
                       >
-                        Services Required
+                        {formData.servicesLabel || "Services Required"}
                       </label>
                       <div ref={serviceDropdownRef} className="relative">
                         <button
@@ -608,7 +649,7 @@ function ContactPage() {
                           >
                             {selectedServices.length
                               ? `${selectedServices.length} service${selectedServices.length > 1 ? "s" : ""} selected`
-                              : "Choose one or more services"}
+                              : (formData.servicesPlaceholder || "Choose one or more services")}
                           </span>
                           <ChevronDown
                             className={`h-4 w-4 text-[#FC9C44] transition-transform ${isServiceOpen ? "rotate-180" : ""}`}
@@ -682,20 +723,19 @@ function ContactPage() {
                           className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]"
                           style={{ fontFamily: "'Inter', sans-serif" }}
                         >
-                          Budget
+                          {formData.budgetLabel || "Budget"}
                         </label>
                         <select
                           id="budget"
                           {...register("budget")}
                           className={getSelectClass(Boolean(errors.budget))}
                         >
-                          <option value="">Select budget</option>
-                          <option value="Under Rs. 25,000">Under Rs. 25,000</option>
-                          <option value="Rs. 25,000 - Rs. 50,000">Rs. 25,000 - Rs. 50,000</option>
-                          <option value="Rs. 50,000 - Rs. 1,00,000">
-                            Rs. 50,000 - Rs. 1,00,000
-                          </option>
-                          <option value="Above Rs. 1,00,000">Above Rs. 1,00,000</option>
+                          <option value="">{formData.budgetPlaceholder || "Select budget"}</option>
+                          {(formData.budgetOptions || []).map((b) => (
+                            <option key={b} value={b}>
+                              {b}
+                            </option>
+                          ))}
                         </select>
                         {errors.budget && (
                           <p
@@ -713,18 +753,21 @@ function ContactPage() {
                           className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]"
                           style={{ fontFamily: "'Inter', sans-serif" }}
                         >
-                          Timeline
+                          {formData.timelineLabel || "Timeline"}
                         </label>
                         <select
                           id="timeline"
                           {...register("timeline")}
                           className={getSelectClass(Boolean(errors.timeline))}
                         >
-                          <option value="">Select timeline</option>
-                          <option value="Urgent">Urgent</option>
-                          <option value="1-2 weeks">1-2 weeks</option>
-                          <option value="1 month">1 month</option>
-                          <option value="Flexible">Flexible</option>
+                          <option value="">
+                            {formData.timelinePlaceholder || "Select timeline"}
+                          </option>
+                          {(formData.timelineOptions || []).map((t) => (
+                            <option key={t} value={t}>
+                              {t}
+                            </option>
+                          ))}
                         </select>
                         {errors.timeline && (
                           <p
@@ -737,18 +780,89 @@ function ContactPage() {
                       </div>
                     </div>
 
+                    {/* Dynamic Custom Form Fields (Managed via CMS) */}
+                    {(formData.customFields || []).length > 0 && (
+                      <div className="space-y-4 pt-1">
+                        {(formData.customFields || []).map((cf) => (
+                          <div key={cf.id} className="space-y-1.5">
+                            <label
+                              htmlFor={cf.id}
+                              className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]"
+                              style={{ fontFamily: "'Inter', sans-serif" }}
+                            >
+                              {cf.label} {cf.required && <span className="text-red-500">*</span>}
+                            </label>
+                            {cf.type === "textarea" ? (
+                              <textarea
+                                id={cf.id}
+                                rows={3}
+                                placeholder={cf.placeholder}
+                                value={customFieldValues[cf.id] || ""}
+                                onChange={(e) =>
+                                  setCustomFieldValues((prev) => ({
+                                    ...prev,
+                                    [cf.id]: e.target.value,
+                                  }))
+                                }
+                                required={cf.required}
+                                className={`${fieldBaseClass} resize-none`}
+                              />
+                            ) : cf.type === "select" ? (
+                              <select
+                                id={cf.id}
+                                value={customFieldValues[cf.id] || ""}
+                                onChange={(e) =>
+                                  setCustomFieldValues((prev) => ({
+                                    ...prev,
+                                    [cf.id]: e.target.value,
+                                  }))
+                                }
+                                required={cf.required}
+                                className={selectBaseClass}
+                              >
+                                <option value="">{cf.placeholder || "Select option"}</option>
+                                {(cf.options || []).map((opt) => (
+                                  <option key={opt} value={opt}>
+                                    {opt}
+                                  </option>
+                                ))}
+                              </select>
+                            ) : (
+                              <input
+                                type={cf.type}
+                                id={cf.id}
+                                placeholder={cf.placeholder}
+                                value={customFieldValues[cf.id] || ""}
+                                onChange={(e) =>
+                                  setCustomFieldValues((prev) => ({
+                                    ...prev,
+                                    [cf.id]: e.target.value,
+                                  }))
+                                }
+                                required={cf.required}
+                                className={fieldBaseClass}
+                              />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
                     <div className="space-y-1.5">
                       <label
                         htmlFor="message"
                         className="block text-xs font-bold uppercase tracking-wider text-[#6B7280]"
                         style={{ fontFamily: "'Inter', sans-serif" }}
                       >
-                        How can we help?
+                        {formData.messageLabel || "How can we help?"}
                       </label>
                       <textarea
                         id="message"
                         rows={5}
-                        placeholder="Tell us about your digital platforms, your timeline, and your specific growth targets..."
+                        placeholder={
+                          formData.messagePlaceholder ||
+                          "Tell us about your digital platforms, your timeline, and your specific growth targets..."
+                        }
                         {...register("message")}
                         className={`${getFieldClass(Boolean(errors.message))} resize-none`}
                       />
@@ -774,7 +888,7 @@ function ContactPage() {
                         </>
                       ) : (
                         <>
-                          <span>Submit Message</span>
+                          <span>{formData.submitButtonText || "Submit Message"}</span>
                           <Send className="h-4 w-4" />
                         </>
                       )}

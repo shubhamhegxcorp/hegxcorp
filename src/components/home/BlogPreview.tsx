@@ -51,21 +51,14 @@ export function BlogPreview() {
 
   // Use custom CMS override if filled, otherwise fall back to featured blog
   const title =
-    data?.customTitle?.trim() ||
-    featuredArticle?.title ||
-    "How AI Search Changes Rankings";
+    data?.customTitle?.trim() || featuredArticle?.title || "How AI Search Changes Rankings";
   const excerpt =
     data?.customExcerpt?.trim() ||
     featuredArticle?.excerpt ||
     "A technical breakdown of semantic search index shifts and how search algorithms evaluate topical authority inside generative answers.";
   const slug =
-    data?.customSlug?.trim() ||
-    featuredArticle?.slug ||
-    "how-ai-search-reshapes-organic-traffic";
-  const imageSrc =
-    data?.customImage?.trim() ||
-    featuredArticle?.featuredImage ||
-    aisearch;
+    data?.customSlug?.trim() || featuredArticle?.slug || "how-ai-search-reshapes-organic-traffic";
+  const imageSrc = data?.customImage?.trim() || featuredArticle?.featuredImage || aisearch;
 
   return (
     <section
@@ -86,11 +79,7 @@ export function BlogPreview() {
         >
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-            <SectionHeading
-              tagline={tagline}
-              heading={heading}
-              description={description}
-            />
+            <SectionHeading tagline={tagline} heading={heading} description={description} />
             <motion.div
               whileHover={{ scale: 1.03 }}
               transition={{ duration: 0.2 }}

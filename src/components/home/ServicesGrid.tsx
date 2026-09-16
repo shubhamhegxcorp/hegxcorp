@@ -1,51 +1,11 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { useWebsiteSection } from "@/hooks/useWebsiteContent";
-
-/* ─────────────────────────────────────────────────────────────
-   BLUEPRINT CONNECTOR SVG — updated for 2+4 layout
-   Row 1 (featured): SEO @ x=0.25, PPC @ x=0.75,  y ≈ 0.28
-   Row 2 (standard): WEB @ x=0.125, CRO @ x=0.375,
-                     BRAND @ x=0.625, SMM @ x=0.875, y ≈ 0.78
-───────────────────────────────────────────────────────────── */
-function SystemConnections() {
-  const lines: [number, number, number, number][] = [
-    // Featured row horizontal
-    [0.25, 0.28, 0.75, 0.28],
-    // Standard row horizontals
-    [0.125, 0.78, 0.375, 0.78],
-    [0.375, 0.78, 0.625, 0.78],
-    [0.625, 0.78, 0.875, 0.78],
-    // Verticals: featured → standard
-    [0.25, 0.28, 0.25, 0.78],
-    [0.75, 0.28, 0.75, 0.78],
-  ];
-
-  return (
-    <svg
-      className="absolute inset-0 w-full h-full pointer-events-none select-none"
-      viewBox="0 0 1 1"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      {lines.map(([x1, y1, x2, y2], i) => (
-        <line
-          key={i}
-          x1={x1}
-          y1={y1}
-          x2={x2}
-          y2={y2}
-          stroke="#FC9C44"
-          strokeWidth="1"
-          opacity="0.08"
-          vectorEffect="non-scaling-stroke"
-        />
-      ))}
-    </svg>
-  );
-}
+import { ShaderCard } from "@/components/ui/shader-card";
+import { ServicesMobilePageFlip } from "@/components/home/ServicesMobilePageFlip";
 
 /* ─────────────────────────────────────────────────────────────
    SERVICE VISUAL PANELS
@@ -56,10 +16,24 @@ function SystemConnections() {
 /** SEO — authority bars + compounding growth line */
 function SEOVisual() {
   return (
-    <div className="relative w-full flex flex-col gap-2">
+    <div className="w-full flex flex-col gap-2.5">
+      {/* Proof point header — dedicated top row so bars never overlap or cover +310% */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-[9px] font-mono text-[#9CA3AF] uppercase tracking-wider">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#FC9C44] animate-pulse" />
+          Keyword Authority
+        </div>
+        <div className="rounded-md border border-[#FC9C44]/20 bg-[#FFF8F2] px-2 py-0.5 text-right shadow-xs">
+          <div className="text-[18px] font-bold text-[#FC9C44] leading-none font-mono">+310%</div>
+          <div className="text-[8px] font-semibold text-[#C96A13] font-mono uppercase tracking-wider mt-0.5">
+            Organic Growth
+          </div>
+        </div>
+      </div>
+
       {/* Bar chart — keyword authority */}
-      <div className="flex items-end gap-[3px] h-14">
-        {[32, 50, 42, 64, 54, 74, 62, 82, 70, 92].map((h, i) => (
+      <div className="flex items-end gap-[3px] h-12">
+        {[24, 38, 32, 48, 40, 56, 46, 62, 52, 68].map((h, i) => (
           <motion.div
             key={i}
             className="flex-1 rounded-[2px] bg-[#FC9C44]"
@@ -78,14 +52,14 @@ function SEOVisual() {
           >
             <div
               className="w-full"
-              style={{ height: `${h * 0.56}px`, transformOrigin: "bottom" }}
+              style={{ height: `${h * 0.52}px`, transformOrigin: "bottom" }}
             />
           </motion.div>
         ))}
       </div>
 
       {/* Growth curve */}
-      <svg viewBox="0 0 200 36" className="w-full h-8" preserveAspectRatio="none">
+      <svg viewBox="0 0 200 32" className="w-full h-7" preserveAspectRatio="none">
         <defs>
           <linearGradient id="seo-g" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor="#FC9C44" stopOpacity="0.2" />
@@ -93,11 +67,11 @@ function SEOVisual() {
           </linearGradient>
         </defs>
         <path
-          d="M0 34 C30 30, 60 22, 90 14 S140 5, 170 3 S190 2, 200 1 V36 H0 Z"
+          d="M0 30 C30 26, 60 18, 90 12 S140 4, 170 2 S190 1, 200 1 V32 H0 Z"
           fill="url(#seo-g)"
         />
         <motion.path
-          d="M0 34 C30 30, 60 22, 90 14 S140 5, 170 3 S190 2, 200 1"
+          d="M0 30 C30 26, 60 18, 90 12 S140 4, 170 2 S190 1, 200 1"
           fill="none"
           stroke="#FC9C44"
           strokeWidth="1.6"
@@ -108,12 +82,6 @@ function SEOVisual() {
           transition={{ duration: 1.4, ease: "easeInOut", delay: 0.2 }}
         />
       </svg>
-
-      {/* Proof point */}
-      <div className="absolute -top-1 right-0 text-right">
-        <div className="text-[20px] font-bold text-[#FC9C44] leading-none font-mono">+310%</div>
-        <div className="text-[8px] text-[#9CA3AF] font-mono">Organic Growth</div>
-      </div>
     </div>
   );
 }
@@ -391,6 +359,7 @@ const services = [
 ];
 
 /* ─────────────────────────────────────────────────────────────
+
    ANIMATION VARIANTS
 ───────────────────────────────────────────────────────────── */
 const cardVariant = {
@@ -407,20 +376,10 @@ const cardVariant = {
 };
 
 /* ─────────────────────────────────────────────────────────────
-   SERVICE CARD
-   size="featured"  — SEO + PPC: 2-col row, taller visual, larger title
-   size="standard"  — WEB, CRO, BRAND, SMM: 4-col row, compact
+   SERVICE CARD (with WebGL Shader Fire effect on hover)
 ───────────────────────────────────────────────────────────── */
-function ServiceCard({
-  s,
-  i,
-  size = "standard",
-}: {
-  s: (typeof services)[number];
-  i: number;
-  size?: "featured" | "standard";
-}) {
-  const isFeatured = size === "featured";
+function ServiceCard({ s, i }: { s: (typeof services)[number]; i: number }) {
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <motion.div
@@ -429,68 +388,111 @@ function ServiceCard({
       whileInView="show"
       viewport={{ once: true, margin: "-60px" }}
       variants={cardVariant}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       whileHover={{
-        y: -5,
-        borderColor: "rgba(252,156,68,0.45)",
-        boxShadow: "0 0 0 1px rgba(252,156,68,0.12), 0 20px 40px -16px rgba(29,39,66,0.09)",
-        transition: { duration: 0.2, ease: "easeOut" },
+        y: -6,
+        borderColor: "rgba(252,156,68,0.6)",
+        boxShadow:
+          "0 0 0 1px rgba(252,156,68,0.25), 0 24px 50px -14px rgba(252,156,68,0.18), 0 12px 30px -10px rgba(29,39,66,0.1)",
+        transition: { duration: 0.25, ease: "easeOut" },
       }}
-      className="group rounded-2xl border border-[#EAEAEA] bg-white overflow-hidden flex flex-col cursor-pointer"
+      className="group rounded-2xl border border-[#EAEAEA] bg-white overflow-hidden flex flex-col cursor-pointer transition-colors duration-300 min-h-[490px]"
     >
       <Link to={s.href} className="flex flex-col h-full">
-        {/* Browser chrome = card top edge */}
-        <div className="flex items-center gap-1.5 px-3.5 py-2.5 bg-[#FAFAF8] border-b border-[#EAEAEA] select-none shrink-0">
-          <span className="h-2 w-2 rounded-full bg-[#FC9C44]/50" />
+        {/* Browser chrome top bar */}
+        <div className="flex items-center gap-1.5 px-4 py-3 bg-[#FAFAF8] border-b border-[#EAEAEA] select-none shrink-0">
+          <span className="h-2 w-2 rounded-full bg-[#FC9C44]/70" />
           <span className="h-2 w-2 rounded-full bg-[#E5E7EB]" />
           <span className="h-2 w-2 rounded-full bg-[#E5E7EB]" />
-          <span className="ml-2 text-[8px] text-[#C4C9D4] font-mono truncate flex-1">{s.url}</span>
-          <span className="h-1.5 w-1.5 rounded-full bg-[#EAEAEA] group-hover:bg-emerald-400 transition-colors duration-300 shrink-0" />
-        </div>
-
-        {/* Visual panel — taller for featured, compact for standard */}
-        <div
-          className={`border-b border-[#F3F4F6] bg-white ${
-            isFeatured ? "px-4 sm:px-6 pt-5 sm:pt-6 pb-4 sm:pb-5" : "px-3 sm:px-4 pt-3 sm:pt-4 pb-2 sm:pb-3"
-          }`}
-          style={{ minHeight: isFeatured ? "clamp(150px, 20vw, 200px)" : "clamp(120px, 15vw, 140px)" }}
-        >
-          <s.Visual />
-        </div>
-
-        {/* Text panel */}
-        <div className={`flex flex-col flex-1 gap-2 ${isFeatured ? "p-5" : "p-4"}`}>
+          <span className="ml-2 text-[9px] text-[#9CA3AF] font-mono truncate flex-1">{s.url}</span>
           <span
-            className="text-[10px] font-bold tracking-[0.14em] text-[#FC9C44]"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            {s.slug}
-          </span>
+            className={`h-2 w-2 rounded-full transition-colors duration-300 shrink-0 ${
+              isHovered ? "bg-[#FC9C44] animate-pulse" : "bg-emerald-400"
+            }`}
+          />
+        </div>
 
-          <h3
-            className="font-bold text-[#232323] leading-snug"
+        {/* Visual / Graph Panel with WebGL Fire Shader on hover */}
+        <div
+          className={`relative overflow-hidden border-b border-[#F3F4F6] h-[215px] sm:h-[235px] shrink-0 transition-colors duration-500 ease-out ${
+            isHovered ? "bg-[#0A0D14]" : "bg-[#FAFAF8]"
+          }`}
+        >
+          {/* WebGL Animated Fire Shader (Reveals on Hover) */}
+          <div
+            className="absolute inset-0 pointer-events-none transition-opacity duration-500 ease-out z-10"
             style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: isFeatured ? "18px" : "14px",
+              opacity: isHovered ? 1 : 0,
+              visibility: isHovered ? "visible" : "hidden",
             }}
           >
-            {s.title}
-          </h3>
+            <ShaderCard
+              hoverOnly={false}
+              autoPlay={true}
+              color="#FC9C44"
+              speed={0.85}
+              scale={2.6}
+              positionY={0.25}
+              effectRadius={0.95}
+              effectBoost={0.7}
+              branchIntensity={2.4}
+              noiseScale={1.6}
+              className="w-full h-full bg-transparent"
+            />
+            {/* Fiery ambient badge overlay */}
+            <div className="absolute inset-0 flex items-center justify-center bg-radial from-transparent via-black/15 to-black/65 pointer-events-none">
+              <div className="px-3.5 py-1.5 rounded-full bg-black/85 backdrop-blur-md border border-[#FC9C44]/60 text-[#FC9C44] text-[11px] font-mono font-bold tracking-wider uppercase flex items-center gap-2 shadow-2xl">
+                <span className="w-2 h-2 rounded-full bg-[#FC9C44] animate-ping" />
+                <span>{s.slug} Acceleration</span>
+              </div>
+            </div>
+          </div>
 
-          <p
-            className={`text-[#6B7280] leading-relaxed flex-1 ${
-              isFeatured ? "text-[13px]" : "text-[12px] line-clamp-2"
-            }`}
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            {s.desc}
-          </p>
+          {/* Default Graph / Visual Panel (Shown when not hovered, completely removed on hover) */}
+          {!isHovered && (
+            <div className="absolute inset-0 p-5 sm:p-6 flex items-center justify-center bg-white pointer-events-none z-0">
+              <s.Visual />
+            </div>
+          )}
+        </div>
+
+        {/* Text panel — wider, taller, no line truncation */}
+        <div className="flex flex-col flex-1 p-6 sm:p-7 gap-3 bg-white justify-between">
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-bold tracking-[0.14em] text-[#FC9C44] uppercase font-mono px-2.5 py-0.5 rounded-full bg-[#FC9C44]/10 border border-[#FC9C44]/20">
+                {s.slug}
+              </span>
+              <span className="text-[11px] font-mono text-[#9CA3AF]">Capability 0{i + 1}</span>
+            </div>
+
+            <h3
+              className="font-bold text-[#1D2742] leading-snug text-lg sm:text-xl"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              {s.title}
+            </h3>
+
+            <p
+              className="text-[#4B5563] text-sm leading-relaxed"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              {s.desc}
+            </p>
+          </div>
 
           {/* CTA — slides in on hover */}
-          <div
-            className="flex items-center gap-1.5 text-xs font-semibold text-[#FC9C44] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-[opacity,transform] duration-200 ease-out"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            Learn more <ArrowRight className="h-3 w-3" />
+          <div className="pt-4 border-t border-[#F3F4F6] flex items-center justify-between">
+            <span
+              className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#1D2742] group-hover:text-[#FC9C44] transition-colors"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              <span>Explore capability</span>
+              <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1.5 text-[#FC9C44]" />
+            </span>
+
+            <span className="text-[10px] font-mono text-[#9CA3AF]">Enterprise Ready</span>
           </div>
         </div>
       </Link>
@@ -518,13 +520,12 @@ export function ServicesGrid() {
     Visual: visualMap[item.slug] || WebDevVisual,
   }));
 
-  const featured = mappedServices.slice(0, 2); // SEO + PPC
-  const standard = mappedServices.slice(2); // WEB, CRO, BRAND, SMM
   return (
     <section
-      className="bg-[#FAFAF8] overflow-hidden"
+      id="services"
+      className="bg-[#FAFAF8]"
       style={{
-        paddingTop: "clamp(10px, 2vw, 20px)",
+        paddingTop: "clamp(24px, 4vw, 48px)",
         paddingBottom: "clamp(64px, 8vw, 120px)",
       }}
     >
@@ -538,7 +539,7 @@ export function ServicesGrid() {
             duration: 0.6,
             ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
           }}
-          className="mb-14 flex flex-col md:flex-row md:items-end md:justify-between gap-6"
+          className="mb-12 sm:mb-16 flex flex-col md:flex-row md:items-end md:justify-between gap-6"
         >
           <SectionHeading
             tagline={sectionData.tagline}
@@ -560,26 +561,16 @@ export function ServicesGrid() {
           </motion.div>
         </motion.div>
 
-        {/* Grid wrapper with blueprint connectors behind */}
-        <div className="relative flex flex-col gap-5">
-          {/* Blueprint SVG — behind both rows, desktop only */}
-          <div className="absolute inset-0 z-0 pointer-events-none hidden lg:block">
-            <SystemConnections />
-          </div>
+        {/* ── Mobile View: 3D PageFlip Book (Scroll-driven & Click/Tap) ── */}
+        <div className="block lg:hidden">
+          <ServicesMobilePageFlip services={mappedServices} />
+        </div>
 
-          {/* ── Row 1: Featured — SEO + PPC (2 wide cards) ── */}
-          <div className="relative z-10 grid sm:grid-cols-2 gap-5">
-            {featured.map((s: any, i: number) => (
-              <ServiceCard key={s.slug} s={s} i={i} size="featured" />
-            ))}
-          </div>
-
-          {/* ── Row 2: Standard — WEB, CRO, BRAND, SMM (4 compact cards) ── */}
-          <div className="relative z-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {standard.map((s: any, i: number) => (
-              <ServiceCard key={s.slug} s={s} i={i + 2} size="standard" />
-            ))}
-          </div>
+        {/* ── Desktop View: 3-Column Wide & Tall Responsive Grid (6 Capabilities) ── */}
+        <div className="relative z-10 hidden lg:grid lg:grid-cols-3 gap-6 lg:gap-8">
+          {mappedServices.map((s: any, i: number) => (
+            <ServiceCard key={s.slug} s={s} i={i} />
+          ))}
         </div>
       </div>
     </section>

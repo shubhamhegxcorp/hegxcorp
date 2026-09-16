@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { PostCategoryPicker } from "@/components/admin/CategorySidebar";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { TagInput } from "@/components/admin/TagInput";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { getBlogDraft, saveBlogDraft } from "@/lib/blog-drafts";
 import { generateId } from "@/lib/id";
 
@@ -74,9 +75,7 @@ function CreateBlogPage() {
   const [saving, setSaving] = useState(false);
 
   // featured image upload
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
 
   // categories — PostCategoryPicker owns persistence; this just needs to
   // accept restored names into the list without changing what's selected.
@@ -110,32 +109,6 @@ function CreateBlogPage() {
       toast.error("Could not publish. Please try again.");
     } finally {
       setSaving(false);
-    }
-  }
-  function readFileAsDataUrl(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  }
-
-  async function handleImageFile(file: File | undefined) {
-    if (!file || !file.type.startsWith("image/")) return;
-    setImageFile(file);
-    // Read the picked file as a base64 data URL rather than an object URL.
-    // A blob: object URL is revoked on reload and cannot be serialized into
-    // the saved draft, so it would break after save/refresh. The data URL is
-    // stored on the form (via buildPayload's featuredImage) and survives.
-    // TODO: when a storage/upload API exists, POST the file and use the
-    // returned URL here instead of the data URL.
-    try {
-      const dataUrl = await readFileAsDataUrl(file);
-      setImagePreview(dataUrl);
-    } catch (readError) {
-      console.error("Failed to read image file:", readError);
-      alert("Could not read that image. Please try another file.");
     }
   }
 
@@ -379,78 +352,13 @@ function CreateBlogPage() {
         <div className="grid gap-6 self-start">
           <div className="rounded-xl border border-[#E4E7EC] p-5">
             <h3 className="mb-4 text-sm font-black text-[#06133D]">Featured image</h3>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                void handleImageFile(e.target.files?.[0]);
-                e.target.value = "";
+            <ImageUploadField
+              value={imagePreview || ""}
+              onChange={(val) => {
+                setImagePreview(val || null);
               }}
+              helpText="Directly upload from your device or paste a URL. Auto-compressed for performance."
             />
-
-            {imagePreview ? (
-              <div className="relative overflow-hidden rounded-lg border border-[#E4E7EC]">
-                <img
-                  src={imagePreview}
-                  alt={imageFile?.name}
-                  className="h-28 w-full object-cover"
-                />
-                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-black/50 px-3 py-1.5">
-                  <p className="truncate text-[10px] font-bold text-white">{imageFile?.name}</p>
-                  <div className="flex shrink-0 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="text-[10px] font-black text-white underline"
-                    >
-                      Replace
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setImagePreview(null);
-                        setImageFile(null);
-                      }}
-                      className="text-[10px] font-black text-white underline"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={() => fileInputRef.current?.click()}
-                onKeyDown={(e) =>
-                  (e.key === "Enter" || e.key === " ") && fileInputRef.current?.click()
-                }
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  void handleImageFile(e.dataTransfer.files?.[0]);
-                }}
-                className="grid h-28 cursor-pointer place-items-center rounded-lg border border-dashed border-[#FC9C44] bg-[#FFF4E8] hover:bg-[#FFEBD6]"
-              >
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    fileInputRef.current?.click();
-                  }}
-                  aria-label="Upload featured image"
-                  className="mb-1 grid h-7 w-7 place-items-center rounded-full bg-[#FC9C44] text-white hover:bg-[#E88933]"
-                >
-                  <span className="text-sm font-black leading-none">+</span>
-                </button>
-                <p className="text-xs font-black text-[#C96A13]">Upload featured image</p>
-                <p className="text-[10px] text-[#98A2B3]">Recommended 1200×630</p>
-              </div>
-            )}
           </div>
 
           {/* Publish settings */}

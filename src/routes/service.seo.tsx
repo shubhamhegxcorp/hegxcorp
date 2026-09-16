@@ -6,6 +6,8 @@ import { ServiceLeadForm } from "@/components/site/ServiceLeadForm";
 import { ZigZagGrowthStack } from "@/components/site/ZigZagGrowthStack";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { PageSEO } from "@/components/site/PageSEO";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 import {
   Activity,
   BarChart3,
@@ -70,6 +72,7 @@ export const Route = createFileRoute("/service/seo")({
 });
 
 function SeoHero() {
+  const { data: heroData } = useWebsiteSection<any>("service.seo.hero");
   return (
     <section className="relative overflow-hidden bg-[#050B24] px-6 py-24 text-white lg:px-10 lg:pt-10 lg:pb-14 ">
       <div
@@ -98,7 +101,7 @@ function SeoHero() {
           transition={{ duration: 0.65, ease: "easeOut" }}
         >
           <p className="mb-5 inline-flex rounded-full border border-white/12 bg-white/8 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#FC9C44]">
-            SEO Growth Consulting
+            {heroData?.badge || "SEO Growth Consulting"}
           </p>
 
           <h1
@@ -108,9 +111,15 @@ function SeoHero() {
               fontSize: "clamp(46px, 6vw, 86px)",
             }}
           >
-            Search Engine
-            <span className="block text-[#FC9C44]">Optimisation</span>
-            Built to Compound
+            {heroData?.title ? (
+              heroData.title
+            ) : (
+              <>
+                Search Engine
+                <span className="block text-[#FC9C44]">Optimisation</span>
+                Built to Compound
+              </>
+            )}
           </h1>
 
           <p
@@ -121,24 +130,23 @@ function SeoHero() {
               lineHeight: 1.75,
             }}
           >
-            Hegxcorp builds SEO systems for brands that want more than rankings. We improve
-            technical health, search intent coverage, content authority, local visibility, and
-            conversion paths so organic traffic turns into qualified enquiries and revenue.
+            {heroData?.description ||
+              "Hegxcorp builds SEO systems for brands that want more than rankings. We improve technical health, search intent coverage, content authority, local visibility, and conversion paths so organic traffic turns into qualified enquiries and revenue."}
           </p>
 
           <div className="mt-9 flex flex-col sm:flex-row gap-3">
             <a
-              href="/free-growth-audit"
+              href={heroData?.primaryButtonUrl || "/free-growth-audit"}
               className="w-full sm:w-auto justify-center inline-flex items-center rounded-full bg-[#FC9C44] px-7 py-3.5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-[#E88C35] hover:shadow-[0_18px_36px_-18px_rgba(252,156,68,0.9)] active:scale-98"
             >
-              Get Free SEO Audit
+              {heroData?.primaryButtonText || "Get Free SEO Audit"}
             </a>
 
             <a
-              href="/case-studies"
+              href={heroData?.secondaryButtonUrl || "/case-studies"}
               className="w-full sm:w-auto justify-center inline-flex items-center rounded-full border border-white/14 bg-white/8 px-7 py-3.5 text-sm font-bold text-white transition hover:border-[#FC9C44] hover:bg-white/12 active:scale-98"
             >
-              Explore Case Studies
+              {heroData?.secondaryButtonText || "Discuss Strategy"}
             </a>
           </div>
         </motion.div>
@@ -949,6 +957,11 @@ function SeoServicePage() {
 
   return (
     <div className="min-h-screen bg-white">
+      <PageSEO
+        sectionKey="service.seo.seo"
+        fallbackTitle="SEO Services — Technical, Enterprise & Ecommerce Search Growth | Hegxcorp"
+        fallbackDescription="Data-driven SEO services: technical search architecture, content clusters, local & international SEO, link authority, and organic revenue scaling."
+      />
       <Header />
 
       <style>{`

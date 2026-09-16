@@ -1,19 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import * as z from "zod";
 
-import type { LeadSourceData } from "./lead-source";
+import { leadSourceDataSchema, type LeadSourceData } from "./lead-source";
 
 export const inquiryStatuses = ["NEW", "INPROGRESS", "CLOSED"] as const;
-
-const leadSourceDataSchema = z.object({
-  leadSource: z.string().optional(),
-  leadMedium: z.string().optional(),
-  leadCampaign: z.string().optional(),
-  leadAdSet: z.string().optional(),
-  leadAd: z.string().optional(),
-  leadLandingPage: z.string().optional(),
-  leadReferrer: z.string().optional(),
-});
 
 export const contactInquiryInputSchema = z.object({
   name: z.string().min(2, { message: "Please enter your full name" }),

@@ -8,9 +8,15 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
-  ChevronRight,
+  ExternalLink,
   MessageSquare,
-  ShieldCheck,
+  Star,
+  MapPin,
+  TrendingUp,
+  Sparkles,
+  Award,
+  PhoneCall,
+  Calendar,
 } from "lucide-react";
 
 export const Route = createFileRoute("/case-studies/$slug")({
@@ -37,11 +43,11 @@ export const Route = createFileRoute("/case-studies/$slug")({
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
         { property: "og:url", content: currentUrl },
-        { property: "og:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+        { property: "og:image", content: study?.featuredImage || "https://hegxcorp.com/favicon/apple-touch-icon.png" },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: description },
-        { name: "twitter:image", content: "https://hegxcorp.com/favicon/apple-touch-icon.png" },
+        { name: "twitter:image", content: study?.featuredImage || "https://hegxcorp.com/favicon/apple-touch-icon.png" },
       ],
       links: [{ rel: "canonical", href: currentUrl }],
     };
@@ -118,33 +124,39 @@ function CaseStudyDetailPage() {
                   <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-[#FC9C44] uppercase tracking-wider">
                     <span>{study.industry}</span>
                     <span>•</span>
-                    <span>{study.services.join(" • ")}</span>
+                    <span>{study.services.slice(0, 3).join(" • ")}</span>
                   </div>
 
                   <div className="space-y-1">
                     <div
-                      className="font-bold text-[#1D2742] leading-[0.95] tracking-tight"
+                      className="font-black text-[#1D2742] leading-none tracking-tight text-4xl sm:text-5xl lg:text-6xl"
                       style={{
                         fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: "clamp(56px, 7vw, 100px)",
                       }}
                     >
                       {study.metricValue}
                     </div>
                     <div
-                      className="text-xs font-bold uppercase tracking-[0.2em] text-[#FC9C44] mt-1"
+                      className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.16em] text-[#FC9C44] mt-1.5"
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     >
                       {study.metricLabel.toUpperCase()}
                     </div>
                   </div>
 
-                  <h2
-                    className="text-2xl font-bold text-[#6B7280]"
-                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                  >
-                    Client Case Study: {study.client}
-                  </h2>
+                  <div>
+                    <h1
+                      className="text-2xl sm:text-3xl font-bold text-[#1D2742] tracking-tight"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
+                      Client Case Study: {study.client}
+                    </h1>
+                    {study.clientSubtitle && (
+                      <p className="text-sm text-[#6B7280] font-medium mt-1">
+                        {study.clientSubtitle}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <p
@@ -153,6 +165,33 @@ function CaseStudyDetailPage() {
                 >
                   {study.summary}
                 </p>
+
+                {/* External links and live site badges */}
+                {study.aboutClient?.websiteUrl && (
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <a
+                      href={study.aboutClient.websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-[#EAEAEA] bg-white text-xs font-bold text-[#1D2742] hover:border-[#FC9C44] hover:text-[#FC9C44] transition-colors shadow-sm"
+                    >
+                      <span>Visit Live Site</span>
+                      <ExternalLink className="h-3 w-3" />
+                    </a>
+                    {study.aboutClient?.externalProofUrl && (
+                      <a
+                        href={study.aboutClient.externalProofUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-[#EAEAEA] bg-white text-xs font-bold text-[#6B7280] hover:text-[#1D2742] hover:border-[#1D2742] transition-colors shadow-sm"
+                      >
+                        <Award className="h-3 w-3 text-[#FC9C44]" />
+                        <span>{study.aboutClient.externalProofLabel || "Collegedunia Profile"}</span>
+                        <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Browser Preview Screenshot */}
@@ -163,12 +202,127 @@ function CaseStudyDetailPage() {
                   proofLabel={study.proofLabel}
                   proofDuration={study.proofDuration}
                   proofMetric={`${study.metricValue} Growth`}
+                  url={
+                    study.slug === "tarkashastra"
+                      ? "tarkashastra.co.in"
+                      : study.slug === "orra"
+                        ? "orra.co.in"
+                        : `${study.slug}.com`
+                  }
                   className="w-full shadow-[0_24px_48px_rgba(29,39,66,0.08)]"
                 />
               </div>
             </div>
           </div>
         </section>
+
+        {/* ── ABOUT THE CLIENT SECTION (Spotlight Card) ── */}
+        {study.aboutClient && (
+          <section className="py-16 bg-white border-b border-[#EAEAEA]">
+            <div className="mx-auto max-w-[1100px] px-6 lg:px-10">
+              <div className="rounded-2xl border border-[#EAEAEA] bg-[#FAFAF8] p-8 md:p-10 shadow-sm">
+                <div className="flex items-center gap-2 mb-6">
+                  <span className="h-2 w-2 rounded-full bg-[#FC9C44]" />
+                  <span
+                    className="text-xs font-bold uppercase tracking-[0.15em] text-[#FC9C44]"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    About The Client
+                  </span>
+                </div>
+
+                <div className="grid lg:grid-cols-12 gap-8 items-center">
+                  {/* Left: Client bio & founder */}
+                  <div className="lg:col-span-7 space-y-6">
+                    <p
+                      className="text-[#4A5568] leading-relaxed text-sm sm:text-base"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      {study.aboutClient.description}
+                    </p>
+
+                    {/* Founder Highlight */}
+                    {study.aboutClient.founder && (
+                      <div className="flex items-center gap-4 pt-4 border-t border-[#EAEAEA]">
+                        {study.aboutClient.founderImage && (
+                          <img
+                            src={study.aboutClient.founderImage}
+                            alt={study.aboutClient.founder}
+                            className="h-14 w-14 rounded-full object-cover border-2 border-white shadow-md"
+                          />
+                        )}
+                        <div>
+                          <div
+                            className="text-base font-bold text-[#1D2742]"
+                            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                          >
+                            {study.aboutClient.founder}
+                          </div>
+                          {study.aboutClient.founderTitle && (
+                            <div className="text-xs text-[#6B7280] font-medium mt-0.5">
+                              {study.aboutClient.founderTitle}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right: Verified Trust Signals */}
+                  <div className="lg:col-span-5 space-y-3">
+                    {study.aboutClient.rating && (
+                      <div className="bg-white border border-[#EAEAEA] rounded-xl p-4 flex items-center gap-4 shadow-sm">
+                        <div className="h-10 w-10 rounded-full bg-amber-50 flex items-center justify-center shrink-0">
+                          <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-[#1D2742]">
+                            {study.aboutClient.rating.score} / 5.0 Rating
+                          </div>
+                          <div className="text-xs text-[#6B7280]">
+                            Over {study.aboutClient.rating.count} on {study.aboutClient.rating.source}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {study.aboutClient.locations && (
+                      <div className="bg-white border border-[#EAEAEA] rounded-xl p-4 flex items-center gap-4 shadow-sm">
+                        <div className="h-10 w-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0">
+                          <MapPin className="h-5 w-5 text-emerald-600" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-[#1D2742]">
+                            Centres Across Pune
+                          </div>
+                          <div className="text-xs text-[#6B7280]">
+                            {study.aboutClient.locations.join(" & ")}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {study.aboutClient.established && (
+                      <div className="bg-white border border-[#EAEAEA] rounded-xl p-4 flex items-center gap-4 shadow-sm">
+                        <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                          <Calendar className="h-5 w-5 text-blue-600" />
+                        </div>
+                        <div>
+                          <div className="text-sm font-bold text-[#1D2742]">
+                            Established {study.aboutClient.established}
+                          </div>
+                          <div className="text-xs text-[#6B7280]">
+                            Classroom & Live Online Programs
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ── THE CHALLENGE & THE SOLUTION ── */}
         <section className="py-20 bg-white border-b border-[#EAEAEA]">
@@ -182,14 +336,14 @@ function CaseStudyDetailPage() {
                 >
                   01 / The Challenge
                 </span>
-                <h3
-                  className="text-2xl font-bold text-[#1D2742]"
+                <h2
+                  className="text-2xl sm:text-3xl font-bold text-[#1D2742]"
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                 >
                   {study.challenge.title}
-                </h3>
+                </h2>
                 <div
-                  className="text-[#4A5568] leading-relaxed space-y-4"
+                  className="text-[#4A5568] leading-relaxed text-base space-y-4"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   <p>{study.challenge.description}</p>
@@ -204,14 +358,14 @@ function CaseStudyDetailPage() {
                 >
                   02 / The Solution
                 </span>
-                <h3
-                  className="text-2xl font-bold text-[#1D2742]"
+                <h2
+                  className="text-2xl sm:text-3xl font-bold text-[#1D2742]"
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                 >
                   {study.solution.title}
-                </h3>
+                </h2>
                 <div
-                  className="text-[#4A5568] leading-relaxed space-y-4"
+                  className="text-[#4A5568] leading-relaxed text-base space-y-4"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   <p>{study.solution.description}</p>
@@ -221,116 +375,288 @@ function CaseStudyDetailPage() {
           </div>
         </section>
 
-        {/* ── OUR APPROACH (STRATEGY TIMELINE) ── */}
-        <section className="py-20 bg-[#FAFAF8] border-b border-[#EAEAEA]">
-          <div className="mx-auto max-w-[960px] px-6 lg:px-10">
-            <div className="text-center max-w-[640px] mx-auto mb-16 space-y-3">
-              <span
-                className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                Methodology
-              </span>
-              <h3
-                className="text-3xl font-bold text-[#1D2742]"
-                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-              >
-                Our Approach &amp; Roadmap
-              </h3>
-              <p className="text-[#6B7280] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                A systematic workflow engineered to isolate scaling bottlenecks and build
-                compounding search and campaign loops.
-              </p>
-            </div>
-
-            {/* Strategy Timeline Layout */}
-            <div
-              className={`grid ${gridColsMap[study.approach?.length || 4] || "md:grid-cols-4"} gap-8 relative`}
-            >
-              {/* Horizontal connection line on desktop */}
-              <div className="hidden md:block absolute top-[26px] left-[10%] right-[10%] h-0.5 bg-[#EAEAEA] -z-0" />
-
-              {study.approach?.map((step, idx) => (
-                <div
-                  key={idx}
-                  className="relative bg-white p-6 rounded-xl border border-[#EAEAEA] text-center space-y-3 z-10 shadow-sm"
+        {/* ── WHAT WE DID (5 Strategic Pillars) ── */}
+        {study.whatWeDid && study.whatWeDid.length > 0 ? (
+          <section className="py-20 bg-[#FAFAF8] border-b border-[#EAEAEA]">
+            <div className="mx-auto max-w-[1100px] px-6 lg:px-10">
+              <div className="text-center max-w-[640px] mx-auto mb-16 space-y-3">
+                <span
+                  className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
                 >
+                  Execution Strategy
+                </span>
+                <h2
+                  className="text-3xl sm:text-4xl font-bold text-[#1D2742]"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
+                  What We Did
+                </h2>
+                <p className="text-[#6B7280] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  A multi-channel growth system built across technical architecture, local authority, and targeted demand capture.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {study.whatWeDid.map((pillar) => (
                   <div
-                    className="mx-auto h-12 w-12 rounded-full bg-[#1D2742] text-white flex items-center justify-center font-bold text-lg"
-                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    key={pillar.num}
+                    className="bg-white rounded-2xl border border-[#EAEAEA] p-6 space-y-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
                   >
-                    {step.phase}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span
+                          className="text-xl font-bold text-[#FC9C44]"
+                          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                        >
+                          {pillar.num}
+                        </span>
+                        <Sparkles className="h-4 w-4 text-[#FC9C44] opacity-50" />
+                      </div>
+                      <h3
+                        className="text-base font-bold text-[#1D2742]"
+                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                      >
+                        {pillar.title}
+                      </h3>
+                      <p
+                        className="text-xs text-[#6B7280] leading-relaxed"
+                        style={{ fontFamily: "'Inter', sans-serif" }}
+                      >
+                        {pillar.description}
+                      </p>
+                    </div>
+
+                    {pillar.deliverables && (
+                      <ul className="space-y-2 pt-3 border-t border-[#EAEAEA]">
+                        {pillar.deliverables.map((item, idx) => (
+                          <li
+                            key={idx}
+                            className="flex items-start gap-2 text-xs text-[#4A5568]"
+                            style={{ fontFamily: "'Inter', sans-serif" }}
+                          >
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 shrink-0 mt-0.5" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
-                  <h4
-                    className="font-bold text-[#1D2742] text-sm"
-                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                  >
-                    {step.title}
-                  </h4>
-                  <p
-                    className="text-xs text-[#6B7280] leading-relaxed"
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : (
+          /* Approach Roadmap Fallback */
+          study.approach && (
+            <section className="py-20 bg-[#FAFAF8] border-b border-[#EAEAEA]">
+              <div className="mx-auto max-w-[960px] px-6 lg:px-10">
+                <div className="text-center max-w-[640px] mx-auto mb-16 space-y-3">
+                  <span
+                    className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
-                    {step.description}
+                    Methodology
+                  </span>
+                  <h2
+                    className="text-3xl font-bold text-[#1D2742]"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  >
+                    Our Approach &amp; Roadmap
+                  </h2>
+                  <p className="text-[#6B7280] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    A systematic workflow engineered to isolate scaling bottlenecks and build compounding loops.
                   </p>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
 
-        {/* ── RESULTS GRID ── */}
-        <section className="py-20 bg-white border-b border-[#EAEAEA]">
-          <div className="mx-auto max-w-[960px] px-6 lg:px-10">
-            <div className="text-center max-w-[640px] mx-auto mb-16 space-y-3">
-              <span
-                className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]"
+                <div className={`grid ${gridColsMap[study.approach?.length || 4] || "md:grid-cols-4"} gap-8 relative`}>
+                  <div className="hidden md:block absolute top-[26px] left-[10%] right-[10%] h-0.5 bg-[#EAEAEA] -z-0" />
+                  {study.approach.map((step, idx) => (
+                    <div
+                      key={idx}
+                      className="relative bg-white p-6 rounded-xl border border-[#EAEAEA] text-center space-y-3 z-10 shadow-sm"
+                    >
+                      <div
+                        className="mx-auto h-12 w-12 rounded-full bg-[#1D2742] text-white flex items-center justify-center font-bold text-lg"
+                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                      >
+                        {step.phase}
+                      </div>
+                      <h3
+                        className="font-bold text-[#1D2742] text-sm"
+                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                      >
+                        {step.title}
+                      </h3>
+                      <p
+                        className="text-xs text-[#6B7280] leading-relaxed"
+                        style={{ fontFamily: "'Inter', sans-serif" }}
+                      >
+                        {step.description}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )
+        )}
+
+        {/* ── THE RESULTS: BEFORE VS AFTER COMPARISON TABLE ── */}
+        {study.resultsTable ? (
+          <section className="py-20 bg-white border-b border-[#EAEAEA]">
+            <div className="mx-auto max-w-[1000px] px-6 lg:px-10 space-y-12">
+              <div className="text-center max-w-[640px] mx-auto space-y-3">
+                <span
+                  className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  03 / Verified Results
+                </span>
+                <h2
+                  className="text-3xl sm:text-4xl font-bold text-[#1D2742]"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
+                  The Transformation — {study.resultsTable.timeframe}
+                </h2>
+                <p className="text-[#6B7280] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  Direct before-and-after performance metrics verified across Google Analytics, Search Console, and ad accounts.
+                </p>
+              </div>
+
+              {/* Before vs After Matrix Table */}
+              <div className="overflow-hidden rounded-2xl border border-[#EAEAEA] shadow-sm bg-white">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-[#1D2742] text-white text-xs uppercase tracking-wider">
+                        <th className="py-4 px-6 font-semibold">Key Growth Metric</th>
+                        <th className="py-4 px-6 font-semibold text-white/70">Before Engagement</th>
+                        <th className="py-4 px-6 font-semibold text-[#FC9C44]">After {study.resultsTable.timeframe}</th>
+                        <th className="py-4 px-6 font-semibold text-right">Net Impact</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#EAEAEA] text-sm">
+                      {study.resultsTable.rows.map((row, idx) => (
+                        <tr key={idx} className="hover:bg-[#FAFAF8] transition-colors">
+                          <td className="py-4 px-6 font-bold text-[#1D2742]">
+                            {row.metric}
+                          </td>
+                          <td className="py-4 px-6 text-[#6B7280] font-mono">
+                            {row.before}
+                          </td>
+                          <td className="py-4 px-6 font-bold text-[#1D2742] font-mono">
+                            <span className="text-[#FC9C44] font-black text-base">{row.after}</span>
+                          </td>
+                          <td className="py-4 px-6 text-right">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              {row.change}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Paid Search Highlight Banner */}
+                {study.resultsTable.paidSearchHighlight && (
+                  <div className="bg-[#FFF7ED] border-t border-[#FC9C44]/20 p-5 flex items-center gap-4">
+                    <div className="h-10 w-10 rounded-full bg-[#FC9C44] text-white flex items-center justify-center shrink-0">
+                      <PhoneCall className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1 text-xs sm:text-sm text-[#1D2742] font-medium leading-relaxed">
+                      <strong className="font-bold text-[#FC9C44]">Paid Search Efficiency: </strong>
+                      {study.resultsTable.paidSearchHighlight}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* 4 Stat Metric Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {study.results.metrics.map((metric, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-[#FAFAF8] p-6 rounded-xl border border-[#EAEAEA] flex flex-col items-center justify-center text-center space-y-1 shadow-sm"
+                  >
+                    <span
+                      className="text-3xl sm:text-4xl font-black text-[#FC9C44]"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
+                      {metric.value}
+                    </span>
+                    <span
+                      className="text-[11px] font-bold text-[#1D2742] uppercase tracking-wider"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      {metric.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <p
+                className="text-[#4A5568] leading-relaxed text-sm sm:text-base text-center max-w-[720px] mx-auto pt-4"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
-                03 / Verified Results
-              </span>
-              <h3
-                className="text-3xl font-bold text-[#1D2742]"
-                style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-              >
-                Documented Client Outcomes
-              </h3>
-              <p className="text-[#6B7280] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                Concrete, measurable performance indices checked and verified post-deployment.
+                {study.results.description}
               </p>
             </div>
-
-            {/* Outcomes Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {study.results.metrics.map((metric, idx) => (
-                <div
-                  key={idx}
-                  className="bg-[#FAFAF8] p-6 rounded-xl border border-[#EAEAEA] flex flex-col items-center justify-center text-center space-y-2 shadow-sm"
+          </section>
+        ) : (
+          /* Standard Results Fallback */
+          <section className="py-20 bg-white border-b border-[#EAEAEA]">
+            <div className="mx-auto max-w-[960px] px-6 lg:px-10">
+              <div className="text-center max-w-[640px] mx-auto mb-16 space-y-3">
+                <span
+                  className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
                 >
-                  <span
-                    className="text-3xl md:text-4xl font-bold text-[#FC9C44]"
-                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                  >
-                    {metric.value}
-                  </span>
-                  <span
-                    className="text-[11px] font-bold text-[#1D2742] uppercase tracking-wider"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    {metric.label}
-                  </span>
-                </div>
-              ))}
-            </div>
+                  03 / Verified Results
+                </span>
+                <h2
+                  className="text-3xl font-bold text-[#1D2742]"
+                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                >
+                  Documented Client Outcomes
+                </h2>
+                <p className="text-[#6B7280] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  Concrete, measurable performance indices checked and verified post-deployment.
+                </p>
+              </div>
 
-            <p
-              className="text-[#4A5568] leading-relaxed text-sm text-center max-w-[720px] mx-auto mt-12"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              {study.results.description}
-            </p>
-          </div>
-        </section>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                {study.results.metrics.map((metric, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-[#FAFAF8] p-6 rounded-xl border border-[#EAEAEA] flex flex-col items-center justify-center text-center space-y-2 shadow-sm"
+                  >
+                    <span
+                      className="text-3xl md:text-4xl font-bold text-[#FC9C44]"
+                      style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                    >
+                      {metric.value}
+                    </span>
+                    <span
+                      className="text-[11px] font-bold text-[#1D2742] uppercase tracking-wider"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      {metric.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <p
+                className="text-[#4A5568] leading-relaxed text-sm text-center max-w-[720px] mx-auto mt-12"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                {study.results.description}
+              </p>
+            </div>
+          </section>
+        )}
 
         {/* ── CLIENT TESTIMONIAL BLOCK ── */}
         {study.testimonial && (
@@ -343,61 +669,67 @@ function CaseStudyDetailPage() {
               >
                 &ldquo;{study.testimonial.quote}&rdquo;
               </blockquote>
-              <div className="space-y-1">
-                <p
-                  className="font-bold text-[#FC9C44]"
-                  style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-                >
-                  {study.testimonial.author}
-                </p>
-                <p
-                  className="text-xs text-[#9CA3AF] font-medium uppercase tracking-wider"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
-                  {study.testimonial.role}
-                </p>
+              <div className="flex flex-col items-center justify-center space-y-2">
+                {study.testimonial.image && (
+                  <img
+                    src={study.testimonial.image}
+                    alt={study.testimonial.author}
+                    className="h-12 w-12 rounded-full object-cover border-2 border-[#FC9C44] shadow-md"
+                  />
+                )}
+                <div>
+                  <p
+                    className="font-bold text-[#FC9C44] text-base"
+                    style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                  >
+                    {study.testimonial.author}
+                  </p>
+                  <p
+                    className="text-xs text-[#9CA3AF] font-medium uppercase tracking-wider mt-0.5"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {study.testimonial.role}
+                  </p>
+                </div>
               </div>
             </div>
           </section>
         )}
 
-        {/* ── VISUAL PROOF (GALLERY / PRIMARY PREVIEW) ── */}
+        {/* ── VISUAL PROOF GALLERY ── */}
         <section className="py-20 bg-[#FAFAF8] border-b border-[#EAEAEA]">
-          <div className="mx-auto max-w-[960px] px-6 lg:px-10 space-y-8">
-            <div className="text-center max-w-[640px] mx-auto mb-10 space-y-2">
+          <div className="mx-auto max-w-[1100px] px-6 lg:px-10 space-y-10">
+            <div className="text-center max-w-[640px] mx-auto space-y-2">
               <span
                 className="text-xs font-bold uppercase tracking-wider text-[#FC9C44]"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 Visual Proof
               </span>
-              <h3
-                className="text-2xl font-bold text-[#1D2742]"
+              <h2
+                className="text-2xl sm:text-3xl font-bold text-[#1D2742]"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
-                Live System Preview
-              </h3>
+                Client Assets &amp; Live Systems
+              </h2>
               <p
-                className="text-xs text-[#6B7280] leading-relaxed"
+                className="text-xs sm:text-sm text-[#6B7280] leading-relaxed"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
-                Direct capture layout representing the client's optimized website presence.
-                <br />
-                <span className="text-[10px] font-semibold text-[#9CA3AF]">
-                  (Placeholder graphic will be replaced with real analytics screenshots)
-                </span>
+                Direct captures representing the live optimized site presence, classroom programs, and documented growth.
               </p>
             </div>
 
-            {/* Gallery Grid or single image preview */}
-            <div className="grid md:grid-cols-2 gap-8 max-w-[960px] mx-auto">
+            {/* Gallery Grid */}
+            <div className="grid md:grid-cols-2 gap-8 max-w-[1000px] mx-auto">
               {study.gallery && study.gallery.length > 0 ? (
                 study.gallery.map((img, idx) => (
                   <BrowserPreview
                     key={idx}
                     src={img}
-                    alt={`${study.client} Gallery Screen ${idx + 1}`}
+                    alt={`${study.client} Visual Asset ${idx + 1}`}
                     aspectRatio="video"
+                    url="tarkashastra.co.in"
                     className="w-full shadow-md"
                   />
                 ))
@@ -418,14 +750,38 @@ function CaseStudyDetailPage() {
           </div>
         </section>
 
+        {/* ── FINAL GROWTH AUDIT CTA ── */}
+        <section className="py-16 bg-white border-b border-[#EAEAEA]">
+          <div className="mx-auto max-w-[960px] px-6 lg:px-10 text-center space-y-6">
+            <h3
+              className="text-2xl sm:text-3xl font-bold text-[#1D2742]"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              Ready to engineer predictable, data-driven revenue growth?
+            </h3>
+            <p className="text-[#6B7280] text-sm max-w-[560px] mx-auto">
+              Get a custom teardown of your current SEO, advertising funnel, and conversion bottlenecks — completely free.
+            </p>
+            <div className="pt-2">
+              <Link
+                to="/free-growth-audit"
+                className="inline-flex items-center gap-2.5 rounded-full px-8 py-4 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 shadow-md hover:shadow-lg transition-all"
+              >
+                <span>Request Your Free Growth Audit</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* ── RELATED CASE STUDIES ── */}
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-[#FAFAF8]">
           <div className="mx-auto max-w-[1280px] px-6 lg:px-10">
             <h3
               className="text-2xl font-bold text-[#1D2742] tracking-tight mb-12 text-center"
               style={{ fontFamily: "'Space Grotesk', sans-serif" }}
             >
-              Other Success Stories
+              Other Documented Growth Stories
             </h3>
 
             <div className="grid md:grid-cols-2 gap-12 max-w-[960px] mx-auto">
@@ -439,62 +795,33 @@ function CaseStudyDetailPage() {
                   <BrowserPreview
                     src={item.featuredImage}
                     alt={`${item.client} Case Study`}
+                    proofLabel={item.proofLabel}
+                    proofDuration={item.proofDuration}
+                    proofMetric={item.metricValue}
                     className="w-full"
                   />
                   <div className="space-y-1">
-                    <span
-                      className="text-lg font-bold text-[#FC9C44] group-hover:text-[#E88C35] transition-colors"
+                    <div
+                      className="text-2xl font-bold text-[#FC9C44] tracking-tight"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
-                      {item.metricValue} {item.metricLabel}
-                    </span>
-                    <h4
-                      className="text-sm font-bold text-[#1D2742]"
+                      {item.metricValue}
+                    </div>
+                    <div
+                      className="text-lg font-bold text-[#1D2742]"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
                       {item.client}
-                    </h4>
-                    <p
-                      className="text-xs text-[#6B7280] line-clamp-2 leading-relaxed"
-                      style={{ fontFamily: "'Inter', sans-serif" }}
-                    >
+                    </div>
+                    <p className="text-xs text-[#6B7280] leading-relaxed line-clamp-2">
                       {item.summary}
                     </p>
+                    <span className="inline-flex items-center gap-1 text-xs font-bold text-[#FC9C44] pt-2">
+                      Explore Study <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                    </span>
                   </div>
                 </Link>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── FOOTER CALL TO ACTION (CTA) ── */}
-        <section className="py-20 bg-[#FAFAF8] border-t border-b border-[#EAEAEA]">
-          <div className="mx-auto max-w-[800px] px-6 lg:px-10 text-center space-y-6">
-            <ShieldCheck className="h-10 w-10 text-[#FC9C44] mx-auto" />
-
-            <h3
-              className="text-3xl font-bold text-[#1D2742] tracking-tight"
-              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
-            >
-              Want Similar Results?
-            </h3>
-
-            <p
-              className="text-[#6B7280] leading-relaxed max-w-[500px] mx-auto text-sm"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              We'll audit your search visibility, PPC ad spend, and conversion funnel to uncover
-              high-impact growth paths for your business.
-            </p>
-
-            <div className="pt-2">
-              <Link
-                to="/free-growth-audit"
-                className="inline-flex items-center gap-2 rounded-full px-8 py-4 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 transition-all"
-              >
-                Get Free Growth Audit
-                <ArrowRight className="h-4 w-4" />
-              </Link>
             </div>
           </div>
         </section>

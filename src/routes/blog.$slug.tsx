@@ -3,6 +3,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { getPublishedBlogBySlug, getPublishedBlogs } from "@/lib/content/blogs";
 import { ContentBlock, type Blog } from "@/data/blogs";
+import { subscribeToNewsletter } from "@/lib/newsletter";
 import ShapeGrid from "@/components/ShapeGrid";
 import {
   ArrowLeft,
@@ -18,6 +19,8 @@ import {
   AlertCircle,
   Lightbulb,
   Check,
+  Loader2,
+  CheckCircle2,
 } from "lucide-react";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, useScroll, useSpring } from "framer-motion";
@@ -72,7 +75,8 @@ export const Route = createFileRoute("/blog/$slug")({
       ? article.seoDescription
       : "In-depth growth breakdowns and strategic frameworks from Hegxcorp.";
     const currentUrl = `https://hegxcorp.com/blog/${params.slug}`;
-    const ogImage = article ? article.featuredImage : "https://hegxcorp.com/og-default.jpg";
+    const ogImage =
+      article?.featuredImage || "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp";
 
     return {
       meta: [
@@ -92,7 +96,91 @@ export const Route = createFileRoute("/blog/$slug")({
     };
   },
   component: BlogDetailPage,
+  notFoundComponent: BlogNotFoundComponent,
+  errorComponent: BlogErrorComponent,
 });
+
+function BlogNotFoundComponent() {
+  return (
+    <div className="min-h-screen bg-[#FAFAF8] flex flex-col justify-between">
+      <Header />
+      <main className="flex-1 flex items-center justify-center px-6 py-24">
+        <div className="max-w-lg w-full text-center space-y-6">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#EAEAEA] bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-[#FC9C44] shadow-sm">
+            404 — Article Not Found
+          </span>
+          <h1
+            className="text-3xl md:text-5xl font-bold text-[#1D2742] tracking-tight"
+            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+          >
+            Blog Post Not Found
+          </h1>
+          <p className="text-sm md:text-base text-[#6B7280] leading-relaxed max-w-md mx-auto">
+            The article you are looking for might have been moved, renamed, or is currently
+            unpublished.
+          </p>
+          <div className="pt-4 flex flex-wrap gap-4 justify-center">
+            <Link
+              to="/blog"
+              className="inline-flex items-center gap-2 rounded-full bg-[#FC9C44] px-8 py-3.5 text-sm font-semibold text-white hover:bg-[#E88C35] transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Browse All Articles
+            </Link>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-white px-8 py-3.5 text-sm font-semibold text-[#1D2742] hover:bg-[#F3F4F6] transition-colors"
+            >
+              Go to Home
+            </Link>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+function BlogErrorComponent() {
+  return (
+    <div className="min-h-screen bg-[#FAFAF8] flex flex-col justify-between">
+      <Header />
+      <main className="flex-1 flex items-center justify-center px-6 py-24">
+        <div className="max-w-lg w-full text-center space-y-6">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-[#EAEAEA] bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-[#FC9C44] shadow-sm">
+            Insights
+          </span>
+          <h1
+            className="text-3xl md:text-4xl font-bold text-[#1D2742] tracking-tight"
+            style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+          >
+            Unable to Load Article
+          </h1>
+          <p className="text-sm md:text-base text-[#6B7280] leading-relaxed max-w-md mx-auto">
+            There was a temporary issue retrieving this article. You can try refreshing or browsing
+            our other insights.
+          </p>
+          <div className="pt-4 flex flex-wrap gap-4 justify-center">
+            <Link
+              to="/blog"
+              className="inline-flex items-center gap-2 rounded-full bg-[#FC9C44] px-8 py-3.5 text-sm font-semibold text-white hover:bg-[#E88C35] transition-colors"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Blog
+            </Link>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-white px-8 py-3.5 text-sm font-semibold text-[#1D2742] hover:bg-[#F3F4F6] transition-colors"
+            >
+              Go to Home
+            </Link>
+          </div>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
 
 interface TocItem {
   id: string;
@@ -321,6 +409,9 @@ function BlogDetailPage() {
   const [copied, setCopied] = useState(false);
   const [sidebarEmail, setSidebarEmail] = useState("");
   const [sidebarSubscribed, setSidebarSubscribed] = useState(false);
+  const [isSidebarSubscribing, setIsSidebarSubscribing] = useState(false);
+  const [sidebarSubscribeMessage, setSidebarSubscribeMessage] = useState("");
+  const [sidebarSubscribeError, setSidebarSubscribeError] = useState("");
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Related articles now come from the database + static list together,
@@ -419,12 +510,30 @@ function BlogDetailPage() {
     }
   };
 
-  const handleSidebarNewsletterSubmit = (e: React.FormEvent) => {
+  const handleSidebarNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (sidebarEmail.trim()) {
+    const clean = sidebarEmail.trim();
+    if (!clean || isSidebarSubscribing) return;
+
+    setIsSidebarSubscribing(true);
+    setSidebarSubscribeError("");
+    setSidebarSubscribeMessage("");
+
+    try {
+      const res = await subscribeToNewsletter({
+        data: {
+          email: clean,
+          source: `blog_article:${article.slug}`,
+        },
+      });
       setSidebarSubscribed(true);
+      setSidebarSubscribeMessage(res.message);
       setSidebarEmail("");
-      setTimeout(() => setSidebarSubscribed(false), 5000);
+      setTimeout(() => setSidebarSubscribed(false), 8000);
+    } catch (err: any) {
+      setSidebarSubscribeError(err?.message || "Could not subscribe. Please try again.");
+    } finally {
+      setIsSidebarSubscribing(false);
     }
   };
 
@@ -797,21 +906,31 @@ function BlogDetailPage() {
                     <input
                       type="email"
                       required
+                      disabled={isSidebarSubscribing}
                       placeholder="business@email.com"
                       value={sidebarEmail}
                       onChange={(e) => setSidebarEmail(e.target.value)}
-                      className="w-full rounded-lg border border-[#EAEAEA] bg-white px-3 py-2 text-xs text-[#232323] outline-none focus:border-[#FC9C44] transition-all"
+                      className="w-full rounded-lg border border-[#EAEAEA] bg-white px-3 py-2 text-xs text-[#232323] outline-none focus:border-[#FC9C44] transition-all disabled:opacity-60"
                     />
                     <button
                       type="submit"
-                      className="w-full rounded-lg bg-[#FC9C44] py-2 text-xs font-semibold text-white hover:bg-[#E88C35] transition-all"
+                      disabled={isSidebarSubscribing}
+                      className="w-full rounded-lg bg-[#FC9C44] py-2 text-xs font-semibold text-white hover:bg-[#E88C35] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
                     >
-                      Subscribe
+                      {isSidebarSubscribing && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                      {isSidebarSubscribing ? "Subscribing..." : "Subscribe"}
                     </button>
                   </form>
                   {sidebarSubscribed && (
-                    <div className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 rounded-lg p-2 text-center">
-                      ✓ Subscribed successfully!
+                    <div className="text-[11px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg p-2.5 text-left flex items-start gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <span>{sidebarSubscribeMessage || "Subscribed successfully!"}</span>
+                    </div>
+                  )}
+                  {sidebarSubscribeError && (
+                    <div className="text-[11px] font-medium text-red-700 bg-red-50 border border-red-200 rounded-lg p-2.5 text-left flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />
+                      <span>{sidebarSubscribeError}</span>
                     </div>
                   )}
                 </div>
