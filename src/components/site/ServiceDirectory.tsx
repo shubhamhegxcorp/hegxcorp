@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import {
@@ -16,152 +16,37 @@ import {
   PenTool,
   Brush,
   Image,
+  Layers,
+  Sparkles,
+  Cpu,
   type LucideIcon,
 } from "lucide-react";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
+import { DEFAULT_CMS_SECTIONS, type ServiceDirectorySection } from "@/lib/cms-config";
 
-type Service = {
-  number: string;
-  icon: LucideIcon;
-  title: string;
-  text: string;
-  href: string;
+export const serviceDirectoryIconMap: Record<string, LucideIcon> = {
+  Code2,
+  LayoutDashboard,
+  Globe2,
+  ShoppingCart,
+  Search,
+  BarChart3,
+  Share2,
+  PenTool,
+  Palette,
+  Brush,
+  Image,
+  Megaphone,
+  ShieldCheck,
+  Layers,
+  Sparkles,
+  Cpu,
 };
 
-type Category = {
-  id: string;
-  label: string;
-  icon: LucideIcon;
-  services: Service[];
-};
-
-const categories: Category[] = [
-  {
-    id: "development",
-    label: "Development",
-    icon: Code2,
-    services: [
-      {
-        number: "01",
-        icon: Code2,
-        title: "Website Development",
-        text: "Fast, responsive, conversion-focused websites built to represent your brand and generate business enquiries.",
-        href: "/service/web-dev",
-      },
-      {
-        number: "02",
-        icon: LayoutDashboard,
-        title: "Custom Web Application",
-        text: "Custom dashboards, portals, SaaS products, admin panels, and business web applications.",
-        href: "/service/web-app",
-      },
-      {
-        number: "03",
-        icon: Globe2,
-        title: "WordPress Development",
-        text: "Editable WordPress websites, custom themes, WooCommerce stores, plugin setup, speed, and security support.",
-        href: "/service/wordpress",
-      },
-      {
-        number: "04",
-        icon: ShoppingCart,
-        title: "E-Commerce Development",
-        text: "Online stores with product pages, cart, checkout, payments, order handling, and conversion-focused shopping flows.",
-        href: "/service/e-comm",
-      },
-    ],
-  },
-  {
-    id: "growth",
-    label: "Marketing",
-    icon: Megaphone,
-    services: [
-      {
-        number: "05",
-        icon: Search,
-        title: "SEO Services",
-        text: "SEO structure, keyword optimisation, technical fixes, content improvements, and search visibility growth.",
-        href: "/service/seo",
-      },
-      {
-        number: "06",
-        icon: BarChart3,
-        title: "PPC",
-        text: "Performance-driven ad campaigns that maximize ROI, generate quality leads, and grow your business faster.",
-        href: "/service/ppc",
-      },
-      {
-        number: "07",
-        icon: Share2,
-        title: "Social Media Marketing",
-        text: "Build your brand, engage your audience, and grow your online community across every major platform.",
-        href: "/service/social-med",
-      },
-      {
-        number: "08",
-        icon: PenTool,
-        title: "Content Marketing",
-        text: "Create compelling content and brand stories that attract, educate, and convert your ideal customers.",
-        href: "/service/content-marketing",
-      },
-      // {
-      //   number: "06",
-      //   icon: Megaphone,
-      //   title: "Digital Marketing",
-      //   text: "Campaign strategy, lead generation, paid ads, social media marketing, and performance tracking.",
-      //   href: "/services",
-      // },
-      // {
-      //   number: "07",
-      //   icon: Megaphone,
-      //   title: "Digital Marketing",
-      //   text: "Campaign strategy, lead generation, paid ads, social media marketing, and performance tracking.",
-      //   href: "/services",
-      // },
-    ],
-  },
-  {
-    id: "design",
-    label: "Design",
-    icon: Palette,
-    services: [
-      {
-        number: "09",
-        icon: Palette,
-        title: "UI/UX Design",
-        text: "Clean interfaces, user journeys, wireframes, landing pages, dashboards, and digital product design.",
-        href: "/service/ui-ux-design",
-      },
-      {
-        number: "10",
-        icon: Brush,
-        title: "Branding",
-        text: "Craft memorable brand identities with purpose, consistency, and a lasting impression across every touchpoint.",
-        href: "/service/branding",
-      },
-      {
-        number: "12",
-        icon: Image,
-        title: "Graphic Design",
-        text: "Creative visuals, marketing assets, and brand graphics that communicate your message with impact.",
-        href: "/service/graphic-design",
-      },
-    ],
-  },
-  // {
-  //   id: "support",
-  //   label: "Support",
-  //   icon: ShieldCheck,
-  //   services: [
-  //     {
-  //       number: "08",
-  //       icon: ShieldCheck,
-  //       title: "Website Maintenance",
-  //       text: "Updates, bug fixes, backups, security checks, performance improvements, and ongoing support.",
-  //       href: "/services",
-  //     },
-  //   ],
-  // },
-];
+export function getServiceDirectoryIcon(name?: string, fallback: LucideIcon = Code2): LucideIcon {
+  if (!name) return fallback;
+  return serviceDirectoryIconMap[name] || fallback;
+}
 
 const panelVariants: Variants = {
   exit: { opacity: 0, x: -20, scale: 0.97, transition: { duration: 0.2 } },
@@ -184,7 +69,24 @@ const rowVariants: Variants = {
 };
 
 export function ServiceDirectory() {
-  const [activeId, setActiveId] = useState(categories[0].id);
+  const { data: sectionData } = useWebsiteSection<ServiceDirectorySection>(
+    "services.directory",
+    DEFAULT_CMS_SECTIONS["services.directory"] as ServiceDirectorySection,
+  );
+
+  const categories =
+    sectionData?.categories && sectionData.categories.length > 0
+      ? sectionData.categories
+      : (DEFAULT_CMS_SECTIONS["services.directory"] as ServiceDirectorySection).categories;
+
+  const [activeId, setActiveId] = useState<string>(categories[0]?.id || "development");
+
+  useEffect(() => {
+    if (!categories.some((c) => c.id === activeId) && categories.length > 0) {
+      setActiveId(categories[0].id);
+    }
+  }, [categories, activeId]);
+
   const activeCategory = categories.find((category) => category.id === activeId) ?? categories[0];
 
   return (
@@ -192,16 +94,16 @@ export function ServiceDirectory() {
       <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[320px_1fr]">
         <aside className="lg:sticky lg:top-28 lg:self-start">
           <p className="text-sm font-bold uppercase tracking-[0.22em] text-[#FC9C44]">
-            Service Directory
+            {sectionData?.tagline || "Service Directory"}
           </p>
 
           <h2 className="mt-4 text-3xl font-black leading-tight text-[#06133D]">
-            Choose the right digital solution for your next stage.
+            {sectionData?.heading || "Choose the right digital solution for your next stage."}
           </h2>
 
-          <div className="mt-8 space-y-2 rounded-2xl bg-white p-2">
+          <div className="mt-8 space-y-2 rounded-2xl bg-white p-2 shadow-sm border border-slate-100">
             {categories.map((category) => {
-              const Icon = category.icon;
+              const Icon = getServiceDirectoryIcon(category.iconName, Code2);
               const isActive = category.id === activeId;
 
               return (
@@ -259,7 +161,7 @@ export function ServiceDirectory() {
                         : "bg-slate-100 text-slate-400 group-hover:bg-[#FFF0DC] group-hover:text-[#FC9C44]"
                     }`}
                   >
-                    {category.services.length}
+                    {category.services?.length || 0}
                   </span>
                 </button>
               );
@@ -267,7 +169,7 @@ export function ServiceDirectory() {
           </div>
         </aside>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeId}
@@ -277,12 +179,12 @@ export function ServiceDirectory() {
               exit="exit"
               className="divide-y divide-slate-200"
             >
-              {activeCategory.services.map((service, index) => {
-                const Icon = service.icon;
+              {(activeCategory?.services || []).map((service, index) => {
+                const Icon = getServiceDirectoryIcon(service.iconName, Palette);
 
                 return (
                   <motion.article
-                    key={service.title}
+                    key={service.id || service.title}
                     custom={index}
                     variants={rowVariants}
                     initial="hidden"
@@ -305,18 +207,18 @@ export function ServiceDirectory() {
                     </div>
 
                     <div>
-                      <h3 className="text-3xl font-black leading-tight text-[#06133D]">
+                      <h3 className="text-2xl sm:text-3xl font-black leading-tight text-[#06133D]">
                         {service.title}
                       </h3>
 
-                      <p className="mt-4 max-w-2xl text-base leading-8 text-slate-500">
+                      <p className="mt-3 max-w-2xl text-sm sm:text-base leading-7 sm:leading-8 text-slate-500">
                         {service.text}
                       </p>
                     </div>
 
                     <Link
                       to={service.href}
-                      className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-[#06133D] transition-all duration-[180ms] ease-out group-hover:border-[#FC9C44] group-hover:bg-[#FFF4E8] group-hover:text-[#FC9C44]"
+                      className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-300 bg-white px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-bold text-[#06133D] transition-all duration-[180ms] ease-out group-hover:border-[#FC9C44] group-hover:bg-[#FFF4E8] group-hover:text-[#FC9C44]"
                     >
                       Learn More
                       <span className="flex transition-transform duration-200 ease-out group-hover:translate-x-1">

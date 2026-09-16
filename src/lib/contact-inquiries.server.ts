@@ -1,16 +1,9 @@
 import { randomUUID } from "node:crypto";
-import process from "node:process";
-
-import postgres from "postgres";
-
 import { assertAdminSession } from "./admin-auth.server";
+import { getDbClient } from "./db.server";
 import { cleanLeadSourceData } from "./lead-source";
+import { cleanOptional, uniqueTrimmed } from "./text-cleanup";
 import type { ContactInquiry, ContactInquiryInput, InquiryStatus } from "./contact-inquiries";
-
-type SqlClient = ReturnType<typeof postgres>;
-type GlobalWithSql = typeof globalThis & {
-  hegxcorpSql?: SqlClient;
-};
 
 type InquiryRow = {
   id: string;
@@ -36,33 +29,6 @@ type InquiryRow = {
   updatedAt: Date | string;
 };
 
-function cleanOptional(value: string | undefined) {
-  const trimmed = value?.trim();
-  return trimmed ? trimmed : null;
-}
-
-function cleanServices(services: string[]) {
-  return [...new Set(services.map((service) => service.trim()).filter(Boolean))];
-}
-
-function getSql() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not configured.");
-  }
-
-  const globalForSql = globalThis as GlobalWithSql;
-  if (!globalForSql.hegxcorpSql) {
-    globalForSql.hegxcorpSql = postgres(databaseUrl, {
-      max: 5,
-      idle_timeout: 20,
-      connect_timeout: 10,
-    });
-  }
-
-  return globalForSql.hegxcorpSql;
-}
-
 function mapInquiry(row: InquiryRow): ContactInquiry {
   return {
     ...row,
@@ -72,8 +38,8 @@ function mapInquiry(row: InquiryRow): ContactInquiry {
 }
 
 export async function createContactInquiry(input: ContactInquiryInput) {
-  const sql = getSql();
-  const services = cleanServices(input.services);
+  const sql = getDbClient();
+  const services = uniqueTrimmed(input.services);
   const leadSourceData = cleanLeadSourceData(input.leadSourceData);
   const rows = await sql<InquiryRow[]>`
     INSERT INTO "ContactInquiry" (
@@ -147,7 +113,7 @@ export async function createContactInquiry(input: ContactInquiryInput) {
 
 export async function listSavedContactInquiries() {
   await assertAdminSession();
-  const sql = getSql();
+  const sql = getDbClient();
   const rows = await sql<InquiryRow[]>`
     SELECT
       "id",
@@ -181,7 +147,7 @@ export async function listSavedContactInquiries() {
 
 export async function updateSavedContactInquiryStatus(id: string, status: InquiryStatus) {
   await assertAdminSession();
-  const sql = getSql();
+  const sql = getDbClient();
   const rows = await sql<InquiryRow[]>`
     UPDATE "ContactInquiry"
     SET

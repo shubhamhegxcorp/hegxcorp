@@ -26,6 +26,7 @@ import { trackContactClick, trackEvent } from "@/lib/analytics";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useWebsiteSection } from "@/hooks/useWebsiteContent";
+import type { HeaderNavConfig } from "@/lib/cms-config";
 
 type ServiceItem = {
   icon: React.ComponentType<{ className?: string }>;
@@ -114,7 +115,7 @@ const serviceColumns: { heading: string; items: ServiceItem[] }[] = [
 ];
 
 const countries = [
-  { code: "in", flag: "IN", name: "India", region: "hegxcorp.in", domain: "https://hegxcorp.in" },
+  { code: "in", flag: "IN", name: "India", region: "hegxcorp.com", domain: "https://hegxcorp.com" },
   {
     code: "us",
     flag: "US",
@@ -132,8 +133,21 @@ const countries = [
   { code: "ae", flag: "AE", name: "Dubai", region: "hegxcorp.ae", domain: "https://hegxcorp.ae" },
 ];
 
+function getActiveCountryFromHost(): string {
+  if (typeof window === "undefined") return "in";
+  const params = new URLSearchParams(window.location.search);
+  const countryParam = params.get("country")?.toLowerCase();
+  if (countryParam && ["in", "us", "uk", "ae"].includes(countryParam)) {
+    return countryParam;
+  }
+  const host = window.location.hostname.toLowerCase();
+  if (host.includes("hegxcorp.us")) return "us";
+  if (host.includes("hegxcorp.uk")) return "uk";
+  if (host.includes("hegxcorp.ae")) return "ae";
+  return "in";
+}
+
 const navLinks = [
-  { label: "Products", to: "/products" as const },
   { label: "Case Studies", to: "/case-studies" as const },
   { label: "About Us", to: "/about" as const },
   { label: "Blog", to: "/blog" as const },
@@ -193,11 +207,28 @@ function StatCounter({
 
 export function Header() {
   const { data: contactDetails } = useWebsiteSection("contact.details");
+  const { data: headerData } = useWebsiteSection<HeaderNavConfig>("site.header");
   const [scrolled, setScrolled] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [countryOpen, setCountryOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeCountry, setActiveCountry] = useState("in");
+  const [activeCountry, setActiveCountry] = useState<string>("in");
+
+  useEffect(() => {
+    const syncCountry = () => {
+      setActiveCountry(getActiveCountryFromHost());
+    };
+    syncCountry();
+    window.addEventListener("pageshow", syncCountry);
+    window.addEventListener("popstate", syncCountry);
+    window.addEventListener("focus", syncCountry);
+    return () => {
+      window.removeEventListener("pageshow", syncCountry);
+      window.removeEventListener("popstate", syncCountry);
+      window.removeEventListener("focus", syncCountry);
+    };
+  }, []);
+
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [mobileCountriesOpen, setMobileCountriesOpen] = useState(false);
   const [hasMegaOpened, setHasMegaOpened] = useState(false);
@@ -250,285 +281,309 @@ export function Header() {
     };
   }, [mobileOpen]);
 
-  const active = countries.find((c) => c.code === activeCountry)!;
+  const active = countries.find((c) => c.code === activeCountry) || countries[0];
+
+  const currentNavLinks = [
+    { label: headerData?.caseStudiesLabel || "Case Studies", to: "/case-studies" as const },
+    { label: headerData?.aboutLabel || "About Us", to: "/about" as const },
+    { label: headerData?.blogLabel || "Blog", to: "/blog" as const },
+    { label: headerData?.contactLabel || "Contact", to: "/contact" as const },
+  ];
 
   return (
     <>
-      {/* Utility bar */}
-      <div className="hidden md:block bg-[#1D2742] text-white/80 text-xs">
-        <div className="mx-auto flex h-8 max-w-[1400px] items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <Globe className="h-3.5 w-3.5 text-white/60" />
-            <span className="font-medium tracking-wide text-white/90">Global Presence:</span>
-            <span className="text-white/60">India • USA • Australia • Europe</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-white/60">24/7 Support</span>
-            <span className="text-white/20">|</span>
-            <a
-              href={`tel:${(contactDetails?.phone || "+918369207836").replace(/\s+/g, "")}`}
-              onClick={() => trackContactClick("phone", "header_utility_phone")}
-              className="flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
-            >
-              <Phone className="h-3.5 w-3.5" />
-              {contactDetails?.phone || "+91 836 920 7836"}
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Main header */}
-      <header
-        className={cn(
-          "sticky top-0 z-50 w-full bg-white border-b border-[#EAEAEA]/60 transition-all duration-300",
-          scrolled && "shadow-[0_4px_24px_-12px_rgba(17,24,39,0.12)]",
-        )}
-      >
+      {/* Sticky Header Wrapper across all pages */}
+      <div className="sticky top-0 z-50 w-full bg-white transition-all duration-300">
+        {/* Utility bar */}
         <div
           className={cn(
-            "mx-auto flex max-w-[1400px] items-center justify-between px-6 transition-all duration-300",
-            scrolled ? "h-[65px]" : "h-[90px]",
+            "hidden md:block bg-[#1D2742] text-white/80 text-xs transition-all duration-300 overflow-hidden",
+            scrolled ? "max-h-0 opacity-0 py-0" : "max-h-8 opacity-100",
           )}
         >
-          {/* Logo */}
-          <Link to="/" className="flex items-center" aria-label="HEXGCORP home">
-            <img
-              src={logoAsset}
-              alt="HEXGCORP"
-              className={cn("w-auto transition-all duration-300", scrolled ? "h-11" : "h-[80px]")}
-            />
-          </Link>
-
-          {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {/* Services with mega menu */}
-            <div
-              ref={triggerRef}
-              className="relative"
-              onMouseEnter={() => setMegaOpen(true)}
-              onMouseLeave={() => setMegaOpen(false)}
-            >
-              <Link
-                to="/services"
-                className="group flex items-center gap-1 px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors duration-[250ms]"
-                aria-expanded={megaOpen}
-                aria-haspopup="true"
-              >
-                Services
-                <ChevronDown
-                  className={cn(
-                    "h-3.5 w-3.5 transition-transform duration-300",
-                    megaOpen && "rotate-180",
-                  )}
-                />
-                <span className="absolute left-4 right-4 bottom-1 h-px scale-x-0 origin-left bg-[#FC9C44] transition-transform duration-300 group-hover:scale-x-100" />
-              </Link>
-
-              {/* Mega menu */}
-              <div
-                className={cn(
-                  "fixed pt-3",
-                  "transition-opacity duration-200",
-                  megaOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
-                )}
-                style={{
-                  top: megaMenuPos.top,
-                  left: megaMenuPos.left,
-                  width: megaMenuPos.width,
-                }}
-              >
-                <div className="rounded-2xl border border-[#EAEAEA]/60 bg-white p-8 shadow-[0_24px_60px_-20px_rgba(17,24,39,0.18)]">
-                  <div className="grid grid-cols-4 gap-6">
-                    {serviceColumns.map((col) => (
-                      <div key={col.heading}>
-                        <h4 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#FC9C44]">
-                          {col.heading}
-                        </h4>
-                        <ul className="space-y-1">
-                          {col.items.map((item) => (
-                            <li key={item.title}>
-                              <Link
-                                to={item.href}
-                                className="group flex items-start gap-3 rounded-lg p-2.5 transition-all duration-300 hover:bg-[#FFF4E8] hover:-translate-y-[3px]"
-                              >
-                                <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-white border border-[#EAEAEA] text-foreground/70 group-hover:text-[#FC9C44] group-hover:border-[#FC9C44]/25 transition-all duration-200">
-                                  <item.icon className="h-4 w-4" />
-                                </span>
-                                <span className="min-w-0">
-                                  <span className="block text-sm font-medium text-foreground">
-                                    {item.title}
-                                  </span>
-                                  <span className="block text-xs text-muted-foreground">
-                                    {item.desc}
-                                  </span>
-                                </span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-
-                    {/* Featured card */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={megaOpen ? { opacity: 1, y: 0 } : {}}
-                      transition={{ duration: 0.4 }}
-                      className="rounded-xl bg-[#FC9C44] p-6 text-white flex flex-col justify-between"
-                    >
-                      <div className="space-y-5">
-                        {/* Primary Statistic */}
-                        <div className="space-y-1">
-                          <div className="text-5xl font-black tracking-tight text-white leading-none">
-                            <StatCounter target={300} suffix="+" trigger={hasMegaOpened} />
-                          </div>
-                          <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/60">
-                            Projects Delivered
-                          </div>
-                        </div>
-
-                        {/* Headline & Description */}
-                        <div className="space-y-2">
-                          <h5 className="text-base font-bold leading-snug">
-                            Building Modern Digital Experiences
-                          </h5>
-                          <p className="text-xs text-white/75 leading-relaxed font-normal">
-                            We help businesses build scalable websites, digital products, and
-                            growth-focused solutions that drive measurable results.
-                          </p>
-                        </div>
-                      </div>
-                      <motion.div
-                        whileHover={{ scale: 1.03 }}
-                        transition={{ duration: 0.2 }}
-                        className="w-full mt-6"
-                      >
-                        <Link
-                          to="/contact"
-                          className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white px-3 py-2.5 text-xs xl:text-sm font-semibold text-foreground hover:bg-white/90 transition-colors whitespace-nowrap"
-                        >
-                          Schedule a Strategy Call
-                          <ArrowRight className="h-4 w-4 shrink-0" />
-                        </Link>
-                      </motion.div>
-                    </motion.div>
-                  </div>
-                </div>
-              </div>
+          <div className="mx-auto flex h-8 max-w-[1400px] items-center justify-between px-6">
+            <div className="flex items-center gap-2">
+              <Globe className="h-3.5 w-3.5 text-white/60" />
+              <span className="font-medium tracking-wide text-white/90">Global Presence:</span>
+              <span className="text-white/60">
+                {headerData?.globalPresenceText || "India • USA • Australia • Dubai"}
+              </span>
             </div>
-
-            {navLinks.map((l) => (
-              <Link
-                key={l.to}
-                to={l.to}
-                className="group relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors duration-[250ms]"
+            <div className="flex items-center gap-4">
+              <span className="text-white/60">{headerData?.supportText || "24/7 Support"}</span>
+              <span className="text-white/20">|</span>
+              <a
+                href={`tel:${(headerData?.phone || contactDetails?.phone || "+918369207836").replace(/\s+/g, "")}`}
+                onClick={() => trackContactClick("phone", "header_utility_phone")}
+                className="flex items-center gap-1.5 text-white/90 hover:text-white transition-colors"
               >
-                {l.label}
-                <span className="absolute left-4 right-4 bottom-1 h-px scale-x-0 origin-left bg-[#FC9C44] transition-transform duration-300 group-hover:scale-x-100" />
-              </Link>
-            ))}
-          </nav>
-
-          {/* Right cluster */}
-          <div className="flex items-center gap-2">
-            {/* Country selector — desktop */}
-            <div
-              className="relative hidden lg:block"
-              onMouseEnter={() => setCountryOpen(true)}
-              onMouseLeave={() => setCountryOpen(false)}
-            >
-              <button
-                className="flex items-center gap-2 rounded-full border border-[#EAEAEA]/80 px-3.5 py-2 text-sm font-medium text-foreground/80 hover:bg-[#FFF4E8] hover:text-foreground transition-colors"
-                aria-haspopup="true"
-                aria-expanded={countryOpen}
-              >
-                <Globe className="h-4 w-4" />
-                <span className="text-base leading-none">{active.flag}</span>
-                <span className="hidden xl:inline">{active.name}</span>
-                <ChevronDown
-                  className={cn("h-3.5 w-3.5 transition-transform", countryOpen && "rotate-180")}
-                />
-              </button>
-
-              <div
-                className={cn(
-                  "absolute right-0 top-full pt-2 w-72 transition-all duration-200",
-                  countryOpen
-                    ? "opacity-100 translate-y-0 pointer-events-auto"
-                    : "opacity-0 -translate-y-2 pointer-events-none",
-                )}
-              >
-                <div className="rounded-xl border border-[#EAEAEA]/60 bg-white p-2 shadow-[0_20px_50px_-20px_rgba(17,24,39,0.2)]">
-                  <div className="px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                    Select your region
-                  </div>
-                  {countries.map((c) => (
-                    <a
-                      key={c.code}
-                      href={c.domain}
-                      onClick={() => {
-                        setActiveCountry(c.code);
-                        setCountryOpen(false);
-                      }}
-                      className={cn(
-                        "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-[#FFF4E8]",
-                        activeCountry === c.code && "bg-[#FFF4E8]",
-                      )}
-                    >
-                      <span className="text-xl leading-none">{c.flag}</span>
-                      <span className="flex-1 min-w-0">
-                        <span className="block text-sm font-medium text-foreground">{c.name}</span>
-                        <span className="block text-xs text-muted-foreground">{c.region}</span>
-                      </span>
-                      {activeCountry === c.code && <Check className="h-4 w-4 text-[#FC9C44]" />}
-                    </a>
-                  ))}
-                </div>
-              </div>
+                <Phone className="h-3.5 w-3.5" />
+                {headerData?.phone || contactDetails?.phone || "+91 836 920 7836"}
+              </a>
             </div>
-
-            {/* CTA */}
-            <Link
-              to="/contact"
-              onClick={() =>
-                trackEvent("cta_click", {
-                  cta_name: "connect_with_us",
-                  cta_location: "header",
-                  destination: "/contact",
-                })
-              }
-              className="hidden md:inline-flex items-center gap-2 rounded-full bg-[#FC9C44] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(252,156,68,0.35)] hover:bg-[#E88C35] hover:shadow-[0_12px_24px_-8px_rgba(252,156,68,0.45)] hover:-translate-y-0.5 transition-all duration-300"
-            >
-              Connect With Us
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-
-            <Link
-              to="/free-growth-audit"
-              onClick={() =>
-                trackEvent("cta_click", {
-                  cta_name: "free_growth_audit",
-                  cta_location: "mobile_header",
-                  destination: "/free-growth-audit",
-                })
-              }
-              className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#FC9C44] text-white shadow-[0_4px_12px_-4px_rgba(252,156,68,0.5)]"
-              aria-label="Get Free Growth Audit"
-            >
-              <TrendingUp className="h-4 w-4" />
-            </Link>
-
-            {/* Mobile hamburger */}
-            <button
-              className="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted transition-colors"
-              onClick={() => setMobileOpen(true)}
-              aria-label="Open menu"
-            >
-              <Menu className="h-5 w-5" />
-            </button>
           </div>
         </div>
-      </header>
+
+        {/* Main header */}
+        <header
+          className={cn(
+            "w-full bg-white border-b border-[#EAEAEA]/60 transition-all duration-300",
+            scrolled && "shadow-[0_4px_24px_-12px_rgba(17,24,39,0.12)]",
+          )}
+        >
+          <div
+            className={cn(
+              "mx-auto flex max-w-[1400px] items-center justify-between px-4 sm:px-6 transition-all duration-300",
+              scrolled ? "h-[60px] sm:h-[65px]" : "h-[72px] sm:h-[90px]",
+            )}
+          >
+            {/* Logo */}
+            <Link to="/" className="flex items-center" aria-label="HEXGCORP home">
+              <img
+                src={logoAsset}
+                alt="HEXGCORP"
+                className={cn(
+                  "w-auto transition-all duration-300 object-contain",
+                  scrolled ? "h-9 sm:h-11" : "h-11 sm:h-[70px] lg:h-[80px]",
+                )}
+              />
+            </Link>
+
+            {/* Desktop nav */}
+            <nav className="hidden lg:flex items-center gap-1">
+              {/* Services with mega menu */}
+              <div
+                ref={triggerRef}
+                className="relative"
+                onMouseEnter={() => setMegaOpen(true)}
+                onMouseLeave={() => setMegaOpen(false)}
+              >
+                <Link
+                  to="/services"
+                  className="group flex items-center gap-1 px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors duration-[250ms]"
+                  aria-expanded={megaOpen}
+                  aria-haspopup="true"
+                >
+                  {headerData?.servicesLabel || "Services"}
+                  <ChevronDown
+                    className={cn(
+                      "h-3.5 w-3.5 transition-transform duration-300",
+                      megaOpen && "rotate-180",
+                    )}
+                  />
+                  <span className="absolute left-4 right-4 bottom-1 h-px scale-x-0 origin-left bg-[#FC9C44] transition-transform duration-300 group-hover:scale-x-100" />
+                </Link>
+
+                {/* Mega menu */}
+                <div
+                  className={cn(
+                    "fixed pt-3",
+                    "transition-opacity duration-200",
+                    megaOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
+                  )}
+                  style={{
+                    top: megaMenuPos.top,
+                    left: megaMenuPos.left,
+                    width: megaMenuPos.width,
+                  }}
+                >
+                  <div className="rounded-2xl border border-[#EAEAEA]/60 bg-white p-8 shadow-[0_24px_60px_-20px_rgba(17,24,39,0.18)]">
+                    <div className="grid grid-cols-4 gap-6">
+                      {serviceColumns.map((col) => (
+                        <div key={col.heading}>
+                          <h4 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#FC9C44]">
+                            {col.heading}
+                          </h4>
+                          <ul className="space-y-1">
+                            {col.items.map((item) => (
+                              <li key={item.title}>
+                                <Link
+                                  to={item.href}
+                                  className="group flex items-start gap-3 rounded-lg p-2.5 transition-all duration-300 hover:bg-[#FFF4E8] hover:-translate-y-[3px]"
+                                >
+                                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-white border border-[#EAEAEA] text-foreground/70 group-hover:text-[#FC9C44] group-hover:border-[#FC9C44]/25 transition-all duration-200">
+                                    <item.icon className="h-4 w-4" />
+                                  </span>
+                                  <span className="min-w-0">
+                                    <span className="block text-sm font-medium text-foreground">
+                                      {item.title}
+                                    </span>
+                                    <span className="block text-xs text-muted-foreground">
+                                      {item.desc}
+                                    </span>
+                                  </span>
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+
+                      {/* Featured card */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={megaOpen ? { opacity: 1, y: 0 } : {}}
+                        transition={{ duration: 0.4 }}
+                        className="rounded-xl bg-[#FC9C44] p-6 text-white flex flex-col justify-between"
+                      >
+                        <div className="space-y-5">
+                          {/* Primary Statistic */}
+                          <div className="space-y-1">
+                            <div className="text-5xl font-black tracking-tight text-white leading-none">
+                              <StatCounter target={300} suffix="+" trigger={hasMegaOpened} />
+                            </div>
+                            <div className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/60">
+                              Projects Delivered
+                            </div>
+                          </div>
+
+                          {/* Headline & Description */}
+                          <div className="space-y-2">
+                            <h5 className="text-base font-bold leading-snug">
+                              Building Modern Digital Experiences
+                            </h5>
+                            <p className="text-xs text-white/75 leading-relaxed font-normal">
+                              We help businesses build scalable websites, digital products, and
+                              growth-focused solutions that drive measurable results.
+                            </p>
+                          </div>
+                        </div>
+                        <motion.div
+                          whileHover={{ scale: 1.03 }}
+                          transition={{ duration: 0.2 }}
+                          className="w-full mt-6"
+                        >
+                          <Link
+                            to="/contact"
+                            className="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-white px-3 py-2.5 text-xs xl:text-sm font-semibold text-foreground hover:bg-white/90 transition-colors whitespace-nowrap"
+                          >
+                            Schedule a Strategy Call
+                            <ArrowRight className="h-4 w-4 shrink-0" />
+                          </Link>
+                        </motion.div>
+                      </motion.div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {currentNavLinks.map((l) => (
+                <Link
+                  key={l.to}
+                  to={l.to}
+                  className="group relative px-4 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors duration-[250ms]"
+                >
+                  {l.label}
+                  <span className="absolute left-4 right-4 bottom-1 h-px scale-x-0 origin-left bg-[#FC9C44] transition-transform duration-300 group-hover:scale-x-100" />
+                </Link>
+              ))}
+            </nav>
+
+            {/* Right cluster */}
+            <div className="flex items-center gap-2">
+              {/* Country selector — desktop */}
+              <div
+                className="relative hidden lg:block"
+                onMouseEnter={() => setCountryOpen(true)}
+                onMouseLeave={() => setCountryOpen(false)}
+              >
+                <button
+                  className="flex items-center gap-2 rounded-full border border-[#EAEAEA]/80 px-3.5 py-2 text-sm font-medium text-foreground/80 hover:bg-[#FFF4E8] hover:text-foreground transition-colors"
+                  aria-haspopup="true"
+                  aria-expanded={countryOpen}
+                >
+                  <Globe className="h-4 w-4" />
+                  <span className="text-base leading-none">{active.flag}</span>
+                  <span className="hidden xl:inline">{active.name}</span>
+                  <ChevronDown
+                    className={cn("h-3.5 w-3.5 transition-transform", countryOpen && "rotate-180")}
+                  />
+                </button>
+
+                <div
+                  className={cn(
+                    "absolute right-0 top-full pt-2 w-72 transition-all duration-200",
+                    countryOpen
+                      ? "opacity-100 translate-y-0 pointer-events-auto"
+                      : "opacity-0 -translate-y-2 pointer-events-none",
+                  )}
+                >
+                  <div className="rounded-xl border border-[#EAEAEA]/60 bg-white p-2 shadow-[0_20px_50px_-20px_rgba(17,24,39,0.2)]">
+                    <div className="px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                      Select your region
+                    </div>
+                    {countries.map((c) => (
+                      <a
+                        key={c.code}
+                        href={c.domain}
+                        onClick={(e) => {
+                          setCountryOpen(false);
+                          if (c.code === activeCountry) {
+                            e.preventDefault();
+                          }
+                        }}
+                        className={cn(
+                          "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-[#FFF4E8]",
+                          activeCountry === c.code && "bg-[#FFF4E8]",
+                        )}
+                      >
+                        <span className="text-xl leading-none">{c.flag}</span>
+                        <span className="flex-1 min-w-0">
+                          <span className="block text-sm font-medium text-foreground">
+                            {c.name}
+                          </span>
+                          <span className="block text-xs text-muted-foreground">{c.region}</span>
+                        </span>
+                        {activeCountry === c.code && <Check className="h-4 w-4 text-[#FC9C44]" />}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <Link
+                to={headerData?.ctaUrl || "/contact"}
+                onClick={() =>
+                  trackEvent("cta_click", {
+                    cta_name: "connect_with_us",
+                    cta_location: "header",
+                    destination: headerData?.ctaUrl || "/contact",
+                  })
+                }
+                className="hidden md:inline-flex items-center gap-2 rounded-full bg-[#FC9C44] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(252,156,68,0.35)] hover:bg-[#E88C35] hover:shadow-[0_12px_24px_-8px_rgba(252,156,68,0.45)] hover:-translate-y-0.5 transition-all duration-300"
+              >
+                {headerData?.ctaText || "Connect With Us"}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+
+              <Link
+                to="/free-growth-audit"
+                onClick={() =>
+                  trackEvent("cta_click", {
+                    cta_name: "free_growth_audit",
+                    cta_location: "mobile_header",
+                    destination: "/free-growth-audit",
+                  })
+                }
+                className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#FC9C44] text-white shadow-[0_4px_12px_-4px_rgba(252,156,68,0.5)]"
+                aria-label="Get Free Growth Audit"
+              >
+                <TrendingUp className="h-4 w-4" />
+              </Link>
+
+              {/* Mobile hamburger */}
+              <button
+                className="lg:hidden inline-flex h-10 w-10 items-center justify-center rounded-md text-foreground hover:bg-muted transition-colors"
+                onClick={() => setMobileOpen(true)}
+                aria-label="Open menu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        </header>
+      </div>
 
       {/* Mobile drawer */}
       <div
@@ -545,10 +600,10 @@ export function Header() {
             mobileOpen ? "translate-x-0" : "translate-x-full",
           )}
         >
-          <div className="flex h-60 items-center justify-between border-b border-border px-5">
-            <img src={logoAsset} alt="HEXGCORP" className="h-20 w-auto" />
+          <div className="flex h-16 items-center justify-between border-b border-[#EAEAEA] px-5">
+            <img src={logoAsset} alt="HEXGCORP" className="h-9 w-auto object-contain" />
             <button
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-muted"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg hover:bg-[#FAFAF8] text-foreground/80"
               onClick={() => setMobileOpen(false)}
               aria-label="Close menu"
             >
@@ -556,22 +611,25 @@ export function Header() {
             </button>
           </div>
 
-          <nav className="flex-1 overflow-y-auto px-3 py-4">
+          <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
             {/* Services accordion */}
             <button
-              className="flex w-full items-center justify-between rounded-lg px-3 py-3 text-base font-medium hover:bg-[#FFF4E8]"
+              className="flex w-full items-center justify-between rounded-xl px-3.5 py-3 text-base font-semibold text-[#232323] hover:bg-[#FFF4E8] transition-colors"
               onClick={() => setMobileServicesOpen((v) => !v)}
             >
-              Services
+              <span>{headerData?.servicesLabel || "Services"}</span>
               <ChevronDown
-                className={cn("h-4 w-4 transition-transform", mobileServicesOpen && "rotate-180")}
+                className={cn(
+                  "h-4 w-4 text-[#6B7280] transition-transform duration-200",
+                  mobileServicesOpen && "rotate-180",
+                )}
               />
             </button>
             {mobileServicesOpen && (
-              <div className="mb-2 ml-2 mt-1 space-y-3 border-l border-[#EAEAEA] pl-3">
+              <div className="mb-2 ml-2 mt-1 space-y-3 border-l-2 border-[#FC9C44]/30 pl-3 py-1">
                 {serviceColumns.map((col) => (
-                  <div key={col.heading}>
-                    <div className="px-2 pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#FC9C44]">
+                  <div key={col.heading} className="space-y-1">
+                    <div className="px-2 pb-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[#FC9C44]">
                       {col.heading}
                     </div>
                     {col.items.map((item) => (
@@ -579,10 +637,10 @@ export function Header() {
                         key={item.title}
                         to={item.href}
                         onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-[#FFF4E8]"
+                        className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-sm text-[#374151] hover:bg-[#FFF4E8] hover:text-[#FC9C44] transition-colors"
                       >
-                        <item.icon className="h-4 w-4 text-muted-foreground" />
-                        {item.title}
+                        <item.icon className="h-4 w-4 text-[#FC9C44] shrink-0" />
+                        <span className="font-medium">{item.title}</span>
                       </Link>
                     ))}
                   </div>
@@ -590,12 +648,12 @@ export function Header() {
               </div>
             )}
 
-            {navLinks.map((l) => (
+            {currentNavLinks.map((l) => (
               <Link
                 key={l.to}
                 to={l.to}
                 onClick={() => setMobileOpen(false)}
-                className="block rounded-lg px-3 py-3 text-base font-medium hover:bg-[#FFF4E8]"
+                className="block rounded-xl px-3.5 py-3 text-base font-semibold text-[#232323] hover:bg-[#FFF4E8] hover:text-[#FC9C44] transition-colors"
               >
                 {l.label}
               </Link>
@@ -603,34 +661,42 @@ export function Header() {
 
             {/* Countries accordion */}
             <button
-              className="mt-2 flex w-full items-center justify-between rounded-lg px-3 py-3 text-base font-medium hover:bg-[#FFF4E8]"
+              className="mt-2 flex w-full items-center justify-between rounded-xl px-3.5 py-3 text-base font-semibold text-[#232323] hover:bg-[#FFF4E8] transition-colors"
               onClick={() => setMobileCountriesOpen((v) => !v)}
             >
               <span className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                Countries
+                <Globe className="h-4 w-4 text-[#FC9C44]" />
+                Countries ({active.flag})
               </span>
               <ChevronDown
-                className={cn("h-4 w-4 transition-transform", mobileCountriesOpen && "rotate-180")}
+                className={cn(
+                  "h-4 w-4 text-[#6B7280] transition-transform duration-200",
+                  mobileCountriesOpen && "rotate-180",
+                )}
               />
             </button>
             {mobileCountriesOpen && (
-              <div className="ml-2 mt-1 space-y-1 border-l border-[#EAEAEA] pl-3">
+              <div className="ml-2 mt-1 space-y-1 border-l-2 border-[#FC9C44]/30 pl-3 py-1">
                 {countries.map((c) => (
                   <a
                     key={c.code}
                     href={c.domain}
-                    onClick={() => {
-                      setActiveCountry(c.code);
+                    onClick={(e) => {
                       setMobileOpen(false);
+                      setMobileCountriesOpen(false);
+                      if (c.code === activeCountry) {
+                        e.preventDefault();
+                      }
                     }}
                     className={cn(
-                      "flex items-center gap-3 rounded-md px-2 py-2 text-sm hover:bg-[#FFF4E8]",
-                      activeCountry === c.code && "bg-[#FFF4E8] font-medium",
+                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                      activeCountry === c.code
+                        ? "bg-[#FFF4E8] font-semibold text-[#FC9C44]"
+                        : "text-[#374151] hover:bg-[#FAFAF8]",
                     )}
                   >
-                    <span className="text-lg">{c.flag}</span>
-                    {c.name}
+                    <span className="text-base font-bold text-[#FC9C44]">{c.flag}</span>
+                    <span>{c.name}</span>
                     {activeCountry === c.code && (
                       <Check className="ml-auto h-4 w-4 text-[#FC9C44]" />
                     )}
@@ -640,11 +706,11 @@ export function Header() {
             )}
           </nav>
 
-          <div className="border-t border-[#EAEAEA] p-4 space-y-3">
+          <div className="border-t border-[#EAEAEA] p-4 pb-6 space-y-3 bg-[#FAFAF8]">
             <Link
               to="/free-growth-audit"
               onClick={() => setMobileOpen(false)}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#FC9C44] px-5 py-3 hover:bg-[#E88C35] text-sm font-semibold text-white"
+              className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-[#FC9C44] px-5 py-3.5 hover:bg-[#E88C35] text-sm font-bold text-white shadow-md active:scale-98 transition-all"
             >
               Get Free Growth Audit
               <ArrowRight className="h-4 w-4" />
@@ -652,9 +718,10 @@ export function Header() {
             <a
               href={`tel:${(contactDetails?.phone || "+918369207836").replace(/\s+/g, "")}`}
               onClick={() => trackContactClick("phone", "mobile_menu_support_phone")}
-              className="flex items-center justify-center gap-2 text-sm text-muted-foreground"
+              className="flex items-center justify-center gap-2 text-xs font-medium text-[#6B7280] hover:text-[#232323] transition-colors py-1"
             >
-              <Phone className="h-4 w-4" /> Support: {contactDetails?.phone || "+91 836 920 7836"}
+              <Phone className="h-3.5 w-3.5 text-[#FC9C44]" /> Support:{" "}
+              {contactDetails?.phone || "+91 836 920 7836"}
             </a>
           </div>
         </aside>

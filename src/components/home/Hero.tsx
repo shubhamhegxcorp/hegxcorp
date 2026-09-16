@@ -12,35 +12,43 @@ import {
 } from "framer-motion";
 import ShapeGrid from "@/components/ShapeGrid";
 import { useWebsiteSection } from "@/hooks/useWebsiteContent";
+import { SimpleGraph, type DataPoint } from "@/components/ui/simple-graph";
+
+const revenueGraphData: DataPoint[] = [
+  { value: 20, label: "01 • Baseline (Start)" },
+  { value: 68, label: "02 • SEO Setup" },
+  { value: 120, label: "03 • Paid Scale" },
+  { value: 182, label: "04 • Conversion Engine" },
+  { value: 247, label: "05 • Projected (+247%)" },
+];
 
 const dashboardMetrics = [
   {
     label: "Organic Traffic Growth",
-    value: 310,
+    value: 700,
     prefix: "+",
     suffix: "%",
     icon: TrendingUp,
     color: "text-[#FC9C44]",
   },
   {
-    label: "Qualified Leads",
-    value: 184,
-    prefix: "+",
-    suffix: "%",
+    label: "Unique Mobile Reach",
+    value: 1,
+    prefix: "",
+    suffix: "M+",
     icon: Users,
     color: "text-[#EBB771]",
   },
   {
-    label: "ROAS Achieved",
-    value: 4.8,
-    prefix: "",
-    suffix: "x",
+    label: "Phone & Form Inquiries",
+    value: 1151,
+    prefix: "+",
+    suffix: "",
     icon: BarChart3,
     color: "text-[#FC9C44]",
-    decimals: 1,
   },
   {
-    label: "Client Satisfaction",
+    label: "Client Retention",
     value: 98,
     prefix: "+",
     suffix: "%",
@@ -75,6 +83,45 @@ const iconVariants: Variants = {
   },
 };
 
+function renderHeroHeadline(title: string) {
+  if (!title) return "Generate More Leads, Sales & Revenue";
+
+  // If user used [highlight]words[/highlight] in CMS
+  if (title.includes("[highlight]") && title.includes("[/highlight]")) {
+    const parts = title.split(/\[highlight\](.*?)\[\/highlight\]/g);
+    return parts.map((part, i) =>
+      i % 2 === 1 ? (
+        <span key={i} className="relative inline-block">
+          {part}
+          <span className="absolute bottom-0 left-0 right-0 h-[3px] rounded-full" style={{}} />
+        </span>
+      ) : (
+        part
+      ),
+    );
+  }
+
+  // If default title, give it the signature orange underline on "Leads, Sales"
+  if (title === "Generate More Leads, Sales & Revenue") {
+    return (
+      <>
+        Generate More{" "}
+        <span className="relative inline-block">
+          Leads, Sales
+          <span
+            className="absolute bottom-0 left-0 right-0 h-[3px] rounded-full"
+            style={{ background: "#FC9C44", bottom: "-4px" }}
+          />
+        </span>{" "}
+        &amp; Revenue
+      </>
+    );
+  }
+
+  // Otherwise, render whatever custom title the user saved in the CMS directly
+  return title;
+}
+
 export function Hero() {
   const { data: heroData } = useWebsiteSection("home.hero");
   const [isMounted, setIsMounted] = useState(false);
@@ -83,10 +130,33 @@ export function Hero() {
     setIsMounted(true);
   }, []);
 
+  const badge = heroData?.badge || "Growth Consultancy & Digital Transformation Partner";
+  const title = heroData?.title || "Generate More Leads, Sales & Revenue";
+  const description =
+    heroData?.description ||
+    "We design and execute data-driven growth marketing systems, custom engineering, and search optimization built to position enterprise firms for compounding scale.";
+  const buttonText = heroData?.buttonText || "Get Free Growth Audit";
+  const buttonUrl = heroData?.buttonUrl || "/free-growth-audit";
+  const secondaryButtonText = heroData?.secondaryButtonText || "Explore Case Studies";
+  const secondaryButtonUrl = heroData?.secondaryButtonUrl || "/case-studies";
+  const trustText =
+    heroData?.trustText || "Trusted by enterprise companies across India, USA, UK & UAE";
+
+  const dashboardUrl = heroData?.dashboardUrl || "hegxcorp.com/growth-analytics";
+  const dashboardTitle = heroData?.dashboardTitle || "Hegxcorp Growth Engine";
+  const dashboardSubtitle = heroData?.dashboardSubtitle || "Real-time Client Portfolio Metrics";
+  const dashboardBadge = heroData?.dashboardBadge || "System Active";
+  const metrics =
+    heroData?.dashboardMetrics && heroData.dashboardMetrics.length > 0
+      ? heroData.dashboardMetrics
+      : dashboardMetrics;
+  const chartTitle = heroData?.chartTitle || "Revenue Pipeline Growth (Average YoY)";
+  const chartMetric = heroData?.chartMetric || "+280%";
+
   return (
     <section
       className="relative overflow-hidden bg-white"
-      style={{ paddingTop: "clamp(64px, 8vw, 120px)", paddingBottom: "clamp(64px, 8vw, 120px)" }}
+      style={{ paddingTop: "clamp(48px, 6vw, 110px)", paddingBottom: "clamp(48px, 6vw, 110px)" }}
     >
       <div
         aria-hidden="true"
@@ -107,80 +177,66 @@ export function Hero() {
         />
       </div>
 
-      <div className="relative mx-auto max-w-[1280px] px-6 lg:px-10">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
+      <div className="relative mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-10">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-12 items-center">
           {/* Left — copy */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="space-y-8"
+            className="space-y-6 sm:space-y-8"
           >
             {/* Category badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.1em] text-[#FC9C44] shadow-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#FC9C44] animate-pulse" />
-              {heroData.badge}
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-[#EAEAEA] bg-[#FAFAF8] px-3 sm:px-4 py-1.5 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.06em] sm:tracking-[0.1em] text-[#FC9C44] shadow-sm max-w-full">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#FC9C44] animate-pulse shrink-0" />
+              <span className="leading-snug">{badge}</span>
             </div>
 
             {/* Headline */}
             <h1
-              className="font-bold text-[#232323] leading-[1.08] tracking-tight"
+              className="font-bold text-[#232323] leading-[1.14] sm:leading-[1.08] tracking-tight break-words [overflow-wrap:anywhere]"
               style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: "clamp(40px, 4.8vw, 68px)",
+                fontSize: "clamp(26px, 6.5vw, 68px)",
               }}
             >
-              {heroData.title.includes("Leads, Sales") ? (
-                <>
-                  Generate More{" "}
-                  <span className="relative">
-                    Leads, Sales
-                    <span
-                      className="absolute bottom-0 left-0 right-0 h-[3px] rounded-full"
-                      style={{ background: "#FC9C44", bottom: "-4px" }}
-                    />
-                  </span>{" "}
-                  &amp; Revenue
-                </>
-              ) : (
-                heroData.title
-              )}
+              {renderHeroHeadline(title)}
             </h1>
 
             {/* Subheadline */}
             <p
-              className="max-w-[540px] text-[#6B7280] leading-relaxed"
-              style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(16px, 1.2vw, 19px)" }}
+              className="max-w-[540px] text-[#6B7280] leading-relaxed text-sm sm:text-base lg:text-lg"
+              style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              {heroData.description}
+              {description}
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-wrap gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Link
-                to={heroData.buttonUrl}
-                className="inline-flex items-center gap-2.5 rounded-full px-7 py-3.5 text-sm font-semibold text-white transition-[background-color,transform,box-shadow] duration-200 ease-out bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(252,156,68,0.5)]"
+                to={buttonUrl}
+                className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 rounded-full px-6 sm:px-7 py-3.5 text-sm font-semibold text-white transition-[background-color,transform,box-shadow] duration-200 ease-out bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(252,156,68,0.5)] active:scale-98"
                 id="hero-cta-audit"
               >
-                {heroData.buttonText}
-                <ArrowRight className="h-4 w-4" />
+                <span>{buttonText}</span>
+                <ArrowRight className="h-4 w-4 shrink-0" />
               </Link>
               <Link
-                to={heroData.secondaryButtonUrl}
-                className="inline-flex items-center gap-2.5 rounded-full border border-[#EAEAEA] bg-white px-7 py-3.5 text-sm font-semibold text-[#232323] transition-[background-color,border-color] duration-200 ease-out hover:bg-[#FFF4E8] hover:border-[#FC9C44]"
+                to={secondaryButtonUrl}
+                className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 rounded-full border border-[#EAEAEA] bg-white px-6 sm:px-7 py-3.5 text-sm font-semibold text-[#232323] transition-[background-color,border-color] duration-200 ease-out hover:bg-[#FFF4E8] hover:border-[#FC9C44] active:scale-98"
                 id="hero-cta-case-studies"
               >
-                {heroData.secondaryButtonText}
+                {secondaryButtonText}
               </Link>
             </div>
 
             {/* Trust line */}
             <div
-              className="flex items-center gap-2 text-xs text-[#6B7280]"
+              className="flex items-start sm:items-center gap-2 text-[11px] sm:text-xs text-[#6B7280] leading-snug"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              <Globe className="h-3.5 w-3.5 text-[#FC9C44]" />
-              <span>Trusted by enterprise companies across India, USA, UK &amp; UAE</span>
+              <Globe className="h-3.5 w-3.5 text-[#FC9C44] shrink-0 mt-0.5 sm:mt-0" />
+              <span className="leading-snug">{trustText}</span>
             </div>
           </motion.div>
 
@@ -189,92 +245,98 @@ export function Hero() {
             initial={{ opacity: 0, scale: 0.95, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="w-full"
+            className="w-full max-w-full overflow-hidden"
           >
-            {/* Subtle floating motion using Framer Motion (subtle, enterprise feel) */}
+            {/* Subtle floating motion using Framer Motion */}
             <motion.div
               animate={{ y: [0, -6, 0] }}
               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
               whileHover={{
-                y: -10, // subtle lift on hover
+                y: -10,
                 boxShadow: "0 32px 80px -20px rgba(29,39,66,0.16)",
                 transition: { duration: 0.25, ease: "easeOut" },
               }}
               className="relative rounded-2xl border border-[#EAEAEA] bg-[#FAFAF8] p-0.5 shadow-[0_24px_64px_-16px_rgba(29,39,66,0.12)] overflow-hidden"
             >
               {/* Browser bar */}
-              <div className="flex items-center gap-2 px-4 py-3 bg-white border-b border-[#EAEAEA] rounded-t-2xl">
+              <div className="flex items-center gap-2 px-3 sm:px-4 py-2.5 sm:py-3 bg-white border-b border-[#EAEAEA] rounded-t-2xl">
                 {/* Dots */}
                 <div className="flex gap-1.5 shrink-0">
-                  <div className="h-3 w-3 rounded-full bg-[#FF5F56]" />
-                  <div className="h-3 w-3 rounded-full bg-[#FFBD2E]" />
-                  <div className="h-3 w-3 rounded-full bg-[#27C93F]" />
+                  <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-[#FF5F56]" />
+                  <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-[#FFBD2E]" />
+                  <div className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-[#27C93F]" />
                 </div>
                 {/* Address bar */}
-                <div className="flex-1 max-w-[340px] mx-auto bg-[#FAFAF8] border border-[#EAEAEA] rounded-md py-1 px-3 text-[10px] text-[#6B7280] font-mono text-center flex items-center justify-center gap-1">
-                  <span className="text-emerald-500 font-bold">https://</span>
-                  <span>hegxcorp.com/growth-analytics</span>
+                <div className="flex-1 min-w-0 max-w-[340px] mx-auto bg-[#FAFAF8] border border-[#EAEAEA] rounded-md py-1 px-2.5 text-[10px] text-[#6B7280] font-mono text-center flex items-center justify-center gap-1 truncate">
+                  <span className="text-emerald-500 font-bold shrink-0">https://</span>
+                  <span className="truncate">{dashboardUrl}</span>
                 </div>
               </div>
 
               {/* Dashboard Content */}
-              <div className="bg-white p-6 rounded-b-2xl">
+              <div className="bg-white p-4 sm:p-6 rounded-b-2xl">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <div>
+                <div className="flex items-center justify-between gap-2 mb-5 sm:mb-6">
+                  <div className="min-w-0">
                     <h3
-                      className="text-sm font-bold text-[#232323] tracking-tight"
+                      className="text-xs sm:text-sm font-bold text-[#232323] tracking-tight truncate"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
-                      Hegxcorp Growth Engine
+                      {dashboardTitle}
                     </h3>
-                    <p className="text-[11px] text-[#6B7280]">Real-time Client Portfolio Metrics</p>
+                    <p className="text-[10px] sm:text-[11px] text-[#6B7280] truncate">
+                      {dashboardSubtitle}
+                    </p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold text-emerald-600">
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2 sm:px-2.5 py-0.5 sm:py-1 text-[10px] sm:text-[11px] font-semibold text-emerald-600">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                      System Active
+                      {dashboardBadge}
                     </span>
                   </div>
                 </div>
 
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                  {dashboardMetrics.map((m, idx) => (
-                    <motion.div
-                      key={m.label}
-                      custom={idx}
-                      variants={cardVariants}
-                      initial="initial"
-                      animate={isMounted ? "animate" : "initial"}
-                      whileHover="hover"
-                      className="group rounded-xl border border-[#EAEAEA] bg-[#FAFAF8] p-4 cursor-default"
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[10px] font-medium text-[#6B7280] uppercase tracking-wide">
-                          {m.label}
-                        </span>
-                        <motion.div variants={iconVariants}>
-                          <m.icon className="h-4 w-4 text-[#FC9C44]" />
-                        </motion.div>
-                      </div>
-                      <div
-                        className="text-2xl font-bold text-[#232323]"
-                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-4 mb-5 sm:mb-6">
+                  {metrics.map((m: any, idx: number) => {
+                    const iconMap = [TrendingUp, Users, BarChart3, Zap];
+                    const IconComp = iconMap[idx % iconMap.length];
+                    return (
+                      <motion.div
+                        key={m.label || idx}
+                        custom={idx}
+                        variants={cardVariants}
+                        initial="initial"
+                        animate={isMounted ? "animate" : "initial"}
+                        whileHover="hover"
+                        className="group rounded-xl border border-[#EAEAEA] bg-[#FAFAF8] p-2.5 sm:p-4 cursor-default"
                       >
-                        <HeroMetric
-                          value={m.value}
-                          prefix={m.prefix}
-                          suffix={m.suffix}
-                          decimals={m.decimals}
-                        />
-                      </div>
-                    </motion.div>
-                  ))}
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[9px] sm:text-[10px] font-medium text-[#6B7280] uppercase tracking-wide truncate pr-1">
+                            {m.label}
+                          </span>
+                          <motion.div variants={iconVariants}>
+                            <IconComp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#FC9C44] shrink-0" />
+                          </motion.div>
+                        </div>
+                        <div
+                          className="text-lg sm:text-2xl font-bold text-[#232323]"
+                          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                        >
+                          <HeroMetric
+                            value={Number(m.value) || 0}
+                            prefix={m.prefix || ""}
+                            suffix={m.suffix || ""}
+                            decimals={m.decimals || 0}
+                          />
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
 
                 {/* Interactive Chart Area */}
-                <ChartArea />
+                <ChartArea title={chartTitle} metric={chartMetric} />
               </div>
             </motion.div>
           </motion.div>
@@ -321,141 +383,75 @@ function HeroMetric({ value, prefix = "", suffix = "", decimals = 0 }: HeroMetri
   );
 }
 
-// ChartArea helper with viewport entry reveal and snappy hover reactivity
-function ChartArea() {
-  const [isHovered, setIsHovered] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: true, margin: "-100px" });
-
+// ChartArea helper with React Bits Pro Simple Graph and re-animation on scroll-back
+function ChartArea({
+  title = "Revenue Pipeline Growth (Average YoY)",
+  metric = "+247%",
+}: {
+  title?: string;
+  metric?: string;
+}) {
   return (
-    <motion.div
-      ref={containerRef}
-      initial={{ opacity: 0, y: 15 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="rounded-xl border border-[#EAEAEA] p-4 bg-white transition-[box-shadow] duration-200 ease-out hover:shadow-sm"
-    >
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-1.5">
-          <Sparkles className="h-3.5 w-3.5 text-[#FC9C44]" />
-          <span className="text-xs font-semibold text-[#232323]">
-            Revenue Pipeline Growth (Average YoY)
-          </span>
+    <div className="rounded-xl border border-[#E5E7EB] p-3.5 sm:p-5 bg-white shadow-[0_4px_24px_-4px_rgba(29,39,66,0.08)]">
+      <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-[#F3F4F6]">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-600 border border-emerald-500/25 shrink-0">
+            <TrendingUp className="h-4 w-4" />
+          </div>
+          <div className="min-w-0">
+            <span
+              className="text-xs sm:text-sm font-bold text-[#1D2742] block truncate"
+              style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+            >
+              {title}
+            </span>
+            <span className="text-[10px] text-[#6B7280]">Compounding Client Growth Model</span>
+          </div>
         </div>
-        <span className="text-[11px] font-bold text-emerald-500">+247%</span>
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 text-xs font-bold font-mono shadow-xs shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          {metric}
+        </div>
       </div>
 
-      {/* Animated Line Graph (SVG) */}
-      <div className="relative h-28 w-full">
-        <svg className="w-full h-full" viewBox="0 0 400 100" preserveAspectRatio="none">
-          {/* Grid Lines */}
-          <line
-            x1="0"
-            y1="25"
-            x2="400"
-            y2="25"
-            stroke="#F3F4F6"
-            strokeWidth="1"
-            strokeDasharray="3"
-          />
-          <line
-            x1="0"
-            y1="50"
-            x2="400"
-            y2="50"
-            stroke="#F3F4F6"
-            strokeWidth="1"
-            strokeDasharray="3"
-          />
-          <line
-            x1="0"
-            y1="75"
-            x2="400"
-            y2="75"
-            stroke="#F3F4F6"
-            strokeWidth="1"
-            strokeDasharray="3"
-          />
-
-          {/* Area under the path (draws in from left to right) */}
-          <motion.path
-            d="M 0 100 L 0 80 L 40 85 L 80 65 L 120 75 L 160 50 L 200 55 L 240 35 L 280 40 L 320 20 L 360 25 L 400 5 L 400 100 Z"
-            fill="url(#gradient-area)"
-            initial={{ pathLength: 0 }}
-            animate={isInView ? { pathLength: 1 } : { pathLength: 0 }}
-            transition={{ duration: 1.4, delay: 0.2, ease: "easeOut" }}
-          />
-
-          {/* Path Line (draws on entry, thickens instantly on hover) */}
-          <motion.path
-            d="M 0 80 L 40 85 L 80 65 L 120 75 L 160 50 L 200 55 L 240 35 L 280 40 L 320 20 L 360 25 L 400 5"
-            fill="none"
-            stroke="#FC9C44"
-            animate={{
-              pathLength: isInView ? 1 : 0,
-              strokeWidth: isHovered ? 4.5 : 3.5,
-            }}
-            strokeLinecap="round"
-            initial={{ pathLength: 0, strokeWidth: 3.5 }}
-            transition={{
-              pathLength: { duration: 1.4, delay: 0.2, ease: "easeOut" },
-              strokeWidth: { duration: 0.2, ease: "easeOut" },
-            }}
-          />
-
-          {/* Interactive circles at points (scale in sequentially after line draws) */}
-          <motion.circle
-            cx="200"
-            cy="55"
-            r="4.5"
-            fill="#FC9C44"
-            stroke="#FFFFFF"
-            strokeWidth="2"
-            initial={{ scale: 0 }}
-            animate={isInView ? { scale: 1 } : { scale: 0 }}
-            transition={{ duration: 0.3, delay: 1.0, ease: "easeOut" }}
-          />
-          <motion.circle
-            cx="320"
-            cy="20"
-            r="4.5"
-            fill="#FC9C44"
-            stroke="#FFFFFF"
-            strokeWidth="2"
-            initial={{ scale: 0 }}
-            animate={isInView ? { scale: 1 } : { scale: 0 }}
-            transition={{ duration: 0.3, delay: 1.2, ease: "easeOut" }}
-          />
-          <motion.circle
-            cx="400"
-            cy="5"
-            r="4.5"
-            fill="#FC9C44"
-            stroke="#FFFFFF"
-            strokeWidth="2"
-            initial={{ scale: 0 }}
-            animate={isInView ? { scale: 1 } : { scale: 0 }}
-            transition={{ duration: 0.3, delay: 1.4, ease: "easeOut" }}
-          />
-
-          <defs>
-            <linearGradient id="gradient-area" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#FC9C44" stopOpacity="0.22" />
-              <stop offset="100%" stopColor="#FC9C44" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-        </svg>
+      {/* Animated Line Graph w/ React Bits Pro Simple Graph */}
+      <div className="w-full relative">
+        <SimpleGraph
+          data={revenueGraphData}
+          lineColor="#10B981"
+          dotColor="#10B981"
+          lineGradient={{ from: "#10B981", to: "#06B6D4" }}
+          height={155}
+          animationDuration={2.2}
+          loop={true}
+          loopDelay={2.0}
+          showGrid={true}
+          gridStyle="dashed"
+          gridLines="horizontal"
+          gridLineThickness={1}
+          showDots={true}
+          dotSize={6}
+          dotHoverGlow={true}
+          curved={true}
+          gradientFade={true}
+          graphLineThickness={4.5}
+          calculatePercentageDifference={true}
+          animateOnScroll={true}
+          animateOnce={false}
+          className="w-full"
+        />
       </div>
 
-      <div className="flex justify-between mt-2 text-[9px] text-[#6B7280] font-mono select-none">
-        <span>Q1</span>
-        <span>Q2</span>
-        <span>Q3</span>
-        <span>Q4</span>
-        <span className="text-[#FC9C44] font-bold">PROJECTED SCALE</span>
+      <div className="flex justify-between items-center mt-2.5 px-0.5 text-[9px] sm:text-[10px] text-[#4B5563] font-mono select-none font-semibold">
+        <span className="text-emerald-700 font-bold">01 (Start)</span>
+        <span>02</span>
+        <span>03</span>
+        <span>04</span>
+        <span className="text-emerald-600 font-bold tracking-tight text-right flex items-center gap-1.5">
+          <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+          PROJECTED (+247%)
+        </span>
       </div>
-    </motion.div>
+    </div>
   );
 }

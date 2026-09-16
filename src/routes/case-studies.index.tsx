@@ -16,10 +16,28 @@ export const Route = createFileRoute("/case-studies/")({
         content:
           "Discover how Hegxcorp helps leading B2B and E-commerce brands scale organic revenue, optimize PPC campaigns, and achieve measurable growth.",
       },
+      { property: "og:title", content: "Client Success & Growth Case Studies | Hegxcorp" },
+      {
+        property: "og:description",
+        content:
+          "Discover how Hegxcorp helps leading B2B and E-commerce brands scale organic revenue, optimize PPC campaigns, and achieve measurable growth.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://hegxcorp.com/case-studies" },
+      { property: "og:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Client Success & Growth Case Studies | Hegxcorp" },
+      {
+        name: "twitter:description",
+        content:
+          "Discover how Hegxcorp helps leading B2B and E-commerce brands scale organic revenue, optimize PPC campaigns, and achieve measurable growth.",
+      },
+      { name: "twitter:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
     ],
+    links: [{ rel: "canonical", href: "https://hegxcorp.com/case-studies" }],
   }),
   component: CaseStudiesPage,
-} as never);
+});
 
 function EditorialDivider() {
   return (
@@ -41,6 +59,7 @@ function CaseStudiesPage() {
   const rollink = studies.find((c) => c.slug === "rollink") || studies[2];
   const learningTree = studies.find((c) => c.slug === "learning-tree") || studies[3];
   const orra = studies.find((c) => c.slug === "orra") || studies[4];
+  const nivesh = studies.find((c) => c.slug === "nivesh") || studies[5];
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-between">
@@ -100,13 +119,13 @@ function CaseStudiesPage() {
                 measurable growth.
               </p>
 
-              <div className="pt-4 flex justify-center">
+              <div className="pt-4 flex justify-center w-full">
                 <Link
                   to="/free-growth-audit"
-                  className="inline-flex items-center gap-2.5 rounded-full px-8 py-4 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(252,156,68,0.5)] transition-[background-color,transform,box-shadow] duration-200 ease-out"
+                  className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 rounded-full px-8 py-4 text-sm font-semibold text-white bg-[#FC9C44] hover:bg-[#E88C35] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-8px_rgba(252,156,68,0.5)] active:scale-98 transition-[background-color,transform,box-shadow] duration-200 ease-out"
                 >
-                  Get Free Growth Audit
-                  <ArrowRight className="h-4 w-4" />
+                  <span>Get Free Growth Audit</span>
+                  <ArrowRight className="h-4 w-4 shrink-0" />
                 </Link>
               </div>
             </div>
@@ -201,16 +220,15 @@ function CaseStudiesPage() {
                   {/* Metric Value Hero (2-3x Larger than client name) */}
                   <div className="space-y-1">
                     <div
-                      className="font-bold text-[#1D2742] leading-[0.95] tracking-tight"
+                      className="font-black text-[#1D2742] leading-none tracking-tight text-4xl sm:text-5xl lg:text-6xl"
                       style={{
                         fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: "clamp(56px, 7vw, 100px)",
                       }}
                     >
                       {featuredStudy.metricValue}
                     </div>
                     <div
-                      className="text-xs font-bold uppercase tracking-[0.2em] text-[#FC9C44] mt-1"
+                      className="text-[11px] sm:text-xs font-bold uppercase tracking-[0.16em] text-[#FC9C44] mt-1.5"
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     >
                       {featuredStudy.metricLabel.toUpperCase()}
@@ -269,10 +287,10 @@ function CaseStudiesPage() {
                       className="text-sm font-bold text-[#1D2742]"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
-                      908
+                      1,151
                     </div>
                     <div className="text-[8px] font-bold text-[#6B7280] uppercase tracking-wider">
-                      Phone Leads
+                      Calls Received
                     </div>
                   </div>
 
@@ -282,7 +300,7 @@ function CaseStudiesPage() {
                       className="text-sm font-bold text-[#1D2742]"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
-                      150
+                      153
                     </div>
                     <div className="text-[8px] font-bold text-[#6B7280] uppercase tracking-wider">
                       Form Subs
@@ -295,10 +313,10 @@ function CaseStudiesPage() {
                       className="text-sm font-bold text-[#1D2742]"
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
-                      -48%
+                      40 Days
                     </div>
                     <div className="text-[8px] font-bold text-[#6B7280] uppercase tracking-wider">
-                      Lower CPL
+                      Turnaround
                     </div>
                   </div>
                 </div>
@@ -307,10 +325,10 @@ function CaseStudiesPage() {
                   <Link
                     to="/case-studies/$slug"
                     params={{ slug: featuredStudy.slug }}
-                    className="inline-flex items-center gap-2.5 rounded-full px-7 py-4 text-sm font-semibold text-white bg-[#1D2742] hover:bg-[#2C3B60] transition-colors duration-200"
+                    className="w-full sm:w-auto justify-center inline-flex items-center gap-2.5 rounded-full px-7 py-4 text-sm font-semibold text-white bg-[#1D2742] hover:bg-[#2C3B60] active:scale-98 transition-all duration-200"
                   >
-                    View Full Case Study
-                    <ArrowRight className="h-4 w-4" />
+                    <span>View Full Case Study</span>
+                    <ArrowRight className="h-4 w-4 shrink-0" />
                   </Link>
                 </div>
               </div>
@@ -323,7 +341,8 @@ function CaseStudiesPage() {
                     alt={`${featuredStudy.client} Growth Result`}
                     proofLabel={featuredStudy.proofLabel}
                     proofDuration={featuredStudy.proofDuration}
-                    proofMetric={`${featuredStudy.metricValue} Growth`}
+                    proofMetric={featuredStudy.metricValue}
+                    url="tarkashastra.co.in"
                     className="w-full shadow-[0_32px_64px_rgba(29,39,66,0.1)]"
                   />
                 </Link>
@@ -365,9 +384,9 @@ function CaseStudiesPage() {
             </div>
 
             {/* EDITORIAL RHYTHM LAYOUT GRID */}
-            <div className="space-y-24">
+            <div className="space-y-14 md:space-y-24">
               {/* ROW 1: Two standard studies side-by-side (GPen & Rollink) */}
-              <div className="grid md:grid-cols-2 gap-16 lg:gap-24">
+              <div className="grid md:grid-cols-2 gap-10 md:gap-16 lg:gap-24">
                 {/* G Pen */}
                 <Link
                   to="/case-studies/$slug"
@@ -380,6 +399,7 @@ function CaseStudiesPage() {
                     proofLabel={gpen.proofLabel}
                     proofDuration={gpen.proofDuration}
                     proofMetric={gpen.metricValue}
+                    url="gpen.com"
                     className="w-full"
                   />
 
@@ -447,6 +467,7 @@ function CaseStudiesPage() {
                     proofLabel={rollink.proofLabel}
                     proofDuration={rollink.proofDuration}
                     proofMetric={rollink.metricValue}
+                    url="rollink.com"
                     className="w-full"
                   />
 
@@ -507,7 +528,7 @@ function CaseStudiesPage() {
               <div className="h-[1px] w-full bg-[#EAEAEA]" />
 
               {/* ROW 2: Two standard studies side-by-side (Learning Tree & Orra) */}
-              <div className="grid md:grid-cols-2 gap-16 lg:gap-24">
+              <div className="grid md:grid-cols-2 gap-10 md:gap-16 lg:gap-24">
                 <Link
                   to="/case-studies/$slug"
                   params={{ slug: learningTree.slug }}
@@ -519,6 +540,7 @@ function CaseStudiesPage() {
                     proofLabel={learningTree.proofLabel}
                     proofDuration={learningTree.proofDuration}
                     proofMetric={learningTree.metricValue}
+                    url="learningtree.com"
                     className="w-full"
                   />
 
@@ -588,13 +610,14 @@ function CaseStudiesPage() {
                     proofLabel={orra.proofLabel}
                     proofDuration={orra.proofDuration}
                     proofMetric={orra.metricValue}
+                    url="orra.co.in"
                     className="w-full"
                   />
 
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">
-                        Localized Brand Authority
+                        TV-to-Mobile Strategy
                       </span>
 
                       <div className="flex flex-col">
@@ -631,11 +654,11 @@ function CaseStudiesPage() {
                     <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider border-t border-[#EAEAEA] pt-3">
                       <span>{orra.industry}</span>
                       <span>•</span>
-                      <span>SEO Local architecture</span>
+                      <span>TV-to-Mobile Retargeting</span>
                       <span>•</span>
-                      <span>Digital Strategy</span>
+                      <span>Programmatic DSP</span>
                       <span>•</span>
-                      <span>Map Dominance</span>
+                      <span>Hyperlocal Foot Traffic</span>
                     </div>
 
                     <div>
@@ -647,6 +670,90 @@ function CaseStudiesPage() {
                   </div>
                 </Link>
               </div>
+
+              {/* Editorial Divider */}
+              <div className="h-[1px] w-full bg-[#EAEAEA]" />
+
+              {/* ROW 3: FinTech SEO Growth Architecture (Nivesh) */}
+              {nivesh && (
+                <div className="grid lg:grid-cols-12 gap-10 md:gap-16 items-center">
+                  <div className="lg:col-span-7">
+                    <Link
+                      to="/case-studies/$slug"
+                      params={{ slug: nivesh.slug }}
+                      className="group block focus:outline-none"
+                    >
+                      <BrowserPreview
+                        src={nivesh.featuredImage}
+                        alt={`${nivesh.client} FinTech SEO Growth`}
+                        proofLabel={nivesh.proofLabel}
+                        proofDuration={nivesh.proofDuration}
+                        proofMetric={nivesh.metricValue}
+                        url="nivesh.com"
+                        className="w-full"
+                      />
+                    </Link>
+                  </div>
+                  <div className="lg:col-span-5 space-y-4">
+                    <div className="space-y-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">
+                        FinTech SEO Architecture
+                      </span>
+
+                      <div className="flex flex-col">
+                        <span
+                          className="text-4xl md:text-5xl font-bold text-[#FC9C44] tracking-tight transition-transform duration-300 group-hover:-translate-y-0.5"
+                          style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                        >
+                          {nivesh.metricValue}
+                        </span>
+                        <span
+                          className="text-[10px] font-bold uppercase tracking-wider text-[#FC9C44] mt-0.5"
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
+                          {nivesh.metricLabel.toUpperCase()}
+                        </span>
+                      </div>
+
+                      <h3
+                        className="text-xl md:text-2xl font-bold text-[#1D2742] tracking-tight mt-1"
+                        style={{ fontFamily: "'Space Grotesk', sans-serif" }}
+                      >
+                        {nivesh.client}
+                      </h3>
+                    </div>
+
+                    <p
+                      className="text-sm text-[#4A5568] leading-relaxed"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      {nivesh.summary}
+                    </p>
+
+                    {/* Trust Signals */}
+                    <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider border-t border-[#EAEAEA] pt-3">
+                      <span>{nivesh.industry}</span>
+                      <span>•</span>
+                      <span>Content Clusters</span>
+                      <span>•</span>
+                      <span>Instant Indexing</span>
+                      <span>•</span>
+                      <span>Financial Calculators</span>
+                    </div>
+
+                    <div className="pt-2">
+                      <Link
+                        to="/case-studies/$slug"
+                        params={{ slug: nivesh.slug }}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1D2742] hover:text-[#FC9C44] transition-colors duration-[250ms] ease-out border-b border-[#1D2742]/10 hover:border-[#FC9C44]/20 pb-0.5"
+                      >
+                        Read Study{" "}
+                        <ArrowRight className="h-3.5 w-3.5 transition-transform duration-[250ms] ease-out group-hover:translate-x-[6px]" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>

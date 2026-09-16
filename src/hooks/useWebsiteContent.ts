@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getWebsiteSection } from "@/lib/website-content";
 import { DEFAULT_CMS_SECTIONS } from "@/lib/cms-config";
+import { subscribeToCmsDraft, requestCmsInitialSync } from "@/lib/cms-preview-bridge";
 
 export function useWebsiteSection<T = any>(
   key: string,
@@ -26,6 +27,29 @@ export function useWebsiteSection<T = any>(
   useEffect(() => {
     void fetchSection();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+
+  // Real-time live preview draft subscription
+  useEffect(() => {
+    const unsubscribe = subscribeToCmsDraft(
+      (updatedKey, updatedData) => {
+        if (updatedKey === key && updatedData) {
+          setData(updatedData);
+        }
+      },
+      (drafts) => {
+        if (drafts && drafts[key]) {
+          setData(drafts[key]);
+        }
+      },
+    );
+
+    // If inside an iframe or preview mode, request current draft state
+    if (typeof window !== "undefined") {
+      requestCmsInitialSync();
+    }
+
+    return unsubscribe;
   }, [key]);
 
   return { data, loading, refresh: fetchSection };

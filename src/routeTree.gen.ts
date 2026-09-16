@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ServicesRouteImport } from './routes/services'
-import { Route as ProductsRouteImport } from './routes/products'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as IndustriesRouteImport } from './routes/industries'
 import { Route as FreeGrowthAuditRouteImport } from './routes/free-growth-audit'
@@ -25,6 +24,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CaseStudiesIndexRouteImport } from './routes/case-studies.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as ServiceWordpressRouteImport } from './routes/service.wordpress'
 import { Route as ServiceWebDevRouteImport } from './routes/service.web-dev'
 import { Route as ServiceWebAppRouteImport } from './routes/service.web-app'
@@ -39,17 +39,22 @@ import { Route as ServiceBrandingRouteImport } from './routes/service.branding'
 import { Route as CaseStudiesSlugRouteImport } from './routes/case-studies.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as ApiGrowthAuditRouteImport } from './routes/api.growth-audit'
+import { Route as AdminSubscribersRouteImport } from './routes/admin.subscribers'
 import { Route as AdminGrowthLeadsRouteImport } from './routes/admin.growth-leads'
 import { Route as AdminContactLeadsRouteImport } from './routes/admin.contact-leads'
 import { Route as AdminBlogPreviewRouteImport } from './routes/admin.blog-preview'
 import { Route as AdminBlogRouteImport } from './routes/admin.blog'
+import { Route as AdminAdminsRouteImport } from './routes/admin.admins'
 import { Route as AdminAddBlogRouteImport } from './routes/admin.add-blog'
 import { Route as AdminAdLeadsRouteImport } from './routes/admin.ad-leads'
+import { Route as AdminWebsiteContentIndexRouteImport } from './routes/admin.website-content.index'
 import { Route as AdminWebsiteContentServicesRouteImport } from './routes/admin.website-content.services'
-import { Route as AdminWebsiteContentProductsRouteImport } from './routes/admin.website-content.products'
 import { Route as AdminWebsiteContentHomeRouteImport } from './routes/admin.website-content.home'
+import { Route as AdminWebsiteContentHeaderRouteImport } from './routes/admin.website-content.header'
+import { Route as AdminWebsiteContentFooterRouteImport } from './routes/admin.website-content.footer'
 import { Route as AdminWebsiteContentContactRouteImport } from './routes/admin.website-content.contact'
 import { Route as AdminWebsiteContentAboutRouteImport } from './routes/admin.website-content.about'
+import { Route as AdminWebsiteContentServiceSlugRouteImport } from './routes/admin.website-content.service.$slug'
 
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
   id: '/terms-of-service',
@@ -64,11 +69,6 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProductsRoute = ProductsRouteImport.update({
-  id: '/products',
-  path: '/products',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
@@ -130,6 +130,11 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => BlogRoute,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const ServiceWordpressRoute = ServiceWordpressRouteImport.update({
   id: '/service/wordpress',
@@ -201,6 +206,11 @@ const ApiGrowthAuditRoute = ApiGrowthAuditRouteImport.update({
   path: '/api/growth-audit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminSubscribersRoute = AdminSubscribersRouteImport.update({
+  id: '/subscribers',
+  path: '/subscribers',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminGrowthLeadsRoute = AdminGrowthLeadsRouteImport.update({
   id: '/growth-leads',
   path: '/growth-leads',
@@ -221,6 +231,11 @@ const AdminBlogRoute = AdminBlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAdminsRoute = AdminAdminsRouteImport.update({
+  id: '/admins',
+  path: '/admins',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAddBlogRoute = AdminAddBlogRouteImport.update({
   id: '/add-blog',
   path: '/add-blog',
@@ -231,16 +246,16 @@ const AdminAdLeadsRoute = AdminAdLeadsRouteImport.update({
   path: '/ad-leads',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminWebsiteContentIndexRoute =
+  AdminWebsiteContentIndexRouteImport.update({
+    id: '/website-content/',
+    path: '/website-content/',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminWebsiteContentServicesRoute =
   AdminWebsiteContentServicesRouteImport.update({
     id: '/website-content/services',
     path: '/website-content/services',
-    getParentRoute: () => AdminRoute,
-  } as any)
-const AdminWebsiteContentProductsRoute =
-  AdminWebsiteContentProductsRouteImport.update({
-    id: '/website-content/products',
-    path: '/website-content/products',
     getParentRoute: () => AdminRoute,
   } as any)
 const AdminWebsiteContentHomeRoute = AdminWebsiteContentHomeRouteImport.update({
@@ -248,6 +263,18 @@ const AdminWebsiteContentHomeRoute = AdminWebsiteContentHomeRouteImport.update({
   path: '/website-content/home',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminWebsiteContentHeaderRoute =
+  AdminWebsiteContentHeaderRouteImport.update({
+    id: '/website-content/header',
+    path: '/website-content/header',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminWebsiteContentFooterRoute =
+  AdminWebsiteContentFooterRouteImport.update({
+    id: '/website-content/footer',
+    path: '/website-content/footer',
+    getParentRoute: () => AdminRoute,
+  } as any)
 const AdminWebsiteContentContactRoute =
   AdminWebsiteContentContactRouteImport.update({
     id: '/website-content/contact',
@@ -258,6 +285,12 @@ const AdminWebsiteContentAboutRoute =
   AdminWebsiteContentAboutRouteImport.update({
     id: '/website-content/about',
     path: '/website-content/about',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminWebsiteContentServiceSlugRoute =
+  AdminWebsiteContentServiceSlugRouteImport.update({
+    id: '/website-content/service/$slug',
+    path: '/website-content/service/$slug',
     getParentRoute: () => AdminRoute,
   } as any)
 
@@ -272,16 +305,17 @@ export interface FileRoutesByFullPath {
   '/free-growth-audit': typeof FreeGrowthAuditRoute
   '/industries': typeof IndustriesRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/products': typeof ProductsRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/admin/ad-leads': typeof AdminAdLeadsRoute
   '/admin/add-blog': typeof AdminAddBlogRoute
+  '/admin/admins': typeof AdminAdminsRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/blog-preview': typeof AdminBlogPreviewRoute
   '/admin/contact-leads': typeof AdminContactLeadsRoute
   '/admin/growth-leads': typeof AdminGrowthLeadsRoute
+  '/admin/subscribers': typeof AdminSubscribersRoute
   '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
@@ -296,33 +330,37 @@ export interface FileRoutesByFullPath {
   '/service/web-app': typeof ServiceWebAppRoute
   '/service/web-dev': typeof ServiceWebDevRoute
   '/service/wordpress': typeof ServiceWordpressRoute
+  '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/case-studies/': typeof CaseStudiesIndexRoute
   '/admin/website-content/about': typeof AdminWebsiteContentAboutRoute
   '/admin/website-content/contact': typeof AdminWebsiteContentContactRoute
+  '/admin/website-content/footer': typeof AdminWebsiteContentFooterRoute
+  '/admin/website-content/header': typeof AdminWebsiteContentHeaderRoute
   '/admin/website-content/home': typeof AdminWebsiteContentHomeRoute
-  '/admin/website-content/products': typeof AdminWebsiteContentProductsRoute
   '/admin/website-content/services': typeof AdminWebsiteContentServicesRoute
+  '/admin/website-content/': typeof AdminWebsiteContentIndexRoute
+  '/admin/website-content/service/$slug': typeof AdminWebsiteContentServiceSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/admin': typeof AdminRouteWithChildren
   '/contact': typeof ContactRoute
   '/cookie-policy': typeof CookiePolicyRoute
   '/free-growth-audit': typeof FreeGrowthAuditRoute
   '/industries': typeof IndustriesRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/products': typeof ProductsRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/admin/ad-leads': typeof AdminAdLeadsRoute
   '/admin/add-blog': typeof AdminAddBlogRoute
+  '/admin/admins': typeof AdminAdminsRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/blog-preview': typeof AdminBlogPreviewRoute
   '/admin/contact-leads': typeof AdminContactLeadsRoute
   '/admin/growth-leads': typeof AdminGrowthLeadsRoute
+  '/admin/subscribers': typeof AdminSubscribersRoute
   '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
@@ -337,13 +375,17 @@ export interface FileRoutesByTo {
   '/service/web-app': typeof ServiceWebAppRoute
   '/service/web-dev': typeof ServiceWebDevRoute
   '/service/wordpress': typeof ServiceWordpressRoute
+  '/admin': typeof AdminIndexRoute
   '/blog': typeof BlogIndexRoute
   '/case-studies': typeof CaseStudiesIndexRoute
   '/admin/website-content/about': typeof AdminWebsiteContentAboutRoute
   '/admin/website-content/contact': typeof AdminWebsiteContentContactRoute
+  '/admin/website-content/footer': typeof AdminWebsiteContentFooterRoute
+  '/admin/website-content/header': typeof AdminWebsiteContentHeaderRoute
   '/admin/website-content/home': typeof AdminWebsiteContentHomeRoute
-  '/admin/website-content/products': typeof AdminWebsiteContentProductsRoute
   '/admin/website-content/services': typeof AdminWebsiteContentServicesRoute
+  '/admin/website-content': typeof AdminWebsiteContentIndexRoute
+  '/admin/website-content/service/$slug': typeof AdminWebsiteContentServiceSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -357,16 +399,17 @@ export interface FileRoutesById {
   '/free-growth-audit': typeof FreeGrowthAuditRoute
   '/industries': typeof IndustriesRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
-  '/products': typeof ProductsRoute
   '/services': typeof ServicesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms-of-service': typeof TermsOfServiceRoute
   '/admin/ad-leads': typeof AdminAdLeadsRoute
   '/admin/add-blog': typeof AdminAddBlogRoute
+  '/admin/admins': typeof AdminAdminsRoute
   '/admin/blog': typeof AdminBlogRoute
   '/admin/blog-preview': typeof AdminBlogPreviewRoute
   '/admin/contact-leads': typeof AdminContactLeadsRoute
   '/admin/growth-leads': typeof AdminGrowthLeadsRoute
+  '/admin/subscribers': typeof AdminSubscribersRoute
   '/api/growth-audit': typeof ApiGrowthAuditRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/case-studies/$slug': typeof CaseStudiesSlugRoute
@@ -381,13 +424,17 @@ export interface FileRoutesById {
   '/service/web-app': typeof ServiceWebAppRoute
   '/service/web-dev': typeof ServiceWebDevRoute
   '/service/wordpress': typeof ServiceWordpressRoute
+  '/admin/': typeof AdminIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/case-studies/': typeof CaseStudiesIndexRoute
   '/admin/website-content/about': typeof AdminWebsiteContentAboutRoute
   '/admin/website-content/contact': typeof AdminWebsiteContentContactRoute
+  '/admin/website-content/footer': typeof AdminWebsiteContentFooterRoute
+  '/admin/website-content/header': typeof AdminWebsiteContentHeaderRoute
   '/admin/website-content/home': typeof AdminWebsiteContentHomeRoute
-  '/admin/website-content/products': typeof AdminWebsiteContentProductsRoute
   '/admin/website-content/services': typeof AdminWebsiteContentServicesRoute
+  '/admin/website-content/': typeof AdminWebsiteContentIndexRoute
+  '/admin/website-content/service/$slug': typeof AdminWebsiteContentServiceSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -402,16 +449,17 @@ export interface FileRouteTypes {
     | '/free-growth-audit'
     | '/industries'
     | '/privacy-policy'
-    | '/products'
     | '/services'
     | '/sitemap.xml'
     | '/terms-of-service'
     | '/admin/ad-leads'
     | '/admin/add-blog'
+    | '/admin/admins'
     | '/admin/blog'
     | '/admin/blog-preview'
     | '/admin/contact-leads'
     | '/admin/growth-leads'
+    | '/admin/subscribers'
     | '/api/growth-audit'
     | '/blog/$slug'
     | '/case-studies/$slug'
@@ -426,33 +474,37 @@ export interface FileRouteTypes {
     | '/service/web-app'
     | '/service/web-dev'
     | '/service/wordpress'
+    | '/admin/'
     | '/blog/'
     | '/case-studies/'
     | '/admin/website-content/about'
     | '/admin/website-content/contact'
+    | '/admin/website-content/footer'
+    | '/admin/website-content/header'
     | '/admin/website-content/home'
-    | '/admin/website-content/products'
     | '/admin/website-content/services'
+    | '/admin/website-content/'
+    | '/admin/website-content/service/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/admin'
     | '/contact'
     | '/cookie-policy'
     | '/free-growth-audit'
     | '/industries'
     | '/privacy-policy'
-    | '/products'
     | '/services'
     | '/sitemap.xml'
     | '/terms-of-service'
     | '/admin/ad-leads'
     | '/admin/add-blog'
+    | '/admin/admins'
     | '/admin/blog'
     | '/admin/blog-preview'
     | '/admin/contact-leads'
     | '/admin/growth-leads'
+    | '/admin/subscribers'
     | '/api/growth-audit'
     | '/blog/$slug'
     | '/case-studies/$slug'
@@ -467,13 +519,17 @@ export interface FileRouteTypes {
     | '/service/web-app'
     | '/service/web-dev'
     | '/service/wordpress'
+    | '/admin'
     | '/blog'
     | '/case-studies'
     | '/admin/website-content/about'
     | '/admin/website-content/contact'
+    | '/admin/website-content/footer'
+    | '/admin/website-content/header'
     | '/admin/website-content/home'
-    | '/admin/website-content/products'
     | '/admin/website-content/services'
+    | '/admin/website-content'
+    | '/admin/website-content/service/$slug'
   id:
     | '__root__'
     | '/'
@@ -486,16 +542,17 @@ export interface FileRouteTypes {
     | '/free-growth-audit'
     | '/industries'
     | '/privacy-policy'
-    | '/products'
     | '/services'
     | '/sitemap.xml'
     | '/terms-of-service'
     | '/admin/ad-leads'
     | '/admin/add-blog'
+    | '/admin/admins'
     | '/admin/blog'
     | '/admin/blog-preview'
     | '/admin/contact-leads'
     | '/admin/growth-leads'
+    | '/admin/subscribers'
     | '/api/growth-audit'
     | '/blog/$slug'
     | '/case-studies/$slug'
@@ -510,13 +567,17 @@ export interface FileRouteTypes {
     | '/service/web-app'
     | '/service/web-dev'
     | '/service/wordpress'
+    | '/admin/'
     | '/blog/'
     | '/case-studies/'
     | '/admin/website-content/about'
     | '/admin/website-content/contact'
+    | '/admin/website-content/footer'
+    | '/admin/website-content/header'
     | '/admin/website-content/home'
-    | '/admin/website-content/products'
     | '/admin/website-content/services'
+    | '/admin/website-content/'
+    | '/admin/website-content/service/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -530,7 +591,6 @@ export interface RootRouteChildren {
   FreeGrowthAuditRoute: typeof FreeGrowthAuditRoute
   IndustriesRoute: typeof IndustriesRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
-  ProductsRoute: typeof ProductsRoute
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsOfServiceRoute: typeof TermsOfServiceRoute
@@ -569,13 +629,6 @@ declare module '@tanstack/react-router' {
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/products': {
-      id: '/products'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: typeof ProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy-policy': {
@@ -661,6 +714,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof BlogRoute
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/service/wordpress': {
       id: '/service/wordpress'
@@ -760,6 +820,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGrowthAuditRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/subscribers': {
+      id: '/admin/subscribers'
+      path: '/subscribers'
+      fullPath: '/admin/subscribers'
+      preLoaderRoute: typeof AdminSubscribersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/growth-leads': {
       id: '/admin/growth-leads'
       path: '/growth-leads'
@@ -788,6 +855,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBlogRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/admins': {
+      id: '/admin/admins'
+      path: '/admins'
+      fullPath: '/admin/admins'
+      preLoaderRoute: typeof AdminAdminsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/add-blog': {
       id: '/admin/add-blog'
       path: '/add-blog'
@@ -802,6 +876,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdLeadsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/website-content/': {
+      id: '/admin/website-content/'
+      path: '/website-content'
+      fullPath: '/admin/website-content/'
+      preLoaderRoute: typeof AdminWebsiteContentIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/website-content/services': {
       id: '/admin/website-content/services'
       path: '/website-content/services'
@@ -809,18 +890,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminWebsiteContentServicesRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/website-content/products': {
-      id: '/admin/website-content/products'
-      path: '/website-content/products'
-      fullPath: '/admin/website-content/products'
-      preLoaderRoute: typeof AdminWebsiteContentProductsRouteImport
-      parentRoute: typeof AdminRoute
-    }
     '/admin/website-content/home': {
       id: '/admin/website-content/home'
       path: '/website-content/home'
       fullPath: '/admin/website-content/home'
       preLoaderRoute: typeof AdminWebsiteContentHomeRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/website-content/header': {
+      id: '/admin/website-content/header'
+      path: '/website-content/header'
+      fullPath: '/admin/website-content/header'
+      preLoaderRoute: typeof AdminWebsiteContentHeaderRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/website-content/footer': {
+      id: '/admin/website-content/footer'
+      path: '/website-content/footer'
+      fullPath: '/admin/website-content/footer'
+      preLoaderRoute: typeof AdminWebsiteContentFooterRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/website-content/contact': {
@@ -837,35 +925,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminWebsiteContentAboutRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/website-content/service/$slug': {
+      id: '/admin/website-content/service/$slug'
+      path: '/website-content/service/$slug'
+      fullPath: '/admin/website-content/service/$slug'
+      preLoaderRoute: typeof AdminWebsiteContentServiceSlugRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
   AdminAdLeadsRoute: typeof AdminAdLeadsRoute
   AdminAddBlogRoute: typeof AdminAddBlogRoute
+  AdminAdminsRoute: typeof AdminAdminsRoute
   AdminBlogRoute: typeof AdminBlogRoute
   AdminBlogPreviewRoute: typeof AdminBlogPreviewRoute
   AdminContactLeadsRoute: typeof AdminContactLeadsRoute
   AdminGrowthLeadsRoute: typeof AdminGrowthLeadsRoute
+  AdminSubscribersRoute: typeof AdminSubscribersRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   AdminWebsiteContentAboutRoute: typeof AdminWebsiteContentAboutRoute
   AdminWebsiteContentContactRoute: typeof AdminWebsiteContentContactRoute
+  AdminWebsiteContentFooterRoute: typeof AdminWebsiteContentFooterRoute
+  AdminWebsiteContentHeaderRoute: typeof AdminWebsiteContentHeaderRoute
   AdminWebsiteContentHomeRoute: typeof AdminWebsiteContentHomeRoute
-  AdminWebsiteContentProductsRoute: typeof AdminWebsiteContentProductsRoute
   AdminWebsiteContentServicesRoute: typeof AdminWebsiteContentServicesRoute
+  AdminWebsiteContentIndexRoute: typeof AdminWebsiteContentIndexRoute
+  AdminWebsiteContentServiceSlugRoute: typeof AdminWebsiteContentServiceSlugRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAdLeadsRoute: AdminAdLeadsRoute,
   AdminAddBlogRoute: AdminAddBlogRoute,
+  AdminAdminsRoute: AdminAdminsRoute,
   AdminBlogRoute: AdminBlogRoute,
   AdminBlogPreviewRoute: AdminBlogPreviewRoute,
   AdminContactLeadsRoute: AdminContactLeadsRoute,
   AdminGrowthLeadsRoute: AdminGrowthLeadsRoute,
+  AdminSubscribersRoute: AdminSubscribersRoute,
+  AdminIndexRoute: AdminIndexRoute,
   AdminWebsiteContentAboutRoute: AdminWebsiteContentAboutRoute,
   AdminWebsiteContentContactRoute: AdminWebsiteContentContactRoute,
+  AdminWebsiteContentFooterRoute: AdminWebsiteContentFooterRoute,
+  AdminWebsiteContentHeaderRoute: AdminWebsiteContentHeaderRoute,
   AdminWebsiteContentHomeRoute: AdminWebsiteContentHomeRoute,
-  AdminWebsiteContentProductsRoute: AdminWebsiteContentProductsRoute,
   AdminWebsiteContentServicesRoute: AdminWebsiteContentServicesRoute,
+  AdminWebsiteContentIndexRoute: AdminWebsiteContentIndexRoute,
+  AdminWebsiteContentServiceSlugRoute: AdminWebsiteContentServiceSlugRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -907,7 +1014,6 @@ const rootRouteChildren: RootRouteChildren = {
   FreeGrowthAuditRoute: FreeGrowthAuditRoute,
   IndustriesRoute: IndustriesRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
-  ProductsRoute: ProductsRoute,
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsOfServiceRoute: TermsOfServiceRoute,

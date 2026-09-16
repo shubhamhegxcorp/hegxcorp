@@ -1,3 +1,22 @@
+import { Readable } from "node:stream";
+
+// Container / daemon environment fix:
+// Prevent Node.js ESM loader from throwing "open EEXIST" when accessing process.stdin
+try {
+  void process.stdin;
+} catch {
+  try {
+    Object.defineProperty(process, "stdin", {
+      value: new Readable({ read() {} }),
+      configurable: true,
+      enumerable: true,
+      writable: true,
+    });
+  } catch {
+    // Keep the original stdin behavior if the fallback cannot be installed.
+  }
+}
+
 import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
@@ -19,7 +38,7 @@ async function getServerEntry(): Promise<ServerEntry> {
 }
 
 // h3 swallows in-handler throws into a normal 500 Response with body
-// {"unhandled":true,"message":"HTTPError"} — try/catch alone never fires for those.
+// {"unhandled":true,"message":"HTTPError"}; try/catch alone never fires for those.
 async function normalizeCatastrophicSsrResponse(response: Response): Promise<Response> {
   if (response.status < 500) return response;
   const contentType = response.headers.get("content-type") ?? "";

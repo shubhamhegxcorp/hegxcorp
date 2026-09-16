@@ -221,7 +221,7 @@ export function ServiceLeadForm({
                   <input
                     id={`${serviceId}-phone`}
                     type="tel"
-                    placeholder="+91 98765 43210"
+                    placeholder="+91 836 920 7836"
                     {...register("phone")}
                     className={`${fieldClass} ${errors.phone ? "border-red-500" : ""}`}
                   />

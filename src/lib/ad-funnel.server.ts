@@ -1,14 +1,6 @@
-import process from "node:process";
-
-import postgres from "postgres";
-
 import { assertAdminSession } from "./admin-auth.server";
+import { getDbClient } from "./db.server";
 import type { AdFunnelReportRow } from "./ad-funnel";
-
-type SqlClient = ReturnType<typeof postgres>;
-type GlobalWithSql = typeof globalThis & {
-  hegxcorpSql?: SqlClient;
-};
 
 type AdFunnelReportDbRow = Omit<
   AdFunnelReportRow,
@@ -21,24 +13,6 @@ type AdFunnelReportDbRow = Omit<
   newLeads: number | string | null;
   latestActivityAt: Date | string | null;
 };
-
-function getSql() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not configured.");
-  }
-
-  const globalForSql = globalThis as GlobalWithSql;
-  if (!globalForSql.hegxcorpSql) {
-    globalForSql.hegxcorpSql = postgres(databaseUrl, {
-      max: 5,
-      idle_timeout: 20,
-      connect_timeout: 10,
-    });
-  }
-
-  return globalForSql.hegxcorpSql;
-}
 
 function toNumber(value: number | string | null) {
   return Number(value ?? 0);
@@ -60,11 +34,11 @@ function mapReportRow(row: AdFunnelReportDbRow): AdFunnelReportRow {
 
 export async function listSavedAdFunnelReport() {
   await assertAdminSession();
-  const sql = getSql();
+  const sql = getDbClient();
   const rows = await sql<AdFunnelReportDbRow[]>`
     WITH event_groups AS (
       SELECT
-        COALESCE(NULLIF("params" ->> 'lead_source', ''), 'Untracked') AS "leadSource",
+        'Meta Ads' AS "leadSource",
         COALESCE(NULLIF("params" ->> 'lead_campaign', ''), 'No campaign') AS "leadCampaign",
         COALESCE(NULLIF("params" ->> 'lead_ad_set', ''), 'No ad set') AS "leadAdSet",
         COALESCE(NULLIF("params" ->> 'lead_ad', ''), 'No ad') AS "leadAd",
@@ -73,41 +47,56 @@ export async function listSavedAdFunnelReport() {
         MAX("createdAt") AS "latestActivityAt"
       FROM "VisitorEvent"
       WHERE "eventName" IN ('page_view', 'form_start')
-        AND COALESCE(NULLIF("params" ->> 'lead_source', ''), '') <> ''
-        AND COALESCE(NULLIF("params" ->> 'lead_source', ''), 'Untracked') <> 'Direct'
+        AND (
+          ("params" ->> 'lead_source') = 'Meta Ads'
+          OR ("params" ->> 'lead_source') ILIKE '%meta%'
+          OR ("params" ->> 'lead_source') ILIKE '%facebook%'
+          OR ("params" ->> 'lead_source') ILIKE '%instagram%'
+        )
+        AND COALESCE(NULLIF("params" ->> 'lead_source', ''), 'Untracked') <> 'Untracked'
         AND COALESCE(NULLIF("params" ->> 'lead_source', ''), '') !~* '^(localhost|::1|127[.]0[.]0[.]1|10[.]|192[.]168[.]|172[.](1[6-9]|2[0-9]|3[0-1])[.])'
       GROUP BY 1, 2, 3, 4
     ),
     lead_rows AS (
       SELECT
-        "leadSource",
+        'Meta Ads' AS "leadSource",
         "leadCampaign",
         "leadAdSet",
         "leadAd",
         "status",
         "createdAt"
       FROM "ContactInquiry"
-      WHERE COALESCE(NULLIF("leadSource", ''), '') <> ''
-        AND COALESCE(NULLIF("leadSource", ''), 'Untracked') <> 'Direct'
+      WHERE (
+          "leadSource" = 'Meta Ads'
+          OR "leadSource" ILIKE '%meta%'
+          OR "leadSource" ILIKE '%facebook%'
+          OR "leadSource" ILIKE '%instagram%'
+        )
+        AND COALESCE(NULLIF("leadSource", ''), 'Untracked') <> 'Untracked'
         AND COALESCE(NULLIF("leadSource", ''), '') !~* '^(localhost|::1|127[.]0[.]0[.]1|10[.]|192[.]168[.]|172[.](1[6-9]|2[0-9]|3[0-1])[.])'
 
       UNION ALL
 
       SELECT
-        "leadSource",
+        'Meta Ads' AS "leadSource",
         "leadCampaign",
         "leadAdSet",
         "leadAd",
         "status",
         "createdAt"
       FROM "GrowthAuditInquiry"
-      WHERE COALESCE(NULLIF("leadSource", ''), '') <> ''
-        AND COALESCE(NULLIF("leadSource", ''), 'Untracked') <> 'Direct'
+      WHERE (
+          "leadSource" = 'Meta Ads'
+          OR "leadSource" ILIKE '%meta%'
+          OR "leadSource" ILIKE '%facebook%'
+          OR "leadSource" ILIKE '%instagram%'
+        )
+        AND COALESCE(NULLIF("leadSource", ''), 'Untracked') <> 'Untracked'
         AND COALESCE(NULLIF("leadSource", ''), '') !~* '^(localhost|::1|127[.]0[.]0[.]1|10[.]|192[.]168[.]|172[.](1[6-9]|2[0-9]|3[0-1])[.])'
     ),
     lead_groups AS (
       SELECT
-        COALESCE(NULLIF("leadSource", ''), 'Untracked') AS "leadSource",
+        'Meta Ads' AS "leadSource",
         COALESCE(NULLIF("leadCampaign", ''), 'No campaign') AS "leadCampaign",
         COALESCE(NULLIF("leadAdSet", ''), 'No ad set') AS "leadAdSet",
         COALESCE(NULLIF("leadAd", ''), 'No ad') AS "leadAd",
@@ -121,12 +110,12 @@ export async function listSavedAdFunnelReport() {
     SELECT
       CONCAT_WS(
         '||',
-        COALESCE(event_groups."leadSource", lead_groups."leadSource"),
+        'Meta Ads',
         COALESCE(event_groups."leadCampaign", lead_groups."leadCampaign"),
         COALESCE(event_groups."leadAdSet", lead_groups."leadAdSet"),
         COALESCE(event_groups."leadAd", lead_groups."leadAd")
       ) AS "key",
-      COALESCE(event_groups."leadSource", lead_groups."leadSource") AS "leadSource",
+      'Meta Ads' AS "leadSource",
       COALESCE(event_groups."leadCampaign", lead_groups."leadCampaign") AS "leadCampaign",
       COALESCE(event_groups."leadAdSet", lead_groups."leadAdSet") AS "leadAdSet",
       COALESCE(event_groups."leadAd", lead_groups."leadAd") AS "leadAd",
@@ -141,15 +130,11 @@ export async function listSavedAdFunnelReport() {
       ) AS "latestActivityAt"
     FROM event_groups
     FULL OUTER JOIN lead_groups
-      ON event_groups."leadSource" = lead_groups."leadSource"
-      AND event_groups."leadCampaign" = lead_groups."leadCampaign"
+      ON event_groups."leadCampaign" = lead_groups."leadCampaign"
       AND event_groups."leadAdSet" = lead_groups."leadAdSet"
       AND event_groups."leadAd" = lead_groups."leadAd"
     ORDER BY
-      COALESCE(lead_groups."genuineLeads", 0) DESC,
-      COALESCE(lead_groups."leadsGenerated", 0) DESC,
-      COALESCE(event_groups."visitors", 0) DESC,
-      "latestActivityAt" DESC
+      "latestActivityAt" ASC
     LIMIT 100
   `;
 

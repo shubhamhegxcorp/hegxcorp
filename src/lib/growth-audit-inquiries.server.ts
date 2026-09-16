@@ -1,17 +1,11 @@
 import { randomUUID } from "node:crypto";
-import process from "node:process";
-
-import postgres from "postgres";
 
 import { assertAdminSession } from "./admin-auth.server";
+import { getDbClient } from "./db.server";
 import { cleanLeadSourceData } from "./lead-source";
+import { cleanOptional } from "./text-cleanup";
 import type { GrowthAuditInquiry, GrowthAuditInquiryInput } from "./growth-audit-inquiries";
 import type { InquiryStatus } from "./contact-inquiries";
-
-type SqlClient = ReturnType<typeof postgres>;
-type GlobalWithSql = typeof globalThis & {
-  hegxcorpSql?: SqlClient;
-};
 
 type GrowthAuditRow = {
   id: string;
@@ -33,24 +27,6 @@ type GrowthAuditRow = {
   updatedAt: Date | string;
 };
 
-function getSql() {
-  const databaseUrl = process.env.DATABASE_URL;
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is not configured.");
-  }
-
-  const globalForSql = globalThis as GlobalWithSql;
-  if (!globalForSql.hegxcorpSql) {
-    globalForSql.hegxcorpSql = postgres(databaseUrl, {
-      max: 5,
-      idle_timeout: 20,
-      connect_timeout: 10,
-    });
-  }
-
-  return globalForSql.hegxcorpSql;
-}
-
 function mapGrowthAudit(row: GrowthAuditRow): GrowthAuditInquiry {
   return {
     ...row,
@@ -60,7 +36,7 @@ function mapGrowthAudit(row: GrowthAuditRow): GrowthAuditInquiry {
 }
 
 export async function createGrowthAuditInquiry(input: GrowthAuditInquiryInput) {
-  const sql = getSql();
+  const sql = getDbClient();
   const leadSourceData = cleanLeadSourceData(input.leadSourceData);
   const rows = await sql<GrowthAuditRow[]>`
     INSERT INTO "GrowthAuditInquiry" (
@@ -85,14 +61,14 @@ export async function createGrowthAuditInquiry(input: GrowthAuditInquiryInput) {
       ${input.name.trim()},
       ${input.email.trim().toLowerCase()},
       ${input.website.trim()},
-      ${input.visitorId?.trim() || null},
-      ${leadSourceData.leadSource?.trim() || null},
-      ${leadSourceData.leadMedium?.trim() || null},
-      ${leadSourceData.leadCampaign?.trim() || null},
-      ${leadSourceData.leadAdSet?.trim() || null},
-      ${leadSourceData.leadAd?.trim() || null},
-      ${leadSourceData.leadLandingPage?.trim() || null},
-      ${leadSourceData.leadReferrer?.trim() || null},
+      ${cleanOptional(input.visitorId)},
+      ${cleanOptional(leadSourceData.leadSource)},
+      ${cleanOptional(leadSourceData.leadMedium)},
+      ${cleanOptional(leadSourceData.leadCampaign)},
+      ${cleanOptional(leadSourceData.leadAdSet)},
+      ${cleanOptional(leadSourceData.leadAd)},
+      ${cleanOptional(leadSourceData.leadLandingPage)},
+      ${cleanOptional(leadSourceData.leadReferrer)},
       ${input.revenueRange.trim()},
       ${input.goal.trim()},
       now()
@@ -122,7 +98,7 @@ export async function createGrowthAuditInquiry(input: GrowthAuditInquiryInput) {
 
 export async function listSavedGrowthAuditInquiries() {
   await assertAdminSession();
-  const sql = getSql();
+  const sql = getDbClient();
   const rows = await sql<GrowthAuditRow[]>`
     SELECT
       "id",
@@ -152,7 +128,7 @@ export async function listSavedGrowthAuditInquiries() {
 
 export async function updateSavedGrowthAuditInquiryStatus(id: string, status: InquiryStatus) {
   await assertAdminSession();
-  const sql = getSql();
+  const sql = getDbClient();
   const rows = await sql<GrowthAuditRow[]>`
     UPDATE "GrowthAuditInquiry"
     SET

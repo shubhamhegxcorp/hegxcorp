@@ -1,9 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowUp, ArrowDown, Plus, Trash2, Edit2, Check, X } from "lucide-react";
+import { ArrowUp, ArrowDown, Plus, Trash2, Edit2, Check, X, Eye } from "lucide-react";
 import { getWebsiteSection, saveWebsiteSection } from "@/lib/website-content";
 import { DEFAULT_CMS_SECTIONS } from "@/lib/cms-config";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import { SeoEditorCard } from "@/components/admin/SeoEditorCard";
+import { CmsLivePreviewModal } from "@/components/admin/CmsLivePreviewModal";
+import { broadcastCmsDraft, registerCmsSyncResponder } from "@/lib/cms-preview-bridge";
 
 export const Route = createFileRoute("/admin/website-content/about")({
   component: AdminAboutCMS,
@@ -14,25 +18,33 @@ function AdminAboutCMS() {
 
   const [hero, setHero] = useState<any>(null);
   const [whoWeAre, setWhoWeAre] = useState<any>(null);
+  const [ourStory, setOurStory] = useState<any>(null);
   const [ourMission, setOurMission] = useState<any>(null);
   const [ourValues, setOurValues] = useState<any>(null);
+  const [cta, setCta] = useState<any>(null);
 
   const [loading, setLoading] = useState(true);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     async function loadData() {
       try {
-        const [heroData, whoWeAreData, ourMissionData, ourValuesData] = await Promise.all([
-          getWebsiteSection({ data: { key: "about.hero" } }),
-          getWebsiteSection({ data: { key: "about.whoWeAre" } }),
-          getWebsiteSection({ data: { key: "about.ourMission" } }),
-          getWebsiteSection({ data: { key: "about.ourValues" } }),
-        ]);
+        const [heroData, whoWeAreData, ourStoryData, ourMissionData, ourValuesData, ctaData] =
+          await Promise.all([
+            getWebsiteSection({ data: { key: "about.hero" } }),
+            getWebsiteSection({ data: { key: "about.whoWeAre" } }),
+            getWebsiteSection({ data: { key: "about.ourStory" } }),
+            getWebsiteSection({ data: { key: "about.ourMission" } }),
+            getWebsiteSection({ data: { key: "about.ourValues" } }),
+            getWebsiteSection({ data: { key: "about.cta" } }),
+          ]);
 
         setHero(heroData || DEFAULT_CMS_SECTIONS["about.hero"]);
         setWhoWeAre(whoWeAreData || DEFAULT_CMS_SECTIONS["about.whoWeAre"]);
+        setOurStory(ourStoryData || DEFAULT_CMS_SECTIONS["about.ourStory"]);
         setOurMission(ourMissionData || DEFAULT_CMS_SECTIONS["about.ourMission"]);
         setOurValues(ourValuesData || DEFAULT_CMS_SECTIONS["about.ourValues"]);
+        setCta(ctaData || DEFAULT_CMS_SECTIONS["about.cta"]);
       } catch (err) {
         console.error("Failed to load about CMS data:", err);
         toast.error("Failed to load website content.");
@@ -54,6 +66,39 @@ function AdminAboutCMS() {
     }
   };
 
+  // Register responder for newly opened preview frames
+  useEffect(() => {
+    const unregister = registerCmsSyncResponder(() => ({
+      "about.hero": hero,
+      "about.whoWeAre": whoWeAre,
+      "about.ourStory": ourStory,
+      "about.ourMission": ourMission,
+      "about.ourValues": ourValues,
+      "about.cta": cta,
+    }));
+    return unregister;
+  }, [hero, whoWeAre, ourStory, ourMission, ourValues, cta]);
+
+  // Real-time broadcast on active section edits
+  useEffect(() => {
+    if (activeSection === "hero" && hero) broadcastCmsDraft("about.hero", hero);
+  }, [hero, activeSection]);
+  useEffect(() => {
+    if (activeSection === "whoWeAre" && whoWeAre) broadcastCmsDraft("about.whoWeAre", whoWeAre);
+  }, [whoWeAre, activeSection]);
+  useEffect(() => {
+    if (activeSection === "ourStory" && ourStory) broadcastCmsDraft("about.ourStory", ourStory);
+  }, [ourStory, activeSection]);
+  useEffect(() => {
+    if (activeSection === "ourMission" && ourMission) broadcastCmsDraft("about.ourMission", ourMission);
+  }, [ourMission, activeSection]);
+  useEffect(() => {
+    if (activeSection === "ourValues" && ourValues) broadcastCmsDraft("about.ourValues", ourValues);
+  }, [ourValues, activeSection]);
+  useEffect(() => {
+    if (activeSection === "cta" && cta) broadcastCmsDraft("about.cta", cta);
+  }, [cta, activeSection]);
+
   if (loading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
@@ -64,9 +109,32 @@ function AdminAboutCMS() {
 
   return (
     <div className="space-y-8 p-6 lg:p-8">
-      <div className="border-b border-[#E4E7EC] pb-4">
-        <p className="text-sm text-slate-500">Manage and edit all frontend About page sections.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E4E7EC] pb-4">
+        <div>
+          <h2 className="text-xl font-black text-[#06133D]">About Page Content</h2>
+          <p className="text-xs text-slate-500 mt-1">Manage and edit all frontend About page sections.</p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setIsPreviewOpen(true)}
+          className="inline-flex items-center gap-2 rounded-lg bg-[#06133D] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#0A1D54] transition shrink-0"
+        >
+          <Eye className="h-4 w-4 text-[#FC9C44]" />
+          Live Preview
+          <span className="flex h-2 w-2 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+          </span>
+        </button>
       </div>
+
+      {/* --- SEO & META TAGS CARD --- */}
+      <SeoEditorCard
+        sectionKey="about.seo"
+        pageName="About Page"
+        canonicalUrl="https://hegxcorp.com/about"
+      />
 
       {/* --- HERO SECTION CARD --- */}
       <div className="rounded-xl border border-[#E4E7EC] bg-white p-6 shadow-sm">
@@ -247,7 +315,7 @@ function AdminAboutCMS() {
                 </span>
                 <input
                   type="text"
-                  value={whoWeAre.tagline}
+                  value={whoWeAre.tagline || ""}
                   onChange={(e) => setWhoWeAre({ ...whoWeAre, tagline: e.target.value })}
                   className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
                 />
@@ -258,7 +326,7 @@ function AdminAboutCMS() {
                 </span>
                 <input
                   type="text"
-                  value={whoWeAre.title}
+                  value={whoWeAre.title || ""}
                   onChange={(e) => setWhoWeAre({ ...whoWeAre, title: e.target.value })}
                   className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
                 />
@@ -270,11 +338,17 @@ function AdminAboutCMS() {
               </span>
               <textarea
                 rows={4}
-                value={whoWeAre.description}
+                value={whoWeAre.description || ""}
                 onChange={(e) => setWhoWeAre({ ...whoWeAre, description: e.target.value })}
                 className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
               />
             </label>
+            <ImageUploadField
+              label="Who We Are Section Image"
+              value={whoWeAre.imageUrl || ""}
+              onChange={(val) => setWhoWeAre({ ...whoWeAre, imageUrl: val })}
+              helperText="Upload a photo from your computer or paste a direct image URL. Leave blank for default team photo."
+            />
           </div>
         ) : (
           <div className="mt-4 space-y-2 text-sm">
@@ -284,6 +358,120 @@ function AdminAboutCMS() {
             <div>
               <span className="font-bold text-[#06133D]">Description:</span> {whoWeAre.description}
             </div>
+            {whoWeAre.imageUrl && (
+              <div>
+                <span className="font-bold text-[#06133D]">Custom Image:</span> {whoWeAre.imageUrl}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* --- OUR STORY SECTION --- */}
+      <div className="rounded-xl border border-[#E4E7EC] bg-white p-6 shadow-sm">
+        <div className="flex items-center justify-between border-b border-[#F2F4F7] pb-4">
+          <div>
+            <h3 className="text-lg font-black text-[#06133D]">Our Story</h3>
+            <p className="text-xs text-slate-500">
+              Founding journey narrative ("Where creativity meets strategy") and story image
+            </p>
+          </div>
+          {activeSection !== "ourStory" ? (
+            <button
+              onClick={() => setActiveSection("ourStory")}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[#D0D5DD] px-3.5 py-2 text-xs font-bold text-[#344054] transition hover:bg-slate-50"
+            >
+              <Edit2 className="h-3.5 w-3.5" /> Edit
+            </button>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                onClick={() => void handleSave("about.ourStory", ourStory)}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[#FC9C44] px-3.5 py-2 text-xs font-bold text-white transition hover:bg-[#E88C35]"
+              >
+                <Check className="h-3.5 w-3.5" /> Save
+              </button>
+              <button
+                onClick={() => {
+                  setActiveSection(null);
+                  getWebsiteSection({ data: { key: "about.ourStory" } }).then((res) =>
+                    setOurStory(res),
+                  );
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[#D0D5DD] px-3.5 py-2 text-xs font-bold text-[#344054] transition hover:bg-slate-50"
+              >
+                <X className="h-3.5 w-3.5" /> Cancel
+              </button>
+            </div>
+          )}
+        </div>
+
+        {activeSection === "ourStory" ? (
+          <div className="mt-6 space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="grid gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Tagline
+                </span>
+                <input
+                  type="text"
+                  value={ourStory.tagline || ""}
+                  onChange={(e) => setOurStory({ ...ourStory, tagline: e.target.value })}
+                  placeholder="Our Story"
+                  className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
+                />
+              </label>
+              <label className="grid gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Title
+                </span>
+                <input
+                  type="text"
+                  value={ourStory.title || ""}
+                  onChange={(e) => setOurStory({ ...ourStory, title: e.target.value })}
+                  placeholder="Where creativity meets strategy."
+                  className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
+                />
+              </label>
+            </div>
+
+            <label className="grid gap-1.5">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Story Narrative (Paragraphs)
+              </span>
+              <textarea
+                rows={5}
+                value={ourStory.description || ""}
+                onChange={(e) => setOurStory({ ...ourStory, description: e.target.value })}
+                placeholder="Founder Akshay Jadia started Hegxcorp in Mumbai in 2016..."
+                className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
+              />
+            </label>
+
+            <ImageUploadField
+              label="Our Story Section Image"
+              value={ourStory.imageUrl || ""}
+              onChange={(val) => setOurStory({ ...ourStory, imageUrl: val })}
+              helperText="Upload a photo from your computer or paste a direct image URL. Leave blank for default meeting photo."
+            />
+          </div>
+        ) : (
+          <div className="mt-4 space-y-2 text-sm">
+            <div>
+              <span className="font-bold text-[#06133D]">Tagline:</span> {ourStory?.tagline}
+            </div>
+            <div>
+              <span className="font-bold text-[#06133D]">Title:</span> {ourStory?.title}
+            </div>
+            <div>
+              <span className="font-bold text-[#06133D]">Story Description:</span>{" "}
+              <span className="line-clamp-2 text-slate-500">{ourStory?.description}</span>
+            </div>
+            {ourStory?.imageUrl && (
+              <div>
+                <span className="font-bold text-[#06133D]">Custom Image:</span> {ourStory.imageUrl}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -334,7 +522,7 @@ function AdminAboutCMS() {
                 </span>
                 <input
                   type="text"
-                  value={ourMission.tagline}
+                  value={ourMission.tagline || ""}
                   onChange={(e) => setOurMission({ ...ourMission, tagline: e.target.value })}
                   className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
                 />
@@ -345,7 +533,7 @@ function AdminAboutCMS() {
                 </span>
                 <input
                   type="text"
-                  value={ourMission.title}
+                  value={ourMission.title || ""}
                   onChange={(e) => setOurMission({ ...ourMission, title: e.target.value })}
                   className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
                 />
@@ -357,11 +545,17 @@ function AdminAboutCMS() {
               </span>
               <textarea
                 rows={4}
-                value={ourMission.description}
+                value={ourMission.description || ""}
                 onChange={(e) => setOurMission({ ...ourMission, description: e.target.value })}
                 className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
               />
             </label>
+            <ImageUploadField
+              label="Our Mission Section Image"
+              value={ourMission.imageUrl || ""}
+              onChange={(val) => setOurMission({ ...ourMission, imageUrl: val })}
+              helperText="Upload a photo from your computer or paste a direct image URL. Leave blank for default global workshop image."
+            />
           </div>
         ) : (
           <div className="mt-4 space-y-2 text-sm">
@@ -372,6 +566,12 @@ function AdminAboutCMS() {
               <span className="font-bold text-[#06133D]">Description:</span>{" "}
               {ourMission.description}
             </div>
+            {ourMission.imageUrl && (
+              <div>
+                <span className="font-bold text-[#06133D]">Custom Image:</span>{" "}
+                {ourMission.imageUrl}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -446,11 +646,18 @@ function AdminAboutCMS() {
               </span>
               <textarea
                 rows={2}
-                value={ourValues.description}
+                value={ourValues.description || ""}
                 onChange={(e) => setOurValues({ ...ourValues, description: e.target.value })}
                 className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
               />
             </label>
+
+            <ImageUploadField
+              label="Values Workspace Section Image"
+              value={ourValues.imageUrl || ""}
+              onChange={(val) => setOurValues({ ...ourValues, imageUrl: val })}
+              helperText="Upload a workspace photo from your computer or paste a direct image URL."
+            />
 
             <div className="space-y-4 border-t border-slate-100 pt-4">
               <div className="flex items-center justify-between">
@@ -573,6 +780,177 @@ function AdminAboutCMS() {
           </div>
         )}
       </div>
+
+      {/* --- CTA / LET'S GROW TOGETHER BANNER CARD --- */}
+      <div className="rounded-xl border border-[#E4E7EC] bg-white p-6 shadow-sm">
+        <div className="flex items-center justify-between border-b border-[#F2F4F7] pb-4">
+          <div>
+            <h3 className="text-lg font-black text-[#06133D]">Let's Grow Together (CTA Banner)</h3>
+            <p className="text-xs text-slate-500">
+              Bottom conversion card ("Ready to turn your next idea into measurable growth?")
+            </p>
+          </div>
+          {activeSection !== "cta" ? (
+            <button
+              onClick={() => setActiveSection("cta")}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-[#D0D5DD] px-3.5 py-2 text-xs font-bold text-[#344054] transition hover:bg-slate-50"
+            >
+              <Edit2 className="h-3.5 w-3.5" /> Edit
+            </button>
+          ) : (
+            <div className="flex gap-2">
+              <button
+                onClick={() => void handleSave("about.cta", cta)}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[#FC9C44] px-3.5 py-2 text-xs font-bold text-white transition hover:bg-[#E88C35]"
+              >
+                <Check className="h-3.5 w-3.5" /> Save
+              </button>
+              <button
+                onClick={() => {
+                  setActiveSection(null);
+                  getWebsiteSection({ data: { key: "about.cta" } }).then((res) => setCta(res));
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[#D0D5DD] px-3.5 py-2 text-xs font-bold text-[#344054] transition hover:bg-slate-50"
+              >
+                <X className="h-3.5 w-3.5" /> Cancel
+              </button>
+            </div>
+          )}
+        </div>
+
+        {activeSection === "cta" ? (
+          <div className="mt-6 space-y-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="grid gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Tagline
+                </span>
+                <input
+                  type="text"
+                  value={cta.tagline || ""}
+                  onChange={(e) => setCta({ ...cta, tagline: e.target.value })}
+                  placeholder="LET'S GROW TOGETHER"
+                  className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
+                />
+              </label>
+              <label className="grid gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Heading / Title
+                </span>
+                <input
+                  type="text"
+                  value={cta.title || ""}
+                  onChange={(e) => setCta({ ...cta, title: e.target.value })}
+                  placeholder="Ready to turn your next idea into measurable growth?"
+                  className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
+                />
+              </label>
+            </div>
+
+            <label className="grid gap-1.5">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Description / Subtitle
+              </span>
+              <textarea
+                rows={3}
+                value={cta.description || ""}
+                onChange={(e) => setCta({ ...cta, description: e.target.value })}
+                placeholder="Tell us where you want to go. We'll help you find the clearest digital path to get there."
+                className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
+              />
+            </label>
+
+            <div className="grid gap-4 sm:grid-cols-4">
+              <label className="grid gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Primary Button Label
+                </span>
+                <input
+                  type="text"
+                  value={cta.buttonText || ""}
+                  onChange={(e) => setCta({ ...cta, buttonText: e.target.value })}
+                  placeholder="Get a Free Growth Audit"
+                  className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
+                />
+              </label>
+              <label className="grid gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Primary Button URL
+                </span>
+                <input
+                  type="text"
+                  value={cta.buttonUrl || ""}
+                  onChange={(e) => setCta({ ...cta, buttonUrl: e.target.value })}
+                  placeholder="/free-growth-audit"
+                  className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
+                />
+              </label>
+              <label className="grid gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Secondary Button Label
+                </span>
+                <input
+                  type="text"
+                  value={cta.secondaryButtonText || ""}
+                  onChange={(e) => setCta({ ...cta, secondaryButtonText: e.target.value })}
+                  placeholder="Contact Us"
+                  className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
+                />
+              </label>
+              <label className="grid gap-1.5">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                  Secondary Button URL
+                </span>
+                <input
+                  type="text"
+                  value={cta.secondaryButtonUrl || ""}
+                  onChange={(e) => setCta({ ...cta, secondaryButtonUrl: e.target.value })}
+                  placeholder="/contact"
+                  className="w-full rounded-lg border border-[#D0D5DD] px-3 py-2 text-sm outline-none focus:border-[#FC9C44]"
+                />
+              </label>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4 space-y-2 text-sm">
+            <div>
+              <span className="font-bold text-[#06133D]">Tagline:</span> {cta?.tagline}
+            </div>
+            <div>
+              <span className="font-bold text-[#06133D]">Heading:</span> {cta?.title}
+            </div>
+            <div>
+              <span className="font-bold text-[#06133D]">Description:</span> {cta?.description}
+            </div>
+            <div className="flex gap-4">
+              <div>
+                <span className="font-bold text-[#06133D]">Primary Button:</span> {cta?.buttonText}{" "}
+                ({cta?.buttonUrl})
+              </div>
+              <div>
+                <span className="font-bold text-[#06133D]">Secondary Button:</span>{" "}
+                {cta?.secondaryButtonText} ({cta?.secondaryButtonUrl})
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Live Preview Modal */}
+      <CmsLivePreviewModal
+        isOpen={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        previewPath="/about"
+        pageName="About Page"
+        onSyncAllDrafts={() => {
+          if (hero) broadcastCmsDraft("about.hero", hero);
+          if (whoWeAre) broadcastCmsDraft("about.whoWeAre", whoWeAre);
+          if (ourStory) broadcastCmsDraft("about.ourStory", ourStory);
+          if (ourMission) broadcastCmsDraft("about.ourMission", ourMission);
+          if (ourValues) broadcastCmsDraft("about.ourValues", ourValues);
+          if (cta) broadcastCmsDraft("about.cta", cta);
+        }}
+      />
     </div>
   );
 }

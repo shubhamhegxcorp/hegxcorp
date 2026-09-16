@@ -23,6 +23,8 @@ import {
 
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
+import { PageSEO } from "@/components/site/PageSEO";
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
 
 export const Route = createFileRoute("/service/web-dev")({
   head: () => ({
@@ -310,12 +312,18 @@ const faqs = [
 ];
 
 function WebsiteDevelopmentPage() {
+  const { data: heroData } = useWebsiteSection<any>("service.web-dev.hero");
   const [openService, setOpenService] = useState<number | null>(null);
   const [openProcess, setOpenProcess] = useState<number | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
     <div className="min-h-screen bg-white text-[#06133D]">
+      <PageSEO
+        sectionKey="service.web-dev.seo"
+        fallbackTitle="Website Development Services | Hegxcorp"
+        fallbackDescription="Website development services by Hegxcorp including responsive websites, custom development, ecommerce websites, performance optimisation, CMS development, website redesign, integrations, and maintenance."
+      />
       <Header />
 
       <main>
@@ -343,36 +351,32 @@ function WebsiteDevelopmentPage() {
             <div>
               <p className="mb-5 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-[#FC9C44] shadow-sm">
                 <Globe2 className="h-4 w-4" />
-                Website Development
+                {heroData?.badge || "Website Development"}
               </p>
 
               <h1 className="max-w-4xl text-5xl font-black leading-tight md:text-6xl">
-                Website Development Services
+                {heroData?.title || "Website Development Services"}
               </h1>
 
               <p className="mt-7 max-w-2xl text-base leading-8 text-white/74 md:text-lg">
-                Build a fast, responsive, and conversion-focused website that helps your business
-                attract visitors, generate leads, build credibility, and grow online.
+                {heroData?.description ||
+                  "Build a fast, responsive, and conversion-focused website that helps your business attract visitors, generate leads, build credibility, and grow online."}
               </p>
-
-              {/* <p className="mt-5 max-w-2xl text-base leading-8 text-[#344B6A]">
-                                From custom website design and React development to CMS, ecommerce, integrations, speed optimisation, and maintenance, Hegxcorp creates websites that support real business outcomes.
-                            </p> */}
 
               <div className="mt-9 flex flex-wrap gap-4">
                 <Link
-                  to="/contact"
+                  to={heroData?.primaryButtonUrl || "/contact"}
                   className="inline-flex items-center gap-2 rounded-full bg-[#FC9C44] px-7 py-4 text-sm font-bold text-white transition hover:bg-[#E88C35]"
                 >
-                  Get Started
+                  {heroData?.primaryButtonText || "Get Started"}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
 
                 <Link
-                  to="/services"
+                  to={heroData?.secondaryButtonUrl || "/services"}
                   className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/8 px-7 py-4 text-sm font-bold text-white transition hover:border-[#FC9C44] hover:bg-white/12"
                 >
-                  View Services
+                  {heroData?.secondaryButtonText || "View Services"}
                 </Link>
               </div>
             </div>

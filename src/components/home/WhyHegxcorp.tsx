@@ -102,13 +102,18 @@ export function WhyHegxcorp() {
           variants={fadeUp}
         >
           <div className="relative">
+            {/* Mobile swipe hint */}
+            <div className="flex sm:hidden items-center justify-end gap-1 mb-2 text-[11px] font-medium text-[#FC9C44]">
+              <span>Scroll horizontally to compare</span>
+              <span className="text-xs">→</span>
+            </div>
             <div className="w-full overflow-x-auto rounded-2xl border border-[#EAEAEA] shadow-[0_2px_24px_-4px_rgba(0,0,0,0.06)]">
-              <table className="w-full min-w-[560px] border-collapse text-sm">
+              <table className="w-full min-w-[480px] sm:min-w-[500px] border-collapse text-xs sm:text-sm">
                 {/* Column headers */}
                 <thead>
                   <tr>
                     <th
-                      className="w-1/2 px-7 py-5 text-left font-semibold text-[#6B7280] border-b border-[#EAEAEA] bg-[#FAFAF8]"
+                      className="w-1/2 px-4 sm:px-7 py-4 sm:py-5 text-left font-semibold text-[#6B7280] border-b border-[#EAEAEA] bg-[#FAFAF8]"
                       style={{
                         fontFamily: "'Space Grotesk', sans-serif",
                         fontSize: "13px",
@@ -118,7 +123,7 @@ export function WhyHegxcorp() {
                       Traditional Agency
                     </th>
                     <th
-                      className="w-1/2 px-7 py-5 text-left font-semibold border-b border-[#FC9C44]/30 bg-[#FFF4E8]"
+                      className="w-1/2 px-4 sm:px-7 py-4 sm:py-5 text-left font-semibold border-b border-[#FC9C44]/30 bg-[#FFF4E8]"
                       style={{
                         fontFamily: "'Space Grotesk', sans-serif",
                         fontSize: "13px",
@@ -142,7 +147,7 @@ export function WhyHegxcorp() {
                     <tr key={i} className="group transition-colors duration-200 hover:bg-[#FAFAF8]">
                       {/* Agency column */}
                       <td
-                        className={`px-7 py-4 text-[#9CA3AF] ${i < rows.length - 1 ? "border-b border-[#EAEAEA]" : ""}`}
+                        className={`px-4 sm:px-7 py-3.5 sm:py-4 text-[#9CA3AF] ${i < rows.length - 1 ? "border-b border-[#EAEAEA]" : ""}`}
                         style={{ fontFamily: "'Inter', sans-serif" }}
                       >
                         <span className="flex items-center gap-3">
@@ -202,8 +207,8 @@ export function WhyHegxcorp() {
           </div>
         </motion.div>
 
-        {/* ── Five outcome pillars ──────────────────────────── */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-px bg-[#EAEAEA] border border-[#EAEAEA] rounded-2xl overflow-hidden">
+        {/* ── Five outcome pillars (desktop only) ───────────── */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-5 gap-px bg-[#EAEAEA] border border-[#EAEAEA] rounded-2xl overflow-hidden">
           {mappedPillars.map((p: any, i: number) => (
             <motion.div
               key={p.title}

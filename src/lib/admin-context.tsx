@@ -1,5 +1,6 @@
 import { createContext, useContext } from "react";
 
+import type { AdminAccessLevel } from "@/lib/admin-users";
 import type { ContactInquiry, InquiryStatus } from "@/lib/contact-inquiries";
 import type { GrowthAuditInquiry } from "@/lib/growth-audit-inquiries";
 
@@ -12,6 +13,8 @@ export type AdminContextValue = {
   handleStatusChange: (id: string, status: InquiryStatus) => Promise<void>;
   handleGrowthAuditStatusChange: (id: string, status: InquiryStatus) => Promise<void>;
   loadInquiries: () => Promise<void>;
+  accessLevel: AdminAccessLevel;
+  isFullAdmin: boolean;
 };
 
 export const AdminContext = createContext<AdminContextValue | null>(null);

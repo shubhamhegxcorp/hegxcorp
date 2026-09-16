@@ -1,9 +1,8 @@
 import { useRef, useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowRight, Sparkles, TrendingUp, Zap, Search } from "lucide-react";
 import { SectionHeading } from "@/components/site/SectionHeading";
-import { CaseStudyCursor } from "@/components/site/PremiumInteractions";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -11,55 +10,58 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// Sample projects data representing high-quality digital products / growth cases
-const projects = [
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
+import type { FeaturedWorkSection, FeaturedWorkItem } from "@/lib/cms-config";
+
+// Default fallback projects data
+const defaultProjects: FeaturedWorkItem[] = [
   {
-    id: "Spirit Boosting Digital",
+    id: "orra",
     isFeatured: true,
-    title: "Spirit Boosting Digital",
-    category: "SEO + Conversion Engineering",
-    industry: "E-Commerce",
-    url: "spiritboostingdigital.in",
-    metric: "+280% Organic Revenue",
-    browserColor: "#FFF4E8",
-    screenshotType: "ecommerce",
+    title: "Orra Fine Jewellery",
+    category: "TV-to-Mobile Retargeting + Programmatic Ads",
+    industry: "Luxury Jewellery & Retail",
+    url: "orra.co.in",
+    metric: "1M+ Unique Mobile Reach",
+    browserColor: "#FAF7F2",
+    screenshotType: "custom",
+    image: "/case-studies/orra/orra-hero-preview.png",
+    linkUrl: "/case-studies/orra",
   },
   {
-    id: "launchscale",
-    isFeatured: false,
-    title: "Cultural Web Creation",
-    category: "Full Funnel Performance Ads",
-    industry: "B2B SaaS",
-    url: "launchscale.com/analytics",
-    metric: "5.2x Google & Meta ROAS",
-    browserColor: "#E8F0FE",
-    screenshotType: "saas",
-  },
-  {
-    id: "healthfirst",
-    isFeatured: false,
-    title: "Environmental Brand Creation",
-    category: "Local SEO & Platform Engineering",
-    industry: "Healthcare",
-    url: "healthfirst.in/booking",
-    metric: "2x Qualified Leads",
-    browserColor: "#F0FDF4",
-    screenshotType: "healthcare",
-  },
-  {
-    id: "fintechone",
-    isFeatured: false,
-    title: "FintechOne Portal",
-    category: "Custom Web Application Development",
+    id: "nivesh",
+    isFeatured: true,
+    title: "Nivesh",
+    category: "SEO Architecture + Content Clusters",
     industry: "FinTech",
-    url: "fintechone.io/dashboard",
-    metric: "Sub-second Load Times",
-    browserColor: "#EAEAEA",
-    screenshotType: "fintech",
+    url: "nivesh.com",
+    metric: "+700% Organic Traffic",
+    browserColor: "#F8FAFC",
+    screenshotType: "custom",
+    image: "/case-studies/nivesh/nivesh-hero-preview.png",
+    linkUrl: "/case-studies/nivesh",
+  },
+  {
+    id: "tarkashastra",
+    isFeatured: true,
+    title: "Tarkashastra Academy",
+    category: "SEO Architecture + Local GBP + Paid Ads",
+    industry: "Education & EdTech",
+    url: "tarkashastra.co.in",
+    metric: "+200% Organic Traffic",
+    browserColor: "#FFF7ED",
+    screenshotType: "custom",
+    image: "/case-studies/tarkashastra/tarkashastra-hero-preview.png",
+    linkUrl: "/case-studies/tarkashastra",
   },
 ];
 
 export function FeaturedWork() {
+  const { data } = useWebsiteSection<FeaturedWorkSection>("home.featuredWork");
+  const tagline = data?.tagline || "Client Success Stories";
+  const heading = data?.heading || "Visual proof of our engineering and growth capabilities";
+  const projects = data?.projects && data.projects.length > 0 ? data.projects : defaultProjects;
+
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -67,7 +69,7 @@ export function FeaturedWork() {
   useEffect(() => {
     // Only run horizontal pinning scroll on desktop viewports (md and above)
     const mediaQuery = window.matchMedia("(min-width: 768px)");
-    if (!mediaQuery.matches) return;
+    if (!mediaQuery.matches || projects.length === 0) return;
 
     const ctx = gsap.context(() => {
       // Step width is: 44vw card width + 6vw gap = 50vw step
@@ -147,7 +149,7 @@ export function FeaturedWork() {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [projects]);
 
   return (
     <>
@@ -158,10 +160,7 @@ export function FeaturedWork() {
       >
         {/* Heading */}
         <div className="mx-auto max-w-[1280px] w-full px-6 lg:px-10 shrink-0">
-          <SectionHeading
-            tagline="Client Success Stories"
-            heading="Visual proof of our engineering and growth capabilities"
-          />
+          <SectionHeading tagline={tagline} heading={heading} />
         </div>
 
         {/* Horizontal Track Viewport: justify-start layout aligns left padding accurately at 0px */}
@@ -176,12 +175,10 @@ export function FeaturedWork() {
           >
             {projects.map((project, index) => (
               <div
-                key={project.id}
+                key={project.id || index}
                 className={`project-card-${index} shrink-0 w-[44vw] origin-center`}
               >
-                <CaseStudyCursor>
-                  <ProjectCard project={project} index={index} isActive={activeIndex === index} />
-                </CaseStudyCursor>
+                <ProjectCard project={project} index={index} isActive={activeIndex === index} />
               </div>
             ))}
           </div>
@@ -194,15 +191,12 @@ export function FeaturedWork() {
       {/* ── Mobile Fallback (Swipeable horizontal snap cards) ── */}
       <div className="block md:hidden bg-white pt-14 pb-16">
         <div className="mx-auto max-w-[1280px] px-6 mb-8">
-          <SectionHeading
-            tagline="Client Success Stories"
-            heading="Visual proof of our capabilities"
-          />
+          <SectionHeading tagline={tagline} heading={heading} />
         </div>
 
         {/* Scroll snap container */}
         <div
-          className="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar px-6 py-4"
+          className="flex gap-4 sm:gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 sm:px-6 py-4"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -213,9 +207,9 @@ export function FeaturedWork() {
               display: none;
             }
           `}</style>
-          {projects.map((project) => (
-            <div key={project.id} className="snap-center shrink-0 w-[85vw] max-w-[320px]">
-              <ProjectCard project={project} index={0} isMobile isActive />
+          {projects.map((project, idx) => (
+            <div key={project.id || idx} className="snap-center shrink-0 w-[88vw] max-w-[340px]">
+              <ProjectCard project={project} index={idx} isMobile isActive />
             </div>
           ))}
         </div>
@@ -427,7 +421,7 @@ function AnimatedMetric({ metric, trigger = false }: { metric: string; trigger?:
 
   if (!parsed.hasNumber) {
     return (
-      <span className="text-[#EBB771] font-black text-xl md:text-2xl tracking-tight font-sans">
+      <span className="text-[#FC9C44] font-black text-lg sm:text-xl md:text-2xl tracking-tight font-sans">
         {metric}
       </span>
     );
@@ -436,14 +430,16 @@ function AnimatedMetric({ metric, trigger = false }: { metric: string; trigger?:
   const formattedNum = currentVal.toFixed(parsed.decimals);
 
   return (
-    <span className="text-[#EBB771] font-black text-xl md:text-2xl tracking-tight block font-sans">
-      <span>{parsed.prefix}</span>
-      <span className="tabular-nums">{formattedNum}</span>
-      <span>{parsed.suffix}</span>
-      <span className="text-[#6B7280] font-medium text-xs md:text-sm ml-2 inline-block normal-case">
+    <div className="flex flex-wrap items-baseline gap-1.5">
+      <span className="text-[#FC9C44] font-black text-lg sm:text-xl md:text-2xl tracking-tight font-sans">
+        <span>{parsed.prefix}</span>
+        <span className="tabular-nums">{formattedNum}</span>
+        <span>{parsed.suffix}</span>
+      </span>
+      <span className="text-[#6B7280] font-semibold text-xs sm:text-sm normal-case">
         {parsed.label.trim()}
       </span>
-    </span>
+    </div>
   );
 }
 
@@ -454,11 +450,12 @@ function ProjectCard({
   isMobile = false,
   isActive = false,
 }: {
-  project: (typeof projects)[0];
+  project: FeaturedWorkItem;
   index: number;
   isMobile?: boolean;
   isActive?: boolean;
 }) {
+  const [imageLoadError, setImageLoadError] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const xVal = useMotionValue(0);
   const yVal = useMotionValue(0);
@@ -490,9 +487,16 @@ function ProjectCard({
     yVal.set(0);
   };
 
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate({ to: (project.linkUrl || "/case-studies") as any });
+  };
+
   return (
     <motion.div
       ref={cardRef}
+      onClick={handleCardClick}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       style={{
@@ -502,11 +506,11 @@ function ProjectCard({
         perspective: 1000,
       }}
       className={`group rounded-2xl border border-[#EAEAEA] bg-white cursor-pointer overflow-hidden flex flex-col justify-between transition-[box-shadow] duration-300 hover:shadow-[0_24px_48px_-12px_rgba(29,39,66,0.08)] ${
-        isMobile ? "w-full min-h-[400px]" : "w-full min-h-[460px]"
+        isMobile ? "w-full" : "w-full min-h-[460px]"
       }`}
     >
       {/* ── Mock Browser Frame Header ── */}
-      <div className="flex items-center gap-2 px-4 py-3 bg-white border-b border-[#EAEAEA] select-none">
+      <div className="flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white border-b border-[#EAEAEA] select-none">
         {/* Red, Yellow, Green Window Dots */}
         <div className="flex gap-1.5 shrink-0">
           <div className="h-2 w-2 rounded-full bg-[#FF5F56]" />
@@ -523,29 +527,41 @@ function ProjectCard({
       {/* ── Browser Page Content / Screenshot Area ── */}
       <div
         className="flex-1 relative overflow-hidden flex items-stretch border-b border-[#EAEAEA]"
-        style={{ backgroundColor: project.browserColor }}
+        style={{ backgroundColor: project.browserColor || "#FAF7F2" }}
       >
-        <div className="w-full h-44 md:h-52 self-center p-6 overflow-hidden">
-          {/* Parallax target class applied here */}
-          <div
-            className={`h-full w-full rounded-lg shadow-sm border border-[#EAEAEA] overflow-hidden preview-inner-${index}`}
-          >
-            <div className="scale-110 h-full w-full transition-transform duration-500 ease-out group-hover:scale-[1.14]">
-              <BrowserPreview type={project.screenshotType} isActive={isActive} />
+        {project.image && !imageLoadError ? (
+          <div className="w-full aspect-video overflow-hidden relative bg-white">
+            <img
+              src={project.image}
+              alt={`${project.title} live interface visual proof`}
+              className="w-full h-full object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.03]"
+              loading="lazy"
+              onError={() => setImageLoadError(true)}
+            />
+          </div>
+        ) : (
+          <div className="w-full h-44 md:h-52 self-center p-4 sm:p-6 overflow-hidden">
+            {/* Parallax target class applied here */}
+            <div
+              className={`h-full w-full rounded-lg shadow-sm border border-[#EAEAEA] overflow-hidden preview-inner-${index}`}
+            >
+              <div className="scale-110 h-full w-full transition-transform duration-500 ease-out group-hover:scale-[1.14]">
+                <BrowserPreview type={project.screenshotType || "ecommerce"} isActive={isActive} />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* ── Content Metadata ── */}
-      <div className="p-6 space-y-4 bg-white">
-        <div className="space-y-2">
+      <div className="p-4 sm:p-6 space-y-3 sm:space-y-4 bg-white">
+        <div className="space-y-1 sm:space-y-1.5">
           {/* Industry and Category labels */}
           <span className="block text-[10px] font-bold uppercase tracking-wider text-[#6B7280]">
             {project.industry} · {project.category}
           </span>
           <h3
-            className="text-lg font-bold text-[#1D2742]"
+            className="text-base sm:text-lg font-bold text-[#1D2742]"
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
           >
             {project.title}
@@ -553,14 +569,14 @@ function ProjectCard({
         </div>
 
         {/* Primary Result Metric (Animated counters on entry) */}
-        <div className="py-1 min-h-[32px] flex items-center">
+        <div className="py-1 min-h-[30px] sm:min-h-[32px] flex items-center">
           <AnimatedMetric metric={project.metric} trigger={isActive} />
         </div>
 
-        {/* Link / CTA (Subtle arrow animation) */}
-        <div className="pt-3 border-t border-[#EAEAEA] flex items-center justify-between">
+        {/* Link / CTA */}
+        <div className="pt-2.5 sm:pt-3 border-t border-[#EAEAEA] flex items-center justify-between">
           <Link
-            to="/case-studies"
+            to={(project.linkUrl || "/case-studies") as any}
             className="group inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#FC9C44] transition-colors"
           >
             Explore Case Study

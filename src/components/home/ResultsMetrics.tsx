@@ -2,42 +2,27 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { AnimatedCounter } from "@/components/site/AnimatedCounter";
-
-/* ── Supporting metrics (stack beside the hero) ─────────── */
-const supporting = [
-  {
-    id: "leads",
-    prefix: "+",
-    value: 184,
-    suffix: "%",
-    label: "Qualified Leads",
-    sub: "More pipeline through conversion-optimised funnels",
-    decimals: 0,
-    href: "/case-studies",
-  },
-  {
-    id: "roas",
-    prefix: "",
-    value: 4.8,
-    suffix: "×",
-    label: "Average ROAS",
-    sub: "Return on ad spend across Google, Meta & programmatic",
-    decimals: 1,
-    href: "/case-studies",
-  },
-  {
-    id: "satisfaction",
-    prefix: "",
-    value: 98,
-    suffix: "%",
-    label: "Client Satisfaction",
-    sub: "Senior-led accounts — no handoff to juniors after onboarding",
-    decimals: 0,
-    href: "/about",
-  },
-];
+import { useWebsiteSection } from "@/hooks/useWebsiteContent";
+import type { ResultsMetricsSection } from "@/lib/cms-config";
 
 export function ResultsMetrics() {
+  const { data } = useWebsiteSection<ResultsMetricsSection>("home.metrics");
+
+  const tagline = data?.tagline || "Proven Results";
+  const heading = data?.heading || "Numbers that prove we deliver.";
+  const heroMetric = data?.heroMetric || {
+    ghostNumber: "700",
+    prefix: "+",
+    value: 700,
+    suffix: "%",
+    decimals: 0,
+    title: "Peak Organic Traffic Growth",
+    description: "Achieved in 6 months through technical SEO taxonomy restructuring, content clusters, and indexing automation.",
+    linkText: "See the Nivesh case study",
+    linkUrl: "/case-studies/nivesh",
+  };
+  const supporting = data?.supporting || [];
+
   return (
     <section
       className="bg-[#FAFAF8] overflow-hidden"
@@ -63,13 +48,13 @@ export function ResultsMetrics() {
             className="text-[11px] font-bold tracking-[0.16em] text-[#FC9C44] uppercase"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            Proven Results
+            {tagline}
           </span>
           <h2
             className="mt-3 text-[28px] font-bold text-[#1D2742] leading-snug"
             style={{ fontFamily: "'Space Grotesk', sans-serif" }}
           >
-            Numbers that prove we deliver.
+            {heading}
           </h2>
         </motion.div>
 
@@ -96,7 +81,7 @@ export function ResultsMetrics() {
                 zIndex: 0,
               }}
             >
-              310
+              {heroMetric.ghostNumber || heroMetric.value}
             </div>
 
             {/* Actual counter */}
@@ -105,10 +90,16 @@ export function ResultsMetrics() {
                 className="font-black leading-none tracking-tight text-[#1D2742]"
                 style={{
                   fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "clamp(72px, 10vw, 130px)",
+                  fontSize: "clamp(52px, 13vw, 130px)",
                 }}
               >
-                <AnimatedCounter target={310} prefix="+" suffix="%" decimals={0} trigger={true} />
+                <AnimatedCounter
+                  target={Number(heroMetric.value) || 0}
+                  prefix={heroMetric.prefix || ""}
+                  suffix={heroMetric.suffix || ""}
+                  decimals={heroMetric.decimals || 0}
+                  trigger={true}
+                />
               </div>
 
               {/* Brand accent bar */}
@@ -118,23 +109,25 @@ export function ResultsMetrics() {
                 className="text-[20px] font-bold text-[#232323] leading-snug mb-2"
                 style={{ fontFamily: "'Space Grotesk', sans-serif" }}
               >
-                Organic Traffic Growth
+                {heroMetric.title}
               </div>
               <p
                 className="text-[14px] text-[#6B7280] leading-relaxed mb-7 max-w-[340px]"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
-                Average increase across all SEO clients within 12 months of engagement.
+                {heroMetric.description}
               </p>
 
-              <Link
-                to="/case-studies"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#FC9C44] group"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                See the case study
-                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-              </Link>
+              {heroMetric.linkText && (
+                <Link
+                  to={heroMetric.linkUrl || "/case-studies"}
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#FC9C44] group"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {heroMetric.linkText}
+                  <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              )}
             </div>
           </motion.div>
 
@@ -152,7 +145,7 @@ export function ResultsMetrics() {
           >
             {supporting.map((m, i) => (
               <motion.div
-                key={m.id}
+                key={m.id || i}
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -171,10 +164,10 @@ export function ResultsMetrics() {
                       style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                     >
                       <AnimatedCounter
-                        target={m.value}
-                        prefix={m.prefix}
-                        suffix={m.suffix}
-                        decimals={m.decimals}
+                        target={Number(m.value) || 0}
+                        prefix={m.prefix || ""}
+                        suffix={m.suffix || ""}
+                        decimals={m.decimals || 0}
                         trigger={true}
                       />
                     </div>
@@ -196,7 +189,7 @@ export function ResultsMetrics() {
 
                   {/* Hover arrow — appears on row hover */}
                   <Link
-                    to={m.href}
+                    to={m.href || "/case-studies"}
                     className="shrink-0 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                     aria-label={`View ${m.label} results`}
                   >

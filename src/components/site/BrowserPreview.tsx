@@ -11,12 +11,15 @@ interface BrowserPreviewProps {
   proofLabel?: string;
   proofDuration?: string;
   proofMetric?: string;
+  hideProofOverlay?: boolean;
+  proofBadgeSize?: "compact" | "normal" | "minimal" | "none";
+  proofBadgePosition?: "bottom-right" | "bottom-left" | "top-right";
+  proofBadgeClassName?: string;
   url?: string;
 }
 
 export function BrowserPreview({
   children,
-  src,
   alt = "Browser Preview",
   className,
   innerClassName,
@@ -24,8 +27,23 @@ export function BrowserPreview({
   proofLabel,
   proofDuration,
   proofMetric,
+  hideProofOverlay = false,
+  proofBadgeSize = "compact",
+  proofBadgePosition = "bottom-right",
+  proofBadgeClassName,
   url,
-}: BrowserPreviewProps) {
+  ...rest
+}: BrowserPreviewProps & { src?: string }) {
+  const src = rest.src;
+  const isMinimal = proofBadgeSize === "minimal";
+  const isHidden = hideProofOverlay || proofBadgeSize === "none";
+
+  const positionClasses = {
+    "bottom-right": "bottom-1.5 right-1.5 sm:bottom-2.5 sm:right-2.5",
+    "bottom-left": "bottom-1.5 left-1.5 sm:bottom-2.5 sm:left-2.5",
+    "top-right": "top-1.5 right-1.5 sm:top-2.5 sm:right-2.5",
+  }[proofBadgePosition];
+
   return (
     <div
       className={cn(
@@ -34,7 +52,7 @@ export function BrowserPreview({
       )}
     >
       {/* Browser chrome header */}
-      <div className="flex items-center gap-1.5 px-4 py-3 bg-white border-b border-[#EAEAEA]">
+      <div className="flex items-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 bg-white border-b border-[#EAEAEA]">
         {/* Subtle colored chrome control dots: ○ ○ ○ */}
         <div className="flex gap-1.5">
           <div className="h-2 w-2 rounded-full bg-[#FF5F56]/60 transition-all duration-300 ease-out group-hover:bg-[#FF5F56] group-hover:scale-[1.05]" />
@@ -71,30 +89,41 @@ export function BrowserPreview({
           </div>
         )}
 
-        {/* Credibility proof overlay card */}
-        {(proofLabel || proofDuration || proofMetric) && (
-          <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm border border-[#EAEAEA] rounded-lg p-3.5 shadow-lg flex items-center gap-4 max-w-[280px] z-10 transition-all duration-[350ms] ease-out group-hover:translate-y-[-3px] group-hover:shadow-2xl">
+        {/* Credibility proof overlay card — sleek, adjustable, and mobile compatible */}
+        {(proofLabel || proofDuration || proofMetric) && !isHidden && (
+          <div
+            className={cn(
+              "absolute z-10 select-none bg-white/95 backdrop-blur-md border border-[#EAEAEA] shadow-sm transition-all duration-[350ms] ease-out group-hover:translate-y-[-2px] group-hover:shadow-md",
+              positionClasses,
+              isMinimal
+                ? "rounded-full px-2.5 py-1 flex items-center gap-1.5"
+                : "rounded-md sm:rounded-lg px-2 py-1 sm:px-2.5 sm:py-1.5 flex items-center gap-1.5 sm:gap-2 max-w-[125px] sm:max-w-[185px]",
+              proofBadgeClassName,
+            )}
+          >
             <div className="flex-1 min-w-0">
               {proofMetric && (
                 <div
-                  className="text-sm font-bold text-[#1D2742] tracking-tight truncate leading-tight"
+                  className="text-[9.5px] sm:text-xs font-bold text-[#1D2742] tracking-tight truncate leading-tight"
                   style={{ fontFamily: "'Space Grotesk', sans-serif" }}
                 >
                   {proofMetric}
                 </div>
               )}
-              <div className="text-[10px] font-bold text-[#FC9C44] uppercase tracking-wider mt-0.5 leading-none">
-                {proofLabel}
-              </div>
-              {proofDuration && (
-                <div className="text-[9px] text-[#6B7280] font-medium uppercase tracking-wider mt-1 leading-none">
-                  Timeline: {proofDuration}
+              {proofLabel && !isMinimal && (
+                <div className="text-[7.5px] sm:text-[8.5px] font-bold text-[#FC9C44] uppercase tracking-wider mt-0.5 leading-none truncate">
+                  {proofLabel}
+                </div>
+              )}
+              {proofDuration && !isMinimal && (
+                <div className="text-[6.5px] sm:text-[7.5px] text-[#6B7280] font-medium uppercase tracking-wider mt-0.5 leading-none truncate hidden xs:block">
+                  {proofDuration}
                 </div>
               )}
             </div>
 
             {/* Sparkline Graphic */}
-            <div className="w-16 h-8 shrink-0">
+            <div className="hidden xs:block w-4 sm:w-8 h-2.5 sm:h-4 shrink-0">
               <svg className="w-full h-full" viewBox="0 0 100 40">
                 <defs>
                   <linearGradient id="sparkline-grad" x1="0" y1="0" x2="0" y2="1">
@@ -102,12 +131,10 @@ export function BrowserPreview({
                     <stop offset="100%" stopColor="#FC9C44" stopOpacity="0" />
                   </linearGradient>
                 </defs>
-                {/* Area */}
                 <path
                   d="M 0 40 L 0 35 L 20 28 L 40 32 L 60 18 L 80 12 L 100 2 L 100 40 Z"
                   fill="url(#sparkline-grad)"
                 />
-                {/* Line */}
                 <path
                   d="M 0 35 L 20 28 L 40 32 L 60 18 L 80 12 L 100 2"
                   fill="none"
@@ -116,7 +143,6 @@ export function BrowserPreview({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
-                {/* Dot */}
                 <circle cx="100" cy="2" r="2.5" fill="#FC9C44" />
               </svg>
             </div>

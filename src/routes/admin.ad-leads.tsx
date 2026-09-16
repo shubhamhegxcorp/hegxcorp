@@ -1,16 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarClock, Megaphone, RefreshCw, ShieldCheck, Target } from "lucide-react";
+import { CalendarClock, Download, Megaphone, RefreshCw, ShieldCheck, Target } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { type AdFunnelReportRow, listAdFunnelReport } from "@/lib/ad-funnel";
+import { downloadCsv, escapeCsv, formatAdminDate } from "@/lib/admin-leads";
 
 export const Route = createFileRoute("/admin/ad-leads")({
   head: () => ({
     meta: [
-      { title: "Ad Leads | Hegxcorp Admin" },
+      { title: "Meta Ad Leads | Hegxcorp Admin" },
       {
         name: "description",
-        content: "Private Hegxcorp ad source lead funnel report.",
+        content: "Private Hegxcorp Meta Ads lead funnel report.",
       },
       { name: "robots", content: "noindex,nofollow" },
     ],
@@ -18,11 +19,10 @@ export const Route = createFileRoute("/admin/ad-leads")({
   component: AdminAdLeadsPage,
 } as never);
 
-function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
+type FunnelMetric = "visitors" | "formStarts" | "leadsGenerated" | "genuineLeads";
+
+function sumReportMetric(rows: AdFunnelReportRow[], metric: FunnelMetric) {
+  return rows.reduce((total, row) => total + row[metric], 0);
 }
 
 function formatPercent(value: number, total: number) {
@@ -42,22 +42,39 @@ function getBestRow(rows: AdFunnelReportRow[]) {
 
 function AdminAdLeadsPage() {
   const [reportRows, setReportRows] = useState<AdFunnelReportRow[]>([]);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const metaRows = useMemo(
-    () => reportRows.filter((row) => row.leadSource === "Meta Ads"),
-    [reportRows],
-  );
-  const totalVisitors = reportRows.reduce((total, row) => total + row.visitors, 0);
-  const totalFormStarts = reportRows.reduce((total, row) => total + row.formStarts, 0);
-  const totalLeadsGenerated = reportRows.reduce((total, row) => total + row.leadsGenerated, 0);
-  const totalGenuineLeads = reportRows.reduce((total, row) => total + row.genuineLeads, 0);
-  const metaVisitors = metaRows.reduce((total, row) => total + row.visitors, 0);
-  const metaFormStarts = metaRows.reduce((total, row) => total + row.formStarts, 0);
-  const metaLeadsGenerated = metaRows.reduce((total, row) => total + row.leadsGenerated, 0);
-  const metaGenuineLeads = metaRows.reduce((total, row) => total + row.genuineLeads, 0);
-  const bestRow = getBestRow(reportRows);
+  // Strictly Meta Ads only: remove Untracked and any other non-Meta ad channels
+  const metaRows = useMemo(() => {
+    return reportRows
+      .filter((row) => {
+        const source = (row.leadSource || "").trim().toLowerCase();
+        return (
+          row.leadSource !== "Untracked" &&
+          (source === "meta ads" ||
+            source.includes("meta") ||
+            source.includes("facebook") ||
+            source.includes("instagram"))
+        );
+      })
+      .map((row) => ({
+        ...row,
+        leadSource: "Meta Ads",
+      }))
+      .sort((a, b) => {
+        const timeA = new Date(a.latestActivityAt).getTime();
+        const timeB = new Date(b.latestActivityAt).getTime();
+        return sortOrder === "asc" ? timeA - timeB : timeB - timeA;
+      });
+  }, [reportRows, sortOrder]);
+
+  const totalVisitors = sumReportMetric(metaRows, "visitors");
+  const totalFormStarts = sumReportMetric(metaRows, "formStarts");
+  const totalLeadsGenerated = sumReportMetric(metaRows, "leadsGenerated");
+  const totalGenuineLeads = sumReportMetric(metaRows, "genuineLeads");
+  const bestRow = getBestRow(metaRows);
 
   async function loadAdFunnelReport() {
     setIsLoading(true);
@@ -82,17 +99,62 @@ function AdminAdLeadsPage() {
     void loadAdFunnelReport();
   }, []);
 
+  function handleExportCsv() {
+    if (metaRows.length === 0) return;
+
+    const headers = [
+      "Source",
+      "Campaign",
+      "Ad Set",
+      "Ad",
+      "Visitors",
+      "Form Starts",
+      "Leads Generated",
+      "Genuine Leads",
+      "Latest Activity",
+    ];
+
+    const rows = metaRows.map((row) => [
+      row.leadSource,
+      row.leadCampaign,
+      row.leadAdSet,
+      row.leadAd,
+      row.visitors,
+      row.formStarts,
+      row.leadsGenerated,
+      row.genuineLeads,
+      row.latestActivityAt,
+    ]);
+
+    const csvContent = [
+      headers.map(escapeCsv).join(","),
+      ...rows.map((r) => r.map(escapeCsv).join(",")),
+    ].join("\n");
+
+    downloadCsv(`meta-ad-leads-${new Date().toISOString().slice(0, 10)}.csv`, csvContent);
+  }
+
   return (
     <section className="grid gap-6 px-6 py-8 lg:px-8">
+      {/* Metric Cards - strictly Meta Ads */}
       <div className="grid gap-3 lg:grid-cols-4">
         <div className="border border-[#E4E7EC] bg-white p-4">
           <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-[#667085]">
             <Megaphone className="h-4 w-4 text-[#FC9C44]" />
             Meta Visitors
           </p>
-          <p className="mt-2 text-3xl font-black text-[#06133D]">{metaVisitors}</p>
+          <p className="mt-2 text-3xl font-black text-[#06133D]">{totalVisitors}</p>
+          <p className="mt-1 text-xs font-semibold text-[#667085]">Tracked Meta Ads traffic</p>
+        </div>
+
+        <div className="border border-[#E4E7EC] bg-white p-4">
+          <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-[#667085]">
+            <Target className="h-4 w-4 text-[#FC9C44]" />
+            Meta Form Starts
+          </p>
+          <p className="mt-2 text-3xl font-black text-[#06133D]">{totalFormStarts}</p>
           <p className="mt-1 text-xs font-semibold text-[#667085]">
-            {metaFormStarts} form starts, {metaLeadsGenerated} leads generated
+            {formatPercent(totalFormStarts, totalVisitors)} start rate from visitors
           </p>
         </div>
 
@@ -101,34 +163,28 @@ function AdminAdLeadsPage() {
             <ShieldCheck className="h-4 w-4 text-[#FC9C44]" />
             Meta Genuine Leads
           </p>
-          <p className="mt-2 text-3xl font-black text-[#06133D]">{metaGenuineLeads}</p>
+          <p className="mt-2 text-3xl font-black text-[#06133D]">{totalGenuineLeads}</p>
           <p className="mt-1 text-xs font-semibold text-[#667085]">
-            {formatPercent(metaGenuineLeads, metaLeadsGenerated)} of generated Meta leads
-          </p>
-        </div>
-
-        <div className="border border-[#E4E7EC] bg-white p-4">
-          <p className="text-xs font-black uppercase tracking-[0.12em] text-[#667085]">
-            All Tracked Funnel
-          </p>
-          <p className="mt-2 text-3xl font-black text-[#06133D]">{totalVisitors}</p>
-          <p className="mt-1 text-xs font-semibold text-[#667085]">
-            {totalFormStarts} starts, {totalLeadsGenerated} leads, {totalGenuineLeads} genuine
+            {totalLeadsGenerated} generated ({formatPercent(totalGenuineLeads, totalLeadsGenerated)}{" "}
+            genuine)
           </p>
         </div>
 
         <div className="border border-[#E4E7EC] bg-white p-4">
           <p className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.12em] text-[#667085]">
             <Target className="h-4 w-4 text-[#FC9C44]" />
-            Best Campaign / Ad
+            Best Meta Campaign / Ad
           </p>
-          <p className="mt-2 text-lg font-black text-[#06133D]">
-            {bestRow ? bestRow.leadCampaign : "No tracked ad activity yet"}
+          <p
+            className="mt-2 text-lg font-black text-[#06133D] truncate"
+            title={bestRow ? bestRow.leadCampaign : undefined}
+          >
+            {bestRow ? bestRow.leadCampaign : "No Meta ad activity yet"}
           </p>
           <p className="mt-1 text-xs font-semibold text-[#667085]">
             {bestRow
-              ? `${bestRow.leadAd} - ${bestRow.genuineLeads} genuine leads`
-              : "Use UTM labels in your ad URL to start tracking."}
+              ? `${bestRow.leadAd} • ${bestRow.genuineLeads} genuine leads`
+              : "Visitors with Meta UTMs will appear here."}
           </p>
         </div>
       </div>
@@ -142,34 +198,51 @@ function AdminAdLeadsPage() {
       <div className="overflow-hidden border border-[#E4E7EC] bg-white">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[#E4E7EC] px-5 py-4">
           <div>
-            <h2 className="text-base font-black text-[#06133D]">Ad funnel report</h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-base font-black text-[#06133D]">Meta Ads Funnel Report</h2>
+              <span className="rounded-full bg-[#EAF2FF] px-2.5 py-0.5 text-xs font-black text-[#2359B8]">
+                Only Meta Ads
+              </span>
+            </div>
             <p className="mt-1 text-xs font-semibold text-[#667085]">
-              Visitors and form starts come from tracking events. Leads generated come from form
-              submissions. Genuine means status is In Progress or Closed.
+              Real-time funnel performance strictly for Meta Ads campaigns (untracked & other
+              channels removed). Sorted by latest activity in ascending order.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => void loadAdFunnelReport()}
-            disabled={isLoading}
-            className="inline-flex items-center gap-2 rounded-lg bg-[#06133D] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#102159] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
-            Refresh
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleExportCsv}
+              disabled={isLoading || metaRows.length === 0}
+              className="inline-flex items-center gap-2 rounded-lg border border-[#D0D5DD] bg-white px-3.5 py-2 text-xs font-bold text-[#344054] transition hover:bg-[#F9FAFB] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Download className="h-3.5 w-3.5 text-[#667085]" />
+              Export CSV
+            </button>
+            <button
+              type="button"
+              onClick={() => void loadAdFunnelReport()}
+              disabled={isLoading}
+              className="inline-flex items-center gap-2 rounded-lg bg-[#06133D] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#102159] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <RefreshCw className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`} />
+              Refresh
+            </button>
+          </div>
         </div>
 
         {isLoading ? (
           <div className="grid min-h-[300px] place-items-center text-sm font-semibold text-[#667085]">
-            Loading ad funnel...
+            Loading Meta Ads funnel...
           </div>
-        ) : reportRows.length === 0 ? (
+        ) : metaRows.length === 0 ? (
           <div className="grid min-h-[300px] place-items-center px-6 text-center">
             <div>
               <Megaphone className="mx-auto h-10 w-10 text-[#98A2B3]" />
-              <h3 className="mt-4 text-lg font-black text-[#06133D]">No tracked ad activity yet</h3>
+              <h3 className="mt-4 text-lg font-black text-[#06133D]">No Meta Ads activity yet</h3>
               <p className="mt-2 max-w-md text-sm leading-6 text-[#667085]">
-                isitors will appear here after they arrive from Meta or another UTM-tagged ad URL.
+                Meta Ads traffic and leads will appear here once visitors arrive with Meta campaign
+                UTMs or fbclid parameters. Untracked and non-Meta channels are excluded.
               </p>
             </div>
           </div>
@@ -186,11 +259,23 @@ function AdminAdLeadsPage() {
                   <th className="px-5 py-3">Form Starts</th>
                   <th className="px-5 py-3">Leads Generated</th>
                   <th className="px-5 py-3">Genuine Leads</th>
-                  <th className="px-5 py-3">Latest Activity</th>
+                  <th className="px-5 py-3">
+                    <button
+                      type="button"
+                      onClick={() => setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))}
+                      className="group inline-flex items-center gap-1.5 font-black uppercase tracking-[0.11em] text-[#667085] hover:text-[#06133D]"
+                      title="Toggle ascending / descending sort"
+                    >
+                      <span>Latest Activity</span>
+                      <span className="rounded bg-[#FFF4E8] px-1.5 py-0.5 text-[10px] font-extrabold text-[#C96A13]">
+                        {sortOrder === "asc" ? "Asc ↑" : "Desc ↓"}
+                      </span>
+                    </button>
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E4E7EC]">
-                {reportRows.map((row) => (
+                {metaRows.map((row) => (
                   <tr key={row.key} className="align-top transition hover:bg-[#FFF9F3]">
                     <td className="px-5 py-4">
                       <span className="rounded-full bg-[#EAF2FF] px-3 py-1 text-xs font-black text-[#2359B8]">
@@ -227,8 +312,8 @@ function AdminAdLeadsPage() {
                     </td>
                     <td className="px-5 py-4">
                       <p className="flex min-w-[170px] items-center gap-2 text-xs font-semibold text-[#667085]">
-                        <CalendarClock className="h-4 w-4" />
-                        {formatDate(row.latestActivityAt)}
+                        <CalendarClock className="h-4 w-4 text-[#FC9C44]" />
+                        {formatAdminDate(row.latestActivityAt)}
                       </p>
                     </td>
                   </tr>

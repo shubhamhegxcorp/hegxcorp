@@ -151,12 +151,24 @@
 @layer base {
   * {
     border-color: var(--color-border);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: "Inter", system-ui, sans-serif;
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   h1,
@@ -166,6 +178,20 @@
   h5,
   h6 {
     font-family: "Space Grotesk", system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* Responsive image containment */
+  img,
+  svg,
+  video,
+  canvas,
+  audio,
+  iframe,
+  embed,
+  object {
+    max-width: 100%;
+    height: auto;
   }
 }
 
@@ -311,32 +337,25 @@
 }
 
 /* ─────────────────────────────────────────────
-   Client Logo Marquee
-   Grayscale by default, full colour on hover.
-   Heights normalised so mixed-size logos align.
+   Client Logo Marquee & LogoLoop
+   Vibrant full color, crisp contrast, smooth hover
 ───────────────────────────────────────────── */
 .client-logo-img {
-  height: 36px;
-  /* desktop baseline */
+  height: 40px;
   width: auto;
-  max-width: 130px;
+  max-width: 150px;
   object-fit: contain;
   object-position: center;
-
-  /* Grayscale default */
-  filter: grayscale(100%);
-  opacity: 0.65;
-
+  filter: none;
+  opacity: 0.95;
   transition:
-    filter 300ms ease,
     opacity 300ms ease,
     transform 300ms ease;
 }
 
 .client-logo-item:hover .client-logo-img {
-  filter: grayscale(0%);
   opacity: 1;
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 /* SEO service page interactions */
@@ -771,4 +790,65 @@
   color: #98a2b3;
   pointer-events: none;
   height: 0;
+}
+
+/* Custom visible scrollbar for Admin Sub-Services menu */
+.subservices-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #fc9c44 #eaecf0;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+.subservices-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  display: block;
+}
+
+.subservices-scroll::-webkit-scrollbar-track {
+  background: #eaecf0;
+  border-radius: 9999px;
+}
+
+.subservices-scroll::-webkit-scrollbar-thumb {
+  background: #fc9c44;
+  border-radius: 9999px;
+}
+
+.subservices-scroll::-webkit-scrollbar-thumb:hover {
+  background: #e08630;
+}
+
+/* Custom visible horizontal scrollbar for Client Success Stories on mobile */
+.client-stories-scroll,
+.services-horizontal-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #fc9c44 #eaecf0;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.client-stories-scroll::-webkit-scrollbar,
+.services-horizontal-scroll::-webkit-scrollbar {
+  height: 6px;
+  display: block;
+}
+
+.client-stories-scroll::-webkit-scrollbar-track,
+.services-horizontal-scroll::-webkit-scrollbar-track {
+  background: #eaecf0;
+  border-radius: 9999px;
+  margin: 0 16px;
+}
+
+.client-stories-scroll::-webkit-scrollbar-thumb,
+.services-horizontal-scroll::-webkit-scrollbar-thumb {
+  background: #fc9c44;
+  border-radius: 9999px;
+}
+
+.client-stories-scroll::-webkit-scrollbar-thumb:hover,
+.services-horizontal-scroll::-webkit-scrollbar-thumb:hover {
+  background: #e08630;
 }

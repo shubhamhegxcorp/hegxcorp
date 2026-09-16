@@ -1,7 +1,10 @@
 import { blogs } from "@/data/blogs";
 import type { Blog } from "@/data/blogs";
 import type { BlogDraft } from "@/lib/blog-drafts";
-import { listPublishedBlogDrafts } from "@/lib/blog-drafts";
+import {
+  listPublishedBlogDrafts,
+  getPublishedBlogDraftBySlug as fetchPublishedDraftBySlug,
+} from "@/lib/blog-drafts";
 
 export function getBlogs(): Blog[] {
   return blogs;
@@ -12,7 +15,9 @@ export function getFeaturedBlogs(): Blog[] {
 }
 
 export function getBlogBySlug(slug: string): Blog | null {
-  return blogs.find((b) => b.slug === slug) ?? null;
+  if (!slug) return null;
+  const clean = slug.trim().toLowerCase();
+  return blogs.find((b) => b.slug === slug || b.slug.toLowerCase() === clean) ?? null;
 }
 
 export function getBlogsByCategory(category: string): Blog[] {
@@ -45,12 +50,45 @@ function draftToBlogCard(draft: BlogDraft): Blog {
 // hardcoded demo posts. Use this on the public /blog page instead of
 // getBlogs() so real published posts actually show up.
 export async function getPublishedBlogs(): Promise<Blog[]> {
-  const drafts = await listPublishedBlogDrafts();
-  const published = drafts.map(draftToBlogCard); // no need to filter — already filtered in SQL
-  return [...published, ...blogs];
+  try {
+    const drafts = await listPublishedBlogDrafts();
+    const published = (drafts || []).map(draftToBlogCard);
+    return [...published, ...blogs];
+  } catch (error) {
+    console.error(
+      "Failed to load published blogs from database, falling back to static blogs:",
+      error,
+    );
+    return blogs;
+  }
 }
 
 export async function getPublishedBlogBySlug(slug: string): Promise<Blog | null> {
-  const all = await getPublishedBlogs();
-  return all.find((b) => b.slug === slug) ?? null;
+  if (!slug) return null;
+  const cleanSlug = slug.trim();
+  const lowerSlug = cleanSlug.toLowerCase();
+
+  // 1. Check static blogs first (fast, completely resilient to database downtime)
+  const staticMatch = blogs.find((b) => b.slug === cleanSlug || b.slug.toLowerCase() === lowerSlug);
+  if (staticMatch) {
+    return staticMatch;
+  }
+
+  // 2. Query database for published dynamic post
+  try {
+    const draft = await fetchPublishedDraftBySlug({ data: { slug: cleanSlug } });
+    if (draft) {
+      return draftToBlogCard(draft);
+    }
+  } catch (error) {
+    console.error(`Failed to fetch published blog draft for slug "${cleanSlug}":`, error);
+  }
+
+  // 3. Fallback: check full list in case of slug normalization quirks
+  try {
+    const all = await getPublishedBlogs();
+    return all.find((b) => b.slug === cleanSlug || b.slug.toLowerCase() === lowerSlug) ?? null;
+  } catch {
+    return null;
+  }
 }

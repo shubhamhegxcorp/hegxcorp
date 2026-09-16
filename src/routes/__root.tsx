@@ -93,8 +93,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Generate more leads, sales and revenue through data-driven growth marketing.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://hegxcorp.com/og-image.webp" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@hegxcorp" },
+      { name: "twitter:image", content: "https://hegxcorp.com/og-image.webp" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -115,6 +117,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "icon",
         type: "image/png",
+        sizes: "48x48",
+        href: "/favicon/favicon-48x48.png",
+      },
+      {
+        rel: "icon",
+        type: "image/png",
         sizes: "32x32",
         href: "/favicon/favicon-32x32.png",
       },
@@ -130,6 +138,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "/favicon/favicon.svg",
       },
       {
+        rel: "shortcut icon",
+        href: "/favicon.ico",
+      },
+      {
         rel: "manifest",
         href: "/site.webmanifest",
       },
@@ -141,14 +153,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+import { OrganizationSchema, WebsiteSchema } from "../components/site/StructuredData";
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="overflow-x-clip w-full max-w-full">
       <head>
         <HeadContent />
+        <OrganizationSchema />
+        <WebsiteSchema />
         <AnalyticsScripts />
       </head>
-      <body>
+      <body className="min-h-screen bg-background text-foreground antialiased overflow-x-clip w-full max-w-full">
         {children}
         <Scripts />
       </body>

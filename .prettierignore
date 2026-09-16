@@ -2,7 +2,12 @@ node_modules
 dist
 .output
 .vinxi
+.vercel
+.netlify
+.tanstack
+src/generated
 pnpm-lock.yaml
 package-lock.json
 bun.lock
 routeTree.gen.ts
+

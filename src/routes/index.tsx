@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/site/Header";
+import { PageSEO } from "@/components/site/PageSEO";
 import { Hero } from "@/components/home/Hero";
 import { ClientLogos } from "@/components/home/ClientLogos";
 import { ResultsMetrics } from "@/components/home/ResultsMetrics";
@@ -30,19 +31,36 @@ export const Route = createFileRoute("/")({
         content:
           "Generate more leads, sales and revenue through data-driven growth marketing. SEO, Paid Ads, Web Development and CRO.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://hegxcorp.com" },
+      { property: "og:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Hegxcorp — Data-Driven Growth Marketing Agency" },
+      {
+        name: "twitter:description",
+        content:
+          "Generate more leads, sales and revenue through data-driven growth marketing. SEO, Paid Ads, Web Development and CRO.",
+      },
+      { name: "twitter:image", content: "https://hegxcorp.com/cropped-hegxcorp-logo-new-web.webp" },
       {
         name: "keywords",
         content:
           "digital marketing agency, SEO agency India, PPC agency, web development, growth marketing, Hegxcorp",
       },
     ],
+    links: [{ rel: "canonical", href: "https://hegxcorp.com" }],
   }),
   component: Index,
-} as never);
+});
 
 function Index() {
   return (
     <div className="min-h-screen bg-white">
+      <PageSEO
+        sectionKey="home.seo"
+        fallbackTitle="Hegxcorp — Data-Driven Growth Marketing Agency"
+        fallbackDescription="Hegxcorp helps businesses generate more leads, sales and revenue through data-driven SEO, paid advertising, web development and conversion optimisation. Serving India, USA, UK and Dubai."
+      />
       {/* ── Navigation ──────────────────────── */}
       <Header />
 
@@ -76,8 +94,8 @@ function Index() {
       {/* ── Section 9: Insights / Blog ──────── */}
       <BlogPreview />
 
-      {/* ── Section 9.5: Dynamic FAQ ────────── */}
-      <HomeFAQ />
+      {/* ── Section 9.5: Dynamic FAQ (Commented out) ────────── */}
+      {/* <HomeFAQ /> */}
 
       {/* ── Section 10: Final CTA ───────────── */}
       <FinalCTA />
